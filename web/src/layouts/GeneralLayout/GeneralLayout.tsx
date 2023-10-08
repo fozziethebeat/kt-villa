@@ -1,21 +1,29 @@
-import { useAuth } from 'src/auth'
 import { Link, routes } from '@redwoodjs/router'
+import { useEffect } from 'react'
+import { themeChange } from 'theme-change'
 
+import { useAuth } from 'src/auth'
 type GeneralLayoutProps = {
   children?: React.ReactNode
 }
 
 const GeneralLayout = ({ children }: GeneralLayoutProps) => {
+  useEffect(() => {
+    themeChange(false)
+  }, [])
+
   const { hasRole } = useAuth()
   return (
     <>
-      <header className="navbar bg-base-100">
+      <header className="navbar">
         <div className="flex-1">
           <a className="norma-case btn btn-ghost text-xl">
             <Link to={routes.home()}>Surface Stay</Link>
           </a>
         </div>
         <nav className="flex-none">
+          <button data-set-theme="light">light</button>
+          <button data-set-theme="cupcake">cupcake</button>
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
               <div className="w-10 rounded-full">

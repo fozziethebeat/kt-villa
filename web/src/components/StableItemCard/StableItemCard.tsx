@@ -11,6 +11,7 @@ const StableItemCard = ({ item }) => {
           <p>{item.text}</p>
           <h2 className="card-title">{item.id}</h2>
         </div>
+        <button className="btn btn-primary">Primary</button>
       </Link>
     </div>
   )
