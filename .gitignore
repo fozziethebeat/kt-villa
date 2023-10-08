@@ -3,6 +3,7 @@
 .env
 .netlify
 .redwood/*
+.postgres/*
 !.redwood/README.md
 dev.db*
 dist
