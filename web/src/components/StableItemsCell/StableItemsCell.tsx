@@ -9,6 +9,8 @@ export const QUERY = gql`
       id
       image
       text
+      claimStatus
+      claimVisible
     }
   }
 `

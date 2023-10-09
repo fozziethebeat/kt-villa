@@ -8,10 +8,12 @@ const StableItemCard = ({ item }) => {
           <img src={item.image} />
         </figure>
         <div className="card-body">
-          <p>{item.text}</p>
+          <div>
+            <div className="badge badge-neutral">{item.claimStatus}</div>
+          </div>
           <h2 className="card-title">{item.id}</h2>
+          <p>{item.text}</p>
         </div>
-        <button className="btn btn-primary">Primary</button>
       </Link>
     </div>
   )

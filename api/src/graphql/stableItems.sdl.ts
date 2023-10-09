@@ -3,6 +3,8 @@ export const schema = gql`
     id: String!
     image: String!
     text: String!
+    claimStatus: String!
+    claimVisible: Boolean!
   }
 
   type Query {
@@ -20,7 +22,19 @@ export const schema = gql`
     text: String
   }
 
+  input ClaimItemInput {
+    id: String!
+    code: String!
+  }
+
+  type ClaimItemResponse {
+    success: Boolean!
+  }
+
   type Mutation {
+    claimItem(input: ClaimItemInput!): StableItem!
+      @requireAuth(roles: ["admin", "general"])
+
     createStableItem(input: CreateStableItemInput!): StableItem!
       @requireAuth(roles: ["admin"])
     updateStableItem(id: String!, input: UpdateStableItemInput!): StableItem!

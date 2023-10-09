@@ -15,15 +15,23 @@ model StableItem {
   image String
   // Interesting text to display.
   text  String
+
+  claimCode    String
+  claimStatus  String
+  claimVisible Boolean
+
+  owner   User? @relation(fields: [ownerId], references: [id])
+  ownerId Int?
 }
 
 model User {
-  id                  Int       @id @default(autoincrement())
+  id                  Int          @id @default(autoincrement())
   name                String?
-  email               String    @unique
+  email               String       @unique
   hashedPassword      String
   salt                String
   resetToken          String?
   resetTokenExpiresAt DateTime?
-  roles               String @default("general")
+  roles               String       @default("general")
+  StableItem          StableItem[]
 }
