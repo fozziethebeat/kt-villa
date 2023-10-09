@@ -80,3 +80,23 @@ export const deleteStableItem: MutationResolvers['deleteStableItem'] = ({
     where: { id },
   })
 }
+
+export const StableItem = {
+  ownerUsername: async (args, gqlArgs) => {
+    const item = gqlArgs.root
+    if (item.claimStatus !== ClaimStatus.CLAIMED) {
+      return 'none'
+    }
+    if (item.ownerId === context.currentUser.id) {
+      return 'you'
+    }
+    if (!item.claimVisible) {
+      return 'anon'
+    }
+    const owner = await db.user.findUnique({
+      where: { id: item.ownerId },
+      select: { name: true },
+    })
+    return owner.name
+  },
+}

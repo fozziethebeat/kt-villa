@@ -11,6 +11,7 @@ export const QUERY = gql`
       text
       claimStatus
       claimVisible
+      ownerUsername
     }
   }
 `

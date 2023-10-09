@@ -14,6 +14,7 @@ export const QUERY = gql`
       text
       claimStatus
       claimVisible
+      ownerUsername
     }
   }
 `
@@ -39,6 +40,7 @@ export const Success = ({
       <div className="flex flex-col ">
         <div>
           <div className="badge badge-neutral">{stableItem.claimStatus}</div>
+          <div className="badge badge-primary">{stableItem.ownerUsername}</div>
         </div>
         <h2 className="">{stableItem.id}</h2>
         <p>{stableItem.text}</p>

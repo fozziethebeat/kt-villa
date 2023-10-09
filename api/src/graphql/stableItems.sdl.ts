@@ -5,6 +5,7 @@ export const schema = gql`
     text: String!
     claimStatus: String!
     claimVisible: Boolean!
+    ownerUsername: String
   }
 
   type Query {
