@@ -4,7 +4,6 @@ import type {
 } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
-import 'react-datepicker/dist/react-datepicker.css'
 import { useState } from 'react'
 import DatePicker from 'react-datepicker'
 

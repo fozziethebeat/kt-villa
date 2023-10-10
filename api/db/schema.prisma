@@ -25,12 +25,12 @@ model StableItem {
 }
 
 model Booking {
-  id        Int      @id @default(autoincrement())
-  startDate DateTime
-  endDate   DateTime
-  numGuests Int
-  bookingCode String
-  status    String @default("pending")
+  id          Int      @id @default(autoincrement())
+  startDate   DateTime
+  endDate     DateTime
+  numGuests   Int
+  bookingCode String @unique
+  status      String   @default("pending")
 
   user   User @relation(fields: [userId], references: [id])
   userId Int

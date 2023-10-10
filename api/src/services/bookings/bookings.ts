@@ -12,7 +12,21 @@ export const bookings: QueryResolvers['bookings'] = () => {
   return db.booking.findMany()
 }
 
-export const futureBookings: QueryResolvers['bookings'] = () => {
+export const userBookings: QueryResolvers['userBookings'] = () => {
+  return db.booking.findMany({
+    where: {
+      userId: context.currentUser.id,
+    },
+  })
+}
+
+export const userBooking: QueryResolvers['userBooking'] = ({ bookingCode }) => {
+  return db.booking.findUnique({
+    where: { bookingCode, userId: context.currentUser.id },
+  })
+}
+
+export const futureBookings: QueryResolvers['futureBookings'] = () => {
   return db.booking.findMany({
     where: {
       startDate: { gt: new Date() },

@@ -31,8 +31,10 @@ const Routes = () => {
         </Set>
       </Private>
       <Set wrap={GeneralLayout}>
-        <Route path="/item/{id}" page={ItemPage} name="item" />
         <Route path="/about" page={AboutPage} name="about" />
+        <Route path="/booking/{bookingCode}" page={UserBookingPage} name="userBooking" />
+        <Route path="/item/{id}" page={ItemPage} name="item" />
+        <Route path="/me" page={MyPage} name="me" />
         <Route path="/" page={HomePage} name="home" />
       </Set>
       <Route notfound page={NotFoundPage} />

@@ -3,10 +3,15 @@ export const schema = gql`
     id: Int!
     startDate: DateTime!
     endDate: DateTime!
+    numGuests: Int!
+    status: String!
+    bookingCode: String!
   }
 
   type Query {
     futureBookings: [Booking!]! @skipAuth
+    userBookings: [Booking!]! @requireAuth
+    userBooking(bookingCode: String!): Booking @requireAuth
     bookings: [Booking!]! @requireAuth
     booking(id: Int!): Booking @requireAuth
   }

@@ -39,6 +39,9 @@ const GeneralLayout = ({ children }: GeneralLayoutProps) => {
                 <Link to={routes.home()}>Home</Link>
               </li>
               <li>
+                <Link to={routes.me()}>My Page</Link>
+              </li>
+              <li>
                 <Link to={routes.about()}>About</Link>
               </li>
               {hasRole('admin') && (
