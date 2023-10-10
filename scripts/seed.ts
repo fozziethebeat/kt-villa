@@ -61,6 +61,28 @@ export default async () => {
         }
       }),
     })
+
+    const bookingData = [
+      {
+        id: 1,
+        startDate: '2023-10-19T08:00:00.000+09:00',
+        endDate: '2023-10-23T20:00:00.000+09:00',
+        numGuests: 2,
+        userId: 2,
+        status: 'approved',
+        bookingCode: 'xyz',
+      },
+      {
+        id: 2,
+        startDate: '2023-10-17T08:00:00.000+09:00',
+        endDate: '2023-10-24T20:00:00.000+09:00',
+        numGuests: 4,
+        userId: 1,
+        status: 'pending',
+        bookingCode: 'abc',
+      },
+    ]
+    await db.booking.createMany({ data: bookingData })
   } catch (error) {
     console.warn('Please define your seed data.')
     console.error(error)

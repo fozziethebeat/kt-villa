@@ -17,9 +17,9 @@ const GeneralLayout = ({ children }: GeneralLayoutProps) => {
     <>
       <header className="navbar">
         <div className="flex-1">
-          <a className="norma-case btn btn-ghost text-xl">
-            <Link to={routes.home()}>Surface Stay</Link>
-          </a>
+          <Link className="norma-case btn btn-ghost text-xl" to={routes.home()}>
+            Surface Stay
+          </Link>
         </div>
         <nav className="flex-none">
           <button data-set-theme="light">light</button>
