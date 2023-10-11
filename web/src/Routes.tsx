@@ -23,6 +23,9 @@ const Routes = () => {
       <Route path="/reset-password" page={ResetPasswordPage} name="resetPassword" />
 
       <Private unauthenticated="home" roles="admin">
+        <Set wrap={GeneralLayout}>
+          <Route path="/admin/bookings" page={AdminReviewBookingsPage} name="adminReviewBookings" />
+        </Set>
         <Set wrap={ScaffoldLayout} title="StableItems" titleTo="adminStableItems" buttonLabel="New StableItem" buttonTo="adminNewStableItem">
           <Route path="/admin/stable-items/new" page={AdminStableItemNewStableItemPage} name="adminNewStableItem" />
           <Route path="/admin/stable-items/{id}/edit" page={AdminStableItemEditStableItemPage} name="adminEditStableItem" />

@@ -48,6 +48,9 @@ const GeneralLayout = ({ children }: GeneralLayoutProps) => {
                 <>
                   <div className="divider" />
                   <li>
+                    <Link to={routes.adminReviewBookings()}>Review</Link>
+                  </li>
+                  <li>
                     <Link to={routes.adminNewStableItem()}>Add Item</Link>
                   </li>
                 </>

@@ -4,29 +4,32 @@ const UserBookingCard = ({ booking }) => {
   return (
     <div className="card w-96 bg-base-100 shadow-xl">
       <div className="card-body">
-        <div>
-          <div className="badge badge-neutral">{booking.status}</div>
-        </div>
-        <h2 className="card-title">{booking.bookingCode}</h2>
-        <div className="w-full max-w-xs">
-          <label className="label">
-            <span className="label-text">Start Date</span>
-          </label>
-          <span className="input input-bordered w-full max-w-xs">
-            {new Date(booking.startDate).toLocaleDateString('en-CA')}
-          </span>
-          <label className="label">
-            <span className="label-text">End Date</span>
-          </label>
-          <span className="input input-bordered w-full max-w-xs">
-            {new Date(booking.endDate).toLocaleDateString('en-CA')}
-          </span>
-          <label className="label">
-            <span className="label-text">Number of Guests</span>
-          </label>
-          <span className="input input-bordered w-full max-w-xs">
-            {booking.numGuests}
-          </span>
+        <h2 className="card-title">Trip: {booking.bookingCode}</h2>
+        <div className="flex w-full flex-col gap-2">
+          <div className="flex justify-between gap-2">
+            <div>Status</div>
+            <div className="badge badge-neutral badge-lg">{booking.status}</div>
+          </div>
+          <div className="flex justify-between gap-2">
+            <div>Start Date</div>
+            <div className="badge badge-ghost badge-lg">
+              {new Date(booking.startDate).toLocaleDateString('en-CA')}
+            </div>
+          </div>
+
+          <div className="flex justify-between gap-2">
+            <div>End Date</div>
+            <div className="badge badge-ghost badge-lg">
+              {new Date(booking.endDate).toLocaleDateString('en-CA')}
+            </div>
+          </div>
+
+          <div className="flex justify-between gap-2">
+            <div>Number of Guests</div>
+            <div className="badge badge-accent badge-lg">
+              {booking.numGuests}
+            </div>
+          </div>
         </div>
         <Link to={routes.userBooking({ bookingCode: booking.bookingCode })}>
           <button className="btn btn-primary"> See More</button>

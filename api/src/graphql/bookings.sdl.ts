@@ -8,12 +8,23 @@ export const schema = gql`
     bookingCode: String!
   }
 
+  type AdminBooking {
+    id: Int!
+    startDate: DateTime!
+    endDate: DateTime!
+    numGuests: Int!
+    status: String!
+    bookingCode: String!
+    user: User
+  }
+
   type Query {
+    adminBookings: [AdminBooking!]! @requireAuth(roles: ["admin"])
+    bookings: [Booking!]! @requireAuth
+    booking(id: Int!): Booking @requireAuth
     futureBookings: [Booking!]! @skipAuth
     userBookings: [Booking!]! @requireAuth
     userBooking(bookingCode: String!): Booking @requireAuth
-    bookings: [Booking!]! @requireAuth
-    booking(id: Int!): Booking @requireAuth
   }
 
   input CreateBookingInput {
@@ -30,8 +41,13 @@ export const schema = gql`
   }
 
   type Mutation {
-    createBooking(input: CreateBookingInput!): Booking! @requireAuth
-    updateBooking(id: Int!, input: UpdateBookingInput!): Booking! @requireAuth
-    deleteBooking(id: Int!): Booking! @requireAuth
+    updateBookingStatus(id: Int!, status: String!): AdminBooking!
+      @requireAuth(roles: ["admin"])
+
+    createBooking(input: CreateBookingInput!): Booking!
+      @requireAuth(roles: ["admin"])
+    updateBooking(id: Int!, input: UpdateBookingInput!): Booking!
+      @requireAuth(roles: ["admin"])
+    deleteBooking(id: Int!): Booking! @requireAuth(roles: ["admin"])
   }
 `

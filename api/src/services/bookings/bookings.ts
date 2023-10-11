@@ -1,7 +1,7 @@
 import type {
   QueryResolvers,
   MutationResolvers,
-  BookingRelationResolvers,
+  AdminBookingRelationResolvers,
 } from 'types/graphql'
 
 import { validateWith } from '@redwoodjs/api'
@@ -9,6 +9,10 @@ import { validateWith } from '@redwoodjs/api'
 import { db } from 'src/lib/db'
 
 export const bookings: QueryResolvers['bookings'] = () => {
+  return db.booking.findMany()
+}
+
+export const adminBookings: QueryResolvers['adminBookings'] = () => {
   return db.booking.findMany()
 }
 
@@ -91,6 +95,18 @@ export const createBooking: MutationResolvers['createBooking'] = async ({
   })
 }
 
+export const updateBookingStatus: MutationResolvers['updateBookingStatus'] = ({
+  id,
+  status,
+}) => {
+  return db.booking.update({
+    data: {
+      status,
+    },
+    where: { id },
+  })
+}
+
 export const updateBooking: MutationResolvers['updateBooking'] = ({
   id,
   input,
@@ -107,7 +123,7 @@ export const deleteBooking: MutationResolvers['deleteBooking'] = ({ id }) => {
   })
 }
 
-export const Booking: BookingRelationResolvers = {
+export const AdminBooking: AdminBookingRelationResolvers = {
   user: (_obj, { root }) => {
     return db.booking.findUnique({ where: { id: root?.id } }).user()
   },
