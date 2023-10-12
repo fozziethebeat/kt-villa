@@ -7,6 +7,7 @@ import type {
 import { validateWith } from '@redwoodjs/api'
 
 import { db } from 'src/lib/db'
+import { genItemQueue } from 'src/lib/queues'
 
 export const bookings: QueryResolvers['bookings'] = () => {
   return db.booking.findMany()
@@ -95,17 +96,21 @@ export const createBooking: MutationResolvers['createBooking'] = async ({
   })
 }
 
-export const updateBookingStatus: MutationResolvers['updateBookingStatus'] = ({
-  id,
-  status,
-}) => {
-  return db.booking.update({
-    data: {
-      status,
-    },
-    where: { id },
-  })
-}
+export const updateBookingStatus: MutationResolvers['updateBookingStatus'] =
+  async ({ id, status }) => {
+    const booking = await db.booking.update({
+      data: {
+        status,
+      },
+      where: { id },
+    })
+    if (booking.status === 'approved') {
+      await genItemQueue.add({
+        id,
+      })
+    }
+    return booking
+  }
 
 export const updateBooking: MutationResolvers['updateBooking'] = ({
   id,
