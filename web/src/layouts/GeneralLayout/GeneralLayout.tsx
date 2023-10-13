@@ -51,7 +51,7 @@ const GeneralLayout = ({ children }: GeneralLayoutProps) => {
                     <Link to={routes.adminReviewBookings()}>Review</Link>
                   </li>
                   <li>
-                    <Link to={routes.adminNewStableItem()}>Add Item</Link>
+                    <Link to={routes.adminStableItems()}>Manage Item</Link>
                   </li>
                 </>
               )}

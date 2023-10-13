@@ -13,6 +13,11 @@ export const QUERY = gql`
       numGuests
       bookingCode
       status
+      item {
+        id
+        image
+        text
+      }
     }
   }
 `
@@ -56,6 +61,13 @@ export const Success = ({
           <span className="input input-bordered w-full max-w-xs">
             {userBooking.numGuests}
           </span>
+          <figure className="h-80 w-80">
+            {userBooking?.item ? (
+              <img src={userBooking.item.image} />
+            ) : (
+              <div className=" placeholder h-80 w-80 bg-neutral-content" />
+            )}
+          </figure>
         </div>
       </div>
     </div>

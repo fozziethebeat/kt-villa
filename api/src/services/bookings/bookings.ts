@@ -5,10 +5,13 @@ import type {
   AdminBookingRelationResolvers,
 } from 'types/graphql'
 
+import ShortUniqueId from 'short-unique-id'
 import { validateWith } from '@redwoodjs/api'
 
 import { db } from 'src/lib/db'
 import { generateBookingItem } from 'src/lib/gen'
+
+const bookingCodeGenerator = new ShortUniqueId({ length: 6 })
 
 export const bookings: QueryResolvers['bookings'] = () => {
   return db.booking.findMany()
@@ -64,6 +67,8 @@ export const createBooking: MutationResolvers['createBooking'] = async ({
         startDate: 'asc',
       },
     })
+    console.log(input)
+    console.log(candidateConflicts)
     if (candidateConflicts.length === 0) {
       return
     }
@@ -88,13 +93,23 @@ export const createBooking: MutationResolvers['createBooking'] = async ({
     }
     throw new Error('Invalid dates. Conflicts with existing booking')
   })
-  return db.booking.create({
+  const user = await db.user.findUnique({
+    where: { id: context.currentUser.id },
+  })
+  const trustStatus = user.trustStatus
+  const status = trustStatus === 'trusted' ? 'approved' : 'pending'
+  const booking = await db.booking.create({
     data: {
       ...input,
-      status: 'pending',
+      status,
+      bookingCode: bookingCodeGenerator.rnd(),
       userId: context.currentUser.id,
     },
   })
+  if (status === 'pending') {
+    return booking
+  }
+  return generateBookingItem(booking.id)
 }
 
 export const createBookingItemAdmin: MutationResolvers['createBookingItemAdmin'] =

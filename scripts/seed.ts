@@ -42,29 +42,32 @@ export default async () => {
         email: 'fozziethebeat@gmail.com',
         password: 'rootpassword',
         roles: 'admin',
+        trustStatus: 'trusted',
       },
       {
         name: 'Steve',
         email: 'fozziethebeat+general@gmail.com',
         password: 'generalpassword',
         roles: 'general',
+        trustStatus: 'new',
       },
     ]
     await db.user.createMany({
-      data: users.map(({ name, email, password }) => {
+      data: users.map(({ name, email, password, roles, trustStatus }) => {
         const [hashedPassword, salt] = hashPassword(password)
         return {
           name,
           email,
           hashedPassword,
           salt,
+          roles,
+          trustStatus,
         }
       }),
     })
 
     const bookingData = [
       {
-        id: 1,
         startDate: '2023-10-19T08:00:00.000+09:00',
         endDate: '2023-10-23T20:00:00.000+09:00',
         numGuests: 2,
@@ -73,7 +76,6 @@ export default async () => {
         bookingCode: 'xyz',
       },
       {
-        id: 2,
         startDate: '2023-10-17T08:00:00.000+09:00',
         endDate: '2023-10-24T20:00:00.000+09:00',
         numGuests: 4,

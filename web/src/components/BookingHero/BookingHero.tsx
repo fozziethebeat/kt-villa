@@ -1,3 +1,4 @@
+import { navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { useState } from 'react'
 
@@ -7,6 +8,7 @@ const CREATE_BOOKING_MUTATION = gql`
   mutation CreateBookingMutation($input: CreateBookingInput!) {
     createBooking(input: $input) {
       id
+      bookingCode
     }
   }
 `
@@ -15,11 +17,10 @@ const BookingHero = () => {
   const [createBooking, { loading, error }] = useMutation(
     CREATE_BOOKING_MUTATION,
     {
-      onCompleted: () => {
-        console.log('success')
-      },
-      onError: (error) => {
-        console.log(error)
+      onCompleted: (data) => {
+        navigate(
+          routes.userBooking({ bookingCode: data.createBooking.bookingCode })
+        )
       },
     }
   )
@@ -107,13 +108,18 @@ const BookingHero = () => {
               </div>
             </div>
             <div className="form-control mt-6">
-              <button
-                disabled={!isValidDates}
-                onClick={onBook}
-                className="btn btn-primary"
-              >
-                Book
-              </button>
+              <div className="stack">
+                {loading && (
+                  <span className="loading loading-bars loading-lg text-neutral"></span>
+                )}
+                <button
+                  disabled={!isValidDates || loading}
+                  onClick={onBook}
+                  className="btn btn-primary"
+                >
+                  Book
+                </button>
+              </div>
             </div>
           </div>
         </div>

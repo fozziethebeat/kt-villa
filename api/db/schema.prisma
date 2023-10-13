@@ -50,6 +50,7 @@ model User {
   resetToken          String?
   resetTokenExpiresAt DateTime?
   roles               String    @default("general")
+  trustStatus         String    @default("new")
 
   StableItem StableItem[]
   booking    Booking[]
