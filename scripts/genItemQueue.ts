@@ -3,7 +3,6 @@ import { genItemQueue } from 'api/src/lib/queues'
 
 import ShortUniqueId from 'short-unique-id'
 
-const images = ['mandaloreo_picturestorybook_230923_00005_full.png']
 export default async ({ args }) => {
   const uid = new ShortUniqueId({ length: 6 })
   const codeid = new ShortUniqueId({ dictionary: 'number', length: 6 })

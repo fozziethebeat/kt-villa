@@ -1,13 +1,14 @@
 import type {
   QueryResolvers,
   MutationResolvers,
+  BookingRelationResolvers,
   AdminBookingRelationResolvers,
 } from 'types/graphql'
 
 import { validateWith } from '@redwoodjs/api'
 
 import { db } from 'src/lib/db'
-import { genItemQueue } from 'src/lib/queues'
+import { generateBookingItem } from 'src/lib/gen'
 
 export const bookings: QueryResolvers['bookings'] = () => {
   return db.booking.findMany()
@@ -96,21 +97,30 @@ export const createBooking: MutationResolvers['createBooking'] = async ({
   })
 }
 
-export const updateBookingStatus: MutationResolvers['updateBookingStatus'] =
-  async ({ id, status }) => {
-    const booking = await db.booking.update({
-      data: {
-        status,
-      },
-      where: { id },
-    })
-    if (booking.status === 'approved') {
-      await genItemQueue.add({
-        id,
+export const createBookingItemAdmin: MutationResolvers['createBookingItemAdmin'] =
+  async ({ id }) => {
+    await validateWith(async () => {
+      const booking = await db.booking.findUnique({
+        where: { id },
       })
-    }
-    return booking
+      if (!booking || !booking.status === 'approved') {
+        throw new Error('Booking is not approved yet')
+      }
+    })
+    return generateBookingItem(id)
   }
+
+export const updateBookingStatus: MutationResolvers['updateBookingStatus'] = ({
+  id,
+  status,
+}) => {
+  return db.booking.update({
+    data: {
+      status,
+    },
+    where: { id },
+  })
+}
 
 export const updateBooking: MutationResolvers['updateBooking'] = ({
   id,
@@ -128,8 +138,17 @@ export const deleteBooking: MutationResolvers['deleteBooking'] = ({ id }) => {
   })
 }
 
+export const Booking: BookingRelationResolvers = {
+  item: (_obj, { root }) => {
+    return db.booking.findUnique({ where: { id: root?.id } }).userItem()
+  },
+}
+
 export const AdminBooking: AdminBookingRelationResolvers = {
   user: (_obj, { root }) => {
     return db.booking.findUnique({ where: { id: root?.id } }).user()
+  },
+  item: (_obj, { root }) => {
+    return db.booking.findUnique({ where: { id: root?.id } }).userItem()
   },
 }

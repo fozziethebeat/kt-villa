@@ -12,6 +12,11 @@ export const QUERY = gql`
       numGuests
       status
       bookingCode
+      item {
+        id
+        image
+        text
+      }
     }
   }
 `

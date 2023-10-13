@@ -16,6 +16,11 @@ export const QUERY = gql`
         name
         email
       }
+      item {
+        id
+        image
+        text
+      }
     }
   }
 `

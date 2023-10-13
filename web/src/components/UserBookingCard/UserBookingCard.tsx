@@ -31,6 +31,14 @@ const UserBookingCard = ({ booking }) => {
             </div>
           </div>
         </div>
+        <figure className="h-80 w-80">
+          {booking?.item ? (
+            <img src={booking.item.image} />
+          ) : (
+            <div className=" placeholder h-80 w-80 bg-neutral-content" />
+          )}
+        </figure>
+
         <Link to={routes.userBooking({ bookingCode: booking.bookingCode })}>
           <button className="btn btn-primary"> See More</button>
         </Link>

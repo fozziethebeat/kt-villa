@@ -6,6 +6,7 @@ export const schema = gql`
     numGuests: Int!
     status: String!
     bookingCode: String!
+    item: StableItem
   }
 
   type AdminBooking {
@@ -16,6 +17,7 @@ export const schema = gql`
     status: String!
     bookingCode: String!
     user: User
+    item: StableItem
   }
 
   type Query {
@@ -41,6 +43,8 @@ export const schema = gql`
   }
 
   type Mutation {
+    createBookingItemAdmin(id: Int!): AdminBooking!
+      @requireAuth(roles: ["admin"])
     updateBookingStatus(id: Int!, status: String!): AdminBooking!
       @requireAuth(roles: ["admin"])
 
