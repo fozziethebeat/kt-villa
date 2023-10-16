@@ -22,8 +22,6 @@ const GeneralLayout = ({ children }: GeneralLayoutProps) => {
           </Link>
         </div>
         <nav className="flex-none">
-          <button data-set-theme="light">light</button>
-          <button data-set-theme="cupcake">cupcake</button>
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
               <div className="w-10 rounded-full">

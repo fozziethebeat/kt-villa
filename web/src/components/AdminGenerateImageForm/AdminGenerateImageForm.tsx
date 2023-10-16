@@ -99,15 +99,13 @@ const AdminGenerateImageForm = () => {
           </div>
         </div>
       </Form>
+      {loading && <progress className="progress progress-primary w-56" />}
       <figure className="flex justify-center">
-        <div className="stack">
-          {loading && <span className="loading loading-bars loading-lg"></span>}
-          {!loading && data ? (
-            <img src={data.adminGenerateImage.image} />
-          ) : (
-            <div className=" placeholder h-[1024px] w-[1024px] bg-neutral-content" />
-          )}
-        </div>
+        {data ? (
+          <img src={data.adminGenerateImage.image} />
+        ) : (
+          <div className=" placeholder h-[1024px] w-[1024px] bg-neutral-content" />
+        )}
       </figure>
     </div>
   )
