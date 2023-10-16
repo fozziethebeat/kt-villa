@@ -25,6 +25,7 @@ const Routes = () => {
       <Private unauthenticated="home" roles="admin">
         <Set wrap={GeneralLayout}>
           <Route path="/admin/bookings" page={AdminReviewBookingsPage} name="adminReviewBookings" />
+          <Route path="/admin/generate-image" page={AdminGenerateImagePage} name="generateImage" />
         </Set>
         <Set wrap={ScaffoldLayout} title="StableItems" titleTo="adminStableItems" buttonLabel="New StableItem" buttonTo="adminNewStableItem">
           <Route path="/admin/stable-items/new" page={AdminStableItemNewStableItemPage} name="adminNewStableItem" />

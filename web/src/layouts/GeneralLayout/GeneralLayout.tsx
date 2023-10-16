@@ -53,6 +53,9 @@ const GeneralLayout = ({ children }: GeneralLayoutProps) => {
                   <li>
                     <Link to={routes.adminStableItems()}>Manage Item</Link>
                   </li>
+                  <li>
+                    <Link to={routes.generateImage()}>Test Images</Link>
+                  </li>
                 </>
               )}
             </ul>
