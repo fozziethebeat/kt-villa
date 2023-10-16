@@ -14,11 +14,11 @@ export const adminListImageAdapters: QueryResolvers['adminListImageAdapters'] =
 
 export const adminGenerateImage: MutationResolvers['adminGenerateImage'] =
   async ({ input }) => {
+    console.log(input)
     const { data } = await axios.post(
       'https://image.api.surfacedata.org/sdxl/generate',
       {
         ...input,
-        num_inference_steps: 5,
       }
     )
     return data

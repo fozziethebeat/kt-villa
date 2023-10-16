@@ -6,6 +6,7 @@ import {
   FormError,
   FieldError,
   Label,
+  RangeField,
   SelectField,
   Submit,
   TextAreaField,
@@ -13,6 +14,7 @@ import {
 } from '@redwoodjs/forms'
 import { useMutation, useQuery } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
+import { useState } from 'react'
 
 export const QUERY = gql`
   query AdminListImageAdaptersQuery {
@@ -33,13 +35,19 @@ const MUTATION = gql`
   }
 `
 const AdminGenerateImageForm = () => {
+  const [numSteps, setNumSteps] = useState(30)
+  const [requestId, setRequestId] = useState(new Date())
   const { loading: loadingAdapters, data: dataAdapters } = useQuery(QUERY)
   const [adminGenerateImage, { data, error, loading }] = useMutation(MUTATION)
 
   const onGenerate = (input) => {
+    setRequestId(new Date())
     adminGenerateImage({
       variables: {
-        input,
+        input: {
+          ...input,
+          num_inference_steps: numSteps,
+        },
       },
     })
   }
@@ -124,7 +132,24 @@ const AdminGenerateImageForm = () => {
             />
           </div>
 
-          <div className="">
+          <div className="form-control w-full">
+            <label name="num_inference_steps" className="label">
+              <span className="label-text">Inference Steps</span>
+              <span>{numSteps}</span>
+            </label>
+
+            <RangeField
+              name="num_inference_steps"
+              min="1"
+              max="100"
+              defaultValue="30"
+              onChange={(e) => {
+                setNumSteps(parseInt(e.target.value))
+              }}
+              className="range range-secondary"
+            />
+          </div>
+          <div>
             <Submit disabled={loading} className="btn btn-primary">
               Generate
             </Submit>
@@ -134,7 +159,7 @@ const AdminGenerateImageForm = () => {
       {loading && <progress className="progress progress-primary w-56" />}
       <figure className="flex justify-center">
         {data ? (
-          <img src={data.adminGenerateImage.image} />
+          <img src={`${data.adminGenerateImage.image}?${requestId}`} />
         ) : (
           <div className=" placeholder h-[1024px] w-[1024px] bg-neutral-content" />
         )}

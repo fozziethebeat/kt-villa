@@ -4,6 +4,7 @@ export const schema = gql`
     prompt: String!
     negative_prompt: String!
     lora: String!
+    num_inference_steps: Int
   }
 
   type GenerateImageResponse {
