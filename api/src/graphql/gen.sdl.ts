@@ -3,10 +3,25 @@ export const schema = gql`
     id: String!
     prompt: String!
     negative_prompt: String!
+    lora: String!
   }
 
   type GenerateImageResponse {
     image: String!
+  }
+
+  type ImageAdapter {
+    name: String!
+    info: String!
+  }
+
+  type ListImageAdapterResponse {
+    adapters: [ImageAdapter!]!
+  }
+
+  type Query {
+    adminListImageAdapters: ListImageAdapterResponse!
+      @requireAuth(roles: ["admin"])
   }
 
   type Mutation {

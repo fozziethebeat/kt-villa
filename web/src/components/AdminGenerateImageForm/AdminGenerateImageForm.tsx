@@ -6,12 +6,24 @@ import {
   FormError,
   FieldError,
   Label,
+  SelectField,
+  Submit,
   TextAreaField,
   TextField,
-  Submit,
 } from '@redwoodjs/forms'
-import { useMutation } from '@redwoodjs/web'
+import { useMutation, useQuery } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
+
+export const QUERY = gql`
+  query AdminListImageAdaptersQuery {
+    adminListImageAdapters {
+      adapters {
+        name
+        info
+      }
+    }
+  }
+`
 
 const MUTATION = gql`
   mutation AdminGenerateImage($input: GenerateImageRequest!) {
@@ -21,9 +33,10 @@ const MUTATION = gql`
   }
 `
 const AdminGenerateImageForm = () => {
+  const { loading: loadingAdapters, data: dataAdapters } = useQuery(QUERY)
   const [adminGenerateImage, { data, error, loading }] = useMutation(MUTATION)
 
-  const onSave = (input) => {
+  const onGenerate = (input) => {
     adminGenerateImage({
       variables: {
         input,
@@ -33,7 +46,7 @@ const AdminGenerateImageForm = () => {
 
   return (
     <div className="m-4 flex flex-col gap-4">
-      <Form<FormStableItem> onSubmit={onSave} error={error}>
+      <Form<FormStableItem> onSubmit={onGenerate} error={error}>
         <FormError
           error={error}
           wrapperClassName="rw-form-error-wrapper"
@@ -49,7 +62,7 @@ const AdminGenerateImageForm = () => {
             <TextField
               name="id"
               defaultValue="test_image"
-              autocomplete="off"
+              autoComplete="off"
               className="max-w-x input input-bordered input-primary w-full"
               validation={{ required: true }}
             />
@@ -64,7 +77,7 @@ const AdminGenerateImageForm = () => {
             <TextAreaField
               name="prompt"
               defaultValue="A field of flowers"
-              autocomplete="off"
+              autoComplete="off"
               className="max-w-x textarea textarea-bordered textarea-primary w-full"
               validation={{ required: true }}
             />
@@ -82,12 +95,31 @@ const AdminGenerateImageForm = () => {
             <TextAreaField
               name="negative_prompt"
               defaultValue="ugly colors"
-              autocomplete="off"
+              autoComplete="off"
               className="max-w-x textarea textarea-bordered textarea-primary w-full"
               validation={{ required: true }}
             />
             <FieldError
               name="negative_prompt"
+              className="label label-text-alt text-error"
+            />
+          </div>
+          <div className="form-control w-full">
+            <label name="lora" className="label">
+              <span className="label-text">Adapter</span>
+            </label>
+            <SelectField
+              name="lora"
+              className="select select-bordered select-primary"
+              validation={{ required: true }}
+            >
+              {dataAdapters?.adminListImageAdapters?.adapters &&
+                dataAdapters.adminListImageAdapters.adapters.map((item) => (
+                  <option key={item.name}>{item.name}</option>
+                ))}
+            </SelectField>
+            <FieldError
+              name="lora"
               className="label label-text-alt text-error"
             />
           </div>
