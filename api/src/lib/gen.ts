@@ -1,3 +1,4 @@
+import axios from 'axios'
 import ShortUniqueId from 'short-unique-id'
 
 import { db } from 'src/lib/db'
@@ -5,7 +6,10 @@ import { db } from 'src/lib/db'
 const itemIdGenerator = new ShortUniqueId({ length: 6 })
 const itemCodeGenerator = new ShortUniqueId({ dictionary: 'number', length: 6 })
 
-const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+const PROMPT_STARTS = ['a city made of floating airships']
+
+const NEGATIVE_PROMPT =
+  '(unnatural hands:1.5), extra fingers, fewer digits, (mutated hands and fingers:1.5), blurry, (dark, shadows, darkness), (deformed face:1.4), (ugly), lowres, ((bad anatomy )), anime, manga, (poorly drawn face), ((mutation)), ((bad proportions)), ((extra limbs)), cropped, ((jpeg artifacts)), out of frame, duplicated artefact, cropped image, deformed, signatures, cut-off, over- saturated, grain, poorly drawn face, out of focus, mutilated, mangled, morbid, gross proportions, watermark, heterochromia, canvas frame, ((disfigured)), ((bad art))'
 
 const generateBookingItem = async (bookingId: string) => {
   const booking = await db.booking.findUnique({ where: { id: bookingId } })
@@ -17,13 +21,35 @@ const generateBookingItem = async (bookingId: string) => {
     console.log('Already has item')
     return undefined
   }
-  await sleep(1000)
-  const itemIndex = Math.floor(Math.random() * 20)
-  const formattedIndex = itemIndex.toString().padStart(5, '0')
-  const image = `https://flowerfruits.mtn.surfacedata.org/results/mandaloreo_picturestorybook_230923_${formattedIndex}_full.png`
-  const text = 'random text goes here'
+
+  // Now get the dat we need to generate the image.
+  // 1) The prompt given a template and a random fragment.
+  // 2) The negative prompt (part of 1 sorta).
+  // 3) The current adapter name.
+
+  const adapters = await db.imageAdapterSetting.findMany({
+    orderBy: [{ startDate: 'desc' }],
+    take: 1,
+  })
+  if (!adapters || adapters.length === 0) {
+    return undefined
+  }
+
   const itemId = itemIdGenerator.rnd()
   const claimCode = itemCodeGenerator.rnd()
+  const request = {
+    id: itemId,
+    prompt: getPrompt(),
+    negative_prompt: NEGATIVE_PROMPT,
+    lora: adapters[0].adapter,
+  }
+  const { data } = await axios.post(
+    'https://image.api.surfacedata.org/sdxl/generate',
+    request
+  )
+
+  const image = data.image
+  const text = 'random text goes here'
 
   await db.stableItem.create({
     data: {
@@ -42,6 +68,12 @@ const generateBookingItem = async (bookingId: string) => {
       userItemId: itemId,
     },
   })
+}
+
+const getPrompt = () => {
+  const index = Math.floor(Math.random() * PROMPT_STARTS.length)
+  const fragment = PROMPT_STARTS[index]
+  return `${fragment}, cyberpunk solarpunk by moebius, masterpiece, best quality, intricate, highly detailed:1.1, drawing, Jean Giraud`
 }
 
 export { generateBookingItem }

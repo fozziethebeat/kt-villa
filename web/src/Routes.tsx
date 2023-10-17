@@ -27,6 +27,14 @@ const Routes = () => {
           <Route path="/admin/bookings" page={AdminReviewBookingsPage} name="adminReviewBookings" />
           <Route path="/admin/generate-image" page={AdminGenerateImagePage} name="generateImage" />
         </Set>
+
+        <Set wrap={ScaffoldLayout} title="ImageAdapterSettings" titleTo="adminImageAdapterSettings" buttonLabel="New ImageAdapterSetting" buttonTo="adminNewImageAdapterSetting">
+          <Route path="/admin/image-adapter-settings/new" page={AdminImageAdapterSettingNewImageAdapterSettingPage} name="adminNewImageAdapterSetting" />
+          <Route path="/admin/image-adapter-settings/{id:Int}/edit" page={AdminImageAdapterSettingEditImageAdapterSettingPage} name="adminEditImageAdapterSetting" />
+          <Route path="/admin/image-adapter-settings/{id:Int}" page={AdminImageAdapterSettingImageAdapterSettingPage} name="adminImageAdapterSetting" />
+          <Route path="/admin/image-adapter-settings" page={AdminImageAdapterSettingImageAdapterSettingsPage} name="adminImageAdapterSettings" />
+        </Set>
+
         <Set wrap={ScaffoldLayout} title="StableItems" titleTo="adminStableItems" buttonLabel="New StableItem" buttonTo="adminNewStableItem">
           <Route path="/admin/stable-items/new" page={AdminStableItemNewStableItemPage} name="adminNewStableItem" />
           <Route path="/admin/stable-items/{id}/edit" page={AdminStableItemEditStableItemPage} name="adminEditStableItem" />
@@ -34,6 +42,7 @@ const Routes = () => {
           <Route path="/admin/stable-items" page={AdminStableItemStableItemsPage} name="adminStableItems" />
         </Set>
       </Private>
+
       <Set wrap={GeneralLayout}>
         <Route path="/about" page={AboutPage} name="about" />
         <Route path="/booking/{bookingCode}" page={UserBookingPage} name="userBooking" />
@@ -41,6 +50,7 @@ const Routes = () => {
         <Route path="/me" page={MyPage} name="me" />
         <Route path="/" page={HomePage} name="home" />
       </Set>
+
       <Route notfound page={NotFoundPage} />
     </Router>
   )
