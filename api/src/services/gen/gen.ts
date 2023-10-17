@@ -4,9 +4,7 @@ import axios from 'axios'
 
 export const adminListImageAdapters: QueryResolvers['adminListImageAdapters'] =
   async ({ input }) => {
-    const { data } = await axios.get(
-      'https://image.api.surfacedata.org/sdxl/models'
-    )
+    const { data } = await axios.get(`${process.env.IMAGE_API_URL}/sdxl/models`)
     return {
       adapters: data.map(({ name, info }) => ({ name, info })),
     }
@@ -15,7 +13,7 @@ export const adminListImageAdapters: QueryResolvers['adminListImageAdapters'] =
 export const adminGenerateImage: MutationResolvers['adminGenerateImage'] =
   async ({ input }) => {
     const { data } = await axios.post(
-      'https://image.api.surfacedata.org/sdxl/generate',
+      `${process.env.IMAGE_API_URL}/sdxl/generate`,
       {
         ...input,
       }

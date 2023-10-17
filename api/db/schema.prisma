@@ -16,6 +16,8 @@ model StableItem {
   // Interesting text to display.
   text  String
 
+  imageRequest Json?
+
   claimCode    String
   claimStatus  String
   claimVisible Boolean

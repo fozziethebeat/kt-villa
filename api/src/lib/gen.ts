@@ -44,7 +44,7 @@ const generateBookingItem = async (bookingId: string) => {
     lora: adapters[0].adapter,
   }
   const { data } = await axios.post(
-    'https://image.api.surfacedata.org/sdxl/generate',
+    `${process.env.IMAGE_API_URL}/sdxl/generate`,
     request
   )
 
@@ -60,6 +60,7 @@ const generateBookingItem = async (bookingId: string) => {
       claimStatus: 'claimed',
       claimVisible: true,
       ownerId: booking.userId,
+      imageRequest: request,
     },
   })
   return await db.booking.update({

@@ -36,38 +36,44 @@ export const Success = ({
   userBooking,
 }: CellSuccessProps<FindUserBookingQuery, FindUserBookingQueryVariables>) => {
   return (
-    <div className="flex flex-row gap-8">
-      <div className="flex flex-col ">
-        <div>
-          <div className="badge badge-neutral">{userBooking.status}</div>
-        </div>
-        <h2 className="card-title">{userBooking.bookingCode}</h2>
-        <div className="w-full max-w-xs">
-          <label className="label">
-            <span className="label-text">Start Date</span>
-          </label>
-          <span className="input input-bordered w-full max-w-xs">
-            {new Date(userBooking.startDate).toLocaleDateString('en-CA')}
-          </span>
-          <label className="label">
-            <span className="label-text">End Date</span>
-          </label>
-          <span className="input input-bordered w-full max-w-xs">
-            {new Date(userBooking.endDate).toLocaleDateString('en-CA')}
-          </span>
-          <label className="label">
-            <span className="label-text">Number of Guests</span>
-          </label>
-          <span className="input input-bordered w-full max-w-xs">
-            {userBooking.numGuests}
-          </span>
-          <figure className="h-80 w-80">
-            {userBooking?.item ? (
-              <img src={userBooking.item.image} />
-            ) : (
-              <div className=" placeholder h-80 w-80 bg-neutral-content" />
-            )}
-          </figure>
+    <div className="min-h-screen w-full bg-base-200">
+      <div className="hero-content flex-col items-start lg:flex-row">
+        <figure className="h-96 w-96">
+          {userBooking?.item ? (
+            <img src={userBooking.item.image} />
+          ) : (
+            <div className="placeholder h-96 w-96 bg-neutral-content" />
+          )}
+        </figure>
+        <div className="flex flex-col gap-2">
+          <h2 className="text-4xl font-bold">
+            Booking Code: {userBooking.bookingCode}
+          </h2>
+          <div className="flex justify-between gap-2">
+            <div>Status</div>
+            <div className="badge badge-accent badge-lg">
+              {userBooking.status}
+            </div>
+          </div>
+
+          <div className="flex justify-between gap-2">
+            <div>Start Date</div>
+            <div className="badge badge-ghost badge-lg">
+              {new Date(userBooking.startDate).toLocaleDateString('en-CA')}
+            </div>
+          </div>
+          <div className="flex justify-between gap-2">
+            <div>End Date</div>
+            <div className="badge badge-ghost badge-lg">
+              {new Date(userBooking.endDate).toLocaleDateString('en-CA')}
+            </div>
+          </div>
+          <div className="flex justify-between gap-2">
+            <div>Number of Guests</div>
+            <div className="badge badge-accent badge-lg">
+              {userBooking.numGuests}
+            </div>
+          </div>
         </div>
       </div>
     </div>

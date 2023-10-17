@@ -33,17 +33,29 @@ export const Success = ({
   stableItem,
 }: CellSuccessProps<FindStableItemQuery, FindStableItemQueryVariables>) => {
   return (
-    <div className="flex flex-row gap-8 ">
-      <figure className="h-96 w-96">
-        <img src={stableItem.image} />
-      </figure>
-      <div className="flex flex-col ">
-        <div>
-          <div className="badge badge-neutral">{stableItem.claimStatus}</div>
-          <div className="badge badge-primary">{stableItem.ownerUsername}</div>
+    <div className="min-h-screen w-full bg-neutral-200">
+      <div className="hero-content flex-col items-start lg:flex-row">
+        <figure className="h-96 w-96">
+          <img src={stableItem.image} />
+        </figure>
+        <div className="flex flex-col gap-2">
+          <h2 className="text-4xl font-bold">Item Code: {stableItem.id}</h2>
+          <div className="flex justify-between gap-2">
+            <div>Owner</div>
+            <div className="badge badge-neutral badge-lg">
+              {stableItem.ownerUsername}
+            </div>
+          </div>
+
+          <div className="flex justify-between gap-2">
+            <div>Claimed</div>
+            <div className="badge badge-primary badge-lg">
+              {stableItem.claimStatus}
+            </div>
+          </div>
         </div>
-        <h2 className="">{stableItem.id}</h2>
-        <p>{stableItem.text}</p>
+      </div>
+      <div>
         {stableItem.claimStatus === 'unclaimed' && (
           <ClaimForm item={stableItem} />
         )}
