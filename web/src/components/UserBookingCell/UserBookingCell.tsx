@@ -18,6 +18,9 @@ export const QUERY = gql`
         image
         text
       }
+      member {
+        status
+      }
     }
   }
 `

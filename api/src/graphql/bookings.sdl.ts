@@ -7,6 +7,13 @@ export const schema = gql`
     status: String!
     bookingCode: String!
     item: StableItem
+    member: [MemberBooking!]
+  }
+
+  type MemberBooking {
+    id: Int!
+    status: String!
+    user: User!
   }
 
   type AdminBooking {
@@ -25,6 +32,7 @@ export const schema = gql`
     bookings: [Booking!]! @requireAuth
     booking(id: Int!): Booking @requireAuth
     futureBookings: [Booking!]! @skipAuth
+    publicBooking(bookingCode: String!): Booking @requireAuth
     userBookings: [Booking!]! @requireAuth
     userBooking(bookingCode: String!): Booking @requireAuth
   }
@@ -43,6 +51,8 @@ export const schema = gql`
   }
 
   type Mutation {
+    joinBooking(bookingCode: String!): Booking! @requireAuth
+
     createBookingItemAdmin(id: Int!): AdminBooking!
       @requireAuth(roles: ["admin"])
     updateBookingStatus(id: Int!, status: String!): AdminBooking!

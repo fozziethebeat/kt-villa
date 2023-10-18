@@ -2,6 +2,7 @@ import type {
   QueryResolvers,
   MutationResolvers,
   BookingRelationResolvers,
+  MemberBookingRelationResolvers,
   AdminBookingRelationResolvers,
 } from 'types/graphql'
 
@@ -35,6 +36,14 @@ export const userBooking: QueryResolvers['userBooking'] = ({ bookingCode }) => {
   })
 }
 
+export const publicBooking: QueryResolvers['publicBooking'] = ({
+  bookingCode,
+}) => {
+  return db.booking.findUnique({
+    where: { bookingCode },
+  })
+}
+
 export const futureBookings: QueryResolvers['futureBookings'] = () => {
   return db.booking.findMany({
     where: {
@@ -49,6 +58,41 @@ export const futureBookings: QueryResolvers['futureBookings'] = () => {
 export const booking: QueryResolvers['booking'] = ({ id }) => {
   return db.booking.findUnique({
     where: { id },
+  })
+}
+
+export const joinBooking: MutationResolvers['joinBooking'] = async ({
+  bookingCode,
+}) => {
+  await validateWith(async () => {
+    const booking = await db.booking.findUnique({
+      where: {
+        bookingCode,
+      },
+      select: {
+        numGuests: true,
+        member: true,
+      },
+    })
+    if (!booking) {
+      throw new Error('Invalid booking.')
+    }
+    if (booking.numGuests === booking.member.length + 1) {
+      throw new Error('Booking not available for joining')
+    }
+  })
+  return db.booking.update({
+    where: { bookingCode },
+    data: {
+      member: {
+        create: [
+          {
+            status: 'pending',
+            userId: context.currentUser.id,
+          },
+        ],
+      },
+    },
   })
 }
 
@@ -67,8 +111,6 @@ export const createBooking: MutationResolvers['createBooking'] = async ({
         startDate: 'asc',
       },
     })
-    console.log(input)
-    console.log(candidateConflicts)
     if (candidateConflicts.length === 0) {
       return
     }
@@ -153,9 +195,18 @@ export const deleteBooking: MutationResolvers['deleteBooking'] = ({ id }) => {
   })
 }
 
+export const MemberBooking: MemberBookingRelationResolvers = {
+  user: (_obj, { root }) => {
+    return db.memberBooking.findUnique({ where: { id: root?.id } }).user()
+  },
+}
+
 export const Booking: BookingRelationResolvers = {
   item: (_obj, { root }) => {
     return db.booking.findUnique({ where: { id: root?.id } }).userItem()
+  },
+  member: (_obj, { root }) => {
+    return db.booking.findUnique({ where: { id: root?.id } }).member()
   },
 }
 
