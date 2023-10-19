@@ -10,7 +10,7 @@ import ShortUniqueId from 'short-unique-id'
 import { validateWith } from '@redwoodjs/api'
 
 import { db } from 'src/lib/db'
-import { generateBookingItem } from 'src/lib/gen'
+import { generateBookingItem, generateItem } from 'src/lib/gen'
 
 const bookingCodeGenerator = new ShortUniqueId({ length: 6 })
 
@@ -173,6 +173,44 @@ export const createBookingItemAdmin: MutationResolvers['createBookingItemAdmin']
       }
     })
     return generateBookingItem(id)
+  }
+
+export const updateMemberBookingStatus: MutationResolvers['updateMemberBookingStatus'] =
+  async ({ id, status }) => {
+    await validateWith(async () => {
+      if (!context.currentUser) {
+        throw new Error('not authorized')
+      }
+      const memberBooking = await db.memberBooking.findUnique({
+        where: { id },
+        select: { booking: true },
+      })
+      if (!memberBooking) {
+        throw new Error('Invalid Member Booking')
+      }
+      if (!memberBooking.booking) {
+        throw new Error('Invalid Booking')
+      }
+      if (memberBooking.booking.userId != context.currentUser.id) {
+        throw new Error('Permission Denied')
+      }
+    })
+    const memberBooking = await db.memberBooking.update({
+      data: {
+        status,
+      },
+      where: { id },
+    })
+    if (memberBooking.status !== 'approved' || memberBooking.userItemId) {
+      return memberBooking
+    }
+    const userItemId = await generateItem(memberBooking.userId)
+    return db.memberBooking.update({
+      data: {
+        userItemId,
+      },
+      where: { id },
+    })
   }
 
 export const updateBookingStatus: MutationResolvers['updateBookingStatus'] = ({

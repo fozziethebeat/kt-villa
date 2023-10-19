@@ -3,6 +3,16 @@ import type {
   FindUserBookingQueryVariables,
 } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
+import {
+  Form,
+  FormError,
+  FieldError,
+  Label,
+  TextField,
+  SelectField,
+  Submit,
+} from '@redwoodjs/forms'
+import { useMutation } from '@redwoodjs/web'
 
 export const QUERY = gql`
   query FindUserBookingQuery($bookingCode: String!) {
@@ -19,8 +29,21 @@ export const QUERY = gql`
         text
       }
       member {
+        id
         status
+        user {
+          name
+        }
       }
+    }
+  }
+`
+
+const MUTATION = gql`
+  mutation UpdateMemberBookingStatus($id: Int!, $status: String!) {
+    updateMemberBookingStatus(id: $id, status: $status) {
+      id
+      status
     }
   }
 `
@@ -77,8 +100,75 @@ export const Success = ({
               {userBooking.numGuests}
             </div>
           </div>
+          <div className="overflow-x-auto">
+            <table className="table">
+              {/* head */}
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userBooking.member.map((mb, index) => (
+                  <tr key={`mb-${index}`}>
+                    <th>{index + 1}</th>
+                    <td>{mb.user.name}</td>
+                    <td>
+                      <MemberBookingAction
+                        memberBooking={mb}
+                        booking={userBooking}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
+  )
+}
+
+const MemberBookingAction = ({ memberBooking, booking }) => {
+  const [updateMemberBookingStatus, { loading, error }] = useMutation(
+    MUTATION,
+    {
+      refetchQueries: [
+        { query: QUERY, variables: { bookingCode: booking.bookingCode } },
+      ],
+    }
+  )
+  const onSave = (input) => {
+    updateMemberBookingStatus({
+      variables: {
+        id: memberBooking.id,
+        ...input,
+      },
+    })
+  }
+
+  return (
+    <Form onSubmit={onSave} error={error} className="flex flex-col gap-2">
+      <SelectField
+        name="status"
+        defaultValue={memberBooking.status}
+        className="select select-bordered"
+        errorClassName="rw-input rw-input-error"
+        validation={{ required: true }}
+      >
+        <option>approved</option>
+        <option>pending</option>
+        <option>rejected</option>
+      </SelectField>
+
+      <div>
+        <Submit disabled={loading} className="btn btn-primary">
+          Update
+        </Submit>
+      </div>
+    </Form>
   )
 }

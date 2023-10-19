@@ -22,6 +22,16 @@ const generateBookingItem = async (bookingId: string) => {
     return undefined
   }
 
+  const userItemId = await generateItem(booking.userId)
+  return await db.booking.update({
+    where: { id: bookingId },
+    data: {
+      userItemId,
+    },
+  })
+}
+
+const generateItem = async (userId) => {
   // Now get the dat we need to generate the image.
   // 1) The prompt given a template and a random fragment.
   // 2) The negative prompt (part of 1 sorta).
@@ -59,16 +69,11 @@ const generateBookingItem = async (bookingId: string) => {
       claimCode,
       claimStatus: 'claimed',
       claimVisible: true,
-      ownerId: booking.userId,
+      ownerId: userId,
       imageRequest: request,
     },
   })
-  return await db.booking.update({
-    where: { id: bookingId },
-    data: {
-      userItemId: itemId,
-    },
-  })
+  return itemId
 }
 
 const getPrompt = () => {
@@ -77,4 +82,4 @@ const getPrompt = () => {
   return `${fragment}, cyberpunk solarpunk by moebius, masterpiece, best quality, intricate, highly detailed:1.1, drawing, Jean Giraud`
 }
 
-export { generateBookingItem }
+export { generateBookingItem, generateItem }
