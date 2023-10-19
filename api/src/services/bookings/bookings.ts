@@ -55,6 +55,14 @@ export const futureBookings: QueryResolvers['futureBookings'] = () => {
   })
 }
 
+export const memberBookings: QueryResolvers['memberBookings'] = () => {
+  return db.memberBooking.findMany({
+    where: {
+      userId: context.currentUser.id,
+    },
+  })
+}
+
 export const booking: QueryResolvers['booking'] = ({ id }) => {
   return db.booking.findUnique({
     where: { id },
@@ -198,6 +206,12 @@ export const deleteBooking: MutationResolvers['deleteBooking'] = ({ id }) => {
 export const MemberBooking: MemberBookingRelationResolvers = {
   user: (_obj, { root }) => {
     return db.memberBooking.findUnique({ where: { id: root?.id } }).user()
+  },
+  booking: (_obj, { root }) => {
+    return db.memberBooking.findUnique({ where: { id: root?.id } }).booking()
+  },
+  item: (_obj, { root }) => {
+    return db.memberBooking.findUnique({ where: { id: root?.id } }).userItem()
   },
 }
 

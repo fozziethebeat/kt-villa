@@ -1,6 +1,7 @@
 import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
 
+import MemberBookingsCell from 'src/components/MemberBookingsCell'
 import UserBookingsCell from 'src/components/UserBookingsCell'
 
 const MyPage = () => {
@@ -10,6 +11,7 @@ const MyPage = () => {
 
       <div className="flex flex-col gap-2">
         <UserBookingsCell />
+        <MemberBookingsCell />
       </div>
     </>
   )

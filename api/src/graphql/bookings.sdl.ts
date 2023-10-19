@@ -14,6 +14,8 @@ export const schema = gql`
     id: Int!
     status: String!
     user: User!
+    booking: Booking!
+    item: StableItem
   }
 
   type AdminBooking {
@@ -32,6 +34,7 @@ export const schema = gql`
     bookings: [Booking!]! @requireAuth
     booking(id: Int!): Booking @requireAuth
     futureBookings: [Booking!]! @skipAuth
+    memberBookings: [MemberBooking!]! @requireAuth
     publicBooking(bookingCode: String!): Booking @requireAuth
     userBookings: [Booking!]! @requireAuth
     userBooking(bookingCode: String!): Booking @requireAuth

@@ -1,4 +1,8 @@
-import type { QueryResolvers, MutationResolvers } from 'types/graphql'
+import type {
+  QueryResolvers,
+  MutationResolvers,
+  StableItemRelationResolvers,
+} from 'types/graphql'
 
 import { validateWith } from '@redwoodjs/api'
 import ShortUniqueId from 'short-unique-id'
@@ -81,9 +85,12 @@ export const deleteStableItem: MutationResolvers['deleteStableItem'] = ({
   })
 }
 
-export const StableItem = {
-  ownerUsername: async (args, gqlArgs) => {
-    const item = gqlArgs.root
+export const StableItem: StableItemRelationResolvers = {
+  ownerUsername: async (args, { root }) => {
+    const item = root
+    if (!context.currentUser) {
+      return 'anon'
+    }
     if (item.claimStatus !== ClaimStatus.CLAIMED) {
       return 'none'
     }
