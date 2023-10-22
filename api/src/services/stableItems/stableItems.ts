@@ -6,9 +6,10 @@ import type {
 
 import { validateWith } from '@redwoodjs/api'
 import ShortUniqueId from 'short-unique-id'
+import { v4 as uuid } from 'uuid'
 
 import { db } from 'src/lib/db'
-import { generateItemCharacter } from 'src/lib/gen'
+import { generateItemCharacter, openai } from 'src/lib/gen'
 
 enum ClaimStatus {
   CLAIMED = 'claimed',
@@ -56,6 +57,7 @@ export const claimItem: MutationResolvers['claimItem'] = async ({ input }) => {
     where: { id },
   })
 }
+
 export const createItemCharacter: MutationResolvers['createItemCharacter'] =
   async ({ id }) => {
     const stableItem = await db.stableItem.findUnique({ where: { id } })
@@ -67,6 +69,40 @@ export const createItemCharacter: MutationResolvers['createItemCharacter'] =
     }
     const text = await generateItemCharacter(stableItem.image)
     return db.stableItem.update({ where: { id }, data: { text } })
+  }
+
+export const stableItemChatBasic: MutationResolvers['stableItemChatBasic'] =
+  async ({ input }) => {
+    const stableItem = await db.stableItem.findUnique({
+      where: { id: input.id },
+    })
+    if (!stableItem || !stableItem.text) {
+      throw new Error('Not ready for chatting')
+    }
+    if (stableItem.ownerId !== context.currentUser.id) {
+      throw new Error('Not authorized for chatting')
+    }
+    const profile = stableItem.text
+    const messages = [
+      {
+        role: 'system',
+        content: `You are a friendly chatbot who always responds in a style following this character profile: ${profile}`,
+      },
+      ...input.messages.map(({ role, text }) => ({
+        role,
+        content: text,
+      })),
+    ]
+    const chatCompletion = await openai.chat.completions.create({
+      model: 'HuggingFaceH4/zephyr-7b-alpha',
+      messages,
+    })
+    console.log(chatCompletion)
+    return {
+      id: uuid(),
+      role: 'assistant',
+      text: chatCompletion.choices[0].message.content,
+    }
   }
 
 export const createStableItem: MutationResolvers['createStableItem'] = ({

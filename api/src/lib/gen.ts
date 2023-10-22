@@ -1,7 +1,13 @@
 import axios from 'axios'
+import OpenAI from 'openai'
 import ShortUniqueId from 'short-unique-id'
 
 import { db } from 'src/lib/db'
+
+const openai = new OpenAI({
+  apiKey: '',
+  baseURL: `${process.env.LLM_API_URL}/v1`,
+})
 
 const itemIdGenerator = new ShortUniqueId({ length: 6 })
 const itemCodeGenerator = new ShortUniqueId({ dictionary: 'number', length: 6 })
@@ -96,4 +102,4 @@ const getPrompt = () => {
   return `${fragment}, cyberpunk solarpunk by moebius, masterpiece, best quality, intricate, highly detailed:1.1, drawing, Jean Giraud`
 }
 
-export { generateBookingItem, generateItem, generateItemCharacter }
+export { generateBookingItem, generateItem, generateItemCharacter, openai }

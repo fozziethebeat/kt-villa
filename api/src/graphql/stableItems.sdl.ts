@@ -32,10 +32,28 @@ export const schema = gql`
     success: Boolean!
   }
 
+  input StableItemChatMessageInput {
+    role: String!
+    text: String!
+  }
+
+  type StableItemChatMessage {
+    id: String!
+    role: String!
+    text: String!
+  }
+
+  input StableItemChatInput {
+    id: String!
+    messages: [StableItemChatMessageInput!]!
+  }
+
   type Mutation {
     claimItem(input: ClaimItemInput!): StableItem!
       @requireAuth(roles: ["admin", "general"])
     createItemCharacter(id: String!): StableItem! @requireAuth
+    stableItemChatBasic(input: StableItemChatInput!): StableItemChatMessage!
+      @requireAuth
 
     createStableItem(input: CreateStableItemInput!): StableItem!
       @requireAuth(roles: ["admin"])
