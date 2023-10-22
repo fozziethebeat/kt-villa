@@ -2,7 +2,7 @@ export const schema = gql`
   type StableItem {
     id: String!
     image: String!
-    text: String!
+    text: String
     claimStatus: String!
     claimVisible: Boolean!
     ownerUsername: String
@@ -15,7 +15,7 @@ export const schema = gql`
 
   input CreateStableItemInput {
     image: String!
-    text: String!
+    text: String
   }
 
   input UpdateStableItemInput {
@@ -35,6 +35,7 @@ export const schema = gql`
   type Mutation {
     claimItem(input: ClaimItemInput!): StableItem!
       @requireAuth(roles: ["admin", "general"])
+    createItemCharacter(id: String!): StableItem! @requireAuth
 
     createStableItem(input: CreateStableItemInput!): StableItem!
       @requireAuth(roles: ["admin"])

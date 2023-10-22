@@ -4,7 +4,11 @@ import type {
 } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
+import { Form, Submit } from '@redwoodjs/forms'
+import { useMutation } from '@redwoodjs/web'
+
 import ClaimForm from 'src/components/ClaimForm'
+import StableItemChat from 'src/components/StableItemChat'
 
 export const QUERY = gql`
   query FindStableItemQuery($id: String!) {
@@ -15,6 +19,14 @@ export const QUERY = gql`
       claimStatus
       claimVisible
       ownerUsername
+    }
+  }
+`
+
+const MUTATION = gql`
+  mutation CreateItemCharacter($id: String!) {
+    createItemCharacter(id: $id) {
+      id
     }
   }
 `
@@ -35,7 +47,7 @@ export const Success = ({
   return (
     <div className="min-h-screen w-full bg-neutral-200">
       <div className="hero-content flex-col items-start lg:flex-row">
-        <figure className="h-96 w-96">
+        <figure className="h-[512px]  w-[512px]">
           <img src={stableItem.image} />
         </figure>
         <div className="flex flex-col gap-2">
@@ -53,13 +65,51 @@ export const Success = ({
               {stableItem.claimStatus}
             </div>
           </div>
+
+          <StableItemProfile stableItem={stableItem} />
         </div>
       </div>
+      <StableItemChat stableItem={stableItem} />
       <div>
         {stableItem.claimStatus === 'unclaimed' && (
           <ClaimForm item={stableItem} />
         )}
       </div>
+    </div>
+  )
+}
+
+const StableItemProfile = ({ stableItem }) => {
+  const [createItemCharacter, { loading, error }] = useMutation(MUTATION, {
+    refetchQueries: [{ query: QUERY, variables: { id: stableItem.id } }],
+  })
+
+  const onSubmit = () => {
+    createItemCharacter({
+      variables: {
+        id: stableItem.id,
+      },
+    })
+  }
+
+  if (stableItem.ownerUsername !== 'you') {
+    return <></>
+  }
+
+  if (!stableItem.text) {
+    return (
+      <Form onSubmit={onSubmit} error={error} className="flex flex-col gap-2">
+        <Submit disabled={loading} className="btn btn-primary">
+          Create Character
+        </Submit>
+      </Form>
+    )
+  }
+
+  return (
+    <div className="flex justify-between gap-2">
+      <div>Character</div>
+      <div className="w-96 text-sm">{stableItem.text}</div>
     </div>
   )
 }

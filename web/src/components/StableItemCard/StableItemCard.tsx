@@ -13,7 +13,7 @@ const StableItemCard = ({ item }) => {
             <div className="badge badge-primary">{item.ownerUsername}</div>
           </div>
           <h2 className="card-title">{item.id}</h2>
-          <p>{item.text}</p>
+          {item?.text && <p>{item.text.slice(0, 100)}</p>}
         </div>
       </Link>
     </div>

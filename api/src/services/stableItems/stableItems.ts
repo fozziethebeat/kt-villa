@@ -8,6 +8,7 @@ import { validateWith } from '@redwoodjs/api'
 import ShortUniqueId from 'short-unique-id'
 
 import { db } from 'src/lib/db'
+import { generateItemCharacter } from 'src/lib/gen'
 
 enum ClaimStatus {
   CLAIMED = 'claimed',
@@ -55,6 +56,18 @@ export const claimItem: MutationResolvers['claimItem'] = async ({ input }) => {
     where: { id },
   })
 }
+export const createItemCharacter: MutationResolvers['createItemCharacter'] =
+  async ({ id }) => {
+    const stableItem = await db.stableItem.findUnique({ where: { id } })
+    if (!stableItem) {
+      throw new Error('Item does not exist')
+    }
+    if (stableItem.ownerId !== context.currentUser.id) {
+      throw new Error('Not Authorized')
+    }
+    const text = await generateItemCharacter(stableItem.image)
+    return db.stableItem.update({ where: { id }, data: { text } })
+  }
 
 export const createStableItem: MutationResolvers['createStableItem'] = ({
   input,

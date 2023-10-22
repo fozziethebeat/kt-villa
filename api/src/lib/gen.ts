@@ -6,6 +6,8 @@ import { db } from 'src/lib/db'
 const itemIdGenerator = new ShortUniqueId({ length: 6 })
 const itemCodeGenerator = new ShortUniqueId({ dictionary: 'number', length: 6 })
 
+const CHARACTER_INSTRUCTION = 'Write a chatbot character profile for this image'
+
 const PROMPT_STARTS = ['a city made of floating airships']
 
 const NEGATIVE_PROMPT =
@@ -29,6 +31,18 @@ const generateBookingItem = async (bookingId: string) => {
       userItemId,
     },
   })
+}
+
+const generateItemCharacter = async (image) => {
+  const request = {
+    image,
+    instruction: CHARACTER_INSTRUCTION,
+  }
+  const { data } = await axios.post(
+    `${process.env.IMAGE_API_URL}/sdxl/generate-profile`,
+    request
+  )
+  return data.profile
 }
 
 const generateItem = async (userId) => {
@@ -82,4 +96,4 @@ const getPrompt = () => {
   return `${fragment}, cyberpunk solarpunk by moebius, masterpiece, best quality, intricate, highly detailed:1.1, drawing, Jean Giraud`
 }
 
-export { generateBookingItem, generateItem }
+export { generateBookingItem, generateItem, generateItemCharacter }

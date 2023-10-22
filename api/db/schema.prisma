@@ -13,8 +13,7 @@ model StableItem {
   id    String @id
   // URL to a stable image.
   image String
-  // Interesting text to display.
-  text  String
+  text  String?
 
   imageRequest Json?
 
