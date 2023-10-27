@@ -1832,6 +1832,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@envelop/live-query@npm:6.0.0":
+  version: 6.0.0
+  resolution: "@envelop/live-query@npm:6.0.0"
+  dependencies:
+    "@graphql-tools/utils": ^10.0.0
+    "@n1ru4l/graphql-live-query": ^0.10.0
+    "@n1ru4l/graphql-live-query-patch": ^0.7.0
+    "@n1ru4l/in-memory-live-query-store": ^0.10.0
+    tslib: ^2.5.0
+  peerDependencies:
+    "@envelop/core": ^4.0.0
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
+  checksum: 3a3a741c454abc09ea51308ebc7f1b78306647957cfa75b8323db2cae35139a8515c1a2760ccb4d19604ea3da768db5ed55b1d5dc9576986b37a3db1d771abfd
+  languageName: node
+  linkType: hard
+
 "@envelop/on-resolve@npm:3.0.0":
   version: 3.0.0
   resolution: "@envelop/on-resolve@npm:3.0.0"
@@ -2367,6 +2383,13 @@ __metadata:
   version: 3.3.0
   resolution: "@fastify/error@npm:3.3.0"
   checksum: b9651ad1b25781880343514bd4dfcbdb55e2459830a78ada73c0ac3dbf217161ee80af7245c7c7bfa370775d0beb146845c7314da13f478ff67520c8128ec3f0
+  languageName: node
+  linkType: hard
+
+"@fastify/error@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "@fastify/error@npm:3.4.0"
+  checksum: 548216c10662a4c2f210c7c40f98195c530b646cf8d27ea35d18c0d513fe2f33b2ba2611a61619a1ec3163e8c0fefca05a671bc87a355df30476fee224bda3b3
   languageName: node
   linkType: hard
 
@@ -3062,7 +3085,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-tools/utils@npm:^8.8.0":
+"@graphql-tools/utils@npm:^8.5.2, @graphql-tools/utils@npm:^8.8.0":
   version: 8.13.1
   resolution: "@graphql-tools/utils@npm:8.13.1"
   dependencies:
@@ -3118,7 +3141,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphql-yoga/subscription@npm:^4.0.0":
+"@graphql-yoga/redis-event-target@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@graphql-yoga/redis-event-target@npm:2.0.0"
+  dependencies:
+    "@graphql-yoga/typed-event-target": ^2.0.0
+    "@whatwg-node/events": ^0.1.0
+  peerDependencies:
+    ioredis: ^5.0.6
+  checksum: e7c015be8eb122648ed17a82d2b87171b91d66673b6fbbf1f5f66ec55ca59ef84efaf739f1d90b4024b2164091475126db16fc1ac8b2316a0e67a91208cc85b2
+  languageName: node
+  linkType: hard
+
+"@graphql-yoga/subscription@npm:4.0.0, @graphql-yoga/subscription@npm:^4.0.0":
   version: 4.0.0
   resolution: "@graphql-yoga/subscription@npm:4.0.0"
   dependencies:
@@ -3593,6 +3628,39 @@ __metadata:
     strict-event-emitter: ^0.2.4
     web-encoding: ^1.1.5
   checksum: 0343a93711b60c321c40733d6bf2720a736d8e0730f5d0d9916ee4a24abfcfca4a83d1e4b2e21c3affef4fc61f04588104be002fbc8258dc4b0d202c384ade33
+  languageName: node
+  linkType: hard
+
+"@n1ru4l/graphql-live-query-patch@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@n1ru4l/graphql-live-query-patch@npm:0.7.0"
+  dependencies:
+    "@repeaterjs/repeater": ^3.0.4
+  peerDependencies:
+    graphql: ^15.4.0 || ^16.0.0
+  checksum: a7ee5825a277e5240a1908cf830c3d55f114a6d8fec520dc155081f170241c50b92309169a6cc79f66087b97f0aaad8895573b2c346fd7671402c6ce3dd81452
+  languageName: node
+  linkType: hard
+
+"@n1ru4l/graphql-live-query@npm:0.10.0, @n1ru4l/graphql-live-query@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@n1ru4l/graphql-live-query@npm:0.10.0"
+  peerDependencies:
+    graphql: ^15.4.0 || ^16.0.0
+  checksum: 972bea6d6e4dcc443e15c19f2da373fc01f7e6c8d366569075dc89dc94e55da5a4029d0e8cff289d208c43edcca5e112fe286c6601717ab42d428fc3d5c2dfae
+  languageName: node
+  linkType: hard
+
+"@n1ru4l/in-memory-live-query-store@npm:0.10.0, @n1ru4l/in-memory-live-query-store@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@n1ru4l/in-memory-live-query-store@npm:0.10.0"
+  dependencies:
+    "@graphql-tools/utils": ^8.5.2
+    "@n1ru4l/graphql-live-query": 0.10.0
+    "@repeaterjs/repeater": ^3.0.4
+  peerDependencies:
+    graphql: ^15.4.0 || ^16.0.0
+  checksum: c2b4c1c09fa68ac7bd776166a86d361ac6e2659028391e7c3cca25943e966d1d035271141e28d0a519d50409cc07728df163d01ee26cacf403f59a6dcf2d4243
   languageName: node
   linkType: hard
 
@@ -4695,6 +4763,28 @@ __metadata:
     fast-glob: 3.3.1
     string-env-interpolation: 1.0.1
   checksum: c01a4d37adf50e06a7787700fd8f228e6c1ce7f3d8bd05653d77805b3ac24d709a1e57050a185bfe1778af0317c07280a0684aead7afd382272d46665ac8e776
+  languageName: node
+  linkType: hard
+
+"@redwoodjs/realtime@npm:^6.3.2":
+  version: 6.3.2
+  resolution: "@redwoodjs/realtime@npm:6.3.2"
+  dependencies:
+    "@envelop/live-query": 6.0.0
+    "@graphql-tools/schema": 10.0.0
+    "@graphql-tools/utils": 10.0.1
+    "@graphql-yoga/redis-event-target": 2.0.0
+    "@graphql-yoga/subscription": 4.0.0
+    "@n1ru4l/graphql-live-query": 0.10.0
+    "@n1ru4l/in-memory-live-query-store": 0.10.0
+    graphql: 16.8.1
+    ioredis: 5.3.2
+  peerDependencies:
+    ioredis: ^5.3.2
+  peerDependenciesMeta:
+    ioredis:
+      optional: true
+  checksum: 5f5265f4ee4d318261ffcb8b8f85161b867b415122127daf72fc3226ba644d0fa37e2a4c8db056eb117e19808533b33e5c89a5f450fb85891f16e6eb2663a015
   languageName: node
   linkType: hard
 
@@ -6729,9 +6819,14 @@ __metadata:
   dependencies:
     "@redwoodjs/api": 6.3.1
     "@redwoodjs/auth-dbauth-api": 6.3.1
+    "@redwoodjs/fastify": 6.3.1
     "@redwoodjs/graphql-server": 6.3.1
+    "@redwoodjs/project-config": 6.3.1
+    "@redwoodjs/realtime": ^6.3.2
     axios: ^1.5.1
     bull: ^4.11.3
+    chalk: 4.1.2
+    fastify: ^4.24.3
     openai: ^4.12.4
     short-unique-id: ^5.0.3
   languageName: unknown
@@ -11082,7 +11177,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-content-type-parse@npm:^1.0.0":
+"fast-content-type-parse@npm:^1.0.0, fast-content-type-parse@npm:^1.1.0":
   version: 1.1.0
   resolution: "fast-content-type-parse@npm:1.1.0"
   checksum: 882bf990fa5d64be1825ce183818db43900ece0d7ef184cb9409bae8ed1001acbe536a657b1496382cb3e308e71ab39cc399bbdae70cba1745eecaeca4e55384
@@ -11137,7 +11232,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-json-stringify@npm:^5.7.0":
+"fast-json-stringify@npm:^5.7.0, fast-json-stringify@npm:^5.8.0":
   version: 5.8.0
   resolution: "fast-json-stringify@npm:5.8.0"
   dependencies:
@@ -11236,6 +11331,30 @@ __metadata:
     semver: ^7.5.0
     toad-cache: ^3.2.0
   checksum: 990fe19f6b30e378abe7c590b725abe4bbe9664e7825024a6e556e8b250d8ff41c0dbb6be241da8e6b4e0f36ce22b8dce07555beb4927ac5cb7b18d888f2cbc9
+  languageName: node
+  linkType: hard
+
+"fastify@npm:^4.24.3":
+  version: 4.24.3
+  resolution: "fastify@npm:4.24.3"
+  dependencies:
+    "@fastify/ajv-compiler": ^3.5.0
+    "@fastify/error": ^3.4.0
+    "@fastify/fast-json-stringify-compiler": ^4.3.0
+    abstract-logging: ^2.0.1
+    avvio: ^8.2.1
+    fast-content-type-parse: ^1.1.0
+    fast-json-stringify: ^5.8.0
+    find-my-way: ^7.7.0
+    light-my-request: ^5.11.0
+    pino: ^8.16.0
+    process-warning: ^2.2.0
+    proxy-addr: ^2.0.7
+    rfdc: ^1.3.0
+    secure-json-parse: ^2.7.0
+    semver: ^7.5.4
+    toad-cache: ^3.3.0
+  checksum: 36018767b25cde307942f52172eedfc7c1ce186162222334e19caa607e3d29fe3de04cff2c08f21096d45fa4b071cd58a319392a6dbb5b5dbdf8230b38405c3e
   languageName: node
   linkType: hard
 
@@ -11433,6 +11552,17 @@ __metadata:
     fast-querystring: ^1.0.0
     safe-regex2: ^2.0.0
   checksum: 562fb28fe1b05c35ae76a6ec95d971eb56fc33b95f2a5ae9fbab3e3c98692720e1466f27ceb55cd2a949e4540ac55c6a2d824fe79fb7091ecd0ab7d84393d1d7
+  languageName: node
+  linkType: hard
+
+"find-my-way@npm:^7.7.0":
+  version: 7.7.0
+  resolution: "find-my-way@npm:7.7.0"
+  dependencies:
+    fast-deep-equal: ^3.1.3
+    fast-querystring: ^1.0.0
+    safe-regex2: ^2.0.0
+  checksum: 6b4fef5f3a21a73c5428337a02ce2f90af055e3fade6f57f3444a76d7f58a43891aba26597014ff02f9fd9071abfdd32b92ff2435aadaf96dd2316920c456f6e
   languageName: node
   linkType: hard
 
@@ -12859,7 +12989,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ioredis@npm:^5.3.2":
+"ioredis@npm:5.3.2, ioredis@npm:^5.3.2":
   version: 5.3.2
   resolution: "ioredis@npm:5.3.2"
   dependencies:
@@ -14442,7 +14572,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"light-my-request@npm:^5.9.1":
+"light-my-request@npm:^5.11.0, light-my-request@npm:^5.9.1":
   version: 5.11.0
   resolution: "light-my-request@npm:5.11.0"
   dependencies:
@@ -16636,6 +16766,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pino@npm:^8.16.0":
+  version: 8.16.0
+  resolution: "pino@npm:8.16.0"
+  dependencies:
+    atomic-sleep: ^1.0.0
+    fast-redact: ^3.1.1
+    on-exit-leak-free: ^2.1.0
+    pino-abstract-transport: v1.1.0
+    pino-std-serializers: ^6.0.0
+    process-warning: ^2.0.0
+    quick-format-unescaped: ^4.0.3
+    real-require: ^0.2.0
+    safe-stable-stringify: ^2.3.1
+    sonic-boom: ^3.7.0
+    thread-stream: ^2.0.0
+  bin:
+    pino: bin.js
+  checksum: 79eee5c7744845e35c922f120b2df954c312198ace09163343629084dda112822f62b8f272cbfa68bc7ee5bbc49d1cc131e5182dce77a64f5fe8efdfc1270569
+  languageName: node
+  linkType: hard
+
 "pirates@npm:^4.0.1, pirates@npm:^4.0.4, pirates@npm:^4.0.5":
   version: 4.0.6
   resolution: "pirates@npm:4.0.6"
@@ -18574,7 +18725,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"secure-json-parse@npm:^2.4.0, secure-json-parse@npm:^2.5.0":
+"secure-json-parse@npm:^2.4.0, secure-json-parse@npm:^2.5.0, secure-json-parse@npm:^2.7.0":
   version: 2.7.0
   resolution: "secure-json-parse@npm:2.7.0"
   checksum: f57eb6a44a38a3eeaf3548228585d769d788f59007454214fab9ed7f01fbf2e0f1929111da6db28cf0bcc1a2e89db5219a59e83eeaec3a54e413a0197ce879e4
@@ -19075,6 +19226,15 @@ __metadata:
   dependencies:
     atomic-sleep: ^1.0.0
   checksum: c5d387d9e35726a60afe5b5c54317db2428158ecaf3769fb16418e50d2a47176cbd800bf664a410dc0aab0792b421d394ce6edaf63b796ac3c7986f01933cddd
+  languageName: node
+  linkType: hard
+
+"sonic-boom@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "sonic-boom@npm:3.7.0"
+  dependencies:
+    atomic-sleep: ^1.0.0
+  checksum: 57a3d560efb77f4576db111168ee2649c99e7869fda6ce0ec2a4e5458832d290ba58d74b073ddb5827d9a30f96d23cff79157993d919e1a6d5f28d8b6391c7f0
   languageName: node
   linkType: hard
 
@@ -20074,6 +20234,13 @@ __metadata:
   version: 3.2.0
   resolution: "toad-cache@npm:3.2.0"
   checksum: 48dc4ff92ea228426f05c3f0b04333253ac9a4b5e6b83c260469d1d0995ee39397af0cd3ca327d53ba52ae23cf10a704b90b8b70707376427765ad01ff065ac2
+  languageName: node
+  linkType: hard
+
+"toad-cache@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "toad-cache@npm:3.3.0"
+  checksum: df2e7fef3991e238197796d3ddd548e1a6b8cb569de8ee053949dcebb689a5ffdbaf2c2642c035768c00d114eb5d4db96925247cc9ccec9d88a6e6d58c95c76a
   languageName: node
   linkType: hard
 

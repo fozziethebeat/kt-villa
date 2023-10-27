@@ -1,5 +1,5 @@
 import { Form, Submit, TextField } from '@redwoodjs/forms'
-import { useMutation } from '@redwoodjs/web'
+import { useMutation, useSubscription } from '@redwoodjs/web'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { v4 as uuid } from 'uuid'
@@ -25,9 +25,19 @@ const MUTATION = gql`
   }
 `
 
+const SUBSCRIPTION = gql`
+  subscription StableItemMessage($id: String!) {
+    stableItemMessage(id: $id) {
+      id
+      role
+      text
+    }
+  }
+`
 const StableItemChat = ({ stableItem }) => {
   const formMethods = useForm()
   const [messageHistory, setMessageHistory] = useState<Message[]>([])
+  const [messageId, setMessageId] = useState<string>('')
   const [stableItemChatBasic, { loading, error }] = useMutation(MUTATION, {
     onCompleted: (data) => {
       const newMessage = {
@@ -39,14 +49,23 @@ const StableItemChat = ({ stableItem }) => {
     },
   })
 
+  useSubscription(SUBSCRIPTION, {
+    variables: { id: messageId },
+    onData: ({ data }) => {
+      console.log(data)
+    },
+  })
+
   const onSend = (input) => {
     const newMessage = {
       id: uuid(),
       text: input.text,
       role: MessageRole.USER,
     }
+    setMessageId(newMessage.id)
     setMessageHistory((oldHistory) => [...oldHistory, newMessage])
     formMethods.reset()
+    /*
     stableItemChatBasic({
       variables: {
         input: {
@@ -55,6 +74,7 @@ const StableItemChat = ({ stableItem }) => {
         },
       },
     })
+     */
   }
 
   if (stableItem.ownerUsername !== 'you') {

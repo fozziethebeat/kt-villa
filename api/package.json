@@ -5,9 +5,14 @@
   "dependencies": {
     "@redwoodjs/api": "6.3.1",
     "@redwoodjs/auth-dbauth-api": "6.3.1",
+    "@redwoodjs/fastify": "6.3.1",
     "@redwoodjs/graphql-server": "6.3.1",
+    "@redwoodjs/project-config": "6.3.1",
+    "@redwoodjs/realtime": "^6.3.2",
     "axios": "^1.5.1",
     "bull": "^4.11.3",
+    "chalk": "4.1.2",
+    "fastify": "^4.24.3",
     "openai": "^4.12.4",
     "short-unique-id": "^5.0.3"
   }

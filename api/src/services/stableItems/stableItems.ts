@@ -3,8 +3,10 @@ import type {
   MutationResolvers,
   StableItemRelationResolvers,
 } from 'types/graphql'
+import type { StableItemChatMessageChannelType } from 'src/subscriptions/stableItemChat'
 
 import { validateWith } from '@redwoodjs/api'
+import { RedwoodGraphQLContext } from '@redwoodjs/graphql-server/dist/types'
 import ShortUniqueId from 'short-unique-id'
 import { v4 as uuid } from 'uuid'
 
@@ -71,8 +73,12 @@ export const createItemCharacter: MutationResolvers['createItemCharacter'] =
     return db.stableItem.update({ where: { id }, data: { text } })
   }
 
+interface ChatContext extends RedwoodGraphQLContext {
+  pubSub: StableItemChatMessageChannelType
+}
+
 export const stableItemChatBasic: MutationResolvers['stableItemChatBasic'] =
-  async ({ input }) => {
+  async ({ input }, { context }: { context: ChatContext }) => {
     const stableItem = await db.stableItem.findUnique({
       where: { id: input.id },
     })
@@ -93,16 +99,22 @@ export const stableItemChatBasic: MutationResolvers['stableItemChatBasic'] =
         content: text,
       })),
     ]
-    const chatCompletion = await openai.chat.completions.create({
+    const stream = await openai.chat.completions.create({
       model: 'HuggingFaceH4/zephyr-7b-alpha',
       messages,
+      stream: true,
     })
-    console.log(chatCompletion)
-    return {
+    const response = {
       id: uuid(),
       role: 'assistant',
-      text: chatCompletion.choices[0].message.content,
+      text: '',
     }
+    for await (const chunk of stream) {
+      const { content } = chunk.choices[0].delta
+      response.text += content ?? ''
+      context.pubSub.publish('stableItemMessage', input.id, response)
+    }
+    return response
   }
 
 export const createStableItem: MutationResolvers['createStableItem'] = ({
