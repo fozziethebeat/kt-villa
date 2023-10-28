@@ -107,7 +107,13 @@ export const handler = async (
     //
     // If this returns anything else, it will be returned by the
     // `signUp()` function in the form of: `{ message: 'String here' }`.
-    handler: ({ username, hashedPassword, salt, userAttributes }) => {
+    handler: async ({ username, hashedPassword, salt, userAttributes }) => {
+      const signupCode = await db.signupCode.findUnique({
+        where: { id: userAttributes.code },
+      })
+      if (!signupCode) {
+        throw new Error('Invalid signup code')
+      }
       return db.user.create({
         data: {
           email: username,

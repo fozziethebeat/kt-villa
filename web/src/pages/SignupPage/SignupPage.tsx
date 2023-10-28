@@ -34,6 +34,7 @@ const SignupPage = () => {
     const response = await signUp({
       username: data.username,
       password: data.password,
+      code: data.code,
     })
 
     if (response.message) {
@@ -102,6 +103,27 @@ const SignupPage = () => {
                     }}
                   />
                   <FieldError name="password" className="rw-field-error" />
+
+                  <Label
+                    name="code"
+                    className="rw-label"
+                    errorClassName="rw-label rw-label-error"
+                  >
+                    Signup Code
+                  </Label>
+                  <PasswordField
+                    name="code"
+                    className="rw-input"
+                    errorClassName="rw-input rw-input-error"
+                    autoComplete="off"
+                    validation={{
+                      required: {
+                        value: true,
+                        message: 'Signup code is required',
+                      },
+                    }}
+                  />
+                  <FieldError name="code" className="rw-field-error" />
 
                   <div className="rw-button-group">
                     <Submit className="rw-button rw-button-blue">

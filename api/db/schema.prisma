@@ -75,6 +75,10 @@ model User {
   memberBooking MemberBooking[]
 }
 
+model SignupCode {
+  id       String @id
+}
+
 model ImageAdapterSetting {
   id        Int      @id @default(autoincrement())
   startDate DateTime

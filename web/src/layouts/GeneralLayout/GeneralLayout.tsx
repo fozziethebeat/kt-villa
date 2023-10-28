@@ -37,7 +37,7 @@ const GeneralLayout = ({ children }: GeneralLayoutProps) => {
 }
 
 const AccountMenu = () => {
-  const { hasRole } = useAuth()
+  const { hasRole, logOut } = useAuth()
   return (
     <div className="dropdown dropdown-end">
       <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
@@ -73,6 +73,10 @@ const AccountMenu = () => {
             </li>
           </>
         )}
+        <div className="divider" />
+        <li>
+          <a onClick={logOut}>Signout</a>
+        </li>
       </ul>
     </div>
   )
