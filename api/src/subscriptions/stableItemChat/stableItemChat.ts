@@ -26,11 +26,9 @@ const stableItemMessage = {
       if (id === '') {
         return
       }
-      console.log(`subscribe ${id}`)
       return pubSub.subscribe('stableItemMessage', id)
     },
     resolve: (payload) => {
-      console.log(payload)
       return payload
     },
   },

@@ -40,19 +40,31 @@ const StableItemChat = ({ stableItem }) => {
   const [messageId, setMessageId] = useState<string>('')
   const [stableItemChatBasic, { loading, error }] = useMutation(MUTATION, {
     onCompleted: (data) => {
+      /*
       const newMessage = {
         id: data.stableItemChatBasic.id,
         text: data.stableItemChatBasic.text,
         role: data.stableItemChatBasic.role,
       }
       setMessageHistory((oldHistory) => [...oldHistory, newMessage])
+       */
     },
   })
 
   useSubscription(SUBSCRIPTION, {
-    variables: { id: messageId },
+    variables: { id: stableItem?.id || '' },
     onData: ({ data }) => {
-      console.log(data)
+      const message = {
+        id: data.data.stableItemMessage.id,
+        text: data.data.stableItemMessage.text,
+        role: data.data.stableItemMessage.role,
+      }
+      setMessageHistory((oldHistory) => {
+        if (oldHistory[oldHistory.length - 1].role === MessageRole.ASSISTANT) {
+          oldHistory.pop()
+        }
+        return [...oldHistory, message]
+      })
     },
   })
 
@@ -62,10 +74,8 @@ const StableItemChat = ({ stableItem }) => {
       text: input.text,
       role: MessageRole.USER,
     }
-    setMessageId(newMessage.id)
     setMessageHistory((oldHistory) => [...oldHistory, newMessage])
     formMethods.reset()
-    /*
     stableItemChatBasic({
       variables: {
         input: {
@@ -74,7 +84,6 @@ const StableItemChat = ({ stableItem }) => {
         },
       },
     })
-     */
   }
 
   if (stableItem.ownerUsername !== 'you') {
