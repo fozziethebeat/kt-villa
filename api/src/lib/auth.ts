@@ -1,5 +1,6 @@
 import type { Decoded } from '@redwoodjs/api'
 import { AuthenticationError, ForbiddenError } from '@redwoodjs/graphql-server'
+import { createHash } from 'crypto'
 
 import { db } from './db'
 
@@ -25,10 +26,18 @@ export const getCurrentUser = async (session: Decoded) => {
     throw new Error('Invalid session')
   }
 
-  return await db.user.findUnique({
+  const user = await db.user.findUnique({
     where: { id: session.id },
     select: { id: true, email: true, roles: true },
   })
+  const profileHash = createHash('sha256')
+    .update(user.email.trim().toLowerCase())
+    .digest('hex')
+  const profileImageUrl = `https://gravatar.com/avatar/${profileHash}?s=200`
+  return {
+    ...user,
+    profileImageUrl,
+  }
 }
 
 /**

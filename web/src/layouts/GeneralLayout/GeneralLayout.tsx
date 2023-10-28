@@ -18,7 +18,7 @@ const GeneralLayout = ({ children }: GeneralLayoutProps) => {
       <header className="navbar">
         <div className="flex-1">
           <Link className="norma-case btn btn-ghost text-xl" to={routes.home()}>
-            Surface Stay
+            KT Villa
           </Link>
         </div>
         <nav className="flex-none">
@@ -37,12 +37,12 @@ const GeneralLayout = ({ children }: GeneralLayoutProps) => {
 }
 
 const AccountMenu = () => {
-  const { hasRole, logOut } = useAuth()
+  const { currentUser, hasRole, logOut } = useAuth()
   return (
     <div className="dropdown dropdown-end">
       <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
         <div className="w-10 rounded-full">
-          <img src="https://avatars.githubusercontent.com/u/398211?v=4" />
+          <img src={currentUser.profileImageUrl} />
         </div>
       </label>
 
