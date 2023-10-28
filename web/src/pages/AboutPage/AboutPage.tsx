@@ -12,7 +12,7 @@ const AboutPage = () => {
           backgroundImage: 'url(/about/view-hakuba-main.jpeg)',
         }}
       >
-        <div className="hero-overlay bg-opacity-60"></div>
+        <div className="hero-overlay" />
         <div className="hero-content text-center text-neutral-content">
           <div className="max-w-md">
             <h1 className="mb-5 text-5xl font-bold">Snow Time</h1>
