@@ -77,15 +77,12 @@ const generateItem = async (userId) => {
     `${process.env.IMAGE_API_URL}/sdxl/generate`,
     request
   )
-
   const image = data.image
-  const text = 'random text goes here'
 
   await db.stableItem.create({
     data: {
       id: itemId,
       image,
-      text,
       claimCode,
       claimStatus: 'claimed',
       claimVisible: true,
