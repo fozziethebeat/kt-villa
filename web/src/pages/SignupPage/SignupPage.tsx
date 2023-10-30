@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 
 import {
   Form,
-  Label,
   TextField,
   PasswordField,
   FieldError,
@@ -51,8 +50,8 @@ const SignupPage = () => {
     <>
       <MetaTags title="Signup" />
 
-      <main className="rw-main">
-        <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
+      <main className="">
+        <Toaster toastOptions={{ className: 'toast', duration: 6000 }} />
         <div className="rw-scaffold rw-login-container">
           <div className="rw-segment">
             <header className="rw-segment-header">
@@ -62,81 +61,76 @@ const SignupPage = () => {
             <div className="rw-segment-main">
               <div className="rw-form-wrapper">
                 <Form onSubmit={onSubmit} className="rw-form-wrapper">
-                  <Label
-                    name="username"
-                    className="rw-label"
-                    errorClassName="rw-label rw-label-error"
-                  >
-                    Username
-                  </Label>
-                  <TextField
-                    name="username"
-                    className="rw-input"
-                    errorClassName="rw-input rw-input-error"
-                    ref={usernameRef}
-                    validation={{
-                      required: {
-                        value: true,
-                        message: 'Username is required',
-                      },
-                    }}
-                  />
-                  <FieldError name="username" className="rw-field-error" />
+                  <div className="form-control w-full max-w-xs">
+                    <label name="username" className="label">
+                      <span className="label-text">Username</span>
+                    </label>
+                    <TextField
+                      name="username"
+                      className="input input-bordered w-full max-w-xs"
+                      ref={usernameRef}
+                      validation={{
+                        required: {
+                          value: true,
+                          message: 'Username is required',
+                        },
+                      }}
+                    />
+                    <label className="label">
+                      <FieldError name="username" className="label-text-alt" />
+                    </label>
+                  </div>
 
-                  <Label
-                    name="password"
-                    className="rw-label"
-                    errorClassName="rw-label rw-label-error"
-                  >
-                    Password
-                  </Label>
-                  <PasswordField
-                    name="password"
-                    className="rw-input"
-                    errorClassName="rw-input rw-input-error"
-                    autoComplete="current-password"
-                    validation={{
-                      required: {
-                        value: true,
-                        message: 'Password is required',
-                      },
-                    }}
-                  />
-                  <FieldError name="password" className="rw-field-error" />
+                  <div className="form-control w-full max-w-xs">
+                    <label name="password" className="label">
+                      <span className="label-text">Password</span>
+                    </label>
+                    <PasswordField
+                      name="password"
+                      className="input input-bordered w-full max-w-xs"
+                      autoComplete="current-password"
+                      validation={{
+                        required: {
+                          value: true,
+                          message: 'Password is required',
+                        },
+                      }}
+                    />
+                    <label className="label">
+                      <FieldError name="password" className="label-text-alt" />
+                    </label>
+                  </div>
 
-                  <Label
-                    name="code"
-                    className="rw-label"
-                    errorClassName="rw-label rw-label-error"
-                  >
-                    Signup Code
-                  </Label>
-                  <PasswordField
-                    name="code"
-                    className="rw-input"
-                    errorClassName="rw-input rw-input-error"
-                    autoComplete="off"
-                    validation={{
-                      required: {
-                        value: true,
-                        message: 'Signup code is required',
-                      },
-                    }}
-                  />
-                  <FieldError name="code" className="rw-field-error" />
+                  <div className="form-control w-full max-w-xs">
+                    <label name="code" className="label">
+                      <span className="label-text">Signup Code</span>
+                    </label>
+                    <TextField
+                      name="code"
+                      className="input input-bordered w-full max-w-xs"
+                      autoComplete="off"
+                      validation={{
+                        required: {
+                          value: true,
+                          message: 'Code is required',
+                        },
+                      }}
+                    />
+                    <label className="label">
+                      <FieldError name="code" className="label-text-alt" />
+                    </label>
+                  </div>
 
                   <div className="rw-button-group">
-                    <Submit className="rw-button rw-button-blue">
-                      Sign Up
-                    </Submit>
+                    <Submit className="btn btn-primary">Sign Up</Submit>
                   </div>
                 </Form>
               </div>
             </div>
           </div>
-          <div className="rw-login-link">
+          <div className="m-2">
             <span>Already have an account?</span>{' '}
-            <Link to={routes.login()} className="rw-link">
+            <Link to={routes.login()} className="link">
               Log in!
             </Link>
           </div>

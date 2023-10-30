@@ -59,69 +59,62 @@ const LoginPage = () => {
             <div className="rw-segment-main">
               <div className="rw-form-wrapper">
                 <Form onSubmit={onSubmit} className="rw-form-wrapper">
-                  <Label
-                    name="username"
-                    className="rw-label"
-                    errorClassName="rw-label rw-label-error"
-                  >
-                    Username
-                  </Label>
-                  <TextField
-                    name="username"
-                    className="rw-input"
-                    errorClassName="rw-input rw-input-error"
-                    ref={usernameRef}
-                    validation={{
-                      required: {
-                        value: true,
-                        message: 'Username is required',
-                      },
-                    }}
-                  />
+                  <div className="form-control w-full max-w-xs">
+                    <label name="username" className="label">
+                      <span className="label-text">Username</span>
+                    </label>
+                    <TextField
+                      name="username"
+                      className="input input-bordered w-full max-w-xs"
+                      ref={usernameRef}
+                      validation={{
+                        required: {
+                          value: true,
+                          message: 'Username is required',
+                        },
+                      }}
+                    />
+                    <label className="label">
+                      <FieldError name="username" className="label-text-alt" />
+                    </label>
+                  </div>
 
-                  <FieldError name="username" className="rw-field-error" />
-
-                  <Label
-                    name="password"
-                    className="rw-label"
-                    errorClassName="rw-label rw-label-error"
-                  >
-                    Password
-                  </Label>
-                  <PasswordField
-                    name="password"
-                    className="rw-input"
-                    errorClassName="rw-input rw-input-error"
-                    autoComplete="current-password"
-                    validation={{
-                      required: {
-                        value: true,
-                        message: 'Password is required',
-                      },
-                    }}
-                  />
+                  <div className="form-control w-full max-w-xs">
+                    <label name="password" className="label">
+                      <span className="label-text">Password</span>
+                    </label>
+                    <PasswordField
+                      name="password"
+                      className="input input-bordered w-full max-w-xs"
+                      autoComplete="current-password"
+                      validation={{
+                        required: {
+                          value: true,
+                          message: 'Password is required',
+                        },
+                      }}
+                    />
+                    <label className="label">
+                      <FieldError name="password" className="label-text-alt" />
+                    </label>
+                  </div>
 
                   <div className="rw-forgot-link">
-                    <Link
-                      to={routes.forgotPassword()}
-                      className="rw-forgot-link"
-                    >
+                    <Link to={routes.forgotPassword()} className="link">
                       Forgot Password?
                     </Link>
                   </div>
 
-                  <FieldError name="password" className="rw-field-error" />
-
                   <div className="rw-button-group">
-                    <Submit className="rw-button rw-button-blue">Login</Submit>
+                    <Submit className="btn btn-primary">Login</Submit>
                   </div>
                 </Form>
               </div>
             </div>
           </div>
-          <div className="rw-login-link">
+          <div className="m-2">
             <span>Don&apos;t have an account?</span>{' '}
-            <Link to={routes.signup()} className="rw-link">
+            <Link to={routes.signup()} className="link">
               Sign up!
             </Link>
           </div>

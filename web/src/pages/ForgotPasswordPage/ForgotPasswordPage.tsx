@@ -54,18 +54,13 @@ const ForgotPasswordPage = () => {
             <div className="rw-segment-main">
               <div className="rw-form-wrapper">
                 <Form onSubmit={onSubmit} className="rw-form-wrapper">
-                  <div className="text-left">
-                    <Label
-                      name="username"
-                      className="rw-label"
-                      errorClassName="rw-label rw-label-error"
-                    >
-                      Username
-                    </Label>
+                  <div className="form-control w-full max-w-xs">
+                    <label name="username" className="label">
+                      <span className="label-text">Username</span>
+                    </label>
                     <TextField
                       name="username"
-                      className="rw-input"
-                      errorClassName="rw-input rw-input-error"
+                      className="input input-bordered w-full max-w-xs"
                       ref={usernameRef}
                       validation={{
                         required: {
@@ -74,12 +69,13 @@ const ForgotPasswordPage = () => {
                         },
                       }}
                     />
-
-                    <FieldError name="username" className="rw-field-error" />
+                    <label className="label">
+                      <FieldError name="username" className="label-text-alt" />
+                    </label>
                   </div>
 
                   <div className="rw-button-group">
-                    <Submit className="rw-button rw-button-blue">Submit</Submit>
+                    <Submit className="btn btn-primary">Submit</Submit>
                   </div>
                 </Form>
               </div>
