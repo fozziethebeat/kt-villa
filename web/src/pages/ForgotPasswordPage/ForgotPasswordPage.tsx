@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-import { Form, Label, TextField, Submit, FieldError } from '@redwoodjs/forms'
+import { Form, Label, EmailField, Submit, FieldError } from '@redwoodjs/forms'
 import { navigate, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
 import { toast, Toaster } from '@redwoodjs/web/toast'
@@ -16,13 +16,13 @@ const ForgotPasswordPage = () => {
     }
   }, [isAuthenticated])
 
-  const usernameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
-    usernameRef?.current?.focus()
+    emailRef?.current?.focus()
   }, [])
 
-  const onSubmit = async (data: { username: string }) => {
-    const response = await forgotPassword(data.username)
+  const onSubmit = async (data: { email: string }) => {
+    const response = await forgotPassword(data.email)
 
     if (response.error) {
       toast.error(response.error)
@@ -55,22 +55,25 @@ const ForgotPasswordPage = () => {
               <div className="rw-form-wrapper">
                 <Form onSubmit={onSubmit} className="rw-form-wrapper">
                   <div className="form-control w-full max-w-xs">
-                    <label name="username" className="label">
-                      <span className="label-text">Username</span>
+                    <label name="email" className="label">
+                      <span className="label-text">Email</span>
                     </label>
-                    <TextField
-                      name="username"
+                    <EmailField
+                      name="email"
                       className="input input-bordered w-full max-w-xs"
-                      ref={usernameRef}
+                      ref={emailRef}
                       validation={{
                         required: {
+                          pattern: {
+                            value: /[^@]+@[^\.]+\..+/,
+                          },
                           value: true,
-                          message: 'Username is required',
+                          message: 'Email is required',
                         },
                       }}
                     />
                     <label className="label">
-                      <FieldError name="username" className="label-text-alt" />
+                      <FieldError name="email" className="label-text-alt" />
                     </label>
                   </div>
 

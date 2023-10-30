@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { useEffect } from 'react'
 
 import {
+  EmailField,
   Form,
   TextField,
   PasswordField,
@@ -24,15 +25,16 @@ const SignupPage = () => {
   }, [isAuthenticated])
 
   // focus on username box on page load
-  const usernameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
-    usernameRef.current?.focus()
+    emailRef.current?.focus()
   }, [])
 
   const onSubmit = async (data: Record<string, string>) => {
     const response = await signUp({
-      username: data.username,
+      username: data.email,
       password: data.password,
+      name: data.name,
       code: data.code,
     })
 
@@ -62,22 +64,25 @@ const SignupPage = () => {
               <div className="rw-form-wrapper">
                 <Form onSubmit={onSubmit} className="rw-form-wrapper">
                   <div className="form-control w-full max-w-xs">
-                    <label name="username" className="label">
-                      <span className="label-text">Username</span>
+                    <label name="email" className="label">
+                      <span className="label-text">Email</span>
                     </label>
-                    <TextField
-                      name="username"
+                    <EmailField
+                      name="email"
                       className="input input-bordered w-full max-w-xs"
-                      ref={usernameRef}
+                      ref={emailRef}
                       validation={{
                         required: {
+                          pattern: {
+                            value: /[^@]+@[^\.]+\..+/,
+                          },
                           value: true,
-                          message: 'Username is required',
+                          message: 'Email is required',
                         },
                       }}
                     />
                     <label className="label">
-                      <FieldError name="username" className="label-text-alt" />
+                      <FieldError name="email" className="label-text-alt" />
                     </label>
                   </div>
 
@@ -98,6 +103,26 @@ const SignupPage = () => {
                     />
                     <label className="label">
                       <FieldError name="password" className="label-text-alt" />
+                    </label>
+                  </div>
+
+                  <div className="form-control w-full max-w-xs">
+                    <label name="name" className="label">
+                      <span className="label-text">Username</span>
+                    </label>
+                    <TextField
+                      name="name"
+                      className="input input-bordered w-full max-w-xs"
+                      autoComplete="off"
+                      validation={{
+                        required: {
+                          value: true,
+                          message: 'Username is required',
+                        },
+                      }}
+                    />
+                    <label className="label">
+                      <FieldError name="name" className="label-text-alt" />
                     </label>
                   </div>
 

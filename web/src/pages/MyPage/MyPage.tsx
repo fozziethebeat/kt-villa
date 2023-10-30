@@ -9,9 +9,9 @@ const MyPage = () => {
     <>
       <MetaTags title="My" description="My page" />
 
-      <div className="flex flex-col gap-2">
-        <UserBookingsCell />
+      <div className="mx-4 flex flex-col gap-2">
         <MemberBookingsCell />
+        <UserBookingsCell />
       </div>
     </>
   )
