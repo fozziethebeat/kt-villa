@@ -64,9 +64,7 @@ export const Success = ({
     })
   }
 
-  const spotsAvailable =
-    !publicBooking.member ||
-    publicBooking.numGuests - 1 > publicBooking.member.length
+  const spotsAvailable = publicBooking.numGuests < 4
   return (
     <div className="min-h-screen w-full bg-base-200">
       <div className="hero-content flex-col items-start lg:flex-row">
@@ -113,7 +111,7 @@ export const Success = ({
             </button>
           ) : (
             <button disabled className="btn btn-warning">
-              full
+              Full
             </button>
           )}
 

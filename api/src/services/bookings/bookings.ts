@@ -99,7 +99,7 @@ export const joinBooking: MutationResolvers['joinBooking'] = async ({
     if (!booking) {
       throw new Error('Invalid booking.')
     }
-    if (booking.numGuests === booking.member.length + 1) {
+    if (booking.numGuests === 4) {
       throw new Error('Booking not available for joining')
     }
   })
@@ -188,6 +188,49 @@ export const createBookingItemAdmin: MutationResolvers['createBookingItemAdmin']
     })
     return generateBookingItem(id)
   }
+export const addMemberBooking: MutationResolvers['addMemberBooking'] = async ({
+  id,
+  username,
+}) => {
+  const users = await db.user.findMany({
+    where: { name: username },
+    select: { id: true },
+  })
+  const booking = await db.booking.findUnique({
+    where: { id },
+  })
+  await validateWith(async () => {
+    if (!context.currentUser) {
+      throw new Error('not authorized')
+    }
+    if (users.length !== 1) {
+      throw new Error('No user found')
+    }
+    if (!booking) {
+      throw new Error('No booking found')
+    }
+    if (booking.userId !== context.currentUser.id) {
+      throw new Error('Not authorized')
+    }
+  })
+  const userId = users[0].id
+  const userItemId = await generateItem(userId)
+  return db.booking.update({
+    where: { id },
+    data: {
+      numGuests: { increment: 1 },
+      member: {
+        create: [
+          {
+            userId,
+            userItemId,
+            status: 'approved',
+          },
+        ],
+      },
+    },
+  })
+}
 
 export const updateMemberBookingStatus: MutationResolvers['updateMemberBookingStatus'] =
   async ({ id, status }) => {
@@ -221,7 +264,14 @@ export const updateMemberBookingStatus: MutationResolvers['updateMemberBookingSt
     const userItemId = await generateItem(memberBooking.userId)
     return db.memberBooking.update({
       data: {
-        userItemId,
+        userItem: {
+          connect: { id: userItemId },
+        },
+        booking: {
+          update: {
+            numGuests: { increment: 1 },
+          },
+        },
       },
       where: { id },
     })

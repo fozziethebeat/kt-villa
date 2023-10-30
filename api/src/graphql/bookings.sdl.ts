@@ -66,6 +66,7 @@ export const schema = gql`
 
   type Mutation {
     joinBooking(bookingCode: String!): Booking! @requireAuth
+    addMemberBooking(id: Int!, username: String!): Booking! @requireAuth
     updateMemberBookingStatus(id: Int!, status: String!): MemberBooking!
       @requireAuth
 

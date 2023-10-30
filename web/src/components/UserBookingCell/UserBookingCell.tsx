@@ -47,6 +47,14 @@ const MUTATION = gql`
     }
   }
 `
+const ADD_MUTATION = gql`
+  mutation addMemberBooking($id: Int!, $username: String!) {
+    addMemberBooking(id: $id, username: $username) {
+      id
+      status
+    }
+  }
+`
 
 export const Loading = () => <div>Loading...</div>
 
@@ -61,6 +69,11 @@ export const Failure = ({
 export const Success = ({
   userBooking,
 }: CellSuccessProps<FindUserBookingQuery, FindUserBookingQueryVariables>) => {
+  const numToRegister = userBooking.numGuests - userBooking.member.length - 1
+  const toRegister = Array(numToRegister)
+    .fill(0)
+    .map((_, i) => i)
+  console.log(toRegister)
   return (
     <div className="min-h-screen w-full bg-base-200">
       <div className="hero-content flex-col items-start lg:flex-row">
@@ -101,6 +114,15 @@ export const Success = ({
             </div>
           </div>
           <div className="overflow-x-auto">
+            <div>
+              {toRegister.map((tid, index) => (
+                <MemberRegisterAction
+                  key={`mra-${index}`}
+                  booking={userBooking}
+                />
+              ))}
+            </div>
+
             <table className="table">
               {/* head */}
               <thead>
@@ -129,6 +151,47 @@ export const Success = ({
         </div>
       </div>
     </div>
+  )
+}
+
+const MemberRegisterAction = ({ booking }) => {
+  const [addMemberBooking, { loading, error }] = useMutation(ADD_MUTATION, {
+    refetchQueries: [
+      { query: QUERY, variables: { bookingCode: booking.bookingCode } },
+    ],
+  })
+  const onSave = (input) => {
+    addMemberBooking({
+      variables: {
+        id: booking.id,
+        ...input,
+      },
+    })
+  }
+
+  return (
+    <Form onSubmit={onSave} error={error} className="flex gap-2 p-2">
+      <div className="form-control w-full max-w-xs">
+        <TextField
+          name="username"
+          className="input input-bordered w-full max-w-xs"
+          placeholder="Username"
+          autoComplete="off"
+          validation={{
+            required: {
+              value: true,
+              message: 'Username is required',
+            },
+          }}
+        />
+        <label className="label">
+          <FieldError name="username" className="label-text-alt" />
+        </label>
+      </div>
+      <Submit disabled={loading} className="btn btn-primary">
+        Register
+      </Submit>
+    </Form>
   )
 }
 
