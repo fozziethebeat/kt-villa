@@ -36,6 +36,20 @@ export const userBooking: QueryResolvers['userBooking'] = ({ bookingCode }) => {
   })
 }
 
+export const publicBookings: QueryResolvers['publicBookings'] = () => {
+  return db.booking.findMany({
+    where: {
+      numGuests: { lt: 4 },
+      startDate: { gt: new Date() },
+      userId: { not: context.currentUser.id },
+    },
+    orderBy: {
+      startDate: 'asc',
+    },
+    take: 3,
+  })
+}
+
 export const publicBooking: QueryResolvers['publicBooking'] = ({
   bookingCode,
 }) => {
