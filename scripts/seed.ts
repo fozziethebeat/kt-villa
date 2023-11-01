@@ -5,51 +5,34 @@ import { db } from 'api/src/lib/db'
 
 export default async () => {
   try {
-    const itemData: Prisma.StableItemCreateArgs['data'][] = [
-      {
-        id: 'uU1NqVR4iC',
-        image:
-          'https://flowerfruits.mtn.surfacedata.org/results/mandaloreo_picturestorybook_230923_00020_full.png',
-        text: 'Mandaloreo picture book smiles',
-        claimCode: '1111',
-        claimStatus: 'unclaimed',
-        claimVisible: false,
-      },
-      {
-        id: 'WMapPW59wR',
-        image:
-          'https://flowerfruits.mtn.surfacedata.org/results/mandaloreo_picturestorybook_230819_00001_full.png',
-        text: 'Firey sunset with Mandaloreo staring down his baddest enemy, the plague of self doubt.',
-        claimCode: '2222',
-        claimStatus: 'unclaimed',
-        claimVisible: false,
-      },
-      {
-        id: 'znGNt5S7QN',
-        image:
-          'https://flowerfruits.mtn.surfacedata.org/results/mandaloreo_picturestorybook_230923_00017_full.png',
-        text: 'Periloux Pixes attack Mandaloreo Cat',
-        claimCode: '3333',
-        claimStatus: 'unclaimed',
-        claimVisible: false,
-      },
-    ]
-    await db.stableItem.createMany({ data: itemData })
-
     const users = [
       {
-        name: 'Keith',
-        email: 'fozziethebeat@gmail.com',
-        password: 'rootpassword',
+        name: 'fozziethebeat',
+        email: 'fozziethebeat+admin@gmail.com',
+        password: 'passwordadmin',
         roles: 'admin',
         trustStatus: 'trusted',
       },
       {
-        name: 'Steve',
-        email: 'fozziethebeat+general@gmail.com',
-        password: 'generalpassword',
+        name: 'amysurfs',
+        email: 'fozziethebeat+amy@gmail.com',
+        password: 'passwordamy',
         roles: 'general',
         trustStatus: 'new',
+      },
+      {
+        name: 'charliechair',
+        email: 'fozziethebeat+charlie@gmail.com',
+        password: 'passwordcharlie',
+        roles: 'general',
+        trustStatus: 'trusted',
+      },
+      {
+        name: 'asakusakids',
+        email: 'fozziethebeat+tianyi@gmail.com',
+        password: 'passwordtianyi',
+        roles: 'admin',
+        trustStatus: 'trusted',
       },
     ]
     await db.user.createMany({
@@ -66,25 +49,69 @@ export default async () => {
       }),
     })
 
-    const bookingData = [
+    const itemData: Prisma.StableItemCreateArgs['data'][] = [
       {
-        startDate: '2023-10-19T08:00:00.000+09:00',
-        endDate: '2023-10-23T20:00:00.000+09:00',
-        numGuests: 2,
-        userId: 2,
-        status: 'approved',
-        bookingCode: 'xyz',
+        id: 'uU1NqVR4iC',
+        image:
+          'https://flowerfruits.mtn.surfacedata.org/results/mandaloreo_picturestorybook_230923_00020_full.png',
+        claimCode: '1111',
+        claimStatus: 'claimed',
+        claimVisible: true,
+        ownerId: 1,
       },
       {
-        startDate: '2023-10-17T08:00:00.000+09:00',
-        endDate: '2023-10-24T20:00:00.000+09:00',
-        numGuests: 4,
+        id: 'WMapPW59wR',
+        image:
+          'https://flowerfruits.mtn.surfacedata.org/results/mandaloreo_picturestorybook_230819_00001_full.png',
+        claimCode: '2222',
+        claimStatus: 'claimed',
+        claimVisible: true,
+        ownerId: 4,
+      },
+      {
+        id: 'znGNt5S7QN',
+        image:
+          'https://flowerfruits.mtn.surfacedata.org/results/mandaloreo_picturestorybook_230923_00017_full.png',
+        claimCode: '3333',
+        claimStatus: 'claimed',
+        claimVisible: true,
+        ownerId: 1,
+      },
+    ]
+    await db.stableItem.createMany({ data: itemData })
+
+    const bookingData = [
+      {
+        startDate: '2023-11-19T08:00:00.000+09:00',
+        endDate: '2023-11-23T20:00:00.000+09:00',
+        numGuests: 2,
         userId: 1,
-        status: 'pending',
+        userItemId: 'uU1NqVR4iC',
+        status: 'approved',
+        bookingCode: 'xyz',
+        member: {
+          create: {
+            userId: 4,
+            userItemId: 'WMapPW59wR',
+            status: 'approved',
+          },
+        },
+      },
+      {
+        startDate: '2023-11-17T08:00:00.000+09:00',
+        endDate: '2023-11-24T20:00:00.000+09:00',
+        numGuests: 1,
+        userId: 1,
+        userItemId: 'znGNt5S7QN',
+        status: 'approved',
         bookingCode: 'abc',
       },
     ]
-    await db.booking.createMany({ data: bookingData })
+    await Promise.all(
+      bookingData.map(async (data) => db.booking.create({ data }))
+    )
+
+    await db.signupCode.create({ data: { id: 'keithiscool' } })
   } catch (error) {
     console.warn('Please define your seed data.')
     console.error(error)
