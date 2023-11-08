@@ -25,7 +25,7 @@ const BookingHero = () => {
           'url(https://www.hakubavalley.com/cms/wp-content/themes/hv_themes/common/img/top-bg-about.jpg)',
       }}
     >
-      <div className="hero-content flex-col ">
+      <div className="z-1 hero-content z-10 flex-col">
         <div className="lg:-left text-center text-neutral-content">
           <h1 className="text-5xl font-bold">Register for a stay!</h1>
           <p className="py-6">
@@ -64,8 +64,8 @@ const AdminBookingForm = () => {
     })
   }
 
-  const [startDate, setStartDate] = useState(new Date())
-  const [endDate, setEndDate] = useState(new Date())
+  const [startDate, setStartDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
   const [isValidDates, setIsValidDates] = useState(false)
   const [numGuests, setNumGuests] = useState(1)
 
@@ -120,18 +120,13 @@ const AdminBookingForm = () => {
         </div>
       </div>
       <div className="form-control mt-6">
-        <div className="stack">
-          {loading && (
-            <span className="loading loading-bars loading-lg text-neutral"></span>
-          )}
-          <button
-            disabled={!isValidDates || loading}
-            onClick={onBook}
-            className="btn btn-primary"
-          >
-            Book
-          </button>
-        </div>
+        <button
+          disabled={!isValidDates || loading}
+          onClick={onBook}
+          className="btn btn-primary"
+        >
+          Book
+        </button>
       </div>
     </div>
   )
