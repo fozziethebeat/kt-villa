@@ -73,23 +73,27 @@ const generateItem = async (userId) => {
     negative_prompt: NEGATIVE_PROMPT,
     lora: adapters[0].adapter,
   }
-  const { data } = await axios.post(
-    `${process.env.IMAGE_API_URL}/sdxl/generate`,
-    request
-  )
-  const image = data.image
+  try {
+    const { data } = await axios.post(
+      `${process.env.IMAGE_API_URL}/sdxl/generate`,
+      request
+    )
+    const image = data.image
 
-  await db.stableItem.create({
-    data: {
-      id: itemId,
-      image,
-      claimCode,
-      claimStatus: 'claimed',
-      claimVisible: true,
-      ownerId: userId,
-      imageRequest: request,
-    },
-  })
+    await db.stableItem.create({
+      data: {
+        id: itemId,
+        image,
+        claimCode,
+        claimStatus: 'claimed',
+        claimVisible: true,
+        ownerId: userId,
+        imageRequest: request,
+      },
+    })
+  } catch (e) {
+    console.log(e)
+  }
   return itemId
 }
 

@@ -128,6 +128,13 @@ const AdminBookingForm = () => {
           Book
         </button>
       </div>
+      <div className="flex justify-center">
+        <progress
+          className={`progress progress-success w-56 ${
+            loading ? 'visible' : 'invisible'
+          }`}
+        />
+      </div>
     </div>
   )
 }

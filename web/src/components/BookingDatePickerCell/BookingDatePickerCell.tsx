@@ -16,6 +16,7 @@ import {
 } from 'react-dates'
 
 moment.tz.setDefault('Asia/Tokyo')
+
 export const QUERY = gql`
   query FutureBookings {
     futureBookings {
@@ -97,17 +98,4 @@ export const Success = ({
       onFocusChange={setFocusedInput}
     />
   )
-  /*
-  return (
-    <DatePicker
-      selected={startDate}
-      onChange={internalOnChange}
-      startDate={startDate}
-      endDate={endDate}
-      excludeDateIntervals={excludedIntervals}
-      selectsRange
-      inline
-    />
-  )
-   */
 }
