@@ -3,7 +3,7 @@ import { hashPassword } from '@redwoodjs/auth-dbauth-api'
 
 import { db } from 'api/src/lib/db'
 
-export default async () => {
+async function devSeed() {
   try {
     const users = [
       {
@@ -115,5 +115,45 @@ export default async () => {
   } catch (error) {
     console.warn('Please define your seed data.')
     console.error(error)
+  }
+}
+
+async function prodSeed() {
+  try {
+    const users = [
+      {
+        name: process.env.ADMIN_NAME,
+        email: process.env.ADMIN_EMAIL,
+        password: process.env.ADMIN_PASSWORD,
+        roles: 'admin',
+        trustStatus: 'trusted',
+      },
+    ]
+    await db.user.createMany({
+      data: users.map(({ name, email, password, roles, trustStatus }) => {
+        const [hashedPassword, salt] = hashPassword(password)
+        return {
+          name,
+          email,
+          hashedPassword,
+          salt,
+          roles,
+          trustStatus,
+        }
+      }),
+    })
+
+    await db.signupCode.create({ data: { id: 'keithiscool' } })
+  } catch (error) {
+    console.warn('Please define your seed data.')
+    console.error(error)
+  }
+}
+
+export default async (argv) => {
+  if (argv.environment === 'prod') {
+    await prodSeed()
+  } else {
+    await devSeed()
   }
 }

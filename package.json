@@ -7,8 +7,8 @@
     ]
   },
   "devDependencies": {
-    "@redwoodjs/auth-dbauth-setup": "7.0.0-canary.404",
-    "@redwoodjs/core": "7.0.0-canary.404",
+    "@redwoodjs/auth-dbauth-setup": "7.0.0-canary.458",
+    "@redwoodjs/core": "7.0.0-canary.458",
     "prettier-plugin-tailwindcss": "0.4.1"
   },
   "eslintConfig": {
@@ -16,7 +16,7 @@
     "root": true
   },
   "engines": {
-    "node": "=18.x",
+    "node": ">=18.x",
     "yarn": ">=1.15"
   },
   "prisma": {
