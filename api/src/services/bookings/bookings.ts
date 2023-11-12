@@ -41,7 +41,7 @@ export const publicBookings: QueryResolvers['publicBookings'] = () => {
     where: {
       numGuests: { lt: 4 },
       startDate: { gt: new Date() },
-      userId: { not: context.currentUser.id },
+      userId: { not: context.currentUser?.id },
     },
     orderBy: {
       startDate: 'asc',

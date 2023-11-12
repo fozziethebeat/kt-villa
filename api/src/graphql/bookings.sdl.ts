@@ -41,9 +41,9 @@ export const schema = gql`
     # Fetch all bookings where the signed in user is joining.
     memberBookings: [MemberBooking!]! @requireAuth
     # Fetch all public bookings where a user can request to join.
-    publicBookings: [Booking!]! @requireAuth
+    publicBookings: [Booking!]! @skipAuth
     # Fetch all details about a specific public booking.
-    publicBooking(bookingCode: String!): Booking @requireAuth
+    publicBooking(bookingCode: String!): Booking @skipAuth
 
     # Fetch all bookings hosted by the signed in user.
     userBookings: [Booking!]! @requireAuth

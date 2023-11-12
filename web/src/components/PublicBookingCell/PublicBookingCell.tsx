@@ -4,7 +4,10 @@ import type {
 } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
+import { Link, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
+
+import { useAuth } from 'src/auth'
 
 export const QUERY = gql`
   query FindPublicBookingQuery($bookingCode: String!) {
@@ -54,15 +57,7 @@ export const Success = ({
   FindPublicBookingQuery,
   FindPublicBookingQueryVariables
 >) => {
-  const [joinBooking, { loading, error }] = useMutation(MUTATION, {
-    refetchQueries: [{ query: QUERY, variables: { bookingCode } }],
-  })
-
-  const onJoin = () => {
-    joinBooking({
-      variables: { bookingCode },
-    })
-  }
+  const { isAuthenticated } = useAuth()
 
   const spotsAvailable = publicBooking.numGuests < 4
   return (
@@ -105,39 +100,66 @@ export const Success = ({
             </div>
           </div>
           <div className="flex justify-between gap-2"></div>
-          {spotsAvailable ? (
-            <button onClick={onJoin} className="btn btn-primary">
-              Join
-            </button>
+          {isAuthenticated ? (
+            <MemberTable
+              bookingCode={bookingCode}
+              publicBooking={publicBooking}
+            />
           ) : (
-            <button disabled className="btn btn-warning">
-              Full
-            </button>
+            <Link to={routes.login()}>
+              <button className="btn btn-primary">Login to join</button>
+            </Link>
           )}
-
-          <div className="overflow-x-auto">
-            <table className="table">
-              {/* head */}
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Name</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {publicBooking.member.map((mb, index) => (
-                  <tr key={`mb-${index}`}>
-                    <th>{index + 1}</th>
-                    <td>{mb.user.name}</td>
-                    <td>{mb.status}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </div>
       </div>
     </div>
+  )
+}
+
+const MemberTable = ({ bookingCode, publicBooking }) => {
+  const [joinBooking, { loading, error }] = useMutation(MUTATION, {
+    refetchQueries: [{ query: QUERY, variables: { bookingCode } }],
+  })
+
+  const onJoin = () => {
+    joinBooking({
+      variables: { bookingCode },
+    })
+  }
+  const spotsAvailable = publicBooking.numGuests < 4
+  return (
+    <>
+      {spotsAvailable ? (
+        <button onClick={onJoin} className="btn btn-primary">
+          Join
+        </button>
+      ) : (
+        <button disabled className="btn btn-warning">
+          Full
+        </button>
+      )}
+
+      <div className="overflow-x-auto">
+        <table className="table">
+          {/* head */}
+          <thead>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {publicBooking.member.map((mb, index) => (
+              <tr key={`mb-${index}`}>
+                <th>{index + 1}</th>
+                <td>{mb.user.name}</td>
+                <td>{mb.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   )
 }
