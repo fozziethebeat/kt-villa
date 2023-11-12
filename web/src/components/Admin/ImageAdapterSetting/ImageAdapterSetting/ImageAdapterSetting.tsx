@@ -1,6 +1,7 @@
 import { Link, routes, navigate } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
+import { useState } from 'react'
 
 import { timeTag } from 'src/lib/formatters'
 
@@ -8,6 +9,14 @@ import type {
   DeleteImageAdapterSettingMutationVariables,
   FindImageAdapterSettingById,
 } from 'types/graphql'
+
+const TEST_IMAGE_ADAPTER_SETTING_MUTATION = gql`
+  mutation TestImageAdapter($id: Int!) {
+    testImageAdapter(id: $id) {
+      image
+    }
+  }
+`
 
 const DELETE_IMAGE_ADAPTER_SETTING_MUTATION = gql`
   mutation DeleteImageAdapterSettingMutation($id: Int!) {
@@ -24,6 +33,7 @@ interface Props {
 }
 
 const ImageAdapterSetting = ({ imageAdapterSetting }: Props) => {
+  const [requestId, setRequestId] = useState(new Date())
   const [deleteImageAdapterSetting] = useMutation(
     DELETE_IMAGE_ADAPTER_SETTING_MUTATION,
     {
@@ -36,6 +46,13 @@ const ImageAdapterSetting = ({ imageAdapterSetting }: Props) => {
       },
     }
   )
+
+  const [testImageAdapter, { data: testImageData, loading: testImageLoading }] =
+    useMutation(TEST_IMAGE_ADAPTER_SETTING_MUTATION)
+  const onTestClick = () => {
+    setRequestId(new Date())
+    testImageAdapter({ variables: { id: imageAdapterSetting.id } })
+  }
 
   const onDeleteClick = (
     id: DeleteImageAdapterSettingMutationVariables['id']
@@ -69,10 +86,38 @@ const ImageAdapterSetting = ({ imageAdapterSetting }: Props) => {
               <th>Adapter</th>
               <td>{imageAdapterSetting.adapter}</td>
             </tr>
+            <tr>
+              <th>Prompt Template</th>
+              <td>{imageAdapterSetting.promptTemplate}</td>
+            </tr>
+            <tr>
+              <th>Prompt Template</th>
+              <td>{imageAdapterSetting.promptTemplate}</td>
+            </tr>
+            <tr>
+              <th>Negative Prompt</th>
+              <td>{imageAdapterSetting.negativePrompt}</td>
+            </tr>
+            <tr>
+              <th>Steps</th>
+              <td>{imageAdapterSetting.steps}</td>
+            </tr>
+            <tr>
+              <th>Variants</th>
+              <td>{imageAdapterSetting.variants.join(',')}</td>
+            </tr>
           </tbody>
         </table>
       </div>
       <nav className="rw-button-group">
+        <button
+          type="button"
+          className="rw-button rw-button-green"
+          onClick={onTestClick}
+        >
+          Test
+        </button>
+
         <Link
           to={routes.adminEditImageAdapterSetting({
             id: imageAdapterSetting.id,
@@ -89,6 +134,14 @@ const ImageAdapterSetting = ({ imageAdapterSetting }: Props) => {
           Delete
         </button>
       </nav>
+      {testImageLoading && (
+        <progress className="progress progress-success w-56" />
+      )}
+      {testImageData && (
+        <figure className="flex justify-center">
+          <img src={`${testImageData.testImageAdapter.image}?${requestId}`} />
+        </figure>
+      )}
     </>
   )
 }

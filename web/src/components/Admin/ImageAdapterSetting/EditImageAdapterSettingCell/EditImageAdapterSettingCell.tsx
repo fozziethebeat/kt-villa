@@ -16,6 +16,10 @@ export const QUERY = gql`
       id
       startDate
       adapter
+      promptTemplate
+      negativePrompt
+      steps
+      variants
     }
   }
 `

@@ -83,4 +83,9 @@ model ImageAdapterSetting {
   id        Int      @id @default(autoincrement())
   startDate DateTime
   adapter   String
+
+  promptTemplate    String
+  negativePrompt    String
+  steps             Int
+  variants          String[]
 }

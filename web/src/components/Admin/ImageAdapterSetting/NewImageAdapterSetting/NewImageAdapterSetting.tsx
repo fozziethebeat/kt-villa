@@ -31,7 +31,14 @@ const NewImageAdapterSetting = () => {
   )
 
   const onSave = (input: CreateImageAdapterSettingInput) => {
-    createImageAdapterSetting({ variables: { input } })
+    createImageAdapterSetting({
+      variables: {
+        input: {
+          ...input,
+          variants: input.variants.split(','),
+        },
+      },
+    })
   }
 
   return (

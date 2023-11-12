@@ -1,6 +1,7 @@
 import type { QueryResolvers, MutationResolvers } from 'types/graphql'
 
 import { db } from 'src/lib/db'
+import { generateImageFromAdapter } from 'src/lib/gen'
 
 export const imageAdapterSettings: QueryResolvers['imageAdapterSettings'] =
   () => {
@@ -36,3 +37,13 @@ export const deleteImageAdapterSetting: MutationResolvers['deleteImageAdapterSet
       where: { id },
     })
   }
+
+export const testImageAdapter: MutationResolvers['testImageAdapter'] = async ({
+  id,
+}) => {
+  const imageAdapter = await db.imageAdapterSetting.findUnique({
+    where: { id },
+  })
+  const { image } = await generateImageFromAdapter(id, imageAdapter)
+  return { image }
+}

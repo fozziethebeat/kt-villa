@@ -2,6 +2,8 @@ import axios from 'axios'
 import OpenAI from 'openai'
 import ShortUniqueId from 'short-unique-id'
 
+import type { ImageAdapterSettings } from 'types/graphql'
+
 import { db } from 'src/lib/db'
 
 const openai = new OpenAI({
@@ -16,6 +18,7 @@ const CHARACTER_INSTRUCTION = 'Write a chatbot character profile for this image'
 
 const PROMPT_STARTS = ['a city made of floating airships']
 
+const PROMPT = `cyberpunk solarpunk by moebius, masterpiece, best quality, intricate, highly detailed:1.1, drawing, Jean Giraud`
 const NEGATIVE_PROMPT =
   '(unnatural hands:1.5), extra fingers, fewer digits, (mutated hands and fingers:1.5), blurry, (dark, shadows, darkness), (deformed face:1.4), (ugly), lowres, ((bad anatomy )), anime, manga, (poorly drawn face), ((mutation)), ((bad proportions)), ((extra limbs)), cropped, ((jpeg artifacts)), out of frame, duplicated artefact, cropped image, deformed, signatures, cut-off, over- saturated, grain, poorly drawn face, out of focus, mutilated, mangled, morbid, gross proportions, watermark, heterochromia, canvas frame, ((disfigured)), ((bad art))'
 
@@ -67,19 +70,8 @@ const generateItem = async (userId) => {
 
   const itemId = itemIdGenerator.rnd()
   const claimCode = itemCodeGenerator.rnd()
-  const request = {
-    id: itemId,
-    prompt: getPrompt(),
-    negative_prompt: NEGATIVE_PROMPT,
-    lora: adapters[0].adapter,
-  }
+  const { image, request } = await generateImageFromAdapter(itemId, adapters[0])
   try {
-    const { data } = await axios.post(
-      `${process.env.IMAGE_API_URL}/sdxl/generate`,
-      request
-    )
-    const image = data.image
-
     await db.stableItem.create({
       data: {
         id: itemId,
@@ -97,10 +89,35 @@ const generateItem = async (userId) => {
   return itemId
 }
 
-const getPrompt = () => {
-  const index = Math.floor(Math.random() * PROMPT_STARTS.length)
-  const fragment = PROMPT_STARTS[index]
-  return `${fragment}, cyberpunk solarpunk by moebius, masterpiece, best quality, intricate, highly detailed:1.1, drawing, Jean Giraud`
+const generateImageFromAdapter = async (
+  itemId: string,
+  adapterSettings: ImageAdapterSettings
+) => {
+  const request = {
+    id: itemId,
+    prompt: getPrompt(adapterSettings),
+    negative_prompt: adapterSettings.negativePrompt,
+    lora: adapterSettings.adapter,
+    num_inference_steps: adapterSettings.steps,
+  }
+  const { data } = await axios.post(
+    `${process.env.IMAGE_API_URL}/sdxl/generate`,
+    request
+  )
+  const image = data.image
+  return { image, request }
 }
 
-export { generateBookingItem, generateItem, generateItemCharacter, openai }
+const getPrompt = (adapterSettings: ImageAdapterSettings) => {
+  const index = Math.floor(Math.random() * adapterSettings.variants.length)
+  const fragment = adapterSettings.variants[index]
+  return `${fragment}, ${adapterSettings.prompt}`
+}
+
+export {
+  generateBookingItem,
+  generateImageFromAdapter,
+  generateItem,
+  generateItemCharacter,
+  openai,
+}
