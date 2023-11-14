@@ -7,12 +7,15 @@
 
 [web]
   title = "KT Villa"
+  host = "0.0.0.0"
   port = 8910
   apiUrl = "/.redwood/functions"
   includeEnvironmentVariables = [
   ]
 [api]
+  host = "0.0.0.0"
   port = 8911
+
 [notifications]
   versionUpdates = ["latest"]
 

@@ -44,6 +44,7 @@ async function serve() {
 
   const apiRootPath = enableWeb ? coerceRootPath(redwoodConfig.web.apiUrl) : ''
   const port = enableWeb ? redwoodConfig.web.port : redwoodConfig.api.port
+  const host = enableWeb ? redwoodConfig.web.host : redwoodConfig.api.host
 
   const tsServer = Date.now()
 
@@ -61,6 +62,7 @@ async function serve() {
   })
 
   if (enableWeb) {
+    console.log('Enabling Web')
     await fastify.register(redwoodFastifyWeb)
   }
 
@@ -91,12 +93,12 @@ async function serve() {
 
   fastify.ready(() => {
     console.log(chalk.italic.dim('Took ' + (Date.now() - tsServer) + ' ms'))
-    const on = chalk.magenta(`http://localhost:${port}${apiRootPath}`)
+    const on = chalk.magenta(`http://${host}:${port}${apiRootPath}`)
     if (enableWeb) {
-      const webServer = chalk.green(`http://localhost:${port}`)
+      const webServer = chalk.green(`http://${host}:${port}`)
       console.log(`Web server started on ${webServer}`)
     }
-    const apiServer = chalk.magenta(`http://localhost:${port}`)
+    const apiServer = chalk.magenta(`http://${host}:${port}`)
     console.log(`API serving from ${apiServer}`)
     console.log(`API listening on ${on}`)
     const graphqlEnd = chalk.magenta(`${apiRootPath}graphql`)
