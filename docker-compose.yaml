@@ -1,19 +1,21 @@
 version: "3.9"
 
 services:
-  ktvilla-api:
-    image: surfacestay_api
+  ktvilla:
+    image: surfacestay
     networks:
       - hosting
+    expose:
+      - "8910"
     command: >
       sh -c "yarn rw prisma migrate deploy &&
-             yarn rw serve api"
+             yarn rw serve"
     env_file:
       - .env.prod
     environment:
-      - LETSENCRYPT_HOST=api.kt-villa.com
-      - VIRTUAL_HOST=api.kt-villa.com
-      - VIRTUAL_PORT=8911
+      - LETSENCRYPT_HOST=www.kt-villa.com
+      - VIRTUAL_HOST=www.kt-villa.com
+      - VIRTUAL_PORT=8910
 
 networks:
   hosting:
