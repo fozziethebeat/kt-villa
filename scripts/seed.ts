@@ -142,8 +142,26 @@ async function prodSeed() {
         }
       }),
     })
-
-    await db.signupCode.create({ data: { id: 'keithiscool' } })
+    await db.signupCode.create({ data: { id: 'HakubaOrBust' } })
+    await db.imageAdapterSetting.create({
+      data: {
+        startDate: '2023-11-09T16:00:00.000Z',
+        adapter: 'hasuikawase',
+        promptTemplate: 'high resolution, mountains, ski slopes, winter',
+        negativePrompt:
+          'misshaped bodies, watermark, misshaped faces, bad eyes',
+        steps: 30,
+        variants: [
+          'snowboarding monkeys',
+          'skiing rabbits',
+          'snowboarding giraffes',
+          'skiing cats',
+          'snowboarding dogs',
+          'telemark skiing ferrets',
+          'snow biking turtles',
+        ],
+      },
+    })
   } catch (error) {
     console.warn('Please define your seed data.')
     console.error(error)
