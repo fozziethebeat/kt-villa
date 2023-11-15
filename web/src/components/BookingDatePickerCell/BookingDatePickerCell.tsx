@@ -2,7 +2,11 @@ import type {
   FutureBookingsQuery,
   FutureBookingsQueryVariables,
 } from 'types/graphql'
-import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
+import type {
+  CellEmptyProps,
+  CellFailureProps,
+  CellSuccessProps,
+} from '@redwoodjs/web'
 
 import 'react-dates/initialize'
 import 'react-dates/lib/css/_datepicker.css'
@@ -28,7 +32,16 @@ export const QUERY = gql`
 
 export const Loading = () => <div>Loading...</div>
 
-export const Empty = () => <div>Empty</div>
+export const Empty = ({ startDate, endDate, onChange }) => {
+  return (
+    <Booking
+      futureBookings={[]}
+      startDate={startDate}
+      endDate={endDate}
+      onChange={onChange}
+    />
+  )
+}
 
 export const Failure = ({
   error,
@@ -42,6 +55,16 @@ export const Success = ({
   endDate,
   onChange,
 }: CellSuccessProps<FutureBookingsQuery, FutureBookingsQueryVariables>) => {
+  return (
+    <Booking
+      futureBookings={futureBookings}
+      startDate={startDate}
+      endDate={endDate}
+      onChange={onChange}
+    />
+  )
+}
+export const Booking = ({ futureBookings, startDate, endDate, onChange }) => {
   const [focusedInput, setFocusedInput] = useState(null)
   const excludedIntervals = [
     ...futureBookings.map(({ startDate, endDate }) => ({
@@ -89,9 +112,9 @@ export const Success = ({
   return (
     <DateRangePicker
       startDate={startDate}
-      startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+      startDateId="your_unique_start_date_id"
       endDate={endDate}
-      endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+      endDateId="your_unique_end_date_id"
       onDatesChange={internalOnChange}
       isDayBlocked={isDayBlocked}
       focusedInput={focusedInput}
