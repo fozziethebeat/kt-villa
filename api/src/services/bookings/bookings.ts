@@ -188,6 +188,7 @@ export const createBookingItemAdmin: MutationResolvers['createBookingItemAdmin']
     })
     return generateBookingItem(id)
   }
+
 export const addMemberBooking: MutationResolvers['addMemberBooking'] = async ({
   id,
   username,
@@ -218,7 +219,6 @@ export const addMemberBooking: MutationResolvers['addMemberBooking'] = async ({
   return db.booking.update({
     where: { id },
     data: {
-      numGuests: { increment: 1 },
       member: {
         create: [
           {
