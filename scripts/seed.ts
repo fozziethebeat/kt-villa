@@ -151,7 +151,8 @@ async function prodSeed() {
 }
 
 export default async (argv) => {
-  if (argv.environment === 'prod') {
+  const environment = argv.environment || process.env.NODE_ENV || 'dev'
+  if (environment === 'prod') {
     await prodSeed()
   } else {
     await devSeed()
