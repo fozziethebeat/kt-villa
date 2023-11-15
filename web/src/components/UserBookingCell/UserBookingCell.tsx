@@ -73,7 +73,6 @@ export const Success = ({
   const toRegister = Array(numToRegister)
     .fill(0)
     .map((_, i) => i)
-  console.log(toRegister)
   return (
     <div className="min-h-screen w-full bg-base-200">
       <div className="hero-content flex-col items-start lg:flex-row">
@@ -174,9 +173,11 @@ const MemberRegisterAction = ({ booking }) => {
       <div className="form-control w-full max-w-xs">
         <TextField
           name="username"
+          autoComplete="off"
+          aria-autocomplete="none"
+          type="search"
           className="input input-bordered w-full max-w-xs"
           placeholder="Username"
-          autoComplete="off"
           validation={{
             required: {
               value: true,
