@@ -33,7 +33,7 @@ const generateBookingItem = async (bookingId: string) => {
     return undefined
   }
 
-  const userItemId = await generateItem(booking.userId)
+  const userItemId = await generateItem(booking.userId, booking.startDate)
   return await db.booking.update({
     where: { id: bookingId },
     data: {
@@ -54,13 +54,14 @@ const generateItemCharacter = async (image) => {
   return data.profile
 }
 
-const generateItem = async (userId) => {
+const generateItem = async (userId, startDate) => {
   // Now get the dat we need to generate the image.
   // 1) The prompt given a template and a random fragment.
   // 2) The negative prompt (part of 1 sorta).
   // 3) The current adapter name.
 
   const adapters = await db.imageAdapterSetting.findMany({
+    where: { startDate: { lt: startDate } },
     orderBy: [{ startDate: 'desc' }],
     take: 1,
   })

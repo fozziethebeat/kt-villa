@@ -214,7 +214,7 @@ export const addMemberBooking: MutationResolvers['addMemberBooking'] = async ({
     }
   })
   const userId = users[0].id
-  const userItemId = await generateItem(userId)
+  const userItemId = await generateItem(userId, booking.startDate)
   return db.booking.update({
     where: { id },
     data: {
