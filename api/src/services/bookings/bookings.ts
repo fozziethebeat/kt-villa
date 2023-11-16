@@ -148,10 +148,7 @@ export const createBooking: MutationResolvers['createBooking'] = async ({
     for (let i = 0; i < candidateConflicts.length - 1; ++i) {
       const curr = candidateConflicts[i]
       const next = candidateConflicts[i + 1]
-      if (
-        candidateConflicts.end < input.startDate &&
-        input.endDate < next.startDate
-      ) {
+      if (curr.endDate < input.startDate && input.endDate < next.startDate) {
         return
       }
     }
