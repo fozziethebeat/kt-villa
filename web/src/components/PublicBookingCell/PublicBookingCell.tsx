@@ -15,6 +15,7 @@ export const QUERY = gql`
       id
       startDate
       endDate
+      maxGuests
       numGuests
       bookingCode
       status
@@ -59,7 +60,7 @@ export const Success = ({
 >) => {
   const { isAuthenticated } = useAuth()
 
-  const spotsAvailable = publicBooking.numGuests < 4
+  const spotsAvailable = publicBooking.numGuests < publicBooking.maxGuests
   return (
     <div className="min-h-screen w-full bg-base-200">
       <div className="hero-content flex-col items-start lg:flex-row">
@@ -126,7 +127,7 @@ const MemberTable = ({ bookingCode, publicBooking }) => {
       variables: { bookingCode },
     })
   }
-  const spotsAvailable = publicBooking.numGuests < 4
+  const spotsAvailable = publicBooking.numGuests < publicBooking < maxGuests
   return (
     <>
       {spotsAvailable ? (

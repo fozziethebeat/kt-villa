@@ -4,6 +4,7 @@ export const schema = gql`
     startDate: DateTime!
     endDate: DateTime!
     numGuests: Int!
+    maxGuests: Int!
     status: String!
     bookingCode: String!
     item: StableItem

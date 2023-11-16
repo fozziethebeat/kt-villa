@@ -33,6 +33,7 @@ model Booking {
   startDate   DateTime
   endDate     DateTime
   numGuests   Int
+  maxGuests   Int      @default(4)
   bookingCode String   @unique
   status      String   @default("pending")
 
