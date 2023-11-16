@@ -29,6 +29,7 @@ const Routes = () => {
         <Set wrap={GeneralLayout}>
           <Route path="/admin/bookings" page={AdminReviewBookingsPage} name="adminReviewBookings" />
           <Route path="/admin/generate-image" page={AdminGenerateImagePage} name="generateImage" />
+          <Route path="/admin/users" page={AdminUsersPage} name="adminUsers" />
         </Set>
 
         <Set wrap={ScaffoldLayout} title="ImageAdapterSettings" titleTo="adminImageAdapterSettings" buttonLabel="New ImageAdapterSetting" buttonTo="adminNewImageAdapterSetting">
