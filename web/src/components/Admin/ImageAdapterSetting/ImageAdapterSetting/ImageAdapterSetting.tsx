@@ -91,10 +91,6 @@ const ImageAdapterSetting = ({ imageAdapterSetting }: Props) => {
               <td>{imageAdapterSetting.promptTemplate}</td>
             </tr>
             <tr>
-              <th>Prompt Template</th>
-              <td>{imageAdapterSetting.promptTemplate}</td>
-            </tr>
-            <tr>
               <th>Negative Prompt</th>
               <td>{imageAdapterSetting.negativePrompt}</td>
             </tr>
