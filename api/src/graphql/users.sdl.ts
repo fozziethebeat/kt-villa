@@ -14,7 +14,7 @@ export const schema = gql`
 
   type Query {
     users: [User!]! @requireAuth(roles: ["admin"])
-    user(id: Int!): User @requireAuth
+    user(id: Int!): User @requireAuth(roles: ["admin"])
   }
 
   input CreateUserInput {

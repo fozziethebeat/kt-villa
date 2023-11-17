@@ -30,6 +30,8 @@ const Routes = () => {
           <Route path="/admin/bookings" page={AdminReviewBookingsPage} name="adminReviewBookings" />
           <Route path="/admin/generate-image" page={AdminGenerateImagePage} name="generateImage" />
           <Route path="/admin/users" page={AdminUsersPage} name="adminUsers" />
+          <Route path="/admin/users/{id:Int}" page={AdminUserPage} name="user" />
+          <Route path="/admin/users/{id:Int}/edit" page={AdminEditUserPage} name="editUser" />
         </Set>
 
         <Set wrap={ScaffoldLayout} title="ImageAdapterSettings" titleTo="adminImageAdapterSettings" buttonLabel="New ImageAdapterSetting" buttonTo="adminNewImageAdapterSetting">
