@@ -11,6 +11,7 @@ export const schema = gql`
   }
 
   input CreateSignupCodeInput {
+    id: String!
     trustStatus: String!
     roles: String!
   }
