@@ -127,7 +127,7 @@ const MemberTable = ({ bookingCode, publicBooking }) => {
       variables: { bookingCode },
     })
   }
-  const spotsAvailable = publicBooking.numGuests < publicBooking < maxGuests
+  const spotsAvailable = publicBooking.numGuests < publicBooking.maxGuests
   return (
     <>
       {spotsAvailable ? (
