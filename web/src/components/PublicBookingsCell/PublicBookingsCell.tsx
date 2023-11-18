@@ -18,7 +18,11 @@ export const QUERY = gql`
 
 export const Loading = () => <div>Loading...</div>
 
-export const Empty = () => <div>Empty</div>
+export const Empty = () => (
+  <div className="center-center m-4 flex h-full justify-center">
+    No trips to join yet
+  </div>
+)
 
 export const Failure = ({ error }: CellFailureProps) => (
   <div style={{ color: 'red' }}>Error: {error?.message}</div>

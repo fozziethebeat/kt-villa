@@ -28,7 +28,13 @@ export const getCurrentUser = async (session: Decoded) => {
 
   const user = await db.user.findUnique({
     where: { id: session.id },
-    select: { id: true, email: true, name: true, roles: true },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      roles: true,
+      trustStatus: true,
+    },
   })
   const profileHash = createHash('sha256')
     .update(user.email.trim().toLowerCase())

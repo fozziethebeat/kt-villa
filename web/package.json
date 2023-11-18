@@ -15,7 +15,7 @@
     "@redwoodjs/forms": "7.0.0-canary.458",
     "@redwoodjs/router": "7.0.0-canary.458",
     "@redwoodjs/web": "7.0.0-canary.458",
-    "daisyui": "latest",
+    "daisyui": "4.4.2",
     "humanize-string": "2.1.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",

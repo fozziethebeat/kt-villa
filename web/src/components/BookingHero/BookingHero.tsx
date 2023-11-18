@@ -1,4 +1,4 @@
-import { navigate, routes } from '@redwoodjs/router'
+import { Link, navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { useState } from 'react'
 
@@ -16,7 +16,8 @@ const CREATE_BOOKING_MUTATION = gql`
 `
 
 const BookingHero = () => {
-  const { hasRole } = useAuth()
+  const { currentUser } = useAuth()
+  const canBook = currentUser?.trustStatus === 'trusted'
   return (
     <div
       className="hero min-h-screen bg-base-200"
@@ -29,16 +30,45 @@ const BookingHero = () => {
         <div className="lg:-left text-center text-neutral-content">
           <h1 className="text-5xl font-bold">Register for a stay!</h1>
           <p className="py-6">
-            Our lovely Hakuba home boasts an espresso machine all for you.
+            Join us for a long weekend in Hakuba!
+            <Link to={routes.about()}> Find out more</Link>
           </p>
         </div>
-        <div className="min-h-10 card w-full max-w-sm flex-shrink-0 bg-base-100 shadow-2xl">
-          {hasRole('admin') ? <AdminBookingForm /> : <MemberBookingForm />}
+        <div className="card h-80 w-[400px] flex-shrink-0 bg-base-100 p-4 shadow-2xl">
+          {canBook ? <TrustedUserContent /> : <MemberBookingForm />}
         </div>
       </div>
     </div>
   )
 }
+
+const TrustedUserContent = () => (
+  <div role="tablist" className="tabs tabs-bordered w-full">
+    <input
+      type="radio"
+      name="my_tabs_1"
+      role="tab"
+      className="tab"
+      label="New Trip"
+      aria-label="New Trip"
+      defaultChecked
+    />
+    <div role="tabpanel" className="tab-content">
+      <AdminBookingForm />
+    </div>
+
+    <input
+      type="radio"
+      name="my_tabs_1"
+      role="tab"
+      className="tab"
+      aria-label="Join a trip"
+    />
+    <div role="tabpanel" className="tab-content">
+      <MemberBookingForm />
+    </div>
+  </div>
+)
 
 const AdminBookingForm = () => {
   const [createBooking, { loading, error }] = useMutation(
@@ -76,7 +106,7 @@ const AdminBookingForm = () => {
   }
 
   return (
-    <div className="card-body">
+    <div className="my-4">
       <div className="form-control">
         <label className="label">
           <span className="label-text">Trip Dates</span>
@@ -174,11 +204,7 @@ const MemberBookingForm = () => {
     setIsValidDates(isValid)
   }
 
-  return (
-    <div className="card-body">
-      <PublicBookingsCell />
-    </div>
-  )
+  return <PublicBookingsCell />
 }
 
 export default BookingHero

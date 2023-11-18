@@ -8880,7 +8880,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colord@npm:^2.9, colord@npm:^2.9.1":
+"colord@npm:^2.9.1":
   version: 2.9.3
   resolution: "colord@npm:2.9.3"
   checksum: 9699e956894d8996b28c686afe8988720785f476f59335c80ce852ded76ab3ebe252703aec53d9bef54f6219aea6b960fb3d9a8300058a1d0c0d4026460cd110
@@ -9670,6 +9670,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"culori@npm:^3":
+  version: 3.2.0
+  resolution: "culori@npm:3.2.0"
+  checksum: c6c9189c7c4b5aa8db8697174e77fd86543fac55d85be2fdee613d22c85ed62147099b5011a58e8ccd16e39fcf58085ea28e073a0b93ec3d623c7701cc20e2e9
+  languageName: node
+  linkType: hard
+
 "cyclist@npm:^1.0.1":
   version: 1.0.2
   resolution: "cyclist@npm:1.0.2"
@@ -9677,16 +9684,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"daisyui@npm:latest":
-  version: 3.9.2
-  resolution: "daisyui@npm:3.9.2"
+"daisyui@npm:4.4.2":
+  version: 4.4.2
+  resolution: "daisyui@npm:4.4.2"
   dependencies:
-    colord: ^2.9
     css-selector-tokenizer: ^0.8
-    postcss: ^8
+    culori: ^3
+    picocolors: ^1
     postcss-js: ^4
-    tailwindcss: ^3.1
-  checksum: 6b6526374c3bcf5eb740d0993e1c0bb9d24f0df073e0a4566b15778dd193f6736c2801b7428ecd52716133fab2bcd0de29baa23b49043272655baa9adeae8a09
+  checksum: efc2a5d545a525fdbf83fa560b54eb6cf408fdbd9faa521a3c4318360b486cf027da1af57bbf5d6d375156cb4e057007b261bf60f5b22cecbca4b35a4950aa3b
   languageName: node
   linkType: hard
 
@@ -16976,7 +16982,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picocolors@npm:^1.0.0":
+"picocolors@npm:^1, picocolors@npm:^1.0.0":
   version: 1.0.0
   resolution: "picocolors@npm:1.0.0"
   checksum: 20a5b249e331c14479d94ec6817a182fd7a5680debae82705747b2db7ec50009a5f6648d0621c561b0572703f84dbef0858abcbd5856d3c5511426afcb1961f7
@@ -17570,7 +17576,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8, postcss@npm:^8.2.14, postcss@npm:^8.4.21, postcss@npm:^8.4.23, postcss@npm:^8.4.24, postcss@npm:^8.4.27, postcss@npm:^8.4.31":
+"postcss@npm:^8.2.14, postcss@npm:^8.4.21, postcss@npm:^8.4.23, postcss@npm:^8.4.24, postcss@npm:^8.4.27, postcss@npm:^8.4.31":
   version: 8.4.31
   resolution: "postcss@npm:8.4.31"
   dependencies:
@@ -20268,7 +20274,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:^3.1, tailwindcss@npm:^3.3.3":
+"tailwindcss@npm:^3.3.3":
   version: 3.3.3
   resolution: "tailwindcss@npm:3.3.3"
   dependencies:
@@ -20995,11 +21001,11 @@ __metadata:
 
 "typescript@patch:typescript@5.2.2#~builtin<compat/typescript>":
   version: 5.2.2
-  resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=f3b441"
+  resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=85af82"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 062c1cee1990e6b9419ce8a55162b8dc917eb87f807e4de0327dbc1c2fa4e5f61bc0dd4e034d38ff541d1ed0479b53bcee8e4de3a4075c51a1724eb6216cb6f5
+  checksum: 303979762f9b8932c53f8149e866521a1265168b5c0fde8cc8ad83ac3d0e8ede8096cb02dff5f2de048e7f118a6f61902f81da12d5972c7fb582f09f2f18d169
   languageName: node
   linkType: hard
 
@@ -21633,7 +21639,7 @@ __metadata:
     "@types/react": 18.2.14
     "@types/react-dom": 18.2.6
     autoprefixer: ^10.4.16
-    daisyui: latest
+    daisyui: 4.4.2
     humanize-string: 2.1.0
     moment: ^2.29.4
     moment-timezone: ^0.5.43
