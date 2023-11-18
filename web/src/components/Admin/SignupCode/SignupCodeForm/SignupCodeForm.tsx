@@ -33,6 +33,23 @@ const SignupCodeForm = (props: SignupCodeFormProps) => {
           titleClassName="rw-form-error-title"
           listClassName="rw-form-error-list"
         />
+        <Label
+          name="id"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          ID
+        </Label>
+
+        <TextField
+          name="id"
+          defaultValue={props.signupCode?.id}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          validation={{ required: true }}
+        />
+
+        <FieldError name="id" className="rw-field-error" />
 
         <Label
           name="trustStatus"
