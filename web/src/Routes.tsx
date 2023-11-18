@@ -41,6 +41,13 @@ const Routes = () => {
           <Route path="/admin/image-adapter-settings" page={AdminImageAdapterSettingImageAdapterSettingsPage} name="adminImageAdapterSettings" />
         </Set>
 
+        <Set wrap={ScaffoldLayout} title="SignupCodes" titleTo="adminSignupCodes" buttonLabel="New SignupCode" buttonTo="adminNewSignupCode">
+          <Route path="/admin/signup-codes/new" page={AdminSignupCodeNewSignupCodePage} name="adminNewSignupCode" />
+          <Route path="/admin/signup-codes/{id}/edit" page={AdminSignupCodeEditSignupCodePage} name="adminEditSignupCode" />
+          <Route path="/admin/signup-codes/{id}" page={AdminSignupCodeSignupCodePage} name="adminSignupCode" />
+          <Route path="/admin/signup-codes" page={AdminSignupCodeSignupCodesPage} name="adminSignupCodes" />
+        </Set>
+
         <Set wrap={ScaffoldLayout} title="StableItems" titleTo="adminStableItems" buttonLabel="New StableItem" buttonTo="adminNewStableItem">
           <Route path="/admin/stable-items/new" page={AdminStableItemNewStableItemPage} name="adminNewStableItem" />
           <Route path="/admin/stable-items/{id}/edit" page={AdminStableItemEditStableItemPage} name="adminEditStableItem" />

@@ -77,7 +77,8 @@ model User {
 }
 
 model SignupCode {
-  id       String @id
+  id          String @id
+  trustStatus String @default("new")
 }
 
 model ImageAdapterSetting {
