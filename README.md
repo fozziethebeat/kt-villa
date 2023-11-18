@@ -51,6 +51,13 @@ yarn redwood dev
 
 Boom, now you too can be silly.
 
+### Launching
+
+```sh
+docker build -t surfacestay -f Dockerfile .
+docker compose up
+```
+
 ## TODOs
 
 1. Replicate [this
