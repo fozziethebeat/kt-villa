@@ -1,6 +1,7 @@
 import type { FindUserQuery, FindUserQueryVariables } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
+import { useMutation } from '@redwoodjs/web'
 import { Link, routes } from '@redwoodjs/router'
 
 export const QUERY = gql`
@@ -11,6 +12,13 @@ export const QUERY = gql`
       email
       roles
       trustStatus
+    }
+  }
+`
+const DELETE_MUTATION = gql`
+  mutation DeleteUser($id: Int!) {
+    deleteUser(id: $id) {
+      id
     }
   }
 `
@@ -28,6 +36,22 @@ export const Failure = ({
 export const Success = ({
   user,
 }: CellSuccessProps<FindUserQuery, FindUserQueryVariables>) => {
+  const [deleteUser] = useMutation(DELETE_MUTATION, {
+    onCompleted: () => {
+      toast.success('User deleted')
+      navigate(routes.adminUsers())
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+
+  const onDeleteClick = () => {
+    if (confirm(`Are you sure you want to delete user ${user.id}?`)) {
+      deleteUser({ variables: { id: user.id } })
+    }
+  }
+
   return (
     <div>
       <table className="table">
@@ -56,6 +80,13 @@ export const Success = ({
       </table>
       <div className="flex flex-row justify-center gap-2">
         <Link to={routes.editUser({ id: user.id })}>Edit</Link>
+        <button
+          type="button"
+          onClick={onDeleteClick}
+          className="btn btn-secondary"
+        >
+          Delete
+        </button>
       </div>
     </div>
   )
