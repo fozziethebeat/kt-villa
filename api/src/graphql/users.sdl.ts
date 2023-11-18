@@ -10,6 +10,7 @@ export const schema = gql`
     roles: String!
     StableItem: [StableItem]!
     booking: [Booking]!
+    trustStatus: String!
   }
 
   type Query {
@@ -25,6 +26,7 @@ export const schema = gql`
     resetToken: String
     resetTokenExpiresAt: DateTime
     roles: String!
+    trustStatus: String
   }
 
   input UpdateUserInput {
@@ -35,11 +37,12 @@ export const schema = gql`
     resetToken: String
     resetTokenExpiresAt: DateTime
     roles: String
+    trustStatus: String
   }
 
   type Mutation {
     createUser(input: CreateUserInput!): User! @requireAuth
     updateUser(id: Int!, input: UpdateUserInput!): User! @requireAuth
-    deleteUser(id: Int!): User! @requireAuth
+    deleteUser(id: Int!): User! @requireAuth(roles: ["admin"])
   }
 `

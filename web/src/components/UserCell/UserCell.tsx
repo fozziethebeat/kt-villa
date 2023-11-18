@@ -10,6 +10,7 @@ export const QUERY = gql`
       name
       email
       roles
+      trustStatus
     }
   }
 `
@@ -46,6 +47,10 @@ export const Success = ({
           <tr>
             <td>Roles</td>
             <td>{user.roles}</td>
+          </tr>
+          <tr>
+            <td>Trust Status</td>
+            <td>{user.trustStatus}</td>
           </tr>
         </tbody>
       </table>

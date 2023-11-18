@@ -6,6 +6,7 @@ import {
   Label,
   NumberField,
   TextField,
+  SelectField,
   Submit,
 } from '@redwoodjs/forms'
 
@@ -68,16 +69,39 @@ const UserForm = ({ user, onSave, error, loading }) => {
         Roles
       </Label>
 
-      <TextField
+      <SelectField
         name="roles"
-        type="search"
         defaultValue={user?.roles}
-        className="input input-bordered w-full"
+        className="select select-bordered"
         errorClassName="rw-input rw-input-error"
         validation={{ required: true }}
-      />
+      >
+        <option>admin</option>
+        <option>general</option>
+      </SelectField>
 
       <FieldError name="roles" className="rw-field-error" />
+
+      <Label
+        name="trustStatus"
+        className="label"
+        errorClassName="rw-label rw-label-error"
+      >
+        Trust Status
+      </Label>
+
+      <SelectField
+        name="trustStatus"
+        defaultValue={user?.trustStatus}
+        className="select select-bordered"
+        errorClassName="rw-input rw-input-error"
+        validation={{ required: true }}
+      >
+        <option>new</option>
+        <option>trusted</option>
+      </SelectField>
+
+      <FieldError name="trustStatus" className="rw-field-error" />
 
       <div className="rw-button-group">
         <Submit disabled={loading} className="btn btn-primary">

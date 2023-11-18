@@ -10,6 +10,7 @@ export const QUERY = gql`
       name
       email
       roles
+      trustStatus
     }
   }
 `
@@ -32,6 +33,7 @@ export const Success = ({ users }: CellSuccessProps<UsersQuery>) => {
           <th>Username</th>
           <th>Email</th>
           <th>Roles</th>
+          <th>Trust Status</th>
           <th>Links</th>
         </tr>
       </thead>
@@ -42,6 +44,7 @@ export const Success = ({ users }: CellSuccessProps<UsersQuery>) => {
             <td>{user.name}</td>
             <td>{user.email}</td>
             <td>{user.roles}</td>
+            <td>{user.trustStatus}</td>
             <td>
               <div className="flex flex-row gap-2">
                 <Link to={routes.user({ id: user.id })}>view</Link>
