@@ -9,6 +9,7 @@ export const QUERY = gql`
     signupCode: signupCode(id: $id) {
       id
       trustStatus
+      roles
     }
   }
 `

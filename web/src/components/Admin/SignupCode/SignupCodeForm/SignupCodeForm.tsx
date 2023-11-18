@@ -52,6 +52,24 @@ const SignupCodeForm = (props: SignupCodeFormProps) => {
 
         <FieldError name="trustStatus" className="rw-field-error" />
 
+        <Label
+          name="roles"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Roles
+        </Label>
+
+        <TextField
+          name="roles"
+          defaultValue={props.signupCode?.roles}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          validation={{ required: true }}
+        />
+
+        <FieldError name="roles" className="rw-field-error" />
+
         <div className="rw-button-group">
           <Submit disabled={props.loading} className="rw-button rw-button-blue">
             Save

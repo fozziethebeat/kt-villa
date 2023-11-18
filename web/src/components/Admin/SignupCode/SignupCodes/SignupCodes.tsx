@@ -46,6 +46,7 @@ const SignupCodesList = ({ signupCodes }: FindSignupCodes) => {
           <tr>
             <th>Id</th>
             <th>Trust status</th>
+            <th>Roles</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
@@ -54,6 +55,7 @@ const SignupCodesList = ({ signupCodes }: FindSignupCodes) => {
             <tr key={signupCode.id}>
               <td>{truncate(signupCode.id)}</td>
               <td>{truncate(signupCode.trustStatus)}</td>
+              <td>{truncate(signupCode.roles)}</td>
               <td>
                 <nav className="rw-table-actions">
                   <Link

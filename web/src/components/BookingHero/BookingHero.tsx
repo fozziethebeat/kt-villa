@@ -16,8 +16,8 @@ const CREATE_BOOKING_MUTATION = gql`
 `
 
 const BookingHero = () => {
-  const { currentUser } = useAuth()
-  const canBook = currentUser?.trustStatus === 'trusted'
+  const { currentUser, hasRole } = useAuth()
+  const canBook = hasRole(['admin', 'trusted'])
   return (
     <div
       className="hero min-h-screen bg-base-200"

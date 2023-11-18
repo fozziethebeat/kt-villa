@@ -56,6 +56,10 @@ const SignupCode = ({ signupCode }: Props) => {
               <th>Trust status</th>
               <td>{signupCode.trustStatus}</td>
             </tr>
+            <tr>
+              <th>Roles</th>
+              <td>{signupCode.roles}</td>
+            </tr>
           </tbody>
         </table>
       </div>

@@ -120,6 +120,7 @@ export const handler = async (
           hashedPassword: hashedPassword,
           salt: salt,
           name: userAttributes.name,
+          roles: signupCode.roles,
           trustStatus: signupCode.trustStatus,
         },
       })

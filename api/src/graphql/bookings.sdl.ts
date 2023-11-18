@@ -77,9 +77,9 @@ export const schema = gql`
       @requireAuth(roles: ["admin"])
 
     createBooking(input: CreateBookingInput!): Booking!
-      @requireAuth(roles: ["admin"])
+      @requireAuth(roles: ["trusted", "admin"])
     updateBooking(id: Int!, input: UpdateBookingInput!): Booking!
-      @requireAuth(roles: ["admin"])
+      @requireAuth(roles: ["trusted", "admin"])
     deleteBooking(id: Int!): Booking! @requireAuth(roles: ["admin"])
   }
 `

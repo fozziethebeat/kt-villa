@@ -12,6 +12,7 @@ export const QUERY = gql`
     signupCode: signupCode(id: $id) {
       id
       trustStatus
+      roles
     }
   }
 `
@@ -23,6 +24,7 @@ const UPDATE_SIGNUP_CODE_MUTATION = gql`
     updateSignupCode(id: $id, input: $input) {
       id
       trustStatus
+      roles
     }
   }
 `

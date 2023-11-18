@@ -77,6 +77,7 @@ const UserForm = ({ user, onSave, error, loading }) => {
         validation={{ required: true }}
       >
         <option>admin</option>
+        <option>trusted</option>
         <option>general</option>
       </SelectField>
 

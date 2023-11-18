@@ -2,6 +2,7 @@ export const schema = gql`
   type SignupCode {
     id: String!
     trustStatus: String!
+    roles: String!
   }
 
   type Query {
@@ -11,10 +12,12 @@ export const schema = gql`
 
   input CreateSignupCodeInput {
     trustStatus: String!
+    roles: String!
   }
 
   input UpdateSignupCodeInput {
     trustStatus: String
+    roles: String
   }
 
   type Mutation {
