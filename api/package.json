@@ -3,10 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "@react-email/components": "^0.0.11",
     "@redwoodjs/api": "7.0.0-canary.458",
     "@redwoodjs/auth-dbauth-api": "7.0.0-canary.458",
     "@redwoodjs/fastify": "7.0.0-canary.458",
     "@redwoodjs/graphql-server": "7.0.0-canary.458",
+    "@redwoodjs/mailer-core": "7.0.0-canary.458",
+    "@redwoodjs/mailer-handler-nodemailer": "7.0.0-canary.458",
+    "@redwoodjs/mailer-renderer-react-email": "7.0.0-canary.458",
     "@redwoodjs/project-config": "7.0.0-canary.458",
     "@redwoodjs/realtime": "7.0.0-canary.458",
     "axios": "^1.5.1",
@@ -15,5 +19,9 @@
     "fastify": "^4.24.3",
     "openai": "^4.12.4",
     "short-unique-id": "^5.0.3"
+  },
+  "devDependencies": {
+    "@redwoodjs/mailer-handler-in-memory": "7.0.0-canary.458",
+    "@redwoodjs/mailer-handler-studio": "7.0.0-canary.458"
   }
 }

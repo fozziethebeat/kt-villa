@@ -3,6 +3,9 @@ import type { APIGatewayProxyEvent, Context } from 'aws-lambda'
 import { DbAuthHandler, DbAuthHandlerOptions } from '@redwoodjs/auth-dbauth-api'
 
 import { db } from 'src/lib/db'
+import { mailer } from 'src/lib/mailer'
+
+import { ForgotPassword } from 'src/mail/ForgotPassword/ForgotPassword'
 
 export const handler = async (
   event: APIGatewayProxyEvent,
@@ -21,7 +24,17 @@ export const handler = async (
     // You could use this return value to, for example, show the email
     // address in a toast message so the user will know it worked and where
     // to look for the email.
-    handler: (user) => {
+    handler: async (user) => {
+      await mailer.send(
+        ForgotPassword({
+          name: user.name,
+          link: `https://www.kt-villa.com/reset-password?resetToken=${user.resetToken}`,
+        }),
+        {
+          to: user.email,
+          subject: 'Reset your KT Villa password',
+        }
+      )
       return user
     },
 
