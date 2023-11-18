@@ -69,7 +69,10 @@ export const Failure = ({
 export const Success = ({
   userBooking,
 }: CellSuccessProps<FindUserBookingQuery, FindUserBookingQueryVariables>) => {
-  const numToRegister = userBooking.numGuests - userBooking.member.length - 1
+  const numToRegister = Math.max(
+    0,
+    userBooking.numGuests - userBooking.member.length - 1
+  )
   const toRegister = Array(numToRegister)
     .fill(0)
     .map((_, i) => i)
