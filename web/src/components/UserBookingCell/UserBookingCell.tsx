@@ -13,6 +13,7 @@ import {
   SelectField,
   Submit,
 } from '@redwoodjs/forms'
+import { Link, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { FaCat, FaDog } from 'react-icons/fa'
 
@@ -52,6 +53,7 @@ const MUTATION = gql`
     }
   }
 `
+
 const ADD_MUTATION = gql`
   mutation addMemberBooking($id: Int!, $username: String!) {
     addMemberBooking(id: $id, username: $username) {
@@ -95,6 +97,14 @@ export const Success = ({
           <h2 className="text-4xl font-bold">
             Booking Code: {userBooking.bookingCode}
           </h2>
+          <Link
+            className="link"
+            to={routes.editUserBooking({
+              bookingCode: userBooking.bookingCode,
+            })}
+          >
+            update
+          </Link>
           <div className="flex justify-between gap-2">
             <div>Status</div>
             <div className="badge badge-accent badge-lg">

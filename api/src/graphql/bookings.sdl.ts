@@ -67,6 +67,7 @@ export const schema = gql`
     startDate: DateTime
     endDate: DateTime
     numGuests: Int
+    maxGuests: Int
     userId: Int
     withCat: Boolean
     withDog: Boolean
