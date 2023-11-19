@@ -25,21 +25,26 @@ const NEGATIVE_PROMPT =
 const generateBookingItem = async (bookingId: string) => {
   const booking = await db.booking.findUnique({ where: { id: bookingId } })
   if (!booking) {
-    console.log('No booking found')
+    console.error('No booking found')
     return undefined
   }
   if (booking.userItemId) {
-    console.log('Already has item')
+    console.error('Already has item')
     return undefined
   }
 
-  const userItemId = await generateItem(booking.userId, booking.startDate)
-  return await db.booking.update({
-    where: { id: bookingId },
-    data: {
-      userItemId,
-    },
-  })
+  try {
+    const userItemId = await generateItem(booking.userId, booking.startDate)
+    return await db.booking.update({
+      where: { id: bookingId },
+      data: {
+        userItemId,
+      },
+    })
+  } catch (e) {
+    console.error(e)
+    throw e
+  }
 }
 
 const generateItemCharacter = async (image) => {
@@ -72,21 +77,17 @@ const generateItem = async (userId, startDate) => {
   const itemId = itemIdGenerator.rnd()
   const claimCode = itemCodeGenerator.rnd()
   const { image, request } = await generateImageFromAdapter(itemId, adapters[0])
-  try {
-    await db.stableItem.create({
-      data: {
-        id: itemId,
-        image,
-        claimCode,
-        claimStatus: 'claimed',
-        claimVisible: true,
-        ownerId: userId,
-        imageRequest: request,
-      },
-    })
-  } catch (e) {
-    console.log(e)
-  }
+  await db.stableItem.create({
+    data: {
+      id: itemId,
+      image,
+      claimCode,
+      claimStatus: 'claimed',
+      claimVisible: true,
+      ownerId: userId,
+      imageRequest: request,
+    },
+  })
   return itemId
 }
 

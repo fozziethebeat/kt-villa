@@ -5,6 +5,8 @@ export const schema = gql`
     endDate: DateTime!
     numGuests: Int!
     maxGuests: Int!
+    withCat: Boolean!
+    withDog: Boolean!
     status: String!
     bookingCode: String!
     item: StableItem
@@ -55,7 +57,10 @@ export const schema = gql`
   input CreateBookingInput {
     startDate: DateTime!
     endDate: DateTime!
+    maxGuests: Int!
     numGuests: Int!
+    withCat: Boolean
+    withDog: Boolean
   }
 
   input UpdateBookingInput {
@@ -63,6 +68,8 @@ export const schema = gql`
     endDate: DateTime
     numGuests: Int
     userId: Int
+    withCat: Boolean
+    withDog: Boolean
   }
 
   type Mutation {

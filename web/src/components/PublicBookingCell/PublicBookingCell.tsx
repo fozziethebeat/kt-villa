@@ -6,6 +6,7 @@ import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
 import { Link, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
+import { FaCat, FaDog } from 'react-icons/fa'
 
 import { useAuth } from 'src/auth'
 
@@ -17,6 +18,8 @@ export const QUERY = gql`
       endDate
       maxGuests
       numGuests
+      withCat
+      withDog
       bookingCode
       status
       item {
@@ -100,6 +103,14 @@ export const Success = ({
               {publicBooking.numGuests}
             </div>
           </div>
+          <div className="flex justify-between gap-2">
+            <div>Animals</div>
+            <div className="flex flex-row gap-2">
+              {publicBooking.withCat && <FaCat />}
+              {publicBooking.withDog && <FaDog />}
+            </div>
+          </div>
+
           <div className="flex justify-between gap-2"></div>
           {isAuthenticated ? (
             <MemberTable

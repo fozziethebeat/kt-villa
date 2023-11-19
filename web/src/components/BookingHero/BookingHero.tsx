@@ -1,3 +1,4 @@
+import { CheckboxField, Form, RangeField, Submit } from '@redwoodjs/forms'
 import { Link, navigate, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { useState } from 'react'
@@ -34,8 +35,8 @@ const BookingHero = () => {
             <Link to={routes.about()}> Find out more</Link>
           </p>
         </div>
-        <div className="card h-80 w-[400px] flex-shrink-0 bg-base-100 p-4 shadow-2xl">
-          {canBook ? <TrustedUserContent /> : <MemberBookingForm />}
+        <div className="card h-96 w-[400px] flex-shrink-0 bg-base-100 p-4 shadow-2xl">
+          {canBook ? <TrustedUserContent /> : <PublicBookingsCell />}
         </div>
       </div>
     </div>
@@ -65,7 +66,7 @@ const TrustedUserContent = () => (
       aria-label="Join a trip"
     />
     <div role="tabpanel" className="tab-content">
-      <MemberBookingForm />
+      <PublicBookingsCell />
     </div>
   </div>
 )
@@ -82,13 +83,13 @@ const AdminBookingForm = () => {
     }
   )
 
-  const onBook = () => {
+  const onSubmit = (data) => {
     createBooking({
       variables: {
         input: {
           startDate,
           endDate,
-          numGuests,
+          ...data,
         },
       },
     })
@@ -97,7 +98,6 @@ const AdminBookingForm = () => {
   const [startDate, setStartDate] = useState(null)
   const [endDate, setEndDate] = useState(null)
   const [isValidDates, setIsValidDates] = useState(false)
-  const [numGuests, setNumGuests] = useState(1)
 
   const onChange = (newStart, newEnd, isValid) => {
     setStartDate(newStart)
@@ -106,7 +106,7 @@ const AdminBookingForm = () => {
   }
 
   return (
-    <div className="my-4">
+    <div className="my-2">
       <div className="form-control">
         <label className="label">
           <span className="label-text">Trip Dates</span>
@@ -129,82 +129,77 @@ const AdminBookingForm = () => {
           </div>
         </div>
       </div>
-      <div className="form-control">
-        <label className="label">
-          <span className="label-text">Guests</span>
-        </label>
-        <input
-          type="range"
-          min={1}
-          max="4"
-          value={numGuests}
-          onChange={(e) => setNumGuests(e.target.valueAsNumber)}
-          className="range"
-          step="1"
-        />
-        <div className="flex w-full justify-between px-2 text-xs">
-          <span>1</span>
-          <span>2</span>
-          <span>3</span>
-          <span>4</span>
+
+      <Form onSubmit={onSubmit} error={error}>
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Max Guests</span>
+          </label>
+          <RangeField
+            name="maxGuests"
+            type="range"
+            min={1}
+            max={5}
+            defaultValue={4}
+            className="range"
+            step="1"
+            validation={{ valueAsNumber: true }}
+          />
+          <div className="flex w-full justify-between px-2 text-xs">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+          </div>
         </div>
-      </div>
-      <div className="form-control mt-6">
-        <button
-          disabled={!isValidDates || loading}
-          onClick={onBook}
-          className="btn btn-primary"
-        >
-          Book
-        </button>
-      </div>
-      <div className="flex justify-center">
-        <progress
-          className={`progress progress-success w-56 ${
-            loading ? 'visible' : 'invisible'
-          }`}
-        />
-      </div>
+
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Known Guests</span>
+          </label>
+          <RangeField
+            name="numGuests"
+            type="range"
+            min={1}
+            max={5}
+            defaultValue={1}
+            className="range"
+            step="1"
+            validation={{ valueAsNumber: true }}
+          />
+          <div className="flex w-full justify-between px-2 text-xs">
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+          </div>
+        </div>
+
+        <div className="grid  grid-cols-2 gap-4">
+          <label className="label cursor-pointer gap-2">
+            <span className="label-text">With Cat</span>
+            <CheckboxField name="withCat" type="checkbox" className="toggle" />
+          </label>
+          <label className="label cursor-pointer">
+            <span className="label-text">With Dog</span>
+            <CheckboxField name="withDog" type="checkbox" className="toggle" />
+          </label>
+        </div>
+
+        <div className="form-control mt-2">
+          <Submit
+            disabled={!isValidDates || loading}
+            className="btn btn-primary btn-sm"
+          >
+            {loading && <span className="loading loading-spinner" />}
+            Book
+          </Submit>
+        </div>
+      </Form>
     </div>
   )
-}
-
-const MemberBookingForm = () => {
-  const [createBooking, { loading, error }] = useMutation(
-    CREATE_BOOKING_MUTATION,
-    {
-      onCompleted: (data) => {
-        navigate(
-          routes.userBooking({ bookingCode: data.createBooking.bookingCode })
-        )
-      },
-    }
-  )
-
-  const onBook = () => {
-    createBooking({
-      variables: {
-        input: {
-          startDate,
-          endDate,
-          numGuests,
-        },
-      },
-    })
-  }
-
-  const [startDate, setStartDate] = useState(new Date())
-  const [endDate, setEndDate] = useState(new Date())
-  const [isValidDates, setIsValidDates] = useState(false)
-  const [numGuests, setNumGuests] = useState(1)
-
-  const onChange = (newStart, newEnd, isValid) => {
-    setStartDate(newStart)
-    setEndDate(newEnd)
-    setIsValidDates(isValid)
-  }
-
-  return <PublicBookingsCell />
 }
 
 export default BookingHero

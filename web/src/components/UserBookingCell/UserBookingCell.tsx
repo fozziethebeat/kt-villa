@@ -3,6 +3,7 @@ import type {
   FindUserBookingQueryVariables,
 } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
+
 import {
   Form,
   FormError,
@@ -13,6 +14,7 @@ import {
   Submit,
 } from '@redwoodjs/forms'
 import { useMutation } from '@redwoodjs/web'
+import { FaCat, FaDog } from 'react-icons/fa'
 
 export const QUERY = gql`
   query FindUserBookingQuery($bookingCode: String!) {
@@ -20,7 +22,10 @@ export const QUERY = gql`
       id
       startDate
       endDate
+      maxGuests
       numGuests
+      withCat
+      withDog
       bookingCode
       status
       item {
@@ -115,6 +120,20 @@ export const Success = ({
               {userBooking.numGuests}
             </div>
           </div>
+          <div className="flex justify-between gap-2">
+            <div>Max Guests</div>
+            <div className="badge badge-accent badge-lg">
+              {userBooking.maxGuests}
+            </div>
+          </div>
+          <div className="flex justify-between gap-2">
+            <div>Animals</div>
+            <div className="flex flex-row gap-2">
+              {userBooking.withCat && <FaCat />}
+              {userBooking.withDog && <FaDog />}
+            </div>
+          </div>
+
           <div className="overflow-x-auto">
             <div>
               {toRegister.map((tid, index) => (

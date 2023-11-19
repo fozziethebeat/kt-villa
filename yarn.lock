@@ -18713,6 +18713,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-icons@npm:^4.12.0":
+  version: 4.12.0
+  resolution: "react-icons@npm:4.12.0"
+  peerDependencies:
+    react: "*"
+  checksum: 2170f43031ee7365539f72d4075cbe6c7fbf9a66d6cf4494aa9393b194272da0564f5b19d1b24dbfc567c0ac89f5fe5b8974d92dd83f61e252388dde6a226fb8
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1, react-is@npm:^16.7.0":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -21610,11 +21619,11 @@ __metadata:
 
 "typescript@patch:typescript@5.2.2#~builtin<compat/typescript>":
   version: 5.2.2
-  resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=f3b441"
+  resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=85af82"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 062c1cee1990e6b9419ce8a55162b8dc917eb87f807e4de0327dbc1c2fa4e5f61bc0dd4e034d38ff541d1ed0479b53bcee8e4de3a4075c51a1724eb6216cb6f5
+  checksum: 303979762f9b8932c53f8149e866521a1265168b5c0fde8cc8ad83ac3d0e8ede8096cb02dff5f2de048e7f118a6f61902f81da12d5972c7fb582f09f2f18d169
   languageName: node
   linkType: hard
 
@@ -22259,6 +22268,7 @@ __metadata:
     react-datepicker: ^4.19.0
     react-dates: ^21.8.0
     react-dom: 0.0.0-experimental-e5205658f-20230913
+    react-icons: ^4.12.0
     tailwindcss: ^3.3.3
     theme-change: ^2.5.0
   languageName: unknown
