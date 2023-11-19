@@ -60,7 +60,15 @@ docker compose up
 
 ## TODOs
 
-1. Replicate [this
-   demo](https://github.com/redwoodjs/redwoodjs-streaming-realtime-demos/tree/main)
-   for doing streaming messages in more places.
-2. Document [SurfaceChat](https://github.com/SurfaceData/surfacechat).
+Investigate prompt settigs for future SDXL adapters:
+* LiquidFlowStyle
+* SaturatedLandscape
+* ohwx
+* filiphodas
+* tangbohu-style
+* jameseads
+* kaynielsen
+* papercut
+* jsmin-style
+* samdoesarts
+* watermeloncarving

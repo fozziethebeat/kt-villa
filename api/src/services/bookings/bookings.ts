@@ -11,6 +11,10 @@ import { validateWith } from '@redwoodjs/api'
 
 import { db } from 'src/lib/db'
 import { generateBookingItem, generateItem } from 'src/lib/gen'
+import { mailer } from 'src/lib/mailer'
+import { CreateBooking } from 'src/mail/CreateBooking/CreateBooking'
+import { JoinApproved } from 'src/mail/JoinApproved/JoinApproved'
+import { JoinBooking } from 'src/mail/JoinBooking/JoinBooking'
 
 const bookingCodeGenerator = new ShortUniqueId({ length: 6 })
 
@@ -86,24 +90,28 @@ export const booking: QueryResolvers['booking'] = ({ id }) => {
 export const joinBooking: MutationResolvers['joinBooking'] = async ({
   bookingCode,
 }) => {
+  const booking = await db.booking.findUnique({
+    where: {
+      bookingCode,
+    },
+    select: {
+      user: true,
+      maxGuests: true,
+      numGuests: true,
+      member: true,
+    },
+  })
+
   await validateWith(async () => {
-    const booking = await db.booking.findUnique({
-      where: {
-        bookingCode,
-      },
-      select: {
-        numGuests: true,
-        member: true,
-      },
-    })
     if (!booking) {
       throw new Error('Invalid booking.')
     }
-    if (booking.numGuests === 4) {
+    if (booking.numGuests === booking.maxGuests) {
       throw new Error('Booking not available for joining')
     }
   })
-  return db.booking.update({
+
+  const updatedBooking = await db.booking.update({
     where: { bookingCode },
     data: {
       member: {
@@ -116,6 +124,18 @@ export const joinBooking: MutationResolvers['joinBooking'] = async ({
       },
     },
   })
+  await mailer.send(
+    JoinBooking({
+      code: bookingCode,
+      link: `https://www.kt-villa.com/booking/${bookingCode}`,
+      name: context.currentUser.name,
+    }),
+    {
+      to: booking.user.email,
+      subject: 'Request to join your trip',
+    }
+  )
+  return updatedBooking
 }
 
 export const createBooking: MutationResolvers['createBooking'] = async ({
@@ -167,6 +187,17 @@ export const createBooking: MutationResolvers['createBooking'] = async ({
       userId: context.currentUser.id,
     },
   })
+  await mailer.send(
+    CreateBooking({
+      code: booking.bookingCode,
+      link: 'https://www.kt-villa.com/admin/bookings',
+    }),
+    {
+      to: process.env.ADMIN_EMAIL,
+      subject: 'New Booking Created',
+    }
+  )
+
   if (status === 'pending') {
     return booking
   }
@@ -231,14 +262,17 @@ export const addMemberBooking: MutationResolvers['addMemberBooking'] = async ({
 
 export const updateMemberBookingStatus: MutationResolvers['updateMemberBookingStatus'] =
   async ({ id, status }) => {
+    const memberBooking = await db.memberBooking.findUnique({
+      where: { id },
+      select: {
+        booking: true,
+        user: true,
+      },
+    })
     await validateWith(async () => {
       if (!context.currentUser) {
         throw new Error('not authorized')
       }
-      const memberBooking = await db.memberBooking.findUnique({
-        where: { id },
-        select: { booking: true },
-      })
       if (!memberBooking) {
         throw new Error('Invalid Member Booking')
       }
@@ -249,17 +283,19 @@ export const updateMemberBookingStatus: MutationResolvers['updateMemberBookingSt
         throw new Error('Permission Denied')
       }
     })
-    const memberBooking = await db.memberBooking.update({
+    const { booking, user } = memberBooking
+
+    const statusSetBooking = await db.memberBooking.update({
       data: {
         status,
       },
       where: { id },
     })
-    if (memberBooking.status !== 'approved' || memberBooking.userItemId) {
-      return memberBooking
+    if (statusSetBooking.status !== 'approved' || statusSetBooking.userItemId) {
+      return statusSetBooking
     }
     const userItemId = await generateItem(memberBooking.userId)
-    return db.memberBooking.update({
+    const updatedMemberBooking = await db.memberBooking.update({
       data: {
         userItem: {
           connect: { id: userItemId },
@@ -272,6 +308,19 @@ export const updateMemberBookingStatus: MutationResolvers['updateMemberBookingSt
       },
       where: { id },
     })
+    await mailer.send(
+      JoinApproved({
+        code: booking.bookingCode,
+        link: `https://www.kt-villa.com/public-booking/${booking.bookingCode}`,
+        name: user.name,
+      }),
+      {
+        to: user.email,
+        subject: 'Your request to join is approved',
+      }
+    )
+
+    return updatedMemberBooking
   }
 
 export const updateBookingStatus: MutationResolvers['updateBookingStatus'] = ({
