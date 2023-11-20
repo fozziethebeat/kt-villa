@@ -152,6 +152,9 @@ export const StableItem: StableItemRelationResolvers = {
     if (!context.currentUser) {
       return 'anon'
     }
+    if (!item.ownerId) {
+      return 'unknown'
+    }
     if (item.claimStatus !== ClaimStatus.CLAIMED) {
       return 'none'
     }

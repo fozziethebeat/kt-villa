@@ -113,7 +113,7 @@ const generateImageFromAdapter = async (
 const getPrompt = (adapterSettings: ImageAdapterSettings) => {
   const index = Math.floor(Math.random() * adapterSettings.variants.length)
   const fragment = adapterSettings.variants[index]
-  return `${fragment}, ${adapterSettings.prompt}`
+  return `${fragment}, ${adapterSettings.promptTemplate}`
 }
 
 export {

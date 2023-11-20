@@ -262,6 +262,7 @@ const MemberBookingAction = ({ memberBooking, booking }) => {
 
       <div>
         <Submit disabled={loading} className="btn btn-primary">
+          {loading && <span className="loading loading-spinner" />}
           Update
         </Submit>
       </div>

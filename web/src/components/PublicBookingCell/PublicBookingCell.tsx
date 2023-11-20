@@ -142,7 +142,8 @@ const MemberTable = ({ bookingCode, publicBooking }) => {
   return (
     <>
       {spotsAvailable ? (
-        <button onClick={onJoin} className="btn btn-primary">
+        <button disabled={loading} onClick={onJoin} className="btn btn-primary">
+          {loading && <span className="loading loading-spinner" />}
           Join
         </button>
       ) : (

@@ -294,7 +294,7 @@ export const updateMemberBookingStatus: MutationResolvers['updateMemberBookingSt
     if (statusSetBooking.status !== 'approved' || statusSetBooking.userItemId) {
       return statusSetBooking
     }
-    const userItemId = await generateItem(memberBooking.userId)
+    const userItemId = await generateItem(user.id, booking.startDate)
     const updatedMemberBooking = await db.memberBooking.update({
       data: {
         userItem: {
