@@ -60,6 +60,10 @@ const StableItem = ({ stableItem }: Props) => {
               <th>Text</th>
               <td>{stableItem.text}</td>
             </tr>
+            <tr>
+              <th>Owner ID</th>
+              <td>{stableItem.ownerId}</td>
+            </tr>
           </tbody>
         </table>
       </div>

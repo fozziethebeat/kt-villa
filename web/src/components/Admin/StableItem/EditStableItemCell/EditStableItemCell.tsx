@@ -13,6 +13,7 @@ export const QUERY = gql`
       id
       image
       text
+      ownerId
     }
   }
 `

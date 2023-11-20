@@ -3,8 +3,10 @@ export const schema = gql`
     id: String!
     image: String!
     text: String
+    claimCode: String
     claimStatus: String!
     claimVisible: Boolean!
+    ownerId: Int
     ownerUsername: String
   }
 
@@ -21,6 +23,7 @@ export const schema = gql`
   input UpdateStableItemInput {
     image: String
     text: String
+    ownerId: Int
   }
 
   input ClaimItemInput {

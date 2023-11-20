@@ -65,10 +65,28 @@ const StableItemForm = (props: StableItemFormProps) => {
           defaultValue={props.stableItem?.text}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
+          validation={{ required: false }}
         />
 
         <FieldError name="text" className="rw-field-error" />
+
+        <Label
+          name="ownerId"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Owner ID
+        </Label>
+
+        <TextField
+          name="ownerId"
+          defaultValue={props.stableItem?.ownerId}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          validation={{ valueAsNumber: true, required: true }}
+        />
+
+        <FieldError name="ownerId" className="rw-field-error" />
 
         <div className="rw-button-group">
           <Submit disabled={props.loading} className="rw-button rw-button-blue">

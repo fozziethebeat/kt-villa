@@ -47,6 +47,7 @@ const StableItemsList = ({ stableItems }: FindStableItems) => {
             <th>Id</th>
             <th>Image</th>
             <th>Text</th>
+            <th>Owner ID</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
@@ -56,6 +57,7 @@ const StableItemsList = ({ stableItems }: FindStableItems) => {
               <td>{truncate(stableItem.id)}</td>
               <td>{truncate(stableItem.image)}</td>
               <td>{truncate(stableItem.text)}</td>
+              <td>{truncate(stableItem.ownerId)}</td>
               <td>
                 <nav className="rw-table-actions">
                   <Link
