@@ -62,6 +62,7 @@ const Routes = () => {
         <Route path="/booking/{bookingCode}/edit" page={EditUserBookingPage} name="editUserBooking" />
         <Route path="/item/{id}" page={ItemPage} name="item" />
         <Route path="/me" page={MyPage} name="me" />
+        <Route path="/public-bookings" page={PublicBookingsPage} name="publicBookings" />
         <Route path="/public-booking/{bookingCode}" page={PublicBookingPage} name="publicBooking" />
         <Route path="/" page={HomePage} name="home" />
       </Set>

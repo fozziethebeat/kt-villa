@@ -4,6 +4,8 @@ import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
 import { Link, routes } from '@redwoodjs/router'
 
+import PublicBookingCard from 'src/components/PublicBookingCard'
+
 export const QUERY = gql`
   query PublicBookingsQuery {
     publicBookings {
@@ -12,6 +14,9 @@ export const QUERY = gql`
       startDate
       endDate
       numGuests
+      item {
+        image
+      }
     }
   }
 `
@@ -32,43 +37,10 @@ export const Success = ({
   publicBookings,
 }: CellSuccessProps<PublicBookingsQuery>) => {
   return (
-    <>
-      <div className="divider">Upcoming Trips</div>
-      <div className="flex flex-col gap-4">
-        {publicBookings.map((item) => (
-          <PublicBookingItem key={item.id} publicBooking={item} />
-        ))}
-      </div>
-    </>
-  )
-}
-
-const PublicBookingItem = ({ publicBooking }) => {
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="flex max-w-full justify-between ">
-        <div className="badge badge-ghost badge-lg">
-          {new Date(publicBooking.startDate).toLocaleDateString('en-CA')}
-        </div>
-        <div>→</div>
-        <div className="badge badge-ghost badge-lg">
-          {new Date(publicBooking.endDate).toLocaleDateString('en-CA')}
-        </div>
-      </div>
-      <div className="flex max-w-full justify-between ">
-        <div className="flex justify-between gap-2">
-          <div>Trip Size</div>
-          <div className="badge badge-accent badge-lg">
-            {publicBooking.numGuests}
-          </div>
-        </div>
-        <Link
-          to={routes.publicBooking({ bookingCode: publicBooking.bookingCode })}
-          className="link"
-        >
-          See Details
-        </Link>
-      </div>
+    <div className="flex flex-wrap justify-center gap-2">
+      {publicBookings.map((item) => (
+        <PublicBookingCard key={item.id} publicBooking={item} />
+      ))}
     </div>
   )
 }

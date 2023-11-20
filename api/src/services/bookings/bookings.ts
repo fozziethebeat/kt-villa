@@ -31,6 +31,9 @@ export const userBookings: QueryResolvers['userBookings'] = () => {
     where: {
       userId: context.currentUser.id,
     },
+    orderBy: {
+      startDate: 'asc',
+    },
   })
 }
 
@@ -40,17 +43,17 @@ export const userBooking: QueryResolvers['userBooking'] = ({ bookingCode }) => {
   })
 }
 
-export const publicBookings: QueryResolvers['publicBookings'] = () => {
+export const publicBookings: QueryResolvers['publicBookings'] = ({ limit }) => {
   return db.booking.findMany({
     where: {
-      numGuests: { lt: 4 },
+      numGuests: { lt: db.booking.fields.maxGuests },
       startDate: { gt: new Date() },
       userId: { not: context.currentUser?.id },
     },
     orderBy: {
       startDate: 'asc',
     },
-    take: 3,
+    take: limit,
   })
 }
 
@@ -77,6 +80,11 @@ export const memberBookings: QueryResolvers['memberBookings'] = () => {
   return db.memberBooking.findMany({
     where: {
       userId: context.currentUser.id,
+    },
+    orderBy: {
+      booking: {
+        startDate: 'asc',
+      },
     },
   })
 }

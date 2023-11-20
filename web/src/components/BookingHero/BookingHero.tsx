@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import { useAuth } from 'src/auth'
 import BookingDatePickerCell from 'src/components/BookingDatePickerCell'
-import PublicBookingsCell from 'src/components/PublicBookingsCell'
+import UpcomingTripsCell from 'src/components/UpcomingTripsCell'
 
 const CREATE_BOOKING_MUTATION = gql`
   mutation CreateBookingMutation($input: CreateBookingInput!) {
@@ -36,7 +36,7 @@ const BookingHero = () => {
           </p>
         </div>
         <div className="card h-96 w-[400px] flex-shrink-0 bg-base-100 p-4 shadow-2xl">
-          {canBook ? <TrustedUserContent /> : <PublicBookingsCell />}
+          {canBook ? <TrustedUserContent /> : <UpcomingTripsCell />}
         </div>
       </div>
     </div>
@@ -66,7 +66,7 @@ const TrustedUserContent = () => (
       aria-label="Join a trip"
     />
     <div role="tabpanel" className="tab-content">
-      <PublicBookingsCell />
+      <UpcomingTripsCell />
     </div>
   </div>
 )
