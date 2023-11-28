@@ -7,6 +7,7 @@ import {
   SelectField,
   Submit,
 } from '@redwoodjs/forms'
+import { Link, routes } from '@redwoodjs/router'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
@@ -129,10 +130,11 @@ const AdminBookingCard = ({ booking }) => {
             <option>rejected</option>
           </SelectField>
 
-          <div>
+          <div className="flex flex-row items-center justify-between">
             <Submit disabled={loading} className="btn btn-primary">
               Update Status
             </Submit>
+            <Link to={routes.editBookings({ id: booking.id })}>Edit</Link>
           </div>
         </Form>
       </div>

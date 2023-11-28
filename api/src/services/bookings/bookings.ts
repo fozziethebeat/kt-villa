@@ -26,6 +26,10 @@ export const adminBookings: QueryResolvers['adminBookings'] = () => {
   return db.booking.findMany()
 }
 
+export const adminBooking: QueryResolvers['adminBookings'] = ({ id }) => {
+  return db.booking.findUnique({ where: { id } })
+}
+
 export const userBookings: QueryResolvers['userBookings'] = () => {
   return db.booking.findMany({
     where: {

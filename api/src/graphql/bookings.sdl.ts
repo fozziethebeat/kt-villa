@@ -25,16 +25,23 @@ export const schema = gql`
     id: Int!
     startDate: DateTime!
     endDate: DateTime!
+    maxGuests: Int!
     numGuests: Int!
+    withCat: Boolean!
+    withDog: Boolean!
     status: String!
     bookingCode: String!
+    userId: Int
     user: User
     item: StableItem
+    member: [MemberBooking!]
   }
 
   type Query {
     # Fetch even more booking info for admins.
     adminBookings: [AdminBooking!]! @requireAuth(roles: ["admin"])
+    # Fetch even more booking info for admins.
+    adminBooking(id: Int!): AdminBooking! @requireAuth(roles: ["admin"])
     # Fetch all bookings.
     bookings: [Booking!]! @requireAuth
     # Fetch a specific booking.
