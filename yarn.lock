@@ -13375,7 +13375,7 @@ __metadata:
     prism-react-renderer: ^2.3.0
     react: ^18.0.0
     react-dom: ^18.0.0
-    typescript: ~5.2.2
+    typescript: 5.2.2
   languageName: unknown
   linkType: soft
 
@@ -27301,7 +27301,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.2.2, typescript@npm:~5.2.2":
+"typescript@npm:5.2.2":
   version: 5.2.2
   resolution: "typescript@npm:5.2.2"
   bin:
@@ -27311,7 +27311,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@5.2.2#~builtin<compat/typescript>, typescript@patch:typescript@~5.2.2#~builtin<compat/typescript>":
+"typescript@patch:typescript@5.2.2#~builtin<compat/typescript>":
   version: 5.2.2
   resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=85af82"
   bin:
