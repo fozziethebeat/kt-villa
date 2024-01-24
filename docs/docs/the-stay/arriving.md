@@ -8,13 +8,15 @@ Once you arrive, you'll need to get the keys and warm up the house
 
 ## The Keys and Doors
 
-On the primary front facing door, there is a big wood shelf ontop of the
-stairs.  Attached to the shelf is a keylock box.  Enter the code (given by
+On the primary front facing door, there is a big wood shelf on top of the
+stairs.  Attached to the shelf is a key lock box.  Enter the code (given by
 Keith) and you'll find two sets of door keys.  That gets you inside.
 
 Additionally, in the garage there is a garage door opener.  This is found
-nearly the door itself ontop of a breadbox.  You can use this to enter in and
+nearly the door itself on top of a breadbox.  You can use this to enter in and
 out of the garage.
+
+![The garage opener](/img/IMG_4008.png)
 
 ## Warming up the house
 

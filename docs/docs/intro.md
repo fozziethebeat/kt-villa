@@ -10,6 +10,6 @@ This little docs site tries to cover everything you need to know about staying a
 
 * [Finding the house](/docs/the-stay/finding-the-house)
 * [Arriving at the house](/docs/the-stay/arriving)
-* Getting familiar with the rooms
-* Enjoying the amenities
-* Wrapping up your stay
+* [Getting familiar with the rooms](/docs/the-stay/rooms#the-rooms)
+* [Enjoying the amenities](/docs/the-stay/rooms#the-amenities)
+* [Wrapping up your stay](/docs/the-stay/departing)
