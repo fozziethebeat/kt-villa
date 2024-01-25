@@ -5,7 +5,7 @@ import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import { Link, routes } from '@redwoodjs/router'
 
 export const QUERY = gql`
-  query PublicBookingsQuery {
+  query UpcomingTripsQuery {
     publicBookings(limit: 3) {
       id
       bookingCode

@@ -48,6 +48,14 @@ const MUTATION = gql`
   }
 `
 
+const DELETE = gql`
+  mutation DeleteAdminBooking($id: Int!) {
+    deleteBooking(id: $id) {
+      id
+    }
+  }
+`
+
 export const Loading = () => <div>Loading...</div>
 
 export const Empty = () => <div>Empty</div>
@@ -66,6 +74,19 @@ export const Success = ({
       navigate(routes.adminReviewBookings())
     },
   })
+  const [deleteBooking, { loading: loadingDelete }] = useMutation(DELETE, {
+    onCompleted: () => {
+      navigate(routes.adminReviewBookings())
+    },
+  })
+
+  const onDelete = () => {
+    deleteBooking({
+      variables: {
+        id: adminBooking.id,
+      },
+    })
+  }
 
   const onSubmit = (data) => {
     updateBooking({
@@ -194,6 +215,9 @@ export const Success = ({
               <Submit className="btn btn-primary btn-sm">Update</Submit>
             </div>
           </Form>
+          <button onClick={onDelete} className="btn btn-warning btn-sm">
+            delete
+          </button>
         </div>
       </div>
     </div>

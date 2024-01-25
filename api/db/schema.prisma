@@ -52,7 +52,7 @@ model MemberBooking {
   id     Int    @id @default(autoincrement())
   status String
 
-  booking   Booking @relation(fields: [bookingId], references: [id])
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
   bookingId Int
 
   user   User @relation(fields: [userId], references: [id])
