@@ -222,6 +222,7 @@ const MemberRegisterAction = ({ booking }) => {
         </label>
       </div>
       <Submit disabled={loading} className="btn btn-primary">
+        {loading && <span className="loading loading-spinner"></span>}
         Register
       </Submit>
     </Form>

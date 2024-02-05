@@ -14,14 +14,6 @@ const openai = new OpenAI({
 const itemIdGenerator = new ShortUniqueId({ length: 6 })
 const itemCodeGenerator = new ShortUniqueId({ dictionary: 'number', length: 6 })
 
-const CHARACTER_INSTRUCTION = 'Write a chatbot character profile for this image'
-
-const PROMPT_STARTS = ['a city made of floating airships']
-
-const PROMPT = `cyberpunk solarpunk by moebius, masterpiece, best quality, intricate, highly detailed:1.1, drawing, Jean Giraud`
-const NEGATIVE_PROMPT =
-  '(unnatural hands:1.5), extra fingers, fewer digits, (mutated hands and fingers:1.5), blurry, (dark, shadows, darkness), (deformed face:1.4), (ugly), lowres, ((bad anatomy )), anime, manga, (poorly drawn face), ((mutation)), ((bad proportions)), ((extra limbs)), cropped, ((jpeg artifacts)), out of frame, duplicated artefact, cropped image, deformed, signatures, cut-off, over- saturated, grain, poorly drawn face, out of focus, mutilated, mangled, morbid, gross proportions, watermark, heterochromia, canvas frame, ((disfigured)), ((bad art))'
-
 const generateBookingItem = async (bookingId: string) => {
   const booking = await db.booking.findUnique({ where: { id: bookingId } })
   if (!booking) {
@@ -48,15 +40,32 @@ const generateBookingItem = async (bookingId: string) => {
 }
 
 const generateItemCharacter = async (image) => {
-  const request = {
-    image,
-    instruction: CHARACTER_INSTRUCTION,
-  }
-  const { data } = await axios.post(
-    `${process.env.IMAGE_API_URL}/sdxl/generate-profile`,
-    request
-  )
-  return data.profile
+  const result = await openai.chat.completions.create({
+    model: 'liuhaotian/llava-v1.6-vicuna-7b',
+    max_tokens: 512,
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a creative AI writing assistant',
+      },
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'image_url',
+            image_url: {
+              url: image,
+            },
+          },
+          {
+            type: 'text',
+            text: 'Invent a unique and interesting character profile based on the image.',
+          },
+        ],
+      },
+    ],
+  })
+  return result.choices[0].message.content
 }
 
 const generateItem = async (userId, startDate) => {

@@ -100,6 +100,7 @@ const StableItemProfile = ({ stableItem }) => {
     return (
       <Form onSubmit={onSubmit} error={error} className="flex flex-col gap-2">
         <Submit disabled={loading} className="btn btn-primary">
+          {loading && <span className="loading loading-spinner"></span>}
           Create Character
         </Submit>
       </Form>

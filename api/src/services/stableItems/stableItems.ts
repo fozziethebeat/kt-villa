@@ -100,7 +100,7 @@ export const stableItemChatBasic: MutationResolvers['stableItemChatBasic'] =
       })),
     ]
     const stream = await openai.chat.completions.create({
-      model: 'HuggingFaceH4/zephyr-7b-alpha',
+      model: 'liuhaotian/llava-v1.6-vicuna-7b',
       messages,
       stream: true,
     })
