@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# Rooms and Ameneties
+# Rooms and Amenities
 
 The house has rooms! and things! You can use the rooms and the things.  Please
 treat them with the campfire rule, leave things better than you found them.
