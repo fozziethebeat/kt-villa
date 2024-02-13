@@ -47,9 +47,21 @@ export const Success = ({
   console.log(stableItem.image)
   return (
     <>
-      <head>
+      <MetaTags
+        title="Stable Item"
+        description="Item page for a KT Villa booking"
+        robots="noindex,nofollow"
+        twitter={{
+          card: 'summary',
+          site: '@ktvilla',
+          creator: '@fozziethebeat',
+        }}
+      >
+        <meta httpEquiv="content-type" content="text/html; charset=UTF-8" />
         <meta property="og:image" content={stableItem.image} />
-      </head>
+        <meta property="twitter:image" content={stableItem.image} />
+      </MetaTags>
+
       <div className="min-h-screen w-full bg-neutral-200">
         <div className="hero-content flex-col items-start lg:flex-row">
           <figure className="h-[512px]  w-[512px]">
