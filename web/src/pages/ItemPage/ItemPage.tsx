@@ -13,7 +13,6 @@ const ItemPage = ({ id }: ItemPageProps) => {
       <Metadata
         title="Stable Item"
         description="Item page for a KT Villa booking"
-        robots="noindex,nofollow"
       >
         <meta httpEquiv="content-type" content="text/html; charset=UTF-8" />
       </Metadata>
