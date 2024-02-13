@@ -44,13 +44,12 @@ export const Failure = ({
 export const Success = ({
   stableItem,
 }: CellSuccessProps<FindStableItemQuery, FindStableItemQueryVariables>) => {
+  console.log(stableItem.image)
   return (
     <>
-      <MetaTags
-        og={{
-          image: stableItem.image,
-        }}
-      />
+      <head>
+        <meta property="og:image" content={stableItem.image} />
+      </head>
       <div className="min-h-screen w-full bg-neutral-200">
         <div className="hero-content flex-col items-start lg:flex-row">
           <figure className="h-[512px]  w-[512px]">

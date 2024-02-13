@@ -14,6 +14,9 @@ const ItemPage = ({ id }: ItemPageProps) => {
         title="Stable Item"
         description="Item page for a KT Villa booking"
         robots="noindex,nofollow"
+        og={{
+          image: '',
+        }}
         twitter={{
           card: 'summary',
           site: '@ktvilla',
