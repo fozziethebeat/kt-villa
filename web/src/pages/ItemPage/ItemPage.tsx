@@ -1,5 +1,5 @@
 import { Link, routes } from '@redwoodjs/router'
-import { MetaTags } from '@redwoodjs/web'
+import { Metadata, MetaTags } from '@redwoodjs/web'
 
 import StableItemCell from 'src/components/StableItemCell'
 
@@ -10,13 +10,13 @@ type ItemPageProps = {
 const ItemPage = ({ id }: ItemPageProps) => {
   return (
     <>
-      <MetaTags
+      <Metadata
         title="Stable Item"
         description="Item page for a KT Villa booking"
         robots="noindex,nofollow"
       >
         <meta httpEquiv="content-type" content="text/html; charset=UTF-8" />
-      </MetaTags>
+      </Metadata>
 
       <StableItemCell id={id} />
     </>

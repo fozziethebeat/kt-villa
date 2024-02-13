@@ -5,7 +5,7 @@ import type {
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
 import { Form, Submit } from '@redwoodjs/forms'
-import { useMutation, MetaTags } from '@redwoodjs/web'
+import { useMutation, Metadata, MetaTags } from '@redwoodjs/web'
 
 import ClaimForm from 'src/components/ClaimForm'
 import StableItemChat from 'src/components/StableItemChat'
@@ -46,15 +46,9 @@ export const Success = ({
 }: CellSuccessProps<FindStableItemQuery, FindStableItemQueryVariables>) => {
   return (
     <>
-      <MetaTags
-        title="Stable Item"
-        description="Item page for a KT Villa booking"
-        tag="og:image"
-        ogContentUrl={stableItem.image}
-        robots="noindex,nofollow"
-      >
-        <meta httpEquiv="content-type" content="text/html; charset=UTF-8" />
-      </MetaTags>
+      <Metadata
+        og={{ image: stableItem.image, url: 'https://www.kt-villa.com' }}
+      />
 
       <div className="min-h-screen w-full bg-neutral-200">
         <div className="hero-content flex-col items-start lg:flex-row">
