@@ -44,22 +44,16 @@ export const Failure = ({
 export const Success = ({
   stableItem,
 }: CellSuccessProps<FindStableItemQuery, FindStableItemQueryVariables>) => {
-  console.log(stableItem.image)
   return (
     <>
       <MetaTags
         title="Stable Item"
         description="Item page for a KT Villa booking"
+        tag="og:image"
+        ogContentUrl={stableItem.image}
         robots="noindex,nofollow"
-        twitter={{
-          card: 'summary',
-          site: '@ktvilla',
-          creator: '@fozziethebeat',
-        }}
       >
         <meta httpEquiv="content-type" content="text/html; charset=UTF-8" />
-        <meta property="og:image" content={stableItem.image} />
-        <meta property="twitter:image" content={stableItem.image} />
       </MetaTags>
 
       <div className="min-h-screen w-full bg-neutral-200">
