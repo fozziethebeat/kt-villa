@@ -10,7 +10,19 @@ type ItemPageProps = {
 const ItemPage = ({ id }: ItemPageProps) => {
   return (
     <>
-      <MetaTags title="Item" description="Item page" />
+      <MetaTags
+        title="Stable Item"
+        description="Item page for a KT Villa booking"
+        robots="noindex,nofollow"
+        twitter={{
+          card: 'summary',
+          site: '@ktvilla',
+          creator: '@fozziethebeat',
+        }}
+      >
+        <meta httpEquiv="content-type" content="text/html; charset=UTF-8" />
+      </MetaTags>
+
       <StableItemCell id={id} />
     </>
   )

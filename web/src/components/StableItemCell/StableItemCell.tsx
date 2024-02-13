@@ -5,7 +5,7 @@ import type {
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
 import { Form, Submit } from '@redwoodjs/forms'
-import { useMutation } from '@redwoodjs/web'
+import { useMutation, MetaTags } from '@redwoodjs/web'
 
 import ClaimForm from 'src/components/ClaimForm'
 import StableItemChat from 'src/components/StableItemChat'
@@ -45,37 +45,44 @@ export const Success = ({
   stableItem,
 }: CellSuccessProps<FindStableItemQuery, FindStableItemQueryVariables>) => {
   return (
-    <div className="min-h-screen w-full bg-neutral-200">
-      <div className="hero-content flex-col items-start lg:flex-row">
-        <figure className="h-[512px]  w-[512px]">
-          <img src={stableItem.image} />
-        </figure>
-        <div className="flex flex-col gap-2">
-          <h2 className="text-4xl font-bold">Item Code: {stableItem.id}</h2>
-          <div className="flex justify-between gap-2">
-            <div>Owner</div>
-            <div className="badge badge-neutral badge-lg">
-              {stableItem.ownerUsername}
+    <>
+      <MetaTags
+        og={{
+          image: stableItem.image,
+        }}
+      />
+      <div className="min-h-screen w-full bg-neutral-200">
+        <div className="hero-content flex-col items-start lg:flex-row">
+          <figure className="h-[512px]  w-[512px]">
+            <img src={stableItem.image} />
+          </figure>
+          <div className="flex flex-col gap-2">
+            <h2 className="text-4xl font-bold">Item Code: {stableItem.id}</h2>
+            <div className="flex justify-between gap-2">
+              <div>Owner</div>
+              <div className="badge badge-neutral badge-lg">
+                {stableItem.ownerUsername}
+              </div>
             </div>
-          </div>
 
-          <div className="flex justify-between gap-2">
-            <div>Claimed</div>
-            <div className="badge badge-primary badge-lg">
-              {stableItem.claimStatus}
+            <div className="flex justify-between gap-2">
+              <div>Claimed</div>
+              <div className="badge badge-primary badge-lg">
+                {stableItem.claimStatus}
+              </div>
             </div>
-          </div>
 
-          <StableItemProfile stableItem={stableItem} />
+            <StableItemProfile stableItem={stableItem} />
+          </div>
+        </div>
+        <StableItemChat stableItem={stableItem} />
+        <div>
+          {stableItem.claimStatus === 'unclaimed' && (
+            <ClaimForm item={stableItem} />
+          )}
         </div>
       </div>
-      <StableItemChat stableItem={stableItem} />
-      <div>
-        {stableItem.claimStatus === 'unclaimed' && (
-          <ClaimForm item={stableItem} />
-        )}
-      </div>
-    </div>
+    </>
   )
 }
 
