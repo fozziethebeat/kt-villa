@@ -22597,18 +22597,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:0.0.0-experimental-e5205658f-20230913":
-  version: 0.0.0-experimental-e5205658f-20230913
-  resolution: "react-dom@npm:0.0.0-experimental-e5205658f-20230913"
-  dependencies:
-    loose-envify: ^1.1.0
-    scheduler: 0.0.0-experimental-e5205658f-20230913
-  peerDependencies:
-    react: 0.0.0-experimental-e5205658f-20230913
-  checksum: b8e0e0edf05161a39cd8495ac11dbebccda0e69245d1f33d07697122e65649a1f0539ff8ad7277d833aabc9cbee8da9d80de14d0766262412da5bf824d5eb823
-  languageName: node
-  linkType: hard
-
 "react-dom@npm:18.2.0, react-dom@npm:^18.0.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
@@ -22915,15 +22903,6 @@ __metadata:
     react: ">=0.14"
     react-with-direction: ^1.3.1
   checksum: 401dd2d36f1597d07ca3bbf41548e6e93b0618e38f84121e5d5a7d6a522426ba9c4422d8fcf6a200653ecc173e6fab921e97b2debc1d119754ebe5eab40b47ce
-  languageName: node
-  linkType: hard
-
-"react@npm:0.0.0-experimental-e5205658f-20230913":
-  version: 0.0.0-experimental-e5205658f-20230913
-  resolution: "react@npm:0.0.0-experimental-e5205658f-20230913"
-  dependencies:
-    loose-envify: ^1.1.0
-  checksum: 69f384cd192d6fc83bd77457b539c171cd89b44fd105c67c77a2c57b237c1068c598470ddf524084bdb7d9b0bc16362918493dbc3fbcb909af8edd92c6be9759
   languageName: node
   linkType: hard
 
@@ -23884,15 +23863,6 @@ __metadata:
   dependencies:
     xmlchars: ^2.2.0
   checksum: 3847b839f060ef3476eb8623d099aa502ad658f5c40fd60c105ebce86d244389b0d76fcae30f4d0c728d7705ceb2f7e9b34bb54717b6a7dbedaf5dad2d9a4b74
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:0.0.0-experimental-e5205658f-20230913":
-  version: 0.0.0-experimental-e5205658f-20230913
-  resolution: "scheduler@npm:0.0.0-experimental-e5205658f-20230913"
-  dependencies:
-    loose-envify: ^1.1.0
-  checksum: 20475be7524bb89002818cfc0f54af122c0e2c07c07ddb92275e10c0e8d1a51a9c7ca3b4b95e9b27017da4e22f1510c478afe08becc1073decfd03ae5823f452
   languageName: node
   linkType: hard
 
@@ -26842,10 +26812,10 @@ __metadata:
     postcss: ^8.4.31
     postcss-loader: ^7.3.3
     prop-types: 15.8.1
-    react: 0.0.0-experimental-e5205658f-20230913
+    react: 18.2.0
     react-datepicker: ^4.19.0
     react-dates: ^21.8.0
-    react-dom: 0.0.0-experimental-e5205658f-20230913
+    react-dom: 18.2.0
     react-icons: ^4.12.0
     tailwindcss: ^3.3.3
     theme-change: ^2.5.0
