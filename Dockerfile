@@ -1,7 +1,7 @@
 FROM node:20-alpine as base
 
 # Fix a prisma bug
-RUN apk add --update --no-cache openssl1.1-compat
+# RUN apk add --update --no-cache openssl1.1-compat
 
 WORKDIR /app
 
@@ -21,6 +21,7 @@ COPY graphql.config.js graphql.config.js
 RUN yarn install
 COPY api api 
 COPY web web
+COPY .env .env
 RUN yarn rw build
 
 EXPOSE 8910
