@@ -1,8 +1,17 @@
 export const schema = gql`
+  type Character {
+    name: String
+    hobbies: String
+    background: String
+    personality: String
+    favorite_pun: String
+  }
+
   type StableItem {
     id: String!
     image: String!
     text: String
+    character: Character
     claimCode: String
     claimStatus: String!
     claimVisible: Boolean!

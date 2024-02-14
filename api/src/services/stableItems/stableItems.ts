@@ -69,8 +69,8 @@ export const createItemCharacter: MutationResolvers['createItemCharacter'] =
     if (stableItem.ownerId !== context.currentUser.id) {
       throw new Error('Not Authorized')
     }
-    const text = await generateItemCharacter(stableItem.image)
-    return db.stableItem.update({ where: { id }, data: { text } })
+    const character = await generateItemCharacter(stableItem.image)
+    return db.stableItem.update({ where: { id }, data: { character } })
   }
 
 interface ChatContext extends RedwoodGraphQLContext {

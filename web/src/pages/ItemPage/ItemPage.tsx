@@ -11,8 +11,8 @@ const ItemPage = ({ id }: ItemPageProps) => {
   return (
     <>
       <Metadata
-        title="Stable Item"
-        description="Item page for a KT Villa booking"
+        title="KT Villa booking item"
+        description="KT Villa booking item"
       >
         <meta httpEquiv="content-type" content="text/html; charset=UTF-8" />
       </Metadata>

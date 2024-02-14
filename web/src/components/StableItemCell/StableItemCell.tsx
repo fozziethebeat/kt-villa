@@ -16,6 +16,13 @@ export const QUERY = gql`
       id
       image
       text
+      character {
+        name
+        personality
+        background
+        hobbies
+        favorite_pun
+      }
       claimStatus
       claimVisible
       ownerUsername
@@ -47,6 +54,10 @@ export const Success = ({
   return (
     <>
       <Metadata
+        title={stableItem.character?.name || 'KT Villa booking Item'}
+        description={
+          stableItem.character?.favorite_pun || 'KT Villa booking item'
+        }
         og={{ image: stableItem.image, url: 'https://www.kt-villa.com' }}
       />
 
@@ -102,7 +113,7 @@ const StableItemProfile = ({ stableItem }) => {
     return <></>
   }
 
-  if (!stableItem.text) {
+  if (!stableItem.character) {
     return (
       <Form onSubmit={onSubmit} error={error} className="flex flex-col gap-2">
         <Submit disabled={loading} className="btn btn-primary">
@@ -114,9 +125,27 @@ const StableItemProfile = ({ stableItem }) => {
   }
 
   return (
-    <div className="flex justify-between gap-2">
-      <div>Character</div>
-      <div className="w-96 text-sm">{stableItem.text}</div>
-    </div>
+    <>
+      <div className="flex justify-between gap-2">
+        <div>Name</div>
+        <div className="text">{stableItem.character.name}</div>
+      </div>
+      <div className="flex justify-between gap-2">
+        <div>Personality</div>
+        <div className="w-96 text-sm">{stableItem.character.personality}</div>
+      </div>
+      <div className="flex justify-between gap-2">
+        <div>Hobbies</div>
+        <div className="w-96 text-sm">{stableItem.character.hobbies}</div>
+      </div>
+      <div className="flex justify-between gap-2">
+        <div>Background</div>
+        <div className="w-96 text-sm">{stableItem.character.background}</div>
+      </div>
+      <div className="flex justify-between gap-2">
+        <div>Favorite Pun</div>
+        <div className="w-96 text-sm">{stableItem.character.favorite_pun}</div>
+      </div>
+    </>
   )
 }

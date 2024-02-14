@@ -40,6 +40,7 @@ const generateBookingItem = async (bookingId: string) => {
 }
 
 const generateItemCharacter = async (image) => {
+  /*
   const result = await openai.chat.completions.create({
     model: 'liuhaotian/llava-v1.6-vicuna-7b',
     max_tokens: 512,
@@ -66,6 +67,28 @@ const generateItemCharacter = async (image) => {
     ],
   })
   return result.choices[0].message.content
+  */
+  const request = {
+    text: 'You are a creative AI writing assistant.  USER: <image> The image is about a unique and interesting character.  Fill in the following JSON about the character\n',
+    image_data: image,
+    sampling_params: {
+      skip_special_tokens: true,
+      max_new_tokens: 256,
+      temperature: 1.0,
+      top_p: 1.0,
+      top_k: -1,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0,
+      ignore_eos: false,
+      regex:
+        '\\{\\n "name": "[\\w\\d\\s]{8,24}",\\n "hobbies": "[\\w\\d\\s,]{24,48}",\\n "background": "[\\w\\d\\s]{48,128}\\.",\\n "personality": "[\\w\\d\\s]{48,128}\\.",\\n "favorite_pun": "[\\w\\d\\s]{48,128}\\."\\n \\}',
+    },
+  }
+  const { data } = await axios.post(
+    `${process.env.LLM_API_URL}/generate`,
+    request
+  )
+  return JSON.parse(data.text)
 }
 
 const generateItem = async (userId, startDate) => {

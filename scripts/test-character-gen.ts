@@ -1,5 +1,5 @@
-// To access your database
-// Append api/* to import from api and web/* to import from web
+import axios from 'axios'
+
 import { db } from 'api/src/lib/db'
 
 import OpenAI from 'openai'
@@ -9,31 +9,28 @@ const openai = new OpenAI({
 })
 
 export default async ({ args }) => {
-  // Your script here...
-  const result = await openai.chat.completions.create({
-    model: 'liuhaotian/llava-v1.6-vicuna-7b',
-    max_tokens: 512,
-    messages: [
-      {
-        role: 'system',
-        content: 'You are a creative AI writing assistant',
-      },
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'image_url',
-            image_url: {
-              url: 'https://flowerfruits.mtn.surfacedata.org/results/GGLsF4_full.png',
-            },
-          },
-          {
-            type: 'text',
-            text: 'Invent a unique and interesting character profile based on the image.',
-          },
-        ],
-      },
-    ],
-  })
-  console.log(result.choices[0].message.content)
+  const request = {
+    text: 'You are a creative AI writing assistant.  USER: <image> The image is about a unique and interesting character.  Fill in the following JSON about the character\n',
+    image_data:
+      'https://flowerfruits.mtn.surfacedata.org/results/GGLsF4_full.png',
+    sampling_params: {
+      skip_special_tokens: true,
+      max_new_tokens: 256,
+      temperature: 1.0,
+      top_p: 1.0,
+      top_k: -1,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.0,
+      ignore_eos: false,
+      regex:
+        '\\{\\n "name": "[\\w\\d\\s]{8,24}",\\n "hobbies": "[\\w\\d\\s,]{24,48}",\\n "background": "[\\w\\d\\s]{48,128}\\.",\\n "personality": "[\\w\\d\\s]{48,128}\\.",\\n "favorite_pun": "[\\w\\d\\s]{48,128}\\."\\n \\}',
+    },
+  }
+  const { data } = await axios.post(
+    `${process.env.LLM_API_URL}/generate`,
+    request
+  )
+  console.log(data.text)
+  const character = JSON.parse(data.text)
+  console.log(character)
 }
