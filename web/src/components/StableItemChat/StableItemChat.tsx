@@ -90,7 +90,7 @@ const StableItemChat = ({ stableItem }) => {
     return <></>
   }
 
-  if (!stableItem.text) {
+  if (!stableItem.character) {
     return <></>
   }
   return (
@@ -133,7 +133,7 @@ const ChatMessageAssistant = ({ message }) => {
   return (
     <div className="chat chat-start">
       <div className="avatar placeholder">
-        <div className="w-8 rounded-full bg-neutral-focus text-neutral-content">
+        <div className="bg-neutral-focus w-8 rounded-full text-neutral-content">
           <span className="text-xs">bot</span>
         </div>
       </div>
@@ -147,7 +147,7 @@ const ChatMessageUser = ({ message }) => {
     <div className="chat chat-end">
       <div className="chat-bubble">{message.text}</div>
       <div className="avatar placeholder">
-        <div className="w-8 rounded-full bg-neutral-focus text-neutral-content">
+        <div className="bg-neutral-focus w-8 rounded-full text-neutral-content">
           <span className="text-xs">you</span>
         </div>
       </div>

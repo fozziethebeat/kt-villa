@@ -8,6 +8,7 @@ import services from 'src/services/**/*.{js,ts}'
 import { getCurrentUser } from 'src/lib/auth'
 import { db } from 'src/lib/db'
 import { logger } from 'src/lib/logger'
+import { realtime } from 'src/lib/realtime'
 
 export const handler = createGraphQLHandler({
   authDecoder,
@@ -20,4 +21,7 @@ export const handler = createGraphQLHandler({
     // Disconnect from your database with an unhandled exception.
     db.$disconnect()
   },
+  allowIntrospection: true,
+  allowGraphiQL: true,
+  realtime,
 })

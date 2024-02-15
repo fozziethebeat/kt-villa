@@ -82,17 +82,17 @@ export const stableItemChatBasic: MutationResolvers['stableItemChatBasic'] =
     const stableItem = await db.stableItem.findUnique({
       where: { id: input.id },
     })
-    if (!stableItem || !stableItem.text) {
+    if (!stableItem || !stableItem.character) {
       throw new Error('Not ready for chatting')
     }
     if (stableItem.ownerId !== context.currentUser.id) {
       throw new Error('Not authorized for chatting')
     }
-    const profile = stableItem.text
+    const { character, image } = stableItem
     const messages = [
       {
         role: 'system',
-        content: `You are a friendly chatbot who always responds in a style following this character profile: ${profile}`,
+        content: `You are a AI friendly chatbot.  You concisely answer user questions using the following characteristics.  Your name is ${character.name}.  Your hobbies are ${character.hobbies}.  Your favorite pun is ${character.favorite_pun}.  Your background is ${character.background}.  Your personality traits are ${character.personality}.`,
       },
       ...input.messages.map(({ role, text }) => ({
         role,
@@ -103,6 +103,7 @@ export const stableItemChatBasic: MutationResolvers['stableItemChatBasic'] =
       model: 'liuhaotian/llava-v1.6-vicuna-7b',
       messages,
       stream: true,
+      max_tokens: 128,
     })
     const response = {
       id: uuid(),
@@ -111,6 +112,7 @@ export const stableItemChatBasic: MutationResolvers['stableItemChatBasic'] =
     }
     for await (const chunk of stream) {
       const { content } = chunk.choices[0].delta
+      console.log(content)
       response.text += content ?? ''
       context.pubSub.publish('stableItemMessage', input.id, response)
     }
