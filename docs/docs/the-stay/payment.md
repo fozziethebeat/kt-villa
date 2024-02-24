@@ -26,3 +26,6 @@ Bank Name: 八十二（はちじゅうに）<br/>
 Branch Name: 白馬（はくば） <br/>
 Account Type: 普通 <br/>
 Account Number: 00211576
+
+With the account number, remove any leading zeros as needed per your bank
+account.  Prestia likes this number of digits for some reason.

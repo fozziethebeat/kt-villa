@@ -49,12 +49,14 @@ what Google maps always recommends
 
 ## By Car
 
-I've found two good routes to Hakuba via car.  Both are good and give you different views and unique service area stops.  You can either go through Nagano city or Matsumoto city and then take local roads to Hakuba.
+I've found two good routes to Hakuba via car.  Both are good and give you
+different views and unique service area stops.  You can either go through
+Nagano city or Matsumoto city and then take local roads to Hakuba.
 
 ### Via Nagano
 
 This route usually avoids traffic as you cut up north and then head west.  One
-part to prepare for is a 210 toll road that doesn't take ETC, so have cash or
+part to prepare for is a 210円 toll road that doesn't take ETC, so have cash or
 coins handy.  As for stops, Yokogawa is nice.
 
 <iframe

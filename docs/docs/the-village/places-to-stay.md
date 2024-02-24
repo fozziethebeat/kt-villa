@@ -25,7 +25,3 @@ There's pensions and small lodges literally everywhere.  Some prime spots are:
    pending your food needs.
 1. Goryu Area, you probably need a car as you're ontop of a bit of a hill and
    not much services around beyond Goryu Escal Plaza.
-
-
-
-

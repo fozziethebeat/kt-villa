@@ -22,3 +22,6 @@ referrerpolicy="no-referrer-when-downgrade"></iframe>
 Also, here's a photo of what the front looks like with snow:
 
 ![The House](/img/IMG_1472.png)
+
+If you're arriving in the green season, let the imagination run wild with how
+it looks without snow.

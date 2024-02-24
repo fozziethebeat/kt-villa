@@ -4,7 +4,8 @@ sidebar_position: 2
 
 # Important Services
 
-In Hakuba, you'll probably want to know where a few key services are.  Here's a few of them.
+In Hakuba, you'll probably want to know where a few key services are.  Here's a
+few of them.
 
 ## Car Rental
 

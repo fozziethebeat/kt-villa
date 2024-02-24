@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Rooms and Amenities
 
-The house has rooms! and things! You can use the rooms and the things.  Please
+The house has rooms! And things! You can use the rooms and the things.  Please
 treat them with the campfire rule, leave things better than you found them.
 
 ## The Rooms
@@ -16,7 +16,10 @@ We have a total of three bedrooms:
 
 :::danger[Don't lock bedroom doors]
 
-We lost the keys to the bedrooms.  So don't lock them otherwise someone might need to pick the lock or drill the lock and crack it.  We'll be fixing this soon-ish.
+We lost the keys to the bedrooms.  So don't lock them otherwise someone might
+need to pick the lock or drill the lock and crack it.  We'll be fixing this
+soon-ish.
+
 :::
 
 ### Tatami Room
@@ -32,7 +35,7 @@ desk for use.
 ### The Office Room
 
 This is the second room for guests.  It has two standing desks, a spare
-bathroom, and a sofa bed.  There's also a big closet you can use and bedding.
+bathroom, and a sofa bed.  There's also a big closet you can use.
 
 ### Keith and Tianyi's Room
 
@@ -47,7 +50,7 @@ staying here.
 ![The wash room ](/img/IMG_4017.png)
 
 The primary wash room is on the first floor near the washing machine.  Please
-use as needed to keep yourselve clean.
+use as needed to keep yourselves clean.
 
 ![The shelving](/img/IMG_4018.png)
 
@@ -66,6 +69,14 @@ Lastly, the primary toilet room is right next to the shower room.
 The most important are of course the kitchen.  Please use as desired and put
 all dishware back where they are found.
 
+:::danger[Counters are not choping blocks]
+
+Don't cut things directly on the kitchen counters.  They look like chopping
+blocks but actually aren't.
+
+:::
+
+
 ![The Espresso Machine](/img/IMG_4004.png)
 
 And please use the espresso machine with any beans you've brought.  Youtube has
@@ -80,11 +91,12 @@ in to watch a movie or two.
 ![The driveway](/img/IMG_4011.png)
 
 And of course we have a driveweay.  Don't park too close to the garage door
-since snow falls off the roof.  You don't want that on your roof.  Generally
+since snow falls off the roof.  You don't want that on your vehicle.  Generally
 the safe place is behind the line created by the metal stairs.  This generally
 gets you two cars.
 
-Lastly, you may need to clean the yard if snow is heavy.  We have a small snow blower in front of the garage.  The key is near the garage door opener. 
+Lastly, you may need to clean the yard if snow is heavy.  We have a small snow
+blower in front of the garage.  The key is near the garage door opener. 
 
 ![The cleaning machine](/img/IMG_4010.png)
 

@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Arriving
 
-Once you arrive, you'll need to get the keys and warm up the house
+Once you arrive, you'll need to get the keys and warm up the house.
 
 ## The Keys and Doors
 
@@ -12,27 +12,27 @@ On the primary front facing door, there is a big wood shelf on top of the
 stairs.  Attached to the shelf is a key lock box.  Enter the code (given by
 Keith) and you'll find two sets of door keys.  That gets you inside.
 
-Additionally, in the garage there is a garage door opener.  This is found
-nearly the door itself on top of a breadbox.  You can use this to enter in and
-out of the garage.
+Additionally, in the garage there will be a garage door opener.  This is found
+near the door itself on top of a tiny breadbox.  You can use this to enter in
+through the garage.
 
 ![The garage opener](/img/IMG_4008.png)
 
 ## Warming up the house
 
-By default when no one is out of the house for a few days, we turn off a few
+By default when no one is in the house for a few days, we turn off a few
 things:
 
 * The heater
 * The water heater
 * The water pump
 
-You'll need to turn these on and wait a bit to prepare the house.
+You'll need to turn these on and wait a bit to get cozy in the house.
 
 ![The heating system](/img/IMG_3998.png)
 
-This is the basic heating system.  Turn on all three buttons to run activate
-the gas heating.  You can leave the temperature setting where it is.  In fact,
+This is the basic heating system.  Turn on all three buttons to activate the
+gas heating.  You can leave the temperature setting where it is.  In fact,
 don't change it.
 
 :::danger[Take care]
@@ -46,8 +46,8 @@ heat the house.  Those look like:
 
 ![A heater](/img/IMG_4005.png)
 
-The primary room heater are these ancient looking brown boxes.  Turn on each
-fan strength and heat level independently.  
+The primary room heaters are these ancient looking brown boxes.  On each box,
+set the fan strength and heat level independently.
 
 ![The water pump](/img/IMG_4001.png)
 
@@ -57,4 +57,4 @@ turn it on.
 ![The water heater](/img/IMG_4003.png)
 
 Finally, this is the water heater so you can enjoy warm showers.  You'll want
-this to be on.  its a standard Japanese water heating system.
+this to be on.  It is a standard Japanese water heating system.
