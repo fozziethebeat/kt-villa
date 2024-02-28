@@ -101,6 +101,9 @@ export const Booking = ({ futureBookings, startDate, endDate, onChange }) => {
         return true
       }
     }
+    if (end < excludedIntervals[excludedIntervals.length - 1].start) {
+      return true
+    }
     return excludedIntervals[excludedIntervals.length - 1].end < start
   }
 

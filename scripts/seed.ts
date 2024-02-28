@@ -98,8 +98,8 @@ async function devSeed() {
         },
       },
       {
-        startDate: '2023-11-17T08:00:00.000+09:00',
-        endDate: '2023-11-24T20:00:00.000+09:00',
+        startDate: '2024-03-07T08:00:00.000+09:00',
+        endDate: '2024-03-11T20:00:00.000+09:00',
         numGuests: 1,
         userId: 1,
         userItemId: 'znGNt5S7QN',
