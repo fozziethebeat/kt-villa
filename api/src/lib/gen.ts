@@ -168,6 +168,8 @@ const generateImageFromAdapter = async (
       n: 1,
     }
     const response = await openai.images.generate(request)
+    return { image: response.data[0].url, request }
+    /*
     // Save the image to AWS S3
     const bucketName = process.env.AWS_BUCKET
     const imageUrl = response.data[0].url
@@ -175,6 +177,7 @@ const generateImageFromAdapter = async (
     const image = await uploadImageToS3(bucketName, imageUrl, targetKey)
     // Done
     return { image, request }
+    */
   } catch (e) {
     console.error(e)
     throw e
