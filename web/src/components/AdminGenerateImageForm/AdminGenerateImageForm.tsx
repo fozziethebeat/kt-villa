@@ -119,7 +119,7 @@ const AdminGenerateImageForm = () => {
             <SelectField
               name="lora"
               className="select select-bordered select-primary"
-              validation={{ required: true }}
+              validation={{ required: false }}
             >
               {dataAdapters?.adminListImageAdapters?.adapters &&
                 dataAdapters.adminListImageAdapters.adapters.map((item) => (
