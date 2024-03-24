@@ -2,6 +2,6 @@
   "functions": {
     "*": {
       "maxDuration": 60
-    },
+    }
   }
 }
