@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/**/*": {
+    "api/src/functions/graphql.*": {
       "maxDuration": 60
     }
   }
