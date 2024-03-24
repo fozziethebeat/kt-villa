@@ -1,18 +1,51 @@
+import AWS from 'aws-sdk'
 import axios from 'axios'
 import OpenAI from 'openai'
+import stream from 'stream'
 import ShortUniqueId from 'short-unique-id'
 
 import type { ImageAdapterSettings } from 'types/graphql'
 
 import { db } from 'src/lib/db'
 
-const openai = new OpenAI({
-  apiKey: '',
-  baseURL: `${process.env.LLM_API_URL}/v1`,
+AWS.config.update({
+  region: process.env.AWS_REGION,
 })
+const openai = new OpenAI()
+const s3 = new AWS.S3()
 
 const itemIdGenerator = new ShortUniqueId({ length: 6 })
 const itemCodeGenerator = new ShortUniqueId({ dictionary: 'number', length: 6 })
+
+const uploadImageToS3 = async (
+  bucketName: string,
+  imageUrl: string,
+  targetKey: string
+): string => {
+  // Fetch the image using axios
+  const response = await axios({
+    method: 'get',
+    url: imageUrl,
+    responseType: 'stream',
+  })
+
+  const pass = new stream.PassThrough()
+
+  // Stream the image directly to S3
+  const params = {
+    Bucket: bucketName,
+    Key: targetKey,
+    Body: pass,
+    ContentType: response.headers['content-type'],
+  }
+
+  // Pipe the downloaded image to the S3 upload stream
+  response.data.pipe(pass)
+
+  // Upload the image to S3
+  const uploadResult = await s3.upload(params).promise()
+  return uploadResult.Location
+}
 
 const generateBookingItem = async (bookingId: string) => {
   const booking = await db.booking.findUnique({ where: { id: bookingId } })
@@ -127,6 +160,26 @@ const generateImageFromAdapter = async (
   itemId: string,
   adapterSettings: ImageAdapterSettings
 ) => {
+  // Get the image from OpenAI
+  const request = {
+    model: 'dall-e-3',
+    prompt: getPrompt(adapterSettings),
+    n: 1,
+  }
+  const response = await openai.images.generate(request)
+  // Save the image to AWS S3
+  const bucketName = process.env.AWS_BUCKET
+  const imageUrl = response.data[0].url
+  const targetKey = `results/${itemId}.png`
+  const image = await uploadImageToS3(bucketName, imageUrl, targetKey)
+  // Done
+  return { image, request }
+}
+/*
+const generateImageFromAdapter = async (
+  itemId: string,
+  adapterSettings: ImageAdapterSettings
+) => {
   const request = {
     id: itemId,
     prompt: getPrompt(adapterSettings),
@@ -141,6 +194,7 @@ const generateImageFromAdapter = async (
   const image = data.image
   return { image, request }
 }
+*/
 
 const getPrompt = (adapterSettings: ImageAdapterSettings) => {
   const index = Math.floor(Math.random() * adapterSettings.variants.length)

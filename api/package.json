@@ -14,12 +14,13 @@
     "@redwoodjs/mailer-renderer-react-email": "7.0.0-rc.931",
     "@redwoodjs/project-config": "7.0.0-rc.931",
     "@redwoodjs/realtime": "7.0.0-rc.931+eba906e16",
-    "axios": "^1.5.1",
+    "aws-sdk": "^2.1584.0",
+    "axios": "^1.6.8",
     "bull": "^4.11.3",
     "chalk": "4.1.2",
     "fastify": "^4.24.3",
     "ioredis": "^5",
-    "openai": "^4.12.4",
+    "openai": "^4.29.2",
     "short-unique-id": "^5.0.3"
   },
   "devDependencies": {

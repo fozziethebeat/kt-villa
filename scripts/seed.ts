@@ -116,18 +116,18 @@ async function devSeed() {
       data: {
         startDate: '2023-11-09T16:00:00.000Z',
         adapter: 'hasuikawase',
-        promptTemplate: 'high resolution, mountains, ski slopes, winter',
+        promptTemplate: '',
         negativePrompt:
-          'misshaped bodies, watermark, misshaped faces, bad eyes',
+          'in Hakuba Village mountains during the spring time in the style of a miniature diorama',
         steps: 30,
         variants: [
-          'snowboarding monkeys',
-          'skiing rabbits',
-          'snowboarding giraffes',
-          'skiing cats',
-          'snowboarding dogs',
-          'telemark skiing ferrets',
-          'snow biking turtles',
+          'mountain biking monkeys',
+          'jogging rabbits',
+          'kayaking giraffes',
+          'golfing cats',
+          'doings doing stand up paddle',
+          'ferrets Parasailing',
+          'turtles white water rafting',
         ],
       },
     })
