@@ -167,17 +167,10 @@ const generateImageFromAdapter = async (
       prompt: getPrompt(adapterSettings),
       n: 1,
     }
-    let response = null
-    try {
-      response = await openai.images.generate(request)
-    } catch (r) {
-      console.log(r)
-    }
+    const response = await openai.images.generate(request)
     // Save the image to AWS S3
     const bucketName = process.env.AWS_BUCKET
-    const imageUrl = response
-      ? response.data[0].url
-      : 'https://flowerfruits.mtn.surfacedata.org/results/kHeStv_full.png'
+    const imageUrl = response.data[0].url
     const targetKey = `results/${itemId}.png`
     const image = await uploadImageToS3(bucketName, imageUrl, targetKey)
     // Done
