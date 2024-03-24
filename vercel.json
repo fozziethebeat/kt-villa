@@ -1,7 +1,8 @@
 {
   "functions": {
     "api/src/functions/graphql.ts": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "runtime": "@vercel/redwood@2.0.5"
     }
   }
 }
