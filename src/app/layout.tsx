@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SessionProvider } from "next-auth/react";
 import localFont from "next/font/local";
 
 import { ApolloWrapper } from "@/app/ApolloWrapper";
@@ -30,7 +31,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ApolloWrapper>{children}</ApolloWrapper>
+        <SessionProvider>
+          <ApolloWrapper>{children}</ApolloWrapper>
+        </SessionProvider>
       </body>
     </html>
   );
