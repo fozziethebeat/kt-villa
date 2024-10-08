@@ -1,5 +1,6 @@
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+
+import { auth } from "@/lib/auth";
 
 export async function checkAccess(targetRole: string, failedPath: string) {
   const session = await auth();

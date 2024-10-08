@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 import Image from "next/image";
 
-import { withAuth } from "@/withAuth";
-import { getClient } from "@/ApolloClient";
+import { getClient } from "@/graphql/ApolloClient";
+import { withAuth } from "@/lib/withAuth";
 
 const QUERY = gql`
   query {
