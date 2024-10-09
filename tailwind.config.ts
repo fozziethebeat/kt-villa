@@ -18,9 +18,9 @@ const config: Config = {
   plugins: [require("daisyui")],
   daisyui: {
     themes: [
+      "cupcake",
       catppuccin("macchiato"),
       catppuccin("latte"),
-      "cupcake",
       catppuccin("frappe", "pink"),
       catppuccin("mocha", { primary: "sky", secondary: "rosewater" }),
     ],

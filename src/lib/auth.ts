@@ -1,4 +1,5 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { createHash } from "crypto";
 import NextAuth from "next-auth";
 import Nodemailer from "next-auth/providers/nodemailer";
 
@@ -20,4 +21,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       from: process.env.MAILER_FROM,
     }),
   ],
+  callbacks: {
+    async session({ session, user }) {
+      const profileHash = createHash("sha256")
+        .update(user.email.trim().toLowerCase())
+        .digest("hex");
+      session.user.profileImageUrl = `https://gravatar.com/avatar/${profileHash}?s=200`;
+      return session;
+    },
+  },
 });

@@ -39,7 +39,7 @@ async function devSeed() {
       {
         id: "uU1NqVR4iC",
         image:
-          "https://flowerfruits.mtn.surfacedata.org/results/mandaloreo_picturestorybook_230923_00020_full.png",
+          "https://ktvilla-images.s3.ap-northeast-1.amazonaws.com/results/DJ4LxL_full.png",
         claimCode: "1111",
         claimStatus: "claimed",
         claimVisible: true,
@@ -48,7 +48,7 @@ async function devSeed() {
       {
         id: "WMapPW59wR",
         image:
-          "https://flowerfruits.mtn.surfacedata.org/results/mandaloreo_picturestorybook_230819_00001_full.png",
+          "https://ktvilla-images.s3.ap-northeast-1.amazonaws.com/results/08QpKS_full.png",
         claimCode: "2222",
         claimStatus: "claimed",
         claimVisible: true,
@@ -57,7 +57,7 @@ async function devSeed() {
       {
         id: "znGNt5S7QN",
         image:
-          "https://flowerfruits.mtn.surfacedata.org/results/mandaloreo_picturestorybook_230923_00017_full.png",
+          "https://ktvilla-images.s3.ap-northeast-1.amazonaws.com/results/MW2Qm5.png",
         claimCode: "3333",
         claimStatus: "claimed",
         claimVisible: true,
