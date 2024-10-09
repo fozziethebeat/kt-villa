@@ -1,71 +1,199 @@
-import { gql } from "@apollo/client";
-import Image from "next/image";
-
-import { getClient } from "@/graphql/ApolloClient";
+/*
+ * Uses https://ui.shadcn.com/blocks instead of DaisyUI for clear role
+ * difference.
+ */
 import { withAuth } from "@/lib/withAuth";
 
-const QUERY = gql`
-  query {
-    hello
-  }
-`;
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 async function AdminPage({ session }) {
-  const { data } = await getClient().query({ query: QUERY });
-
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <div>Your role {session?.user?.roles}</div>
-        <div>{data.hello}</div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div>
+      <Card x-chunk="dashboard-05-chunk-3">
+        <CardHeader className="px-7">
+          <CardTitle>Orders</CardTitle>
+          <CardDescription>Recent orders from your store.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Customer</TableHead>
+                <TableHead className="hidden sm:table-cell">Type</TableHead>
+                <TableHead className="hidden sm:table-cell">Status</TableHead>
+                <TableHead className="hidden md:table-cell">Date</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow className="bg-accent">
+                <TableCell>
+                  <div className="font-medium">Liam Johnson</div>
+                  <div className="hidden text-sm text-muted-foreground md:inline">
+                    liam@example.com
+                  </div>
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">Sale</TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  <Badge className="text-xs" variant="secondary">
+                    Fulfilled
+                  </Badge>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  2023-06-23
+                </TableCell>
+                <TableCell className="text-right">$250.00</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <div className="font-medium">Olivia Smith</div>
+                  <div className="hidden text-sm text-muted-foreground md:inline">
+                    olivia@example.com
+                  </div>
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">Refund</TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  <Badge className="text-xs" variant="outline">
+                    Declined
+                  </Badge>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  2023-06-24
+                </TableCell>
+                <TableCell className="text-right">$150.00</TableCell>
+              </TableRow>
+              {/* <TableRow>
+                          <TableCell>
+                            <div className="font-medium">Liam Johnson</div>
+                            <div className="hidden text-sm text-muted-foreground md:inline">
+                              liam@example.com
+                            </div>
+                          </TableCell>
+                          <TableCell className="hidden sm:table-cell">
+                            Sale
+                          </TableCell>
+                          <TableCell className="hidden sm:table-cell">
+                            <Badge className="text-xs" variant="secondary">
+                              Fulfilled
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            2023-06-23
+                          </TableCell>
+                          <TableCell className="text-right">$250.00</TableCell>
+                        </TableRow> */}
+              <TableRow>
+                <TableCell>
+                  <div className="font-medium">Noah Williams</div>
+                  <div className="hidden text-sm text-muted-foreground md:inline">
+                    noah@example.com
+                  </div>
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  Subscription
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  <Badge className="text-xs" variant="secondary">
+                    Fulfilled
+                  </Badge>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  2023-06-25
+                </TableCell>
+                <TableCell className="text-right">$350.00</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <div className="font-medium">Emma Brown</div>
+                  <div className="hidden text-sm text-muted-foreground md:inline">
+                    emma@example.com
+                  </div>
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">Sale</TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  <Badge className="text-xs" variant="secondary">
+                    Fulfilled
+                  </Badge>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  2023-06-26
+                </TableCell>
+                <TableCell className="text-right">$450.00</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <div className="font-medium">Liam Johnson</div>
+                  <div className="hidden text-sm text-muted-foreground md:inline">
+                    liam@example.com
+                  </div>
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">Sale</TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  <Badge className="text-xs" variant="secondary">
+                    Fulfilled
+                  </Badge>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  2023-06-23
+                </TableCell>
+                <TableCell className="text-right">$250.00</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <div className="font-medium">Olivia Smith</div>
+                  <div className="hidden text-sm text-muted-foreground md:inline">
+                    olivia@example.com
+                  </div>
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">Refund</TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  <Badge className="text-xs" variant="outline">
+                    Declined
+                  </Badge>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  2023-06-24
+                </TableCell>
+                <TableCell className="text-right">$150.00</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>
+                  <div className="font-medium">Emma Brown</div>
+                  <div className="hidden text-sm text-muted-foreground md:inline">
+                    emma@example.com
+                  </div>
+                </TableCell>
+                <TableCell className="hidden sm:table-cell">Sale</TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  <Badge className="text-xs" variant="secondary">
+                    Fulfilled
+                  </Badge>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  2023-06-26
+                </TableCell>
+                <TableCell className="text-right">$450.00</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }
