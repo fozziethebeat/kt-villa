@@ -1,10 +1,40 @@
+import { DateTimeResolver } from "graphql-scalars";
 import { gql } from "graphql-tag";
 
 import { prisma } from "@/lib/prisma";
 
 export const typeDefs = gql`
+  scalar DateTime
+
   type Query {
     hello: String
+  }
+
+  type User {
+    id: String!
+    name: String
+    email: String!
+    hashedPassword: String!
+    salt: String!
+    resetToken: String
+    resetTokenExpiresAt: DateTime
+    roles: String!
+    StableItem: [BookingItem]!
+    booking: [Booking]!
+    trustStatus: String!
+  }
+
+  type Booking {
+    id: Int!
+    startDate: DateTime
+    endDate: DateTime
+    numGuests: Int
+    withCat: Boolean!
+    withDog: Boolean!
+    status: String!
+    bookingCode: String
+    item: BookingItem
+    member: [MemberBooking!]
   }
 
   type BookingItem {
@@ -18,7 +48,31 @@ export const typeDefs = gql`
     ownerUsername: String
   }
 
+  type MemberBooking {
+    id: Int!
+    status: String!
+    user: User!
+    booking: Booking!
+    item: BookingItem
+  }
+
+  type AdminBooking {
+    id: String!
+    startDate: DateTime
+    endDate: DateTime
+    numGuests: Int
+    withCat: Boolean!
+    withDog: Boolean!
+    status: String!
+    bookingCode: String
+    userId: String
+    user: User
+    item: BookingItem
+    member: [MemberBooking!]
+  }
+
   type Query {
+    adminBookings: [AdminBooking!]!
     bookingItems: [BookingItem!]!
     bookingItem(id: String!): BookingItem
   }
@@ -32,6 +86,14 @@ export const resolvers = {
 
     bookingItems: () => {
       return prisma.stableItem.findMany();
+    },
+
+    adminBookings: (a, b, { user }) => {
+      console.log(user);
+      if (!user || !user?.roles === "admin") {
+        throw new Error("Access not supported");
+      }
+      return prisma.booking.findMany();
     },
   },
   BookingItem: {
@@ -64,4 +126,16 @@ export const resolvers = {
       return owner.name;
     },
   },
+  AdminBooking: {
+    user: (booking) => {
+      return prisma.booking.findUnique({ where: { id: booking?.id } }).user();
+    },
+    item: (booking) => {
+      return prisma.booking
+        .findUnique({ where: { id: booking?.id } })
+        .userItem();
+    },
+  },
+
+  DateTime: DateTimeResolver,
 };
