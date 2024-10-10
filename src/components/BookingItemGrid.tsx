@@ -4,7 +4,7 @@ import { getClient } from "@/graphql/ApolloClient";
 import { BookingItemCard } from "@/components/BookingItemCard";
 
 const QUERY = gql`
-  query BookingItemQuery {
+  query BookingItemsQuery {
     bookingItems {
       id
       image

@@ -88,8 +88,13 @@ export const resolvers = {
       return prisma.stableItem.findMany();
     },
 
+    bookingItem: (_, { id }) => {
+      return prisma.stableItem.findUnique({
+        where: { id },
+      });
+    },
+
     adminBookings: (a, b, { user }) => {
-      console.log(user);
       if (!user || !user?.roles === "admin") {
         throw new Error("Access not supported");
       }

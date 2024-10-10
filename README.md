@@ -20,9 +20,9 @@
   * [ ] Booking Item Edit
 * General
   * [i] Home
-  * [ ] About
+  * [x] About
   * [ ] User Booking 
   * [ ] User Booking Page
   * [ ] User Booking Edit
   * [ ] User Profile Page
-  * [ ] Public Booking Item Page
+  * [x] Public Booking Item Page

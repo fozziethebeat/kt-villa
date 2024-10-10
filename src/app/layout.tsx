@@ -20,7 +20,7 @@ export default async function RootLayout({
           <ApolloWrapper>
             <header className="navbar">
               <div className="flex-1">
-                <Link className="norma-case btn btn-ghost text-xl" href="/home">
+                <Link className="norma-case btn btn-ghost text-xl" href="/">
                   KT Villa
                 </Link>
               </div>
