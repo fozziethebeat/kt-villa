@@ -4,7 +4,10 @@ import { auth } from "@/lib/auth";
 
 export async function checkAccess(targetRole: string, failedPath: string) {
   const session = await auth();
-  if (session?.user?.roles !== targetRole) {
+  if (!session) {
+    redirect(failedPath);
+  }
+  if (targetRole !== "" && session?.user?.roles !== targetRole) {
     redirect(failedPath);
   }
 }

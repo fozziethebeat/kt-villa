@@ -8,7 +8,6 @@
 * Admin
   * [i] Bookings Review
   * [ ] Booking Admin Edit
-  * [ ] Test Image Generation
   * [ ] User Review
   * [ ] User Admin Edit
   * [ ] Image Adapter Review
@@ -24,5 +23,5 @@
   * [ ] User Booking 
   * [ ] User Booking Page
   * [ ] User Booking Edit
-  * [ ] User Profile Page
+  * [X] User Profile Page
   * [x] Public Booking Item Page

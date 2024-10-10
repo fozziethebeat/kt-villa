@@ -75,6 +75,8 @@ export const typeDefs = gql`
     adminBookings: [AdminBooking!]!
     bookingItems: [BookingItem!]!
     bookingItem(id: String!): BookingItem
+    memberBookings: [MemberBooking!]!
+    userBookings: [Booking!]!
   }
 `;
 
@@ -100,7 +102,40 @@ export const resolvers = {
       }
       return prisma.booking.findMany();
     },
+
+    memberBookings: (a, b, { user }) => {
+      return prisma.memberBooking.findMany({
+        where: {
+          userId: user.id,
+        },
+        orderBy: {
+          booking: {
+            startDate: "asc",
+          },
+        },
+      });
+    },
+    userBookings: (a, b, { user }) => {
+      if (!user) {
+        throw new Error("Access not supported");
+      }
+      return prisma.booking.findMany({
+        where: {
+          userId: user.id,
+        },
+        orderBy: {
+          startDate: "asc",
+        },
+      });
+    },
   },
+
+  Booking: {
+    item: (item) => {
+      return prisma.booking.findUnique({ where: { id: item.id } }).userItem();
+    },
+  },
+
   BookingItem: {
     /**
      * Resolves {@code ownerUsername} according to the current user's access
@@ -138,6 +173,22 @@ export const resolvers = {
     item: (booking) => {
       return prisma.booking
         .findUnique({ where: { id: booking?.id } })
+        .userItem();
+    },
+  },
+
+  MemberBooking: {
+    user: (booking) => {
+      return prisma.memberBooking
+        .findUnique({ where: { id: booking.id } })
+        .user();
+    },
+    booking: (b) => {
+      return prisma.memberBooking.findUnique({ where: { id: b.id } }).booking();
+    },
+    item: (booking) => {
+      return prisma.memberBooking
+        .findUnique({ where: { id: bookin.id } })
         .userItem();
     },
   },
