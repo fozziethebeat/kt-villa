@@ -20,69 +20,54 @@ import {
 } from "@/components/ui/table";
 
 const QUERY = gql`
-	query AdminBookingsQuery {
-		adminBookings {
+	query Users {
+		users {
 			id
-			bookingCode
-			startDate
-			endDate
-			numGuests
-			status
-			user {
-				name
-				email
-			}
-			item {
-				id
-				image
-				text
-			}
+			name
+			email
+			roles
+			trustStatus
 		}
 	}
 `;
 
-export async function AdminBookingTable() {
+export async function AdminUsersTable() {
 	try {
 		const { data, error } = await getClient().query({ query: QUERY });
 		return (
 			<Card x-chunk="dashboard-05-chunk-3">
 				<CardHeader className="px-7">
-					<CardTitle>Bookings</CardTitle>
-					<CardDescription>Visitor Bookings to Review.</CardDescription>
+					<CardTitle>Users</CardTitle>
+					<CardDescription>KT Villa Users</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead>Guest</TableHead>
-								<TableHead className="hidden sm:table-cell">
-									Start Date
-								</TableHead>
-								<TableHead className="hidden sm:table-cell">End Date</TableHead>
+								<TableHead>ID</TableHead>
+								<TableHead className="hidden sm:table-cell">Name</TableHead>
+								<TableHead className="hidden sm:table-cell">Email</TableHead>
+								<TableHead className="hidden md:table-cell">Roles</TableHead>
 								<TableHead className="hidden md:table-cell">
-									Num Guests
+									Trust Status
 								</TableHead>
-								<TableHead className="hidden md:table-cell">Status</TableHead>
-								<TableHead className="hidden md:table-cell">Action</TableHead>
+								<TableHead className="hidden md:table-cell">Actions</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{data.adminBookings.map((booking) => (
-								<TableRow key={booking.id}>
+							{data.users.map((user) => (
+								<TableRow key={user.id}>
 									<TableCell>
-										<div className="font-medium">{booking.user.name}</div>
+										<div className="font-medium">{user.name}</div>
 									</TableCell>
 									<TableCell className="hidden sm:table-cell">
-										{new Date(booking.startDate).toLocaleDateString("en-CA")}
+										{user.email}
 									</TableCell>
 									<TableCell className="hidden sm:table-cell">
-										{new Date(booking.endDate).toLocaleDateString("en-CA")}
+										{user.roles}
 									</TableCell>
 									<TableCell className="hidden md:table-cell">
-										{booking.numGuests}
-									</TableCell>
-									<TableCell className="hidden md:table-cell">
-										{booking.status}
+										{user.trustStatus}
 									</TableCell>
 									<TableCell className="hidden md:table-cell">Edit</TableCell>
 								</TableRow>
@@ -92,7 +77,8 @@ export async function AdminBookingTable() {
 				</CardContent>
 			</Card>
 		);
-	} catch {
+	} catch (e) {
+		console.log(e);
 		return <div>No Data to fetch</div>;
 	}
 }

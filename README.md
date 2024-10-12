@@ -6,11 +6,11 @@
   * [i] Login
   * [ ] Signup
 * Admin
-  * [i] Bookings Review
+  * [x] Bookings Review
   * [ ] Booking Admin Edit
-  * [ ] User Review
+  * [x] User Review
   * [ ] User Admin Edit
-  * [ ] Image Adapter Review
+  * [x] Image Adapter Review
   * [ ] Image Adapter Create
   * [ ] Image Adapter Edit
   * [ ] Image Adapter View
@@ -20,8 +20,8 @@
 * General
   * [i] Home
   * [x] About
-  * [ ] User Booking 
-  * [ ] User Booking Page
-  * [ ] User Booking Edit
+  * [x] User Booking 
+  * [x] User Booking Page
+  * [x] User Booking Edit
   * [X] User Profile Page
   * [x] Public Booking Item Page

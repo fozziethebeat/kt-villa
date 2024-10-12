@@ -7,8 +7,28 @@ import { prisma } from "@/lib/prisma";
 export const typeDefs = gql`
   scalar DateTime
 
+  type User {
+    id: String!
+    name: String
+    email: String!
+    roles: String!
+    StableItem: [BookingItem]!
+    booking: [Booking]!
+    trustStatus: String!
+  }
+
   type Query {
     hello: String
+  }
+
+  type ImageAdapterSetting {
+    id: String!
+    startDate: DateTime!
+    adapter: String!
+    promptTemplate: String!
+    negativePrompt: String!
+    steps: Int!
+    variants: [String!]!
   }
 
   type User {
@@ -87,7 +107,13 @@ export const typeDefs = gql`
     adminBookings: [AdminBooking!]!
     bookingItems: [BookingItem!]!
     bookingItem(id: String!): BookingItem
+    imageAdapterSettings: [ImageAdapterSetting!]!
+    imageAdapterSetting(id: Int!): ImageAdapterSetting
     memberBookings: [MemberBooking!]!
+
+    users: [User!]!
+    user(id: String!): User
+
     userBookings: [Booking!]!
     userBooking(bookingCode: String!): Booking
   }
@@ -121,6 +147,16 @@ export const resolvers = {
       return prisma.booking.findMany();
     },
 
+    imageAdapterSettings: () => {
+      return prisma.imageAdapterSetting.findMany();
+    },
+
+    imageAdapterSetting: (a, { id }) => {
+      return prisma.imageAdapterSetting.findUnique({
+        where: { id },
+      });
+    },
+
     memberBookings: (a, b, { user }) => {
       return prisma.memberBooking.findMany({
         where: {
@@ -133,6 +169,15 @@ export const resolvers = {
         },
       });
     },
+
+    users: (a, b, { user }) => {
+      if (user?.roles !== "admin") {
+        console.log(user);
+        throw new Error("Access not supported");
+      }
+      return prisma.user.findMany();
+    },
+
     userBookings: (a, b, { user }) => {
       if (!user) {
         throw new Error("Access not supported");

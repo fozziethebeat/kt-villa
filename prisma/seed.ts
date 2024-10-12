@@ -102,9 +102,9 @@ async function devSeed() {
       data: {
         startDate: "2023-11-09T16:00:00.000Z",
         adapter: "hasuikawase",
-        promptTemplate: "",
-        negativePrompt:
+        promptTemplate:
           "in Hakuba Village mountains during the spring time in the style of a miniature diorama",
+        negativePrompt: "",
         steps: 30,
         variants: [
           "mountain biking monkeys",
