@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { ApolloServer } from "@apollo/server";
 import { NextResponse } from "next/server";
 import { startServerAndCreateNextHandler } from "@as-integrations/next";
@@ -15,17 +15,31 @@ interface VillaContext {
   user: User;
 }
 
+function getToken() {
+  const cookieStore = cookies();
+  const cookieToken =
+    cookieStore.get("__Secure-next-auth.session-token") ??
+    cookieStore.get("authjs.session-token");
+  if (cookieToken) {
+    return cookieToken.value;
+  }
+  const headersList = headers();
+  const authHeader = headersList.get("authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return undefined;
+  }
+  return authHeader.substring(7);
+}
+
 const server = new ApolloServer({ typeDefs, resolvers });
 const handler = startServerAndCreateNextHandler(server, {
   context: async (req) => {
-    // Extract the user token so we can fetch the session.  This ensures
-    // graphql resolvers can validate against the current user.
-    const headersList = headers();
-    const authHeader = headersList.get("authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const token = getToken();
+    if (!token) {
       return { req };
     }
-    const token = authHeader.substring(7);
+    // Extract the user token so we can fetch the session.  This ensures
+    // graphql resolvers can validate against the current user.
     const session = await prisma.session.findUnique({
       where: { sessionToken: token },
       select: { user: true },

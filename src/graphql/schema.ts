@@ -1,6 +1,7 @@
 import { DateTimeResolver } from "graphql-scalars";
 import { gql } from "graphql-tag";
 
+import { generateItem } from "@/lib/generate";
 import { prisma } from "@/lib/prisma";
 
 export const typeDefs = gql`
@@ -29,6 +30,7 @@ export const typeDefs = gql`
     startDate: DateTime
     endDate: DateTime
     numGuests: Int
+    maxGuests: Int
     withCat: Boolean!
     withDog: Boolean!
     status: String!
@@ -44,7 +46,7 @@ export const typeDefs = gql`
     claimCode: String
     claimStatus: String!
     claimVisible: Boolean!
-    ownerId: Int
+    ownerId: String
     ownerUsername: String
   }
 
@@ -71,12 +73,28 @@ export const typeDefs = gql`
     member: [MemberBooking!]
   }
 
+  input UpdateBookingInput {
+    startDate: DateTime
+    endDate: DateTime
+    numGuests: Int
+    maxGuests: Int
+    userId: String
+    withCat: Boolean
+    withDog: Boolean
+  }
+
   type Query {
     adminBookings: [AdminBooking!]!
     bookingItems: [BookingItem!]!
     bookingItem(id: String!): BookingItem
     memberBookings: [MemberBooking!]!
     userBookings: [Booking!]!
+    userBooking(bookingCode: String!): Booking
+  }
+
+  type Mutation {
+    addMemberBooking(id: Int!, username: String!): Booking!
+    updateBooking(id: Int!, input: UpdateBookingInput!): Booking!
   }
 `;
 
@@ -128,11 +146,71 @@ export const resolvers = {
         },
       });
     },
+
+    userBooking: (a, { bookingCode }, { user }) => {
+      if (!user) {
+        throw new Error("Access not supported");
+      }
+      return prisma.booking.findUnique({
+        where: { bookingCode, userId: user.id },
+      });
+    },
+  },
+
+  Mutation: {
+    addMemberBooking: async (a, { id, username }, { user }) => {
+      if (!user) {
+        throw new Error("not authorized");
+      }
+      const users = await prisma.user.findMany({
+        where: { name: username },
+        select: { id: true },
+      });
+      if (users.length !== 1) {
+        throw new Error("No user found");
+      }
+      const booking = await prisma.booking.findUnique({
+        where: { id },
+      });
+      if (!booking) {
+        if (!booking) {
+          throw new Error("No booking found");
+        }
+      }
+      if (booking.userId !== user.id) {
+        throw new Error("Not authorized");
+      }
+      const userId = users[0].id;
+      const userItemId = await generateItem(userId, booking.startDate);
+      return prisma.booking.update({
+        where: { id },
+        data: {
+          member: {
+            create: [
+              {
+                userId,
+                userItemId,
+                status: "approved",
+              },
+            ],
+          },
+        },
+      });
+    },
+    updateBooking: (a, { id, input }) => {
+      return prisma.booking.update({
+        data: input,
+        where: { id },
+      });
+    },
   },
 
   Booking: {
     item: (item) => {
       return prisma.booking.findUnique({ where: { id: item.id } }).userItem();
+    },
+    member: (item) => {
+      return prisma.booking.findUnique({ where: { id: item.id } }).member();
     },
   },
 
