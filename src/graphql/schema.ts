@@ -1,7 +1,7 @@
 import { DateTimeResolver } from "graphql-scalars";
 import { gql } from "graphql-tag";
 
-import { generateItem } from "@/lib/generate";
+import { generateItem, generateImageFromAdapter } from "@/lib/generate";
 import { prisma } from "@/lib/prisma";
 
 export const typeDefs = gql`
@@ -22,7 +22,7 @@ export const typeDefs = gql`
   }
 
   type ImageAdapterSetting {
-    id: String!
+    id: Int!
     startDate: DateTime!
     adapter: String!
     promptTemplate: String!
@@ -93,6 +93,19 @@ export const typeDefs = gql`
     member: [MemberBooking!]
   }
 
+  input TestImageAdapterInput {
+    id: Int!
+    adapter: String!
+    promptTemplate: String!
+    negativePrompt: String!
+    steps: Int!
+    variants: [String!]!
+  }
+
+  type TestImage {
+    url: String!
+  }
+
   input UpdateBookingInput {
     startDate: DateTime
     endDate: DateTime
@@ -120,6 +133,7 @@ export const typeDefs = gql`
 
   type Mutation {
     addMemberBooking(id: Int!, username: String!): Booking!
+    testImageAdapter(input: TestImageAdapterInput!): TestImage!
     updateBooking(id: Int!, input: UpdateBookingInput!): Booking!
   }
 `;
@@ -172,7 +186,6 @@ export const resolvers = {
 
     users: (a, b, { user }) => {
       if (user?.roles !== "admin") {
-        console.log(user);
         throw new Error("Access not supported");
       }
       return prisma.user.findMany();
@@ -242,6 +255,18 @@ export const resolvers = {
         },
       });
     },
+
+    testImageAdapter: async (a, { input }, { user }) => {
+      if (user.roles !== "admin") {
+        throw new Error("not authorized");
+      }
+      const { image } = await generateImageFromAdapter(
+        `test_${input.adapter}`,
+        input
+      );
+      return { url: image };
+    },
+
     updateBooking: (a, { id, input }) => {
       return prisma.booking.update({
         data: input,

@@ -102,4 +102,4 @@ function getPrompt(adapterSettings) {
   return `${fragment}, ${adapterSettings.promptTemplate}`;
 }
 
-export { generateItem };
+export { generateItem, generateImageFromAdapter };
