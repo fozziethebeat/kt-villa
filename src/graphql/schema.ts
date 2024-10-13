@@ -93,7 +93,7 @@ export const typeDefs = gql`
     member: [MemberBooking!]
   }
 
-  input TestImageAdapterInput {
+  input ImageAdapterInput {
     id: Int!
     adapter: String!
     promptTemplate: String!
@@ -133,8 +133,12 @@ export const typeDefs = gql`
 
   type Mutation {
     addMemberBooking(id: Int!, username: String!): Booking!
-    testImageAdapter(input: TestImageAdapterInput!): TestImage!
+    testImageAdapter(input: ImageAdapterInput!): TestImage!
     updateBooking(id: Int!, input: UpdateBookingInput!): Booking!
+    updateImageAdapter(
+      id: Int!
+      input: ImageAdapterInput!
+    ): ImageAdapterSetting!
   }
 `;
 
@@ -269,6 +273,16 @@ export const resolvers = {
 
     updateBooking: (a, { id, input }) => {
       return prisma.booking.update({
+        data: input,
+        where: { id },
+      });
+    },
+
+    updateImageAdapter: (a, { id, input }, { user }) => {
+      if (user.roles !== "admin") {
+        throw new Error("not authorized");
+      }
+      return prisma.imageAdapterSetting.update({
         data: input,
         where: { id },
       });

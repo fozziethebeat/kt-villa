@@ -1,13 +1,21 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 
 const TEST_MUTATION = gql`
-  mutation TestImageAdapter($input: TestImageAdapterInput!) {
+  mutation TestImageAdapter($input: ImageAdapterInput!) {
     testImageAdapter(input: $input) {
       url
+    }
+  }
+`;
+const UPDATE_MUTATION = gql`
+  mutation UpdateImageAdapter($id: Int!, $input: ImageAdapterInput!) {
+    updateImageAdapter(id: $id, input: $input) {
+      id
     }
   }
 `;
@@ -21,12 +29,42 @@ type EditAdapterInputs = {
 };
 
 export function EditAdapterForm({ imageAdapter }) {
+  const router = useRouter();
   const [requestId, setRequestId] = useState(new Date());
-  const { register, getValues } = useForm<EditAdapterInputs>({
+  const { handleSubmit, register, getValues } = useForm<EditAdapterInputs>({
     defaultValues: imageAdapter,
   });
+  const [updateImageAdapter, { loading, error }] = useMutation(
+    UPDATE_MUTATION,
+    {
+      onCompleted: () => {
+        router.push(`/admin/adapter/${imageAdapter.id}`);
+      },
+    }
+  );
+
   const [testImageAdapter, { data: testImageData, loading: testImageLoading }] =
     useMutation(TEST_MUTATION);
+
+  const onSubmit = (data) => {
+    const variants =
+      typeof data.variants === "string"
+        ? data.variants.split(",")
+        : data.variants;
+    updateImageAdapter({
+      variables: {
+        id: data.id,
+        input: {
+          id: data.id,
+          adapter: data.adapter,
+          promptTemplate: data.promptTemplate,
+          negativePrompt: data.negativePrompt,
+          steps: parseInt(data.steps),
+          variants: variants,
+        },
+      },
+    });
+  };
 
   const testAdapter = () => {
     setRequestId(new Date());
@@ -50,7 +88,7 @@ export function EditAdapterForm({ imageAdapter }) {
   };
   return (
     <div>
-      <form>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <label className="form-control">
           <div className="label">
             <span className="label-text">Adapter Name </span>
@@ -110,8 +148,16 @@ export function EditAdapterForm({ imageAdapter }) {
           />
         </label>
 
-        <button type="button" onClick={testAdapter}>
+        <button
+          type="button"
+          className="btn btn-secondary"
+          onClick={testAdapter}
+        >
           Test
+        </button>
+
+        <button type="submit" className="btn btn-primary">
+          Udpate
         </button>
       </form>
       {testImageLoading && (
