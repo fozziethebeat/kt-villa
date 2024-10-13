@@ -31,20 +31,6 @@ export const typeDefs = gql`
     variants: [String!]!
   }
 
-  type User {
-    id: String!
-    name: String
-    email: String!
-    hashedPassword: String!
-    salt: String!
-    resetToken: String
-    resetTokenExpiresAt: DateTime
-    roles: String!
-    StableItem: [BookingItem]!
-    booking: [Booking]!
-    trustStatus: String!
-  }
-
   type Booking {
     id: Int!
     startDate: DateTime
@@ -106,6 +92,13 @@ export const typeDefs = gql`
     url: String!
   }
 
+  input UpdateUserInput {
+    name: String
+    email: String!
+    roles: String!
+    trustStatus: String!
+  }
+
   input UpdateBookingInput {
     startDate: DateTime
     endDate: DateTime
@@ -139,6 +132,7 @@ export const typeDefs = gql`
       id: Int!
       input: ImageAdapterInput!
     ): ImageAdapterSetting!
+    updateUser(id: String!, input: UpdateUserInput!): User!
   }
 `;
 
@@ -186,6 +180,13 @@ export const resolvers = {
           },
         },
       });
+    },
+
+    user: (a, { id }, { user }) => {
+      if (user?.roles !== "admin") {
+        throw new Error("Access not supported");
+      }
+      return prisma.user.findUnique({ where: { id } });
     },
 
     users: (a, b, { user }) => {
@@ -283,6 +284,16 @@ export const resolvers = {
         throw new Error("not authorized");
       }
       return prisma.imageAdapterSetting.update({
+        data: input,
+        where: { id },
+      });
+    },
+
+    updateUser: (a, { id, input }, { user }) => {
+      if (user.roles !== "admin" && id != user.id) {
+        throw new Error("not authorized");
+      }
+      return prisma.user.update({
         data: input,
         where: { id },
       });
