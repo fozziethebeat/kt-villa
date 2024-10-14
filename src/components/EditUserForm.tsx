@@ -4,6 +4,33 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const MUTATION = gql`
   mutation UpdateUser($id: String!, $input: UpdateUserInput!) {
@@ -27,7 +54,7 @@ type EditUserInput = {
 
 export function EditUserForm({ user }) {
   const router = useRouter();
-  const { handleSubmit, register, getValues } = useForm<EditUserInput>({
+  const form = useForm<EditUserInput>({
     defaultValues: user,
   });
   const [updateUser, { loading, error }] = useMutation(MUTATION, {
@@ -51,75 +78,105 @@ export function EditUserForm({ user }) {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">User ID</span>
-          </div>
-          <input
-            disabled
-            type="text"
-            name="id"
-            className="input input-bordered w-full max-w-xs"
-            {...register("id")}
-          />
-        </label>
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">Name</span>
-          </div>
-          <input
-            type="text"
-            name="name"
-            className="input input-bordered w-full max-w-xs"
-            {...register("name")}
-          />
-        </label>
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">Email</span>
-          </div>
-          <input
-            type="text"
-            name="email"
-            className="input input-bordered w-full max-w-xs"
-            {...register("email")}
-          />
-        </label>
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">Roles</span>
-          </div>
-          <select
-            name="roles"
-            {...register("roles")}
-            className="select select-bordered w-full max-w-xs"
-          >
-            <option>general</option>
-            <option>trusted</option>
-            <option>admin</option>
-          </select>
-        </label>
+    <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
+      <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
+        <Card x-chunk="dashboard-07-chunk-0">
+          <CardHeader>
+            <CardTitle>Edit User Details</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <div className="grid gap-6">
+                  <div className="grid gap-3">
+                    <Label htmlFor="id">User ID</Label>
+                    <Input
+                      type="text"
+                      disabled
+                      name="id"
+                      className="w-full"
+                      {...form.register("id")}
+                    />
+                  </div>
 
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">Trust Status</span>
-          </div>
-          <select
-            name="trustStatus"
-            {...register("trustStatus")}
-            className="select select-bordered w-full max-w-xs"
-          >
-            <option>new</option>
-            <option>trusted</option>
-          </select>
-        </label>
+                  <div className="grid gap-3">
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      type="text"
+                      name="name"
+                      className="w-full"
+                      {...form.register("name")}
+                    />
+                  </div>
 
-        <button type="submit" className="btn btn-primary">
-          Udpate
-        </button>
-      </form>
+                  <div className="grid gap-3">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      type="text"
+                      name="email"
+                      className="w-full"
+                      {...form.register("email")}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="roles"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="grid gap-3">
+                          <Label htmlFor="roles">Role</Label>
+                          <Select
+                            name="roles"
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="general">General</SelectItem>
+                              <SelectItem value="trusted">Trusted</SelectItem>
+                              <SelectItem value="admin">Admin</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="trustStatus"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="grid gap-3">
+                          <Label htmlFor="trustStatus">Trust Status</Label>
+                          <Select
+                            name="trustStatus"
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="new">New</SelectItem>
+                              <SelectItem value="trusted">Trusted</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button type="submit">Update</Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

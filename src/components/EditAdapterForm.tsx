@@ -61,8 +61,6 @@ export function EditAdapterForm({ imageAdapter }) {
     useMutation(TEST_MUTATION);
 
   const onSubmit = (data) => {
-    console.log(data);
-    return;
     const variants =
       typeof data.variants === "string"
         ? data.variants.split(",")
