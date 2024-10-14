@@ -7,16 +7,16 @@
   * [ ] Signup
 * Admin
   * [x] Bookings Review
-  * [ ] Booking Admin Edit
+  * [X] Booking Admin Edit
   * [x] User Review
-  * [ ] User Admin Edit
-  * [x] Image Adapter Review
-  * [ ] Image Adapter Create
-  * [ ] Image Adapter Edit
-  * [ ] Image Adapter View
+  * [X] User Admin Edit
+  * [X] Image Adapter Review
+  * [X] Image Adapter Create
+  * [X] Image Adapter Edit
+  * [X] Image Adapter View
   * [ ] Create Invitation Link
-  * [ ] Booking Item Review
-  * [ ] Booking Item Edit
+  * [X] Booking Item Review
+  * [X] Booking Item Edit
 * General
   * [i] Home
   * [x] About
