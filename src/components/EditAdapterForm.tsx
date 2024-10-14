@@ -5,6 +5,20 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
+
 const TEST_MUTATION = gql`
   mutation TestImageAdapter($input: ImageAdapterInput!) {
     testImageAdapter(input: $input) {
@@ -47,6 +61,8 @@ export function EditAdapterForm({ imageAdapter }) {
     useMutation(TEST_MUTATION);
 
   const onSubmit = (data) => {
+    console.log(data);
+    return;
     const variants =
       typeof data.variants === "string"
         ? data.variants.split(",")
@@ -87,89 +103,86 @@ export function EditAdapterForm({ imageAdapter }) {
     });
   };
   return (
-    <div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">Adapter Name </span>
-          </div>
-          <input
-            type="text"
-            name="adapter"
-            className="input input-bordered w-full max-w-xs"
-            {...register("adapter")}
-          />
-        </label>
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text"> Prompt Template</span>
-          </div>
-          <textarea
-            name="promptTemplate"
-            className="textarea textarea-bordered"
-            {...register("promptTemplate")}
-          />
-        </label>
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">Negative Prompt</span>
-          </div>
-          <textarea
-            name="negativePrompt"
-            className="textarea textarea-bordered"
-            {...register("negativePrompt")}
-          />
-        </label>
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Steps</span>
-          </label>
-          <input
-            name="steps"
-            type="range"
-            className="range"
-            min="1"
-            max="30"
-            step="1"
-            {...register("steps")}
-          />
-        </div>
+    <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
+      <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
+        <Card x-chunk="dashboard-07-chunk-0">
+          <CardHeader>
+            <CardTitle>Edit Adapter Settings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid gap-6">
+                <div className="grid gap-3">
+                  <Label htmlFor="adapter">Name</Label>
+                  <Input
+                    type="text"
+                    name="adapter"
+                    className="w-full"
+                    {...register("adapter")}
+                  />
+                </div>
+                <div className="grid gap-3">
+                  <Label htmlFor="promptTemplate">Prompt Template</Label>
+                  <Textarea
+                    type="text"
+                    name="promptTemplate"
+                    className="w-full"
+                    {...register("promptTemplate")}
+                  />
+                </div>
+                <div className="grid gap-3">
+                  <Label htmlFor="steps">Inference Steps</Label>
+                  <Slider
+                    name="steps"
+                    min={1}
+                    max={30}
+                    step={1}
+                    defaultValue={[imageAdapter.steps]}
+                    {...register("steps")}
+                  />
+                </div>
+                <div className="grid gap-3">
+                  <Label htmlFor="variants">Variants</Label>
+                  <Textarea
+                    type="text"
+                    name="variants"
+                    className="w-full"
+                    defaultValue={imageAdapter.variants.join(",")}
+                    {...register("variants")}
+                  />
+                </div>
 
-        <label className="form-control">
-          <div className="label">
-            <span className="label-text">Variants</span>
-          </div>
-          <input
-            type="text"
-            name="variants"
-            className="textarea textarea-bordered"
-            defaultValue={imageAdapter.variants.join(",")}
-            {...register("variants")}
-          />
-        </label>
+                <Button type="button" variant="outline" onClick={testAdapter}>
+                  Test
+                </Button>
 
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={testAdapter}
-        >
-          Test
-        </button>
-
-        <button type="submit" className="btn btn-primary">
-          Udpate
-        </button>
-      </form>
-      {testImageLoading && (
-        <progress className="progress progress-primary w-56" />
-      )}
-      <figure className="flex justify-center">
-        {testImageData ? (
-          <img src={`${testImageData.testImageAdapter.url}?${requestId}`} />
-        ) : (
-          <div className=" placeholder h-[1024px] w-[1024px] bg-neutral-content" />
-        )}
-      </figure>
+                <Button type="submit">Update</Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+        <Card x-chunk="dashboard-07-chunk-0">
+          <CardHeader>
+            <CardTitle>Test Image</CardTitle>
+          </CardHeader>
+          <CardDescription>
+            {testImageLoading && (
+              <progress className="progress progress-primary w-56" />
+            )}
+          </CardDescription>
+          <CardContent>
+            <figure className="flex justify-center">
+              {testImageData ? (
+                <img
+                  src={`${testImageData.testImageAdapter.url}?${requestId}`}
+                />
+              ) : (
+                <div className=" placeholder h-[1024px] w-[1024px] bg-neutral-content" />
+              )}
+            </figure>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
