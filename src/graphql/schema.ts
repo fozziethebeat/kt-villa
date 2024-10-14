@@ -17,10 +17,6 @@ export const typeDefs = gql`
     trustStatus: String!
   }
 
-  type Query {
-    hello: String
-  }
-
   type ImageAdapterSetting {
     id: Int!
     startDate: DateTime!
@@ -45,6 +41,22 @@ export const typeDefs = gql`
     member: [MemberBooking!]
   }
 
+  type AdminBooking {
+    id: Int!
+    startDate: DateTime
+    endDate: DateTime
+    numGuests: Int
+    maxGuests: Int
+    withCat: Boolean!
+    withDog: Boolean!
+    status: String!
+    bookingCode: String
+    user: User
+    userId: String
+    item: BookingItem
+    member: [MemberBooking!]
+  }
+
   type BookingItem {
     id: String!
     image: String!
@@ -62,21 +74,6 @@ export const typeDefs = gql`
     user: User!
     booking: Booking!
     item: BookingItem
-  }
-
-  type AdminBooking {
-    id: String!
-    startDate: DateTime
-    endDate: DateTime
-    numGuests: Int
-    withCat: Boolean!
-    withDog: Boolean!
-    status: String!
-    bookingCode: String
-    userId: String
-    user: User
-    item: BookingItem
-    member: [MemberBooking!]
   }
 
   input ImageAdapterInput {
@@ -107,9 +104,11 @@ export const typeDefs = gql`
     userId: String
     withCat: Boolean
     withDog: Boolean
+    status: String
   }
 
   type Query {
+    adminBooking(id: Int!): AdminBooking
     adminBookings: [AdminBooking!]!
     bookingItems: [BookingItem!]!
     bookingItem(id: String!): BookingItem
@@ -138,10 +137,6 @@ export const typeDefs = gql`
 
 export const resolvers = {
   Query: {
-    hello: () => {
-      return "Hello World!";
-    },
-
     bookingItems: () => {
       return prisma.stableItem.findMany();
     },
@@ -157,6 +152,15 @@ export const resolvers = {
         throw new Error("Access not supported");
       }
       return prisma.booking.findMany();
+    },
+
+    adminBooking: (a, { id }, { user }) => {
+      if (!user || !user?.roles === "admin") {
+        throw new Error("Access not supported");
+      }
+      return prisma.booking.findUnique({
+        where: { id },
+      });
     },
 
     imageAdapterSettings: () => {
@@ -272,7 +276,30 @@ export const resolvers = {
       return { url: image };
     },
 
-    updateBooking: (a, { id, input }) => {
+    updateBooking: async (a, { id, input }, { user }) => {
+      if (!input.status) {
+        return prisma.booking.update({
+          data: input,
+          where: { id },
+        });
+      }
+
+      if (user.roles !== "admin") {
+        throw new Error("not authorized");
+      }
+      const booking = await prisma.booking.findUnique({
+        where: { id },
+      });
+      if (!booking.itemId && input.status === "approved") {
+        const itemId = await generateItem(booking.userId, booking.startDate);
+        return prisma.booking.update({
+          data: {
+            input,
+            itemId: itemId,
+          },
+          where: { id },
+        });
+      }
       return prisma.booking.update({
         data: input,
         where: { id },

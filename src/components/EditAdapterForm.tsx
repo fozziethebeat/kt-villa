@@ -26,13 +26,6 @@ const TEST_MUTATION = gql`
     }
   }
 `;
-const UPDATE_MUTATION = gql`
-  mutation UpdateImageAdapter($id: Int!, $input: ImageAdapterInput!) {
-    updateImageAdapter(id: $id, input: $input) {
-      id
-    }
-  }
-`;
 
 type EditAdapterInputs = {
   adapter: string;
