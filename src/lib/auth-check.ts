@@ -1,13 +1,24 @@
-import { redirect } from "next/navigation";
+import {redirect} from 'next/navigation';
 
-import { auth } from "@/lib/auth";
+import {auth} from '@/lib/auth';
+
+export async function hasRole(targetRoles: string[]) {
+  const session = await auth();
+  if (targetRoles === []) {
+    return true;
+  }
+  if (session?.user?.roles in targetRoles) {
+    return true;
+  }
+  return false;
+}
 
 export async function checkAccess(targetRole: string, failedPath: string) {
   const session = await auth();
   if (!session) {
     redirect(failedPath);
   }
-  if (targetRole !== "" && session?.user?.roles !== targetRole) {
+  if (targetRole !== '' && session?.user?.roles !== targetRole) {
     redirect(failedPath);
   }
 }
