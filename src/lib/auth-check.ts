@@ -7,7 +7,7 @@ export async function hasRole(targetRoles: string[]) {
   if (targetRoles === []) {
     return true;
   }
-  if (session?.user?.roles in targetRoles) {
+  if (targetRoles.includes(session?.user?.roles)) {
     return true;
   }
   return false;
