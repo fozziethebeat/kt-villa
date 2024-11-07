@@ -33,6 +33,12 @@ const CREATE_BOOKING_MUTATION = gql`
 `;
 
 export function BookingForm() {
+  const now = new Date();
+  const [date, setDate] = useState<DateRange>({
+    from: now,
+    to: new Date(now).setDate(now.getDate() + 2),
+  });
+  const [isValidDates, setIsValidDates] = useState(false);
   const router = useRouter();
   const form = useForm();
   const {data} = useSuspenseQuery(QUERY);
@@ -44,7 +50,7 @@ export function BookingForm() {
     CREATE_BOOKING_MUTATION,
     {
       onCompleted: data => {
-        router.push(`/booking${data.createBooking.bookingCode}`);
+        router.push(`/booking/${data.createBooking.bookingCode}`);
       },
     },
   );
@@ -53,20 +59,14 @@ export function BookingForm() {
     createBooking({
       variables: {
         input: {
-          startDate,
-          endDate,
+          startDate: date.from,
+          endDate: date.to,
           ...data,
         },
       },
     });
   };
 
-  const now = new Date();
-  const [date, setDate] = useState<DateRange>({
-    from: now,
-    to: new Date(now).setDate(now.getDate() + 2),
-  });
-  const [isValidDates, setIsValidDates] = useState(false);
   const validDateMatcher = candidate => {
     return excludedIntervals.some(
       ({start, end}) => candidate >= start && candidate <= end,

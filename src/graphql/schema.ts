@@ -1,11 +1,14 @@
+import {render} from '@react-email/render';
 import {DateTimeResolver} from 'graphql-scalars';
 import {gql} from 'graphql-tag';
+import ShortUniqueId from 'short-unique-id';
 
 import {
   generateBookingItem,
   generateItem,
   generateImageFromAdapter,
 } from '@/lib/generate';
+import {mailer} from '@/lib/mailer';
 import {CreateBookingMail} from '@/components/mail/CreateBookingMail';
 import {prisma} from '@/lib/prisma';
 
@@ -148,6 +151,8 @@ export const typeDefs = gql`
     updateUser(id: String!, input: UpdateUserInput!): User!
   }
 `;
+
+const bookingCodeGenerator = new ShortUniqueId({length: 6});
 
 export const resolvers = {
   Query: {
@@ -318,6 +323,9 @@ export const resolvers = {
         ) {
           return;
         }
+        console.log(candidateConflicts);
+        console.log(input.startDate);
+        console.log(input.endDate);
         for (let i = 0; i < candidateConflicts.length - 1; ++i) {
           const curr = candidateConflicts[i];
           const next = candidateConflicts[i + 1];
@@ -338,7 +346,7 @@ export const resolvers = {
           ...input,
           status,
           bookingCode: bookingCodeGenerator.rnd(),
-          userId: context.currentUser.id,
+          userId: user.id,
         },
       });
       await mailer.sendMail({
