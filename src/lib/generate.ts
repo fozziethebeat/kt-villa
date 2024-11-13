@@ -9,10 +9,15 @@ import {
 } from '@aws-sdk/client-s3';
 import axios from 'axios';
 import ShortUniqueId from 'short-unique-id';
+import Together from 'together-ai';
 
 import {prisma} from '@/lib/prisma';
 
 const s3Client = new S3Client({});
+
+const together = process.env.IMAGE_API_KEY
+  ? new Together({apiKey: process.env.IMAGE_API_KEY})
+  : undefined;
 
 async function uploadImageToS3(
   bucketName: string,
@@ -96,22 +101,41 @@ async function generateItem(userId, startDate) {
 
 async function generateImageFromAdapter(itemId, adapterSettings) {
   try {
-    const request = {
-      prompt: getPrompt(adapterSettings),
-      num_inference_steps: adapterSettings.steps,
-    };
-    const {data} = await axios.post(
-      `${process.env.IMAGE_API_URL}/txt2img`,
-      request,
-      {responseType: 'arraybuffer'},
-    );
-    const imageBuffer = Buffer.from(data, 'binary');
-    // Save the image to AWS S3
-    const bucketName = process.env.AWS_BUCKET;
-    const targetKey = `results/${itemId}.png`;
-    const image = await uploadImageToS3(bucketName, imageBuffer, targetKey);
-    // Done
-    return {image, request};
+    if (together) {
+      const request = {
+        model: process.env.IMAGE_API_MODEL,
+        prompt: getPrompt(adapterSettings),
+        steps: Math.min(adapterSettings.steps, 10),
+      };
+      const response = await together.images.create(request);
+      const urlResponse = await axios({
+        method: 'GET',
+        url: response.data[0].url,
+        responseType: 'arraybuffer',
+      });
+      const imageBuffer = urlResponse.data;
+      const bucketName = process.env.AWS_BUCKET;
+      const targetKey = `results/${itemId}.png`;
+      const image = await uploadImageToS3(bucketName, imageBuffer, targetKey);
+      return {image, request};
+    } else {
+      const request = {
+        prompt: getPrompt(adapterSettings),
+        num_inference_steps: adapterSettings.steps,
+      };
+      const {data} = await axios.post(
+        `${process.env.IMAGE_API_URL}/txt2img`,
+        request,
+        {responseType: 'arraybuffer'},
+      );
+      const imageBuffer = Buffer.from(data, 'binary');
+      // Save the image to AWS S3
+      const bucketName = process.env.AWS_BUCKET;
+      const targetKey = `results/${itemId}.png`;
+      const image = await uploadImageToS3(bucketName, imageBuffer, targetKey);
+      // Done
+      return {image, request};
+    }
   } catch (e) {
     console.error(e);
     throw e;
