@@ -157,7 +157,11 @@ const bookingCodeGenerator = new ShortUniqueId({length: 6});
 export const resolvers = {
   Query: {
     bookingItems: () => {
-      return prisma.stableItem.findMany();
+      return prisma.stableItem.findMany({
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     },
 
     bookingItem: (_, {id}) => {
@@ -210,7 +214,7 @@ export const resolvers = {
         },
         orderBy: {
           booking: {
-            startDate: 'asc',
+            startDate: 'desc',
           },
         },
       });
@@ -239,7 +243,7 @@ export const resolvers = {
           userId: user.id,
         },
         orderBy: {
-          startDate: 'asc',
+          startDate: 'desc',
         },
       });
     },
@@ -486,7 +490,7 @@ export const resolvers = {
     },
     item: booking => {
       return prisma.memberBooking
-        .findUnique({where: {id: bookin.id}})
+        .findUnique({where: {id: booking.id}})
         .userItem();
     },
   },

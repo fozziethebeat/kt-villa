@@ -1,8 +1,10 @@
-import Link from "next/link";
-import { withAuth } from "@/lib/withAuth";
-import { gql } from "@apollo/client";
-import { getClient } from "@/graphql/ApolloClient";
-import { MemberRegisterForm } from "@/components/MemberRegisterForm";
+import {gql} from '@apollo/client';
+import Link from 'next/link';
+import {FaCat, FaDog} from 'react-icons/fa';
+
+import {withAuth} from '@/lib/withAuth';
+import {getClient} from '@/graphql/ApolloClient';
+import {MemberRegisterForm} from '@/components/MemberRegisterForm';
 
 const QUERY = gql`
   query BookingItemQuery($bookingCode: String!) {
@@ -32,16 +34,16 @@ const QUERY = gql`
   }
 `;
 
-async function BookingPage({ params }) {
+async function BookingPage({params}) {
   try {
-    const { data, error } = await getClient().query({
+    const {data, error} = await getClient().query({
       query: QUERY,
-      variables: { bookingCode: params.id },
+      variables: {bookingCode: params.id},
     });
     const userBooking = data.userBooking;
     const numToRegister = Math.max(
       0,
-      userBooking.numGuests - userBooking.member.length - 1
+      userBooking.numGuests - userBooking.member.length - 1,
     );
     const toRegister = Array(numToRegister)
       .fill(0)
@@ -62,8 +64,7 @@ async function BookingPage({ params }) {
             </h2>
             <Link
               className="link"
-              href={`/booking/${userBooking.bookingCode}/edit`}
-            >
+              href={`/booking/${userBooking.bookingCode}/edit`}>
               update
             </Link>
             <div className="flex justify-between gap-2">
@@ -76,13 +77,13 @@ async function BookingPage({ params }) {
             <div className="flex justify-between gap-2">
               <div>Start Date</div>
               <div className="badge badge-ghost badge-lg">
-                {new Date(userBooking.startDate).toLocaleDateString("en-CA")}
+                {new Date(userBooking.startDate).toLocaleDateString('en-CA')}
               </div>
             </div>
             <div className="flex justify-between gap-2">
               <div>End Date</div>
               <div className="badge badge-ghost badge-lg">
-                {new Date(userBooking.endDate).toLocaleDateString("en-CA")}
+                {new Date(userBooking.endDate).toLocaleDateString('en-CA')}
               </div>
             </div>
             <div className="flex justify-between gap-2">
@@ -152,4 +153,4 @@ async function BookingPage({ params }) {
   }
 }
 
-export default withAuth(BookingPage, "", "/");
+export default withAuth(BookingPage, '', '/');

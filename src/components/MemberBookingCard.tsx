@@ -1,6 +1,6 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-export function MemberBookingCard({ memberBooking }) {
+export function MemberBookingCard({memberBooking}) {
   const booking = memberBooking.booking;
   return (
     <div className="card w-96 bg-base-300 shadow-xl">
@@ -16,14 +16,14 @@ export function MemberBookingCard({ memberBooking }) {
           <div className="flex justify-between gap-2">
             <div>Start Date</div>
             <div className="badge badge-ghost badge-lg">
-              {new Date(booking.startDate).toLocaleDateString("en-CA")}
+              {new Date(booking.startDate).toLocaleDateString('en-CA')}
             </div>
           </div>
 
           <div className="flex justify-between gap-2">
             <div>End Date</div>
             <div className="badge badge-ghost badge-lg">
-              {new Date(booking.endDate).toLocaleDateString("en-CA")}
+              {new Date(booking.endDate).toLocaleDateString('en-CA')}
             </div>
           </div>
 
@@ -42,7 +42,7 @@ export function MemberBookingCard({ memberBooking }) {
           )}
         </figure>
 
-        <Link route={`/public-booking/${booking.bookingCode}`}>
+        <Link href={`/public-booking/${booking.bookingCode}`}>
           <button className="btn btn-primary"> See Full Booking</button>
         </Link>
       </div>

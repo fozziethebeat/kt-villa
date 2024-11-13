@@ -111,6 +111,7 @@ program
           claimStatus: userItem.claimStatus,
           claimVisible: userItem.claimVisible,
           ownerId: oldIdToNew[userItem?.ownerId || ''],
+          createdAt: booking.startDate,
         },
       });
       await newDB.booking.update({
@@ -128,10 +129,15 @@ program
         bookingId: true,
         userId: true,
         userItemId: true,
+        booking: {
+          select: {
+            startDate: true,
+          },
+        },
       },
     });
     for (const fullMemberBooking of oldMemberBookings) {
-      const {userItemId, ...memberBooking} = fullMemberBooking;
+      const {userItemId, booking, ...memberBooking} = fullMemberBooking;
       const createdBooking = await newDB.memberBooking.create({
         data: {
           status: memberBooking.status,
@@ -153,6 +159,7 @@ program
           claimStatus: userItem.claimStatus,
           claimVisible: userItem.claimVisible,
           ownerId: oldIdToNew[userItem?.ownerId || ''],
+          createdAt: booking.startDate,
         },
       });
       await newDB.memberBooking.update({
