@@ -121,7 +121,7 @@ async function generateImageFromAdapter(itemId, adapterSettings) {
 function getPrompt(adapterSettings) {
   const index = Math.floor(Math.random() * adapterSettings.variants.length);
   const fragment = adapterSettings.variants[index];
-  return `${fragment}, ${adapterSettings.promptTemplate}`;
+  return `${fragment} ${adapterSettings.promptTemplate} ${adapterSettings.adapter}`;
 }
 
 export {generateBookingItem, generateItem, generateImageFromAdapter};

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "cli": "ts-node -r tsconfig-paths/register -P tsconfig.cli.json src/cli.ts"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -31,6 +32,7 @@
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "commander": "^12.1.0",
     "date-fns": "^3.6.0",
     "graphql": "^16.9.0",
     "graphql-scalars": "^1.23.0",

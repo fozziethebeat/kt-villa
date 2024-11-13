@@ -142,7 +142,7 @@ model ImageAdapterSetting {
   adapter   String
 
   promptTemplate    String
-  negativePrompt    String
-  steps             Int
+  negativePrompt    String @default("")
+  steps             Int @default(20)
   variants          String[]
 }

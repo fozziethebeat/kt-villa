@@ -1,0 +1,98 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("OLD_DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = "native"
+  output        = "./client"
+}
+
+model StableItem {
+  // A unique short string UUID.
+  id    String @id
+  // URL to a stable image.
+  image String
+  text  String?
+  character Json?
+
+  imageRequest Json?
+
+  claimCode    String
+  claimStatus  String
+  claimVisible Boolean
+
+  owner   User? @relation(fields: [ownerId], references: [id])
+  ownerId Int?
+
+  booking       Booking?
+  memberBooking MemberBooking?
+}
+
+model Booking {
+  id          Int      @id @default(autoincrement())
+  startDate   DateTime
+  endDate     DateTime
+  numGuests   Int
+  maxGuests   Int      @default(4)
+  bookingCode String   @unique
+  status      String   @default("pending")
+  withCat     Boolean  @default(false)
+  withDog     Boolean  @default(false)
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  userItem   StableItem? @relation(fields: [userItemId], references: [id])
+  userItemId String?     @unique
+
+  member MemberBooking[]
+}
+
+model MemberBooking {
+  id     Int    @id @default(autoincrement())
+  status String
+
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  bookingId Int
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  userItem   StableItem? @relation(fields: [userItemId], references: [id])
+  userItemId String?     @unique
+}
+
+model User {
+  id                  Int       @id @default(autoincrement())
+  name                String?
+  email               String    @unique
+  hashedPassword      String
+  salt                String
+  resetToken          String?
+  resetTokenExpiresAt DateTime?
+  roles               String    @default("general")
+  trustStatus         String    @default("new")
+
+  StableItem    StableItem[]
+  booking       Booking[]
+  memberBooking MemberBooking[]
+}
+
+model SignupCode {
+  id          String @id
+  trustStatus String @default("new")
+  roles       String @default("general")
+}
+
+model ImageAdapterSetting {
+  id        Int      @id @default(autoincrement())
+  startDate DateTime
+  adapter   String
+
+  promptTemplate    String
+  negativePrompt    String
+  steps             Int
+  variants          String[]
+}
