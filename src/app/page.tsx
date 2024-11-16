@@ -1,11 +1,11 @@
 import Link from 'next/link';
 
-import {hasRole} from '@/lib/auth-check';
+import {auth} from '@/lib/auth';
 import {BookingForm} from '@/components/BookingForm';
 import {BookingItemGrid} from '@/components/BookingItemGrid';
 
 export default async function Home() {
-  const canBook = await hasRole(['admin', 'trusted']);
+  const session = await auth();
   return (
     <div>
       <div
@@ -22,13 +22,15 @@ export default async function Home() {
               <Link href="/about"> Find out more</Link>
             </p>
           </div>
-          <div className="card h-96 w-[400px] flex-shrink-0 bg-base-100 p-4 shadow-2xl">
-            {canBook ? (
+          <div className="card h-96 w-[400px] flex-shrink-0 bg-base-100 p-4 shadow-2xl flex items-center justify-center">
+            {session ? (
               <BookingForm />
             ) : (
-              <button className="justify-center btn btn-primary">
-                <Link href="/api/auth/signin">Sign In</Link>
-              </button>
+              <Link href="/signin" className="w-full">
+                <button className="justify-center btn btn-primary w-full">
+                  Sign In
+                </button>
+              </Link>
             )}
           </div>
         </div>

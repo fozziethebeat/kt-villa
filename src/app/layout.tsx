@@ -1,11 +1,11 @@
-import { SessionProvider } from "next-auth/react";
-import Link from "next/link";
+import {SessionProvider} from 'next-auth/react';
+import Link from 'next/link';
 
-import { auth } from "@/lib/auth";
-import { ApolloWrapper } from "@/app/ApolloWrapper";
-import { AccountMenu } from "@/components/AccountMenu";
+import {auth} from '@/lib/auth';
+import {ApolloWrapper} from '@/app/ApolloWrapper';
+import {AccountMenu} from '@/components/AccountMenu';
 
-import "@/app/globals.css";
+import '@/app/globals.css';
 
 export default async function RootLayout({
   children,
