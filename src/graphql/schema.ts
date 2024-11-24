@@ -9,8 +9,9 @@ import {
   generateImageFromAdapter,
 } from '@/lib/generate';
 import {mailer} from '@/lib/mailer';
-import {CreateBookingMail} from '@/components/mail/CreateBookingMail';
 import {prisma} from '@/lib/prisma';
+import {CreateBookingMail} from '@/components/mail/CreateBookingMail';
+import {JoinApproved} from '@/components/mail/JoinApproved';
 
 export const typeDefs = gql`
   scalar DateTime
@@ -143,6 +144,7 @@ export const typeDefs = gql`
     addMemberBooking(id: Int!, username: String!): Booking!
     createBooking(input: CreateBookingInput!): Booking!
     testImageAdapter(input: ImageAdapterInput!): TestImage!
+    updateMemberBookingStatus(id: Int!, status: String!): MemberBooking!
     updateBooking(id: Int!, input: UpdateBookingInput!): Booking!
     updateImageAdapter(
       id: Int!
@@ -381,6 +383,73 @@ export const resolvers = {
         input,
       );
       return {url: image};
+    },
+
+    updateMemberBookingStatus: async (a, {id, status}, {user}) => {
+      const memberBooking = await prisma.memberBooking.findUnique({
+        where: {id},
+        select: {
+          booking: true,
+          user: true,
+        },
+      });
+      if (!user) {
+        throw new Error('not authorized');
+      }
+      if (!memberBooking) {
+        throw new Error('Invalid Member Booking');
+      }
+      if (!memberBooking.booking) {
+        throw new Error('Invalid Booking');
+      }
+      if (memberBooking.booking.userId != user.id) {
+        throw new Error('Permission Denied');
+      }
+      const {booking} = memberBooking;
+
+      const statusSetBooking = await prisma.memberBooking.update({
+        data: {
+          status,
+        },
+        where: {id},
+      });
+      if (
+        statusSetBooking.status !== 'approved' ||
+        statusSetBooking.userItemId
+      ) {
+        return statusSetBooking;
+      }
+      const userItemId = await generateItem(
+        memberBooking.user.id,
+        booking.startDate,
+      );
+      const updatedMemberBooking = await db.memberBooking.update({
+        data: {
+          userItem: {
+            connect: {id: userItemId},
+          },
+          booking: {
+            update: {
+              numGuests: {increment: 1},
+            },
+          },
+        },
+        where: {id},
+      });
+      await mailer.sendMail({
+        from: process.env.MAILER_FROM,
+        to: memberBooking.user.email,
+        subject: 'Your request to join is approved',
+        html: await render(
+          JoinApproved({
+            code: booking.bookingCode,
+            link: `https://www.kt-villa.com/public-booking/${booking.bookingCode}`,
+            name: memberBooking.user.name,
+          }),
+        ),
+      });
+
+      return updatedMemberBooking;
     },
 
     updateBooking: async (a, {id, input}, {user}) => {

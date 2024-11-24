@@ -4,6 +4,7 @@ import {FaCat, FaDog} from 'react-icons/fa';
 
 import {withAuth} from '@/lib/withAuth';
 import {getClient} from '@/graphql/ApolloClient';
+import {MemberBookingForm} from '@/components/MemberBookingForm';
 import {MemberRegisterForm} from '@/components/MemberRegisterForm';
 
 const QUERY = gql`
@@ -117,7 +118,6 @@ async function BookingPage({params}) {
               </div>
 
               <table className="table">
-                {/* head */}
                 <thead>
                   <tr>
                     <th></th>
@@ -131,12 +131,10 @@ async function BookingPage({params}) {
                       <th>{index + 1}</th>
                       <td>{mb.user.name}</td>
                       <td>
-                        {/*
-                      <MemberBookingAction
-                        memberBooking={mb}
-                        booking={userBooking}
-                      />
-                        */}
+                        <MemberBookingForm
+                          memberBooking={mb}
+                          booking={userBooking}
+                        />
                       </td>
                     </tr>
                   ))}
