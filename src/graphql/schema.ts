@@ -149,6 +149,7 @@ export const typeDefs = gql`
       input: ImageAdapterInput!
     ): ImageAdapterSetting!
     updateUser(id: String!, input: UpdateUserInput!): User!
+    updateUsername(name: String!): User!
   }
 `;
 
@@ -429,6 +430,13 @@ export const resolvers = {
       return prisma.user.update({
         data: input,
         where: {id},
+      });
+    },
+
+    updateUsername: (a, {name}, {user}) => {
+      return prisma.user.update({
+        where: {id: user.id},
+        data: {name},
       });
     },
   },
