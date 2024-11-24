@@ -3,11 +3,7 @@ import {DateTimeResolver} from 'graphql-scalars';
 import {gql} from 'graphql-tag';
 import ShortUniqueId from 'short-unique-id';
 
-import {
-  generateBookingItem,
-  generateItem,
-  generateImageFromAdapter,
-} from '@/lib/generate';
+import {imageGenerator} from '@/lib/generate';
 import {mailer} from '@/lib/mailer';
 import {prisma} from '@/lib/prisma';
 import {CreateBookingMail} from '@/components/mail/CreateBookingMail';
@@ -285,7 +281,10 @@ export const resolvers = {
         throw new Error('Not authorized');
       }
       const userId = users[0].id;
-      const userItemId = await generateItem(userId, booking.startDate);
+      const userItemId = await imageGenerator.generateItem(
+        userId,
+        booking.startDate,
+      );
       return prisma.booking.update({
         where: {id},
         data: {
@@ -330,9 +329,6 @@ export const resolvers = {
         ) {
           return;
         }
-        console.log(candidateConflicts);
-        console.log(input.startDate);
-        console.log(input.endDate);
         for (let i = 0; i < candidateConflicts.length - 1; ++i) {
           const curr = candidateConflicts[i];
           const next = candidateConflicts[i + 1];
@@ -371,14 +367,14 @@ export const resolvers = {
       if (status === 'pending') {
         return booking;
       }
-      return generateBookingItem(booking.id);
+      return imageGenerator.generateBookingItem(booking.id);
     },
 
     testImageAdapter: async (a, {input}, {user}) => {
       if (user.roles !== 'admin') {
         throw new Error('not authorized');
       }
-      const {image} = await generateImageFromAdapter(
+      const {image} = await imageGenerator.generateImageFromAdapter(
         `test_${input.adapter}`,
         input,
       );
@@ -419,7 +415,7 @@ export const resolvers = {
       ) {
         return statusSetBooking;
       }
-      const userItemId = await generateItem(
+      const userItemId = await imageGenerator.generateItem(
         memberBooking.user.id,
         booking.startDate,
       );
@@ -467,7 +463,10 @@ export const resolvers = {
         where: {id},
       });
       if (!booking.itemId && input.status === 'approved') {
-        const itemId = await generateItem(booking.userId, booking.startDate);
+        const itemId = await imageGenerator.generateItem(
+          booking.userId,
+          booking.startDate,
+        );
         return prisma.booking.update({
           data: {
             input,

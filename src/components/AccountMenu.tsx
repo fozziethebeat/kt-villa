@@ -38,7 +38,6 @@ export async function AccountMenu() {
             action={async () => {
               'use server';
 
-              console.log('signout');
               await signOut();
             }}>
             <button type="submit" className="w-full text-left">

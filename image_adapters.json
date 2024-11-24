@@ -10,7 +10,7 @@
         "telemark skiing ferrets",
         "snow biking turtles"
       ],
-      "adapter": "by Makoto Shinkai"
+      "adapter": "style Makoto Shinkai"
     },
     {
       "promptTemplate": "high resolution, mountains, ski slopes, winter",
@@ -49,7 +49,7 @@
         "telemark skiing ferrets",
         "snow biking turtles"
       ],
-      "adapter": "in Gemma Correll Style"
+      "adapter": "style Gemma Correll"
     },
     {
       "promptTemplate": "high resolution, mountains, ski slopes, winter",
@@ -62,7 +62,7 @@
         "telemark skiing ferrets",
         "snow biking turtles"
       ],
-      "adapter": "in Hasui Kawase Style"
+      "adapter": "in style Hasui Kawase"
     },
     {
       "promptTemplate": "high resolution, mountains, ski slopes, winter",
@@ -75,7 +75,7 @@
         "telemark skiing ferrets",
         "snow biking turtles"
       ],
-      "adapter": "in Kay Nielsen Style"
+      "adapter": "in style Kay Nielsen"
     },
     {
       "promptTemplate": "high resolution, mountains, ski slopes, winter",
@@ -127,7 +127,7 @@
         "telemark skiing ferrets",
         "snow biking turtles"
       ],
-        "adapter": "in classical Chinese Tang Bo Hu Style"
+        "adapter": "in style classical Chinese by Tang Bo Hu",
     },
     {
       "promptTemplate": "high resolution, mountains, ski slopes, winter",
@@ -205,7 +205,7 @@
         "telemark skiing ferrets",
         "snow biking turtles"
       ],
-        "adapter": "in Studio Ghibli Style"
+      "adapter": "in Studio Ghibli Style"
     },
     {
       "promptTemplate": "high resolution, mountains, ski slopes, winter",
@@ -231,7 +231,7 @@
         "telemark skiing ferrets",
         "snow biking turtles"
       ],
-        "adapter": "in Jessie Willcox Style"
+        "adapter": "style Jessie Willcox"
     },
     {
       "promptTemplate": "high resolution, mountains, ski slopes, winter",
@@ -244,7 +244,7 @@
         "telemark skiing ferrets",
         "snow biking turtles"
       ],
-        "adapter": "in John Berkeley Style"
+        "adapter": "style John Berkeley"
     },
     {
       "promptTemplate": "high resolution, mountains, ski slopes, winter",
