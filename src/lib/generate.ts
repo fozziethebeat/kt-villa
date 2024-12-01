@@ -1,12 +1,4 @@
-import {
-  S3Client,
-  PutObjectCommand,
-  CreateBucketCommand,
-  DeleteObjectCommand,
-  DeleteBucketCommand,
-  paginateListObjectsV2,
-  GetObjectCommand,
-} from '@aws-sdk/client-s3';
+import {S3Client, PutObjectCommand} from '@aws-sdk/client-s3';
 import {helpers, PredictionServiceClient} from '@google-cloud/aiplatform';
 import axios from 'axios';
 import ShortUniqueId from 'short-unique-id';
@@ -114,7 +106,7 @@ class TogetherFluxGenerator extends ImageGenerationService {
   protected together: Together;
   protected modelId: string;
 
-  constructor(bucketName: String, apiKey: string, modelId: string) {
+  constructor(bucketName: string, apiKey: string, modelId: string) {
     super(bucketName);
     this.together = new Together({apiKey});
     this.modelId = modelId;

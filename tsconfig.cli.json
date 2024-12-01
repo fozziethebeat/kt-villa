@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
+    "noImplicitAny": false,
     "resolveJsonModule": true,
     "composite": true,
     "paths": {

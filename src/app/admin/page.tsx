@@ -2,7 +2,7 @@
  * Uses https://ui.shadcn.com/blocks instead of DaisyUI for clear role
  * difference.
  */
-import { withAuth } from "@/lib/withAuth";
+import {withAuth} from '@/lib/withAuth';
 
 import {
   Breadcrumb,
@@ -11,12 +11,16 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { AdminBookingTable } from "@/components/AdminBookingTable";
-import { AdminAdapterTable } from "@/components/AdminAdapterTable";
-import { AdminUsersTable } from "@/components/AdminUsersTable";
+} from '@/components/ui/breadcrumb';
+import {AdminBookingTable} from '@/components/AdminBookingTable';
+import {AdminAdapterTable} from '@/components/AdminAdapterTable';
+import {AdminUsersTable} from '@/components/AdminUsersTable';
 
-async function AdminPage({ session }) {
+interface AdminPageProps {
+  session: any;
+}
+
+async function AdminPage({session}: AdminPageProps) {
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-4">
       <Breadcrumb>
@@ -73,4 +77,4 @@ async function AdminPage({ session }) {
   );
 }
 
-export default withAuth(AdminPage, "admin", "/");
+export default withAuth(AdminPage, 'admin', '/');

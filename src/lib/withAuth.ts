@@ -1,13 +1,13 @@
-import { checkAccess, getSession } from "./auth-check";
+import {checkAccess, getSession} from './auth-check';
 
 export function withAuth<T>(
   Component: React.ComponentType<T>,
   targetRole: string,
-  failedPath: string
-) {
+  failedPath: string,
+): React.ComponentType<T> {
   return async function ProtectedPage(props: T) {
     await checkAccess(targetRole, failedPath);
     const session = await getSession();
-    return Component({ ...props, session });
+    return Component({...props, session});
   };
 }

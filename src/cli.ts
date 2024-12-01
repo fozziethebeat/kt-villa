@@ -66,6 +66,7 @@ program
   .command('migrate')
   .description('Migrate databases')
   .action(async () => {
+    console.log('Fetching old users');
     // First, load up all the users and then create a mapping from the old
     // User ID (integer) to the new User ID (cuid).  This will make it easier
     // to then load up all other associated assets by swapping out the user ID
@@ -75,6 +76,7 @@ program
       usersOld.map(user => [user.email, user.id]),
     );
 
+    console.log('Adding users');
     const usersNew = usersOld.map(u => ({
       name: u.name,
       email: u.email,
@@ -95,6 +97,7 @@ program
       }),
     );
 
+    console.log('Adding bookings');
     // Now extract all the Bookings and StableItems.
     // NOTE: this is more painful than it should be.  We have to:
     // 1. Fetch all the old bookings (without member bookings or items)
@@ -154,6 +157,7 @@ program
       });
     }
 
+    console.log('Adding member bookings');
     // Now do the same horrible mess with member bookings.
     const oldMemberBookings = await oldDB.memberBooking.findMany({
       select: {
@@ -202,6 +206,7 @@ program
       });
     }
 
+    console.log('Adding adapters');
     const now = new Date();
     const adapterData = imageAdapters.map((adapter, i) => ({
       ...adapter,

@@ -4,17 +4,17 @@ export default function About() {
       <div
         className="hero min-h-screen"
         style={{
-          backgroundImage: "url(/about/view-hakuba-main.jpeg)",
-        }}
-      >
+          backgroundImage: 'url(/about/view-hakuba-main.jpeg)',
+        }}>
         <div className="hero-overlay" />
         <div className="hero-content text-center text-neutral-content">
           <div className="max-w-md">
             <h1 className="mb-5 text-5xl font-bold">Snow Time</h1>
             <p className="mb-5">
-              This ski season, we're opening up our Hakuba home, KT Villa, to
-              friends and friends of friends. find an upcoming trip and join us
-              as we enjoy some chilly weather and fly down some snowy mountains.
+              This ski season, we&apos;re opening up our Hakuba home, KT Villa,
+              to friends and friends of friends. find an upcoming trip and join
+              us as we enjoy some chilly weather and fly down some snowy
+              mountains.
             </p>
           </div>
         </div>
@@ -25,9 +25,10 @@ export default function About() {
         <p>
           At KT-Villa, we live about 1 kilometer from Hakuba 47 and about 2
           kilometers from Hakuba Goryu, two of the best ski slopes in Japan.
-          Each week, we'll be driving from Tokyo to Hakuba in a Toyota Prius for
-          a long weekend. To join, just pick a trip that works for you, follow
-          the transit instructions, and it'll all work out for the fun.
+          Each week, we&apos;ll be driving from Tokyo to Hakuba in a Toyota
+          Prius for a long weekend. To join, just pick a trip that works for
+          you, follow the transit instructions, and it&apos;ll all work out for
+          the fun.
         </p>
         <div className="carousel w-[512px]">
           <div id="view-hakuba" className="carousel-item w-full">
@@ -60,7 +61,7 @@ export default function About() {
         <h1 className="text-3xl font-bold">Weather</h1>
         <p>
           It can be quite cold, anywhere from -20 to 0, so be prepared. But
-          that's why you're joining right?
+          that&apos;s why you&apos;re joining right?
         </p>
         <div className="carousel w-[512px]">
           <div id="perks-fireplace" className="carousel-item w-full">
@@ -86,10 +87,10 @@ export default function About() {
         </div>
         <h1 className="text-3xl font-bold">Perks</h1>
         <p>
-          On each trip, we'll have a few perks ready. We've got a lovely wood
-          stove in the living room, a solid espresso machine, and everything
-          needed for cooking. On some trips you can also expect our lovely
-          little Mame to join along and even a wild mushroom.
+          On each trip, we&apos;ll have a few perks ready. We&apos;ve got a
+          lovely wood stove in the living room, a solid espresso machine, and
+          everything needed for cooking. On some trips you can also expect our
+          lovely little Mame to join along and even a wild mushroom.
         </p>
         <h1 className="text-3xl font-bold">How to Join</h1>
         <ul className="steps steps-vertical">
