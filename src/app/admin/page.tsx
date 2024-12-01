@@ -1,7 +1,4 @@
-/*
- * Uses https://ui.shadcn.com/blocks instead of DaisyUI for clear role
- * difference.
- */
+import {getSession} from '@/lib/auth-check';
 import {withAuth} from '@/lib/withAuth';
 
 import {
@@ -16,11 +13,8 @@ import {AdminBookingTable} from '@/components/AdminBookingTable';
 import {AdminAdapterTable} from '@/components/AdminAdapterTable';
 import {AdminUsersTable} from '@/components/AdminUsersTable';
 
-interface AdminPageProps {
-  session: any;
-}
-
-async function AdminPage({session}: AdminPageProps) {
+async function AdminPage() {
+  const session = await getSession();
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-4">
       <Breadcrumb>
@@ -41,7 +35,6 @@ async function AdminPage({session}: AdminPageProps) {
           name="my_tabs_1"
           role="tab"
           className="tab"
-          label="Bookings"
           aria-label="Bookings"
           defaultChecked
         />
@@ -54,7 +47,6 @@ async function AdminPage({session}: AdminPageProps) {
           name="my_tabs_1"
           role="tab"
           className="tab"
-          label="Adapters"
           aria-label="Adapters"
         />
         <div role="tabpanel" className="tab-content">
@@ -66,7 +58,6 @@ async function AdminPage({session}: AdminPageProps) {
           name="my_tabs_1"
           role="tab"
           className="tab"
-          label="Users"
           aria-label="Users"
         />
         <div role="tabpanel" className="tab-content">

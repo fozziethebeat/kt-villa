@@ -1,9 +1,20 @@
+import type {DefaultSession} from 'next-auth';
+
 import {PrismaAdapter} from '@auth/prisma-adapter';
 import {createHash} from 'crypto';
 import NextAuth from 'next-auth';
 import Nodemailer from 'next-auth/providers/nodemailer';
 
 import {prisma} from '@/lib/prisma';
+
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      roles: string;
+      profileImageUrl: string;
+    } & DefaultSession['user'];
+  }
+}
 
 export const {handlers, signIn, signOut, auth} = NextAuth({
   adapter: PrismaAdapter(prisma),

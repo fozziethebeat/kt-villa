@@ -3,7 +3,12 @@
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {useForm} from 'react-hook-form';
-import {gql, useSuspenseQuery, useMutation} from '@apollo/client';
+import {
+  gql,
+  useSuspenseQuery,
+  useMutation,
+  TypedDocumentNode,
+} from '@apollo/client';
 import {useState} from 'react';
 import {CalendarIcon} from '@radix-ui/react-icons';
 import {addDays, format} from 'date-fns';
@@ -14,7 +19,14 @@ import {Button} from '@/components/ui/button';
 import {Calendar} from '@/components/ui/calendar';
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
 
-export const QUERY = gql`
+interface Data {
+  futureBookings: {
+    startDate: Date;
+    endDate: Date;
+  }[];
+}
+
+export const QUERY: TypedDocumentNode<Data> = gql`
   query FutureBookings {
     futureBookings {
       startDate
@@ -34,9 +46,11 @@ const CREATE_BOOKING_MUTATION = gql`
 
 export function BookingForm() {
   const now = new Date();
+  const inTwoWeeks = new Date(now);
+  inTwoWeeks.setDate(now.getDate() + 2);
   const [date, setDate] = useState<DateRange>({
     from: now,
-    to: new Date(now).setDate(now.getDate() + 2),
+    to: inTwoWeeks,
   });
   const [isValidDates, setIsValidDates] = useState(false);
   const router = useRouter();

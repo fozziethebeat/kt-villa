@@ -8,7 +8,7 @@ export async function AccountMenu() {
     <div className="dropdown dropdown-end">
       <label tabIndex={0} className="avatar btn btn-circle btn-ghost">
         <div className="w-10 rounded-full">
-          <img src={session.user.profileImageUrl} />
+          <img src={session.user?.profileImageUrl} />
         </div>
       </label>
 

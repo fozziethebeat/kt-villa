@@ -3,7 +3,7 @@
 import {useRouter} from 'next/navigation';
 import {useState} from 'react';
 import {useForm} from 'react-hook-form';
-import {gql, useMutation} from '@apollo/client';
+import {gql, useMutation, TypedDocumentNode} from '@apollo/client';
 
 import {Button} from '@/components/ui/button';
 import {
@@ -19,7 +19,7 @@ import {Label} from '@/components/ui/label';
 import {Slider} from '@/components/ui/slider';
 import {Textarea} from '@/components/ui/textarea';
 
-const TEST_MUTATION = gql`
+const TEST_MUTATION: TypedDocumentNode<any, any> = gql`
   mutation TestImageAdapter($input: ImageAdapterInput!) {
     testImageAdapter(input: $input) {
       url
@@ -27,7 +27,7 @@ const TEST_MUTATION = gql`
   }
 `;
 
-const UPDATE_MUTATION = gql`
+const UPDATE_MUTATION: TypedDocumentNode<any, any> = gql`
   mutation UpdateImageAdapter($id: Int!, $input: ImageAdapterInput!) {
     updateImageAdapter(id: $id, input: $input) {
       url
@@ -40,14 +40,21 @@ type EditAdapterInputs = {
   promptTemplate: string;
   negativePrompt: string;
   steps: number;
-  variants: string[];
+  variants: string;
 };
 
-export function EditAdapterForm({imageAdapter}) {
+interface EditAdapterFormProps {
+  imageAdapter: any;
+}
+
+export function EditAdapterForm({imageAdapter}: EditAdapterFormProps) {
   const router = useRouter();
   const [requestId, setRequestId] = useState(new Date());
   const {handleSubmit, register, getValues} = useForm<EditAdapterInputs>({
-    defaultValues: imageAdapter,
+    defaultValues: {
+      ...imageAdapter,
+      variants: imageAdapter.variants.join(','),
+    },
   });
   const [updateImageAdapter, {loading, error}] = useMutation(UPDATE_MUTATION, {
     onCompleted: () => {
@@ -59,19 +66,16 @@ export function EditAdapterForm({imageAdapter}) {
     useMutation(TEST_MUTATION);
 
   const onSubmit = data => {
-    const variants =
-      typeof data.variants === 'string'
-        ? data.variants.split(',')
-        : data.variants;
+    const variants = data.variants.split(',');
     updateImageAdapter({
       variables: {
-        id: data.id,
+        id: imageAdapter.id,
         input: {
-          id: data.id,
+          id: imageAdapter.id,
           adapter: data.adapter,
           promptTemplate: data.promptTemplate,
           negativePrompt: data.negativePrompt,
-          steps: parseInt(data.steps),
+          steps: data.steps,
           variants: variants,
         },
       },
@@ -81,23 +85,22 @@ export function EditAdapterForm({imageAdapter}) {
   const testAdapter = () => {
     setRequestId(new Date());
     const data = getValues();
-    const variants =
-      typeof data.variants === 'string'
-        ? data.variants.split(',')
-        : data.variants;
+    const variants = data.variants.split(',');
     testImageAdapter({
       variables: {
         input: {
-          id: data.id,
+          id: imageAdapter.id,
           adapter: data.adapter,
           promptTemplate: data.promptTemplate,
           negativePrompt: data.negativePrompt,
-          steps: parseInt(data.steps),
+          steps: data.steps,
           variants: variants,
         },
       },
     });
   };
+  // @ts-ignore
+  /* eslint-disable */
   return (
     <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
       <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
@@ -120,7 +123,6 @@ export function EditAdapterForm({imageAdapter}) {
                 <div className="grid gap-3">
                   <Label htmlFor="promptTemplate">Prompt Template</Label>
                   <Textarea
-                    type="text"
                     name="promptTemplate"
                     className="w-full"
                     {...register('promptTemplate')}
@@ -130,11 +132,12 @@ export function EditAdapterForm({imageAdapter}) {
                   <Label htmlFor="steps">Inference Steps</Label>
                   <Slider
                     name="steps"
-                    min={1}
                     max={30}
                     step={1}
                     defaultValue={[imageAdapter.steps]}
-                    {...register('steps')}
+                    {...register('steps', {
+                      valueAsNumber: true,
+                    })}
                   />
                 </div>
                 <div className="grid gap-3">
@@ -143,7 +146,6 @@ export function EditAdapterForm({imageAdapter}) {
                     type="text"
                     name="variants"
                     className="w-full"
-                    defaultValue={imageAdapter.variants.join(',')}
                     {...register('variants')}
                   />
                 </div>
@@ -181,4 +183,5 @@ export function EditAdapterForm({imageAdapter}) {
       </div>
     </div>
   );
+  /* eslint-enable */
 }
