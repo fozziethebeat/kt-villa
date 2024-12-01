@@ -6,6 +6,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "ktvilla-images.s3.ap-northeast-1.amazonaws.com",
         pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "ktvilla-images.s3.amazonaws.com",
+        pathname: "/**",
       }
     ]
   }

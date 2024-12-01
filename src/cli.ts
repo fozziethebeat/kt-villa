@@ -3,6 +3,8 @@ import {Command} from 'commander';
 import {PrismaClient as NewClient} from '@prisma/client';
 import {PrismaClient as OldClient} from '../old_prisma/client';
 
+import {helpers, PredictionServiceClient} from '@google-cloud/aiplatform';
+
 import imageAdapters from '../image_adapters.json';
 
 const newDB = new NewClient();
@@ -29,6 +31,36 @@ program
   .name('kt-villa-tools')
   .description('CLI tools for KT Villa Operations')
   .version('1.0.0');
+
+program
+  .command('generate')
+  .description('Generate Test Image')
+  .action(async () => {
+    const location = process.env.GEMINI_LOCATION;
+    const projectId = process.env.GEMINI_PROJECT_ID;
+    const predictionServiceClient = new PredictionServiceClient({
+      apiEndpoint: `${location}-aiplatform.googleapis.com`,
+    });
+    const endpoint = `projects/${projectId}/locations/${location}/publishers/google/models/imagen-3.0-generate-001`;
+    const parameters = helpers.toValue({
+      sampleCount: 1,
+      aspectRatio: '1:1',
+      safetyFilterLevel: 'block_none',
+      personGeneration: 'allow_adult',
+    });
+    const instances = [
+      helpers.toValue({
+        prompt: 'A simple photo of cats',
+      }),
+    ];
+    const request = {
+      endpoint,
+      instances,
+      parameters,
+    };
+
+    await predictionServiceClient.predict(request);
+  });
 
 program
   .command('migrate')

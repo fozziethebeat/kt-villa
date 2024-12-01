@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { gql, useMutation } from "@apollo/client";
+import {useRouter} from 'next/navigation';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {gql, useMutation} from '@apollo/client';
 
-import { Button } from "@/components/ui/button";
+import {Button} from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -13,15 +13,23 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { Textarea } from "@/components/ui/textarea";
+} from '@/components/ui/card';
+import {Input} from '@/components/ui/input';
+import {Label} from '@/components/ui/label';
+import {Slider} from '@/components/ui/slider';
+import {Textarea} from '@/components/ui/textarea';
 
 const TEST_MUTATION = gql`
   mutation TestImageAdapter($input: ImageAdapterInput!) {
     testImageAdapter(input: $input) {
+      url
+    }
+  }
+`;
+
+const UPDATE_MUTATION = gql`
+  mutation UpdateImageAdapter($id: Int!, $input: ImageAdapterInput!) {
+    updateImageAdapter(id: $id, input: $input) {
       url
     }
   }
@@ -35,28 +43,25 @@ type EditAdapterInputs = {
   variants: string[];
 };
 
-export function EditAdapterForm({ imageAdapter }) {
+export function EditAdapterForm({imageAdapter}) {
   const router = useRouter();
   const [requestId, setRequestId] = useState(new Date());
-  const { handleSubmit, register, getValues } = useForm<EditAdapterInputs>({
+  const {handleSubmit, register, getValues} = useForm<EditAdapterInputs>({
     defaultValues: imageAdapter,
   });
-  const [updateImageAdapter, { loading, error }] = useMutation(
-    UPDATE_MUTATION,
-    {
-      onCompleted: () => {
-        router.push(`/admin/adapter/${imageAdapter.id}`);
-      },
-    }
-  );
+  const [updateImageAdapter, {loading, error}] = useMutation(UPDATE_MUTATION, {
+    onCompleted: () => {
+      router.push(`/admin/adapter/${imageAdapter.id}`);
+    },
+  });
 
-  const [testImageAdapter, { data: testImageData, loading: testImageLoading }] =
+  const [testImageAdapter, {data: testImageData, loading: testImageLoading}] =
     useMutation(TEST_MUTATION);
 
-  const onSubmit = (data) => {
+  const onSubmit = data => {
     const variants =
-      typeof data.variants === "string"
-        ? data.variants.split(",")
+      typeof data.variants === 'string'
+        ? data.variants.split(',')
         : data.variants;
     updateImageAdapter({
       variables: {
@@ -77,8 +82,8 @@ export function EditAdapterForm({ imageAdapter }) {
     setRequestId(new Date());
     const data = getValues();
     const variants =
-      typeof data.variants === "string"
-        ? data.variants.split(",")
+      typeof data.variants === 'string'
+        ? data.variants.split(',')
         : data.variants;
     testImageAdapter({
       variables: {
@@ -109,7 +114,7 @@ export function EditAdapterForm({ imageAdapter }) {
                     type="text"
                     name="adapter"
                     className="w-full"
-                    {...register("adapter")}
+                    {...register('adapter')}
                   />
                 </div>
                 <div className="grid gap-3">
@@ -118,7 +123,7 @@ export function EditAdapterForm({ imageAdapter }) {
                     type="text"
                     name="promptTemplate"
                     className="w-full"
-                    {...register("promptTemplate")}
+                    {...register('promptTemplate')}
                   />
                 </div>
                 <div className="grid gap-3">
@@ -129,7 +134,7 @@ export function EditAdapterForm({ imageAdapter }) {
                     max={30}
                     step={1}
                     defaultValue={[imageAdapter.steps]}
-                    {...register("steps")}
+                    {...register('steps')}
                   />
                 </div>
                 <div className="grid gap-3">
@@ -138,8 +143,8 @@ export function EditAdapterForm({ imageAdapter }) {
                     type="text"
                     name="variants"
                     className="w-full"
-                    defaultValue={imageAdapter.variants.join(",")}
-                    {...register("variants")}
+                    defaultValue={imageAdapter.variants.join(',')}
+                    {...register('variants')}
                   />
                 </div>
 

@@ -177,7 +177,7 @@ class GeminiImagenGenerator extends ImageGenerationService {
   }
 
   async generateImageFromAdapter(itemId, adapterSettings): Promise<string> {
-    const endpoint = `projects/${this.projectId}/locations/${this.location}/publishers/google/models/imagen-3.0-generate-001`;
+    const endpoint = `projects/${this.projectID}/locations/${this.location}/publishers/google/models/imagen-3.0-generate-001`;
     const parameters = helpers.toValue({
       sampleCount: 1,
       aspectRatio: '1:1',

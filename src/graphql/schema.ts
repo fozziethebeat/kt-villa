@@ -173,7 +173,11 @@ export const resolvers = {
       if (!user || !user?.roles === 'admin') {
         throw new Error('Access not supported');
       }
-      return prisma.booking.findMany();
+      return prisma.booking.findMany({
+        orderBy: {
+          startDate: 'desc',
+        },
+      });
     },
 
     adminBooking: (a, {id}, {user}) => {
@@ -374,7 +378,7 @@ export const resolvers = {
       if (user.roles !== 'admin') {
         throw new Error('not authorized');
       }
-      const {image} = await imageGenerator.generateImageFromAdapter(
+      const image = await imageGenerator.generateImageFromAdapter(
         `test_${input.adapter}`,
         input,
       );
@@ -463,14 +467,14 @@ export const resolvers = {
         where: {id},
       });
       if (!booking.itemId && input.status === 'approved') {
-        const itemId = await imageGenerator.generateItem(
+        const userItemId = await imageGenerator.generateItem(
           booking.userId,
           booking.startDate,
         );
         return prisma.booking.update({
           data: {
-            input,
-            itemId: itemId,
+            ...input,
+            userItemId,
           },
           where: {id},
         });

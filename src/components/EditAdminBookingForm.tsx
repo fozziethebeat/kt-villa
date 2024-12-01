@@ -1,21 +1,17 @@
-"use client";
+'use client';
 
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { format } from "date-fns";
-import { gql, useMutation } from "@apollo/client";
+import {CalendarIcon} from '@radix-ui/react-icons';
+import {useRouter} from 'next/navigation';
+import Image from 'next/image';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {format} from 'date-fns';
+import {gql, useMutation} from '@apollo/client';
 
-import { cn } from "@/lib/utils";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import {cn} from '@/lib/utils';
+import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
+import {Button} from '@/components/ui/button';
+import {Calendar} from '@/components/ui/calendar';
 import {
   Card,
   CardContent,
@@ -23,7 +19,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -32,17 +28,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+} from '@/components/ui/select';
+import {Input} from '@/components/ui/input';
+import {Label} from '@/components/ui/label';
+import {Slider} from '@/components/ui/slider';
 
 const MUTATION = gql`
   mutation UpdateBooking($id: Int!, $input: UpdateBookingInput!) {
@@ -62,17 +58,17 @@ type EditAdminBookingInput = {
   status: string;
 };
 
-export function EditAdminBookingForm({ booking }) {
+export function EditAdminBookingForm({booking}) {
   const router = useRouter();
   const form = useForm<EditAdminBookingItem>({
     defaultValues: booking,
   });
-  const [updateBooking, { loading }] = useMutation(MUTATION, {
+  const [updateBooking, {loading}] = useMutation(MUTATION, {
     onCompleted: () => {
       router.push(`/admin/booking/${booking.id}`);
     },
   });
-  const onSubmit = (data) => {
+  const onSubmit = data => {
     updateBooking({
       variables: {
         id: booking.id,
@@ -93,15 +89,14 @@ export function EditAdminBookingForm({ booking }) {
         <Card x-chunk="dashboard-07-chunk-0">
           <CardHeader>
             <CardTitle>Edit Booking Details</CardTitle>
-            <CardDescription>
-              {booking?.item?.image ? (
-                <Image src={booking.item.image} width={256} height={256} />
-              ) : (
-                <div className=" placeholder h-[256px] w-[256px] bg-neutral-content" />
-              )}
-            </CardDescription>
+            <CardDescription></CardDescription>
           </CardHeader>
           <CardContent>
+            {booking?.item?.image ? (
+              <Image src={booking.item.image} width={256} height={256} />
+            ) : (
+              <div className=" placeholder h-[256px] w-[256px] bg-neutral-content" />
+            )}
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="grid gap-6">
@@ -112,7 +107,7 @@ export function EditAdminBookingForm({ booking }) {
                       disabled
                       name="id"
                       className="w-full"
-                      {...form.register("id")}
+                      {...form.register('id')}
                     />
                   </div>
 
@@ -122,28 +117,27 @@ export function EditAdminBookingForm({ booking }) {
                       type="text"
                       name="userId"
                       className="w-full"
-                      {...form.register("userId")}
+                      {...form.register('userId')}
                     />
                   </div>
 
                   <FormField
                     control={form.control}
                     name="startDate"
-                    render={({ field }) => (
+                    render={({field}) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Start Date</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
-                                variant={"outline"}
+                                variant={'outline'}
                                 className={cn(
-                                  "w-[240px] pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
+                                  'w-[240px] pl-3 text-left font-normal',
+                                  !field.value && 'text-muted-foreground',
+                                )}>
                                 {field.value ? (
-                                  format(field.value, "PPP")
+                                  format(field.value, 'PPP')
                                 ) : (
                                   <span>Pick a date</span>
                                 )}
@@ -168,21 +162,20 @@ export function EditAdminBookingForm({ booking }) {
                   <FormField
                     control={form.control}
                     name="endDate"
-                    render={({ field }) => (
+                    render={({field}) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>End Date</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
-                                variant={"outline"}
+                                variant={'outline'}
                                 className={cn(
-                                  "w-[240px] pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
+                                  'w-[240px] pl-3 text-left font-normal',
+                                  !field.value && 'text-muted-foreground',
+                                )}>
                                 {field.value ? (
-                                  format(field.value, "PPP")
+                                  format(field.value, 'PPP')
                                 ) : (
                                   <span>Pick a date</span>
                                 )}
@@ -212,7 +205,7 @@ export function EditAdminBookingForm({ booking }) {
                       max={5}
                       min={1}
                       step={1}
-                      {...form.register("numGuests")}
+                      {...form.register('numGuests')}
                     />
                     <div className="flex w-full justify-between px-2 text-xs">
                       <span>1</span>
@@ -231,7 +224,7 @@ export function EditAdminBookingForm({ booking }) {
                       max={5}
                       min={1}
                       step={1}
-                      {...form.register("maxGuests")}
+                      {...form.register('maxGuests')}
                     />
                     <div className="flex w-full justify-between px-2 text-xs">
                       <span>1</span>
@@ -245,15 +238,14 @@ export function EditAdminBookingForm({ booking }) {
                   <FormField
                     control={form.control}
                     name="status"
-                    render={({ field }) => (
+                    render={({field}) => (
                       <FormItem>
                         <div className="grid gap-3">
                           <Label htmlFor="status">Status</Label>
                           <Select
                             name="status"
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
+                            defaultValue={field.value}>
                             <SelectTrigger>
                               <SelectValue />
                             </SelectTrigger>
