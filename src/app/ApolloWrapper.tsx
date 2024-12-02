@@ -10,7 +10,7 @@ import {
 function makeClient() {
   console.log(process.env.GRAPHQL_URL);
   const httpLink = new HttpLink({
-    uri: process.env.GRAPHQL_URL,
+    uri: process.env.NEXT_PUBLIC_GRAPHQL_URL,
     fetchOptions: {cache: 'no-store'},
   });
 
