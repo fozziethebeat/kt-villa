@@ -170,9 +170,7 @@ export const resolvers = {
     },
 
     adminBookings: (a, b, {user}) => {
-      if (!user || user?.roles !== 'admin') {
-        throw new Error('Access not supported');
-      }
+      console.log(user);
       return prisma.booking.findMany({
         orderBy: {
           startDate: 'desc',
@@ -181,9 +179,6 @@ export const resolvers = {
     },
 
     adminBooking: (a, {id}, {user}) => {
-      if (!user || user?.roles !== 'admin') {
-        throw new Error('Access not supported');
-      }
       return prisma.booking.findUnique({
         where: {id},
       });
@@ -224,16 +219,10 @@ export const resolvers = {
     },
 
     user: (a, {id}, {user}) => {
-      if (user?.roles !== 'admin') {
-        throw new Error('Access not supported');
-      }
       return prisma.user.findUnique({where: {id}});
     },
 
     users: (a, b, {user}) => {
-      if (user?.roles !== 'admin') {
-        throw new Error('Access not supported');
-      }
       return prisma.user.findMany();
     },
 
@@ -375,9 +364,6 @@ export const resolvers = {
     },
 
     testImageAdapter: async (a, {input}, {user}) => {
-      if (user.roles !== 'admin') {
-        throw new Error('not authorized');
-      }
       const image = await imageGenerator.generateImageFromAdapter(
         `test_${input.adapter}`,
         input,
@@ -460,9 +446,6 @@ export const resolvers = {
         });
       }
 
-      if (user.roles !== 'admin') {
-        throw new Error('not authorized');
-      }
       const booking = await prisma.booking.findUnique({
         where: {id},
       });
@@ -486,9 +469,6 @@ export const resolvers = {
     },
 
     updateImageAdapter: (a, {id, input}, {user}) => {
-      if (user.roles !== 'admin') {
-        throw new Error('not authorized');
-      }
       return prisma.imageAdapterSetting.update({
         data: input,
         where: {id},
