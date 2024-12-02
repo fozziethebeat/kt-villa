@@ -28,7 +28,6 @@ const server = new ApolloServer({typeDefs, resolvers});
 const handler = startServerAndCreateNextHandler(server, {
   context: async req => {
     const token = await getToken();
-    console.log(token);
     if (!token) {
       return {req, user: null};
     }
@@ -38,7 +37,6 @@ const handler = startServerAndCreateNextHandler(server, {
       where: {sessionToken: token},
       select: {user: true},
     });
-    console.log(session?.user);
 
     return {
       req,

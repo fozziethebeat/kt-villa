@@ -111,7 +111,6 @@ export function BookingForm() {
   };
 
   const checkAndSetDate = d => {
-    console.log(d);
     setDate(d);
     if (d) {
       const valid = isValid(d.from, d.to);
