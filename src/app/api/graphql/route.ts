@@ -11,7 +11,7 @@ import {prisma} from '@/lib/prisma';
 async function getToken() {
   const cookieStore = await cookies();
   const cookieToken =
-    (await cookieStore.get('__Secure-next-auth.session-token')) ??
+    (await cookieStore.get('__Secure-auth.session-token')) ??
     (await cookieStore.get('authjs.session-token'));
   if (cookieToken) {
     return cookieToken.value;
@@ -28,6 +28,7 @@ const server = new ApolloServer({typeDefs, resolvers});
 const handler = startServerAndCreateNextHandler(server, {
   context: async req => {
     const token = await getToken();
+    console.log(token);
     if (!token) {
       return {req, user: null};
     }
@@ -37,6 +38,7 @@ const handler = startServerAndCreateNextHandler(server, {
       where: {sessionToken: token},
       select: {user: true},
     });
+    console.log(session?.user);
 
     return {
       req,
