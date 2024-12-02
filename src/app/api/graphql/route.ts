@@ -11,7 +11,7 @@ import {prisma} from '@/lib/prisma';
 async function getToken() {
   const cookieStore = await cookies();
   const cookieToken =
-    (await cookieStore.get('__Secure-auth.session-token')) ??
+    (await cookieStore.get('__Secure-authjs.session-token')) ??
     (await cookieStore.get('authjs.session-token'));
   if (cookieToken) {
     return cookieToken.value;
