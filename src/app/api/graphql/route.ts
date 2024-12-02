@@ -8,15 +8,15 @@ import {startServerAndCreateNextHandler} from '@as-integrations/next';
 import {typeDefs, resolvers} from '@/graphql/schema';
 import {prisma} from '@/lib/prisma';
 
-function getToken() {
-  const cookieStore = cookies();
+async function getToken() {
+  const cookieStore = await cookies();
   const cookieToken =
-    cookieStore.get('__Secure-next-auth.session-token') ??
-    cookieStore.get('authjs.session-token');
+    (await cookieStore.get('__Secure-next-auth.session-token')) ??
+    (await cookieStore.get('authjs.session-token'));
   if (cookieToken) {
     return cookieToken.value;
   }
-  const headersList = headers();
+  const headersList = await headers();
   const authHeader = headersList.get('authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return undefined;
@@ -27,7 +27,7 @@ function getToken() {
 const server = new ApolloServer({typeDefs, resolvers});
 const handler = startServerAndCreateNextHandler(server, {
   context: async req => {
-    const token = getToken();
+    const token = await getToken();
     if (!token) {
       return {req, user: null};
     }

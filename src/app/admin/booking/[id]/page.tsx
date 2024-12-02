@@ -1,6 +1,7 @@
-import { withAuth } from "@/lib/withAuth";
-import { gql } from "@apollo/client";
-import { getClient } from "@/graphql/ApolloClient";
+import {gql} from '@apollo/client';
+
+import {checkAccess} from '@/lib/auth-check';
+import {getClient} from '@/graphql/ApolloClient';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,8 +9,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { EditAdminBookingForm } from "@/components/EditAdminBookingForm";
+} from '@/components/ui/breadcrumb';
+import {EditAdminBookingForm} from '@/components/EditAdminBookingForm';
 
 const QUERY = gql`
   query AdminBooking($id: Int!) {
@@ -37,11 +38,12 @@ const QUERY = gql`
   }
 `;
 
-async function EditBookingPage({ params }) {
+export default async function EditBookingPage({params}) {
+  await checkAccess('admin', '/');
   try {
-    const { data, error } = await getClient().query({
+    const {data, error} = await getClient().query({
       query: QUERY,
-      variables: { id: parseInt(params.id) },
+      variables: {id: parseInt(params.id)},
     });
     return (
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-4">
@@ -68,5 +70,3 @@ async function EditBookingPage({ params }) {
     return <div>whoops</div>;
   }
 }
-
-export default withAuth(EditBookingPage, "admin", "/");

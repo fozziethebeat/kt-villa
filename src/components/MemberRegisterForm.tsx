@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import { gql, useMutation } from "@apollo/client";
-import { useRouter } from "next/navigation";
+import {gql, useMutation} from '@apollo/client';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
 
 const MUTATION = gql`
   mutation addMemberBooking($id: Int!, $username: String!) {
@@ -12,27 +13,24 @@ const MUTATION = gql`
   }
 `;
 
-export function MemberRegisterForm({ booking }) {
-  const [addMemberBooking, { loading, error }] = useMutation(MUTATION, {
-    /*
-    refetchQueries: [
-      { query: QUERY, variables: { bookingCode: booking.bookingCode } },
-    ],
-     */
-  });
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+interface MemberRegisterInput {
+  username: string;
+}
+
+export function MemberRegisterForm({booking}) {
+  const {handleSubmit, register} = useForm<MemberRegisterInput>();
+  const [addMemberBooking, {loading, error}] = useMutation(MUTATION);
+  const onSubmit = data => {
     addMemberBooking({
       variables: {
         id: booking.id,
-        username: data.get("username"),
+        username: data.username,
       },
     });
   };
 
   return (
-    <form onSubmit={onSubmit} className="flex gap-2 p-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex gap-2 p-2">
       <div className="form-control w-full max-w-xs">
         <input
           type="search"
@@ -41,6 +39,7 @@ export function MemberRegisterForm({ booking }) {
           aria-autocomplete="none"
           className="input input-bordered w-full max-w-xs"
           placeholder="Username"
+          {...register('username')}
         />
       </div>
       <button type="submit" disabled={loading} className="btn btn-primary">

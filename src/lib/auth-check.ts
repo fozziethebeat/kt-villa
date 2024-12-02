@@ -4,7 +4,7 @@ import {auth} from '@/lib/auth';
 
 export async function hasRole(targetRoles: string[]) {
   const session = await auth();
-  if (targetRoles === []) {
+  if (targetRoles.length === 0) {
     return true;
   }
   if (targetRoles.includes(session?.user?.roles)) {

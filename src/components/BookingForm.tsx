@@ -46,11 +46,9 @@ const CREATE_BOOKING_MUTATION = gql`
 
 export function BookingForm() {
   const now = new Date();
-  const inTwoWeeks = new Date(now);
-  inTwoWeeks.setDate(now.getDate() + 2);
-  const [date, setDate] = useState<DateRange>({
+  const [date, setDate] = useState<DateRange | undefined>({
     from: now,
-    to: inTwoWeeks,
+    to: addDays(now, 14),
   });
   const [isValidDates, setIsValidDates] = useState(false);
   const router = useRouter();
@@ -113,9 +111,12 @@ export function BookingForm() {
   };
 
   const checkAndSetDate = d => {
-    const valid = isValid(d.from, d.to);
-    setIsValidDates(valid);
+    console.log(d);
     setDate(d);
+    if (d) {
+      const valid = isValid(d.from, d.to);
+      setIsValidDates(valid);
+    }
   };
 
   return (
@@ -160,6 +161,8 @@ export function BookingForm() {
                     onSelect={checkAndSetDate}
                     numberOfMonths={2}
                     disabled={validDateMatcher}
+                    /*
+                    // @ts-ignore */
                     excludeDisabled
                     timeZone="+09:00"
                     footer={

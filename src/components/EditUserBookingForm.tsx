@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import { gql, useMutation } from "@apollo/client";
-import { useRouter } from "next/navigation";
+import {gql, useMutation} from '@apollo/client';
+import {useRouter} from 'next/navigation';
+import {useForm} from 'react-hook-form';
 
 const MUTATION = gql`
   mutation UpdateBooking($id: Int!, $input: UpdateBookingInput!) {
@@ -24,22 +25,31 @@ const MUTATION = gql`
   }
 `;
 
-export function EditUserBookingForm({ userBooking }) {
+interface EditUserBookingInput {
+  maxGuests: number;
+  numGuests: number;
+}
+
+export function EditUserBookingForm({userBooking}) {
   const router = useRouter();
-  const [updateBooking, { loading, error }] = useMutation(MUTATION, {
+  const {handleSubmit, register} = useForm<EditUserBookingInput>({
+    defaultValues: {
+      maxGuests: userBooking.maxGuests,
+      numGuests: userBooking.numGuests,
+    },
+  });
+  const [updateBooking, {loading, error}] = useMutation(MUTATION, {
     onCompleted: () => {
       router.push(`/booking/${userBooking.bookingCode}`);
     },
   });
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  const onSubmit = data => {
     updateBooking({
       variables: {
         id: userBooking.id,
         input: {
-          maxGuests: parseInt(data.get("maxGuests")),
-          numGuests: parseInt(data.get("numGuests")),
+          maxGuests: data.maxGuests,
+          numGuests: data.numGuests,
         },
       },
     });
@@ -68,16 +78,16 @@ export function EditUserBookingForm({ userBooking }) {
           <div className="flex justify-between gap-2">
             <div>Start Date</div>
             <div className="badge badge-ghost badge-lg">
-              {new Date(userBooking.startDate).toLocaleDateString("en-CA")}
+              {new Date(userBooking.startDate).toLocaleDateString('en-CA')}
             </div>
           </div>
           <div className="flex justify-between gap-2">
             <div>End Date</div>
             <div className="badge badge-ghost badge-lg">
-              {new Date(userBooking.endDate).toLocaleDateString("en-CA")}
+              {new Date(userBooking.endDate).toLocaleDateString('en-CA')}
             </div>
           </div>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Max Guests</span>
@@ -88,7 +98,7 @@ export function EditUserBookingForm({ userBooking }) {
                 min="1"
                 max="4"
                 step="1"
-                defaultValue={userBooking?.maxGuests}
+                {...register('maxGuests', {valueAsNumber: true})}
                 className="range"
               />
               <div className="flex w-full justify-between px-2 text-xs">
@@ -110,7 +120,7 @@ export function EditUserBookingForm({ userBooking }) {
                 min="1"
                 max="5"
                 step="1"
-                defaultValue={userBooking?.numGuests}
+                {...register('numGuests', {valueAsNumber: true})}
                 className="range"
               />
               <div className="flex w-full justify-between px-2 text-xs">
@@ -126,8 +136,7 @@ export function EditUserBookingForm({ userBooking }) {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn btn-primary btn-sm"
-              >
+                className="btn btn-primary btn-sm">
                 {loading && <span className="loading loading-spinner" />}
                 Update
               </button>

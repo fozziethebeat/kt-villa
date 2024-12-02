@@ -2,7 +2,7 @@ import {gql} from '@apollo/client';
 import Link from 'next/link';
 import {FaCat, FaDog} from 'react-icons/fa';
 
-import {withAuth} from '@/lib/withAuth';
+import {checkAccess} from '@/lib/auth-check';
 import {getClient} from '@/graphql/ApolloClient';
 import {MemberBookingForm} from '@/components/MemberBookingForm';
 import {MemberRegisterForm} from '@/components/MemberRegisterForm';
@@ -35,7 +35,8 @@ const QUERY = gql`
   }
 `;
 
-async function BookingPage({params}) {
+export default async function BookingPage({params}) {
+  await checkAccess('', '/');
   try {
     const {data, error} = await getClient().query({
       query: QUERY,
@@ -150,5 +151,3 @@ async function BookingPage({params}) {
     return <div>whoops</div>;
   }
 }
-
-export default withAuth(BookingPage, '', '/');

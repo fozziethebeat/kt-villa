@@ -1,6 +1,7 @@
-import { withAuth } from "@/lib/withAuth";
-import { gql } from "@apollo/client";
-import { getClient } from "@/graphql/ApolloClient";
+import {gql} from '@apollo/client';
+
+import {getClient} from '@/graphql/ApolloClient';
+import {checkAccess} from '@/lib/auth-check';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,8 +9,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { EditUserForm } from "@/components/EditUserForm";
+} from '@/components/ui/breadcrumb';
+import {EditUserForm} from '@/components/EditUserForm';
 
 const QUERY = gql`
   query User($id: String!) {
@@ -23,11 +24,12 @@ const QUERY = gql`
   }
 `;
 
-async function EditUserPage({ params }) {
+export default async function EditUserPage({params}) {
+  await checkAccess('admin', '/');
   try {
-    const { data, error } = await getClient().query({
+    const {data, error} = await getClient().query({
       query: QUERY,
-      variables: { id: params.id },
+      variables: {id: params.id},
     });
     return (
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-4">
@@ -54,5 +56,3 @@ async function EditUserPage({ params }) {
     return <div>whoops</div>;
   }
 }
-
-export default withAuth(EditUserPage, "admin", "/");

@@ -1,6 +1,7 @@
-import { withAuth } from "@/lib/withAuth";
-import { gql } from "@apollo/client";
-import { getClient } from "@/graphql/ApolloClient";
+import {gql} from '@apollo/client';
+import {getClient} from '@/graphql/ApolloClient';
+
+import {checkAccess} from '@/lib/auth-check';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,9 +9,9 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+} from '@/components/ui/breadcrumb';
 
-import { EditAdapterForm } from "@/components/EditAdapterForm";
+import {EditAdapterForm} from '@/components/EditAdapterForm';
 
 const QUERY = gql`
   query ImageAdapterSetting($id: Int!) {
@@ -26,11 +27,12 @@ const QUERY = gql`
   }
 `;
 
-async function EditAdapterPage({ params }) {
+export default async function EditAdapterPage({params}) {
+  await checkAccess('admin', '/');
   try {
-    const { data, error } = await getClient().query({
+    const {data, error} = await getClient().query({
       query: QUERY,
-      variables: { id: parseInt(params.id) },
+      variables: {id: parseInt(params.id)},
     });
     const imageAdapter = data.imageAdapterSetting;
     return (
@@ -58,5 +60,3 @@ async function EditAdapterPage({ params }) {
     return <div>whoops</div>;
   }
 }
-
-export default withAuth(EditAdapterPage, "admin", "/");

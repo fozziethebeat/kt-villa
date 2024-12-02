@@ -1,3 +1,4 @@
+import type {UnsafeUnwrappedCookies} from 'next/headers';
 import {cookies} from 'next/headers';
 import {createHttpLink, from} from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';
@@ -26,7 +27,7 @@ const errorLink = onError(({graphQLErrors, networkError}) => {
 });
 
 const authLink = setContext((_, {headers}) => {
-  const cookieStore = cookies();
+  const cookieStore = cookies() as unknown as UnsafeUnwrappedCookies;
   const token =
     cookieStore.get('__Secure-next-auth.session-token') ??
     cookieStore.get('authjs.session-token');

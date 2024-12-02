@@ -31,6 +31,7 @@ export function EditUserDetails({user}) {
   });
   const [updateUsername, {loading, error}] = useMutation(MUTATION, {
     onCompleted: () => {
+      // @ts-ignore
       document.getElementById('my_modal_2').close();
       router.refresh();
     },
@@ -47,6 +48,8 @@ export function EditUserDetails({user}) {
   return (
     <>
       <span
+        /*
+        // @ts-ignore */
         onClick={() => document.getElementById('my_modal_2').showModal()}
         className="px-4">
         Update

@@ -170,7 +170,7 @@ export const resolvers = {
     },
 
     adminBookings: (a, b, {user}) => {
-      if (!user || !user?.roles === 'admin') {
+      if (!user || user?.roles !== 'admin') {
         throw new Error('Access not supported');
       }
       return prisma.booking.findMany({
@@ -181,7 +181,7 @@ export const resolvers = {
     },
 
     adminBooking: (a, {id}, {user}) => {
-      if (!user || !user?.roles === 'admin') {
+      if (!user || user?.roles !== 'admin') {
         throw new Error('Access not supported');
       }
       return prisma.booking.findUnique({
@@ -423,7 +423,7 @@ export const resolvers = {
         memberBooking.user.id,
         booking.startDate,
       );
-      const updatedMemberBooking = await db.memberBooking.update({
+      const updatedMemberBooking = await prisma.memberBooking.update({
         data: {
           userItem: {
             connect: {id: userItemId},
@@ -466,7 +466,7 @@ export const resolvers = {
       const booking = await prisma.booking.findUnique({
         where: {id},
       });
-      if (!booking.itemId && input.status === 'approved') {
+      if (!booking.userItemId && input.status === 'approved') {
         const userItemId = await imageGenerator.generateItem(
           booking.userId,
           booking.startDate,

@@ -1,5 +1,5 @@
 import {getSession} from '@/lib/auth-check';
-import {withAuth} from '@/lib/withAuth';
+import {checkAccess} from '@/lib/auth-check';
 
 import {
   Breadcrumb,
@@ -13,7 +13,8 @@ import {AdminBookingTable} from '@/components/AdminBookingTable';
 import {AdminAdapterTable} from '@/components/AdminAdapterTable';
 import {AdminUsersTable} from '@/components/AdminUsersTable';
 
-async function AdminPage() {
+export default async function AdminPage() {
+  await checkAccess('admin', '/');
   const session = await getSession();
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-4">
@@ -67,5 +68,3 @@ async function AdminPage() {
     </div>
   );
 }
-
-export default withAuth(AdminPage, 'admin', '/');

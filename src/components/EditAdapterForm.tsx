@@ -99,8 +99,6 @@ export function EditAdapterForm({imageAdapter}: EditAdapterFormProps) {
       },
     });
   };
-  // @ts-expect-error
-  /* eslint-disable */
   return (
     <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
       <div className="grid auto-rows-max items-start gap-4 lg:col-span-2 lg:gap-8">
@@ -132,7 +130,11 @@ export function EditAdapterForm({imageAdapter}: EditAdapterFormProps) {
                   <Label htmlFor="steps">Inference Steps</Label>
                   <Slider
                     name="steps"
+                    /*
+                    // @ts-ignore */
                     max={30}
+                    /*
+                    // @ts-ignore */
                     step={1}
                     defaultValue={[imageAdapter.steps]}
                     {...register('steps', {
@@ -143,7 +145,6 @@ export function EditAdapterForm({imageAdapter}: EditAdapterFormProps) {
                 <div className="grid gap-3">
                   <Label htmlFor="variants">Variants</Label>
                   <Textarea
-                    type="text"
                     name="variants"
                     className="w-full"
                     {...register('variants')}
@@ -183,5 +184,4 @@ export function EditAdapterForm({imageAdapter}: EditAdapterFormProps) {
       </div>
     </div>
   );
-  /* eslint-enable */
 }

@@ -19,7 +19,7 @@ abstract class ImageGenerationService {
     this.bucketName = bucketName;
   }
 
-  async generateBookingItem(bookingId: string) {
+  async generateBookingItem(bookingId: number) {
     const booking = await prisma.booking.findUnique({where: {id: bookingId}});
     if (!booking) {
       console.error('No booking found');
@@ -77,10 +77,7 @@ abstract class ImageGenerationService {
     return itemId;
   }
 
-  abstract async generateImageFromAdapter(
-    itemId,
-    adapterSettings,
-  ): Promise<string>;
+  abstract generateImageFromAdapter(itemId, adapterSettings): Promise<string>;
 
   protected async uploadImageToS3(imageBuffer, targetKey: string) {
     await this.s3Client.send(
@@ -121,7 +118,7 @@ class TogetherFluxGenerator extends ImageGenerationService {
     const response = await this.together.images.create(request);
     const urlResponse = await axios({
       method: 'GET',
-      url: response.data[0].url,
+      url: response.data[0]?.url || '',
       responseType: 'arraybuffer',
     });
     const imageBuffer = urlResponse.data;

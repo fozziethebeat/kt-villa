@@ -56,11 +56,12 @@ type EditAdminBookingInput = {
   withCat: boolean;
   withDog: boolean;
   status: string;
+  userId: string;
 };
 
 export function EditAdminBookingForm({booking}) {
   const router = useRouter();
-  const form = useForm<EditAdminBookingItem>({
+  const form = useForm<EditAdminBookingInput>({
     defaultValues: booking,
   });
   const [updateBooking, {loading}] = useMutation(MUTATION, {
@@ -93,7 +94,12 @@ export function EditAdminBookingForm({booking}) {
           </CardHeader>
           <CardContent>
             {booking?.item?.image ? (
-              <Image src={booking.item.image} width={256} height={256} />
+              <Image
+                src={booking.item.image}
+                alt="thing"
+                width={256}
+                height={256}
+              />
             ) : (
               <div className=" placeholder h-[256px] w-[256px] bg-neutral-content" />
             )}
@@ -102,13 +108,7 @@ export function EditAdminBookingForm({booking}) {
                 <div className="grid gap-6">
                   <div className="grid gap-3">
                     <Label htmlFor="id">Booking ID</Label>
-                    <Input
-                      type="text"
-                      disabled
-                      name="id"
-                      className="w-full"
-                      {...form.register('id')}
-                    />
+                    <div>{booking.id}</div>
                   </div>
 
                   <div className="grid gap-3">
@@ -202,8 +202,14 @@ export function EditAdminBookingForm({booking}) {
                     <Slider
                       name="id"
                       defaultValue={[booking.numGuests]}
+                      /*
+                      // @ts-ignore */
                       max={5}
+                      /*
+                      // @ts-ignore */
                       min={1}
+                      /*
+                      // @ts-ignore */
                       step={1}
                       {...form.register('numGuests')}
                     />
@@ -221,8 +227,14 @@ export function EditAdminBookingForm({booking}) {
                     <Slider
                       name="id"
                       defaultValue={[booking.maxGuests]}
+                      /*
+                      // @ts-ignore */
                       max={5}
+                      /*
+                      // @ts-ignore */
                       min={1}
+                      /*
+                      // @ts-ignore */
                       step={1}
                       {...form.register('maxGuests')}
                     />

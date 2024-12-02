@@ -18,6 +18,7 @@ type MemberBookingInput = {
 };
 
 export function MemberBookingForm({memberBooking, booking}) {
+  const router = useRouter();
   const {handleSubmit, register} = useForm<MemberBookingInput>({
     defaultValues: {
       status: memberBooking.status,
@@ -28,7 +29,7 @@ export function MemberBookingForm({memberBooking, booking}) {
       router.refresh();
     },
   });
-  const onSave = data => {
+  const onSubmit = data => {
     updateMemberBookingStatus({
       variables: {
         id: memberBooking.id,
