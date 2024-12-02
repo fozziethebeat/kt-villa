@@ -48,7 +48,7 @@ export function BookingForm() {
   const now = new Date();
   const [date, setDate] = useState<DateRange | undefined>({
     from: now,
-    to: addDays(now, 14),
+    to: addDays(now, 3),
   });
   const [isValidDates, setIsValidDates] = useState(false);
   const router = useRouter();

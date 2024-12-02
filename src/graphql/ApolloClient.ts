@@ -10,7 +10,7 @@ import {
 } from '@apollo/experimental-nextjs-app-support';
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:3000/api/graphql',
+  uri: process.env.GRAPHQL_URL,
   credentials: 'include',
   fetchOptions: {cache: 'no-store'},
 });
