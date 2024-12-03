@@ -1,0 +1,18 @@
+[
+  {
+    "id": "2d_game_art",
+    "pattern": "2D Game Art {{text}}, 2D Game Art, often for platformers, pixel art, or side-scrolling games."
+  },
+  {
+    "id": "abstract_painting",
+    "pattern": "Abstract Painting {{text}}, Painting in abstract styles, often using non-representational shapes, colors, and forms."
+  },
+  {
+    "id": "art_deco_uncategorized",
+    "pattern": "Art Deco style {{text}}. geometric shapes, bold colors, luxurious, elegant, decorative, symmetrical, ornate, detailed"
+  },
+  {
+    "id": "art_constructivist_uncategorized",
+    "pattern": "constructivist style {{text}}. geometric shapes, bold colors, dynamic composition, propaganda art style"
+  }
+]
