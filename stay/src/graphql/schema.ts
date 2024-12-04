@@ -193,6 +193,9 @@ export const resolvers = {
       return prisma.booking.findMany({
         where: {
           startDate: {gt: new Date()},
+          status: {
+            in: ['pending', 'approved'],
+          },
         },
         orderBy: {
           startDate: 'asc',
@@ -244,6 +247,9 @@ export const resolvers = {
       return prisma.booking.findMany({
         where: {
           userId: user.id,
+          status: {
+            in: ['pending', 'approved'],
+          },
         },
         orderBy: {
           startDate: 'desc',
@@ -316,6 +322,9 @@ export const resolvers = {
         const candidateConflicts = await prisma.booking.findMany({
           where: {
             startDate: {gt: new Date()},
+            status: {
+              in: ['pending', 'approved'],
+            },
           },
           orderBy: {
             startDate: 'asc',
