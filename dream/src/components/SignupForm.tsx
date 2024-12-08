@@ -27,7 +27,6 @@ export function SignupForm(props: {
       });
     } catch (error) {
       if (error instanceof AuthError) {
-        //return redirect(`/?error=${error.type}`);
       }
       throw error;
     }
@@ -36,9 +35,7 @@ export function SignupForm(props: {
     <Card className="mx-auto max-w-sm">
       <CardHeader>
         <CardTitle className="text-2xl">Signup</CardTitle>
-        <CardDescription>
-          Get your soap's Magic Code and sign up!
-        </CardDescription>
+        <CardDescription>Use your signup code to join</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={handleSubmit}>
@@ -57,7 +54,7 @@ export function SignupForm(props: {
                 name="code"
                 id="code"
                 type="text"
-                placeholder="Soap Code Here..."
+                placeholder="Magic Code Here..."
               />
             </div>
             <Button type="submit" className="w-full">

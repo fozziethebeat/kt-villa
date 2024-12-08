@@ -7,6 +7,18 @@ const db = new PrismaClient();
 
 async function devSeed() {
   try {
+    await db.user.createMany({
+      data: [
+        {
+          name: 'Keith',
+          email: 'fozziethebeat@gmail.com',
+          roles: 'admin',
+        },
+      ],
+    });
+    await db.magicCode.createMany({
+      data: [{id: 'forTen10'}],
+    });
     await db.style.createMany({
       data: styles,
     });

@@ -1,6 +1,7 @@
 import type {DefaultSession} from 'next-auth';
 
 import {PrismaAdapter} from '@auth/prisma-adapter';
+import {render} from '@react-email/render';
 import {createHash} from 'crypto';
 import NextAuth from 'next-auth';
 import Nodemailer from 'next-auth/providers/nodemailer';
@@ -39,14 +40,12 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
             throw new Error('Invalid magic code');
           }
         }
-        const {host} = new URL(url);
         const result = await mailer.sendMail({
           from: provider.from,
           to: identifier,
-          subject: `Sign in to ${host}`,
+          subject: 'Sign in to Yumegai',
           html: await render(
             SigninMail({
-              host,
               url,
             }),
           ),

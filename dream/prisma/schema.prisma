@@ -63,6 +63,10 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
+model MagicCode {
+  id     String @id @unique
+}
+
 model Style {
   id      String @id @unique
   pattern String
