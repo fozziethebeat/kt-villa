@@ -1,5 +1,6 @@
 import {SessionProvider} from 'next-auth/react';
 
+import {AppSidebar} from '@/components/AppSidebar';
 import {ApolloWrapper} from '@/app/ApolloWrapper';
 import '@/app/globals.css';
 
