@@ -40,9 +40,19 @@
 		--chart-2: 183 73.86363744735718% 34.50980484485626%; /* teal */
 		--chart-3: 220 91.4893627166748% 53.921568393707275%; /* blue */
 		--chart-4: 35 76.98412537574768% 49.41176474094391%; /* yellow */
-		--chart-5: 109 57.63546824455261% 39.803922176361084%; /* green */ --sidebar-background: 0 0% 98%; --sidebar-foreground: 240 5.3% 26.1%; --sidebar-primary: 240 5.9% 10%; --sidebar-primary-foreground: 0 0% 98%; --sidebar-accent: 240 4.8% 95.9%; --sidebar-accent-foreground: 240 5.9% 10%; --sidebar-border: 220 13% 91%; --sidebar-ring: 217.2 91.2% 59.8%;
+    --chart-5: 109 57.63546824455261% 39.803922176361084%; /* green */
+   
+    --sidebar-background: 220 21% 89%; /* Crust */
+    --sidebar-foreground: 234 16.022099554538727% 35.49019694328308%; 
+    --sidebar-primary: 189 69.953054189682% 41.76470637321472%; /* accent - Sapphire */
+    --sidebar-primary-foreground: 220 23.076923191547394% 94.90196108818054%; /* base */
+    --sidebar-accent: 223 15.909090638160706% 82.74509906768799%; /* surface0 */
+    --sidebar-accent-foreground: 234 16.022099554538727% 35.49019694328308%; /* text */
+    --sidebar-border: 225 13.55932205915451% 76.86274647712708%; /* surface1 */
+    --sidebar-ring: 234 16.022099554538727% 35.49019694328308%; /* text */
 	}
-  .dark {
+
+  .light {
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;

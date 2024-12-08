@@ -4,6 +4,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import {SidebarTrigger} from '@/components/ui/sidebar';
 
@@ -14,7 +15,9 @@ export function Header({links, target}) {
       <Breadcrumb>
         <BreadcrumbList>
           {links?.map(l => (
-            <div key={l.label}>
+            <div
+              key={l.label}
+              className="flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5">
               <BreadcrumbItem>
                 <BreadcrumbLink href={l.url}>{l.label}</BreadcrumbLink>
               </BreadcrumbItem>

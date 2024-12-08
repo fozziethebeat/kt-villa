@@ -4,6 +4,10 @@ import {auth} from '@/lib/auth';
 
 export async function hasRole(targetRoles: string[]) {
   const session = await auth();
+  return hasRoleInSession(session, targetRoles);
+}
+
+export function hasRoleInSession(session, targetRoles: string[]) {
   if (targetRoles.length === 0) {
     return true;
   }
