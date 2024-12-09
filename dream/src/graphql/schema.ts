@@ -18,6 +18,12 @@ export const typeDefs = gql`
     pattern: String!
   }
 
+  type DreamTheme {
+    id: String!
+    theme: String!
+    description: String!
+  }
+
   type Image {
     url: String!
   }
@@ -28,6 +34,7 @@ export const typeDefs = gql`
   }
 
   type Query {
+    dreamThemes: [DreamTheme!]!
     styles: [Style!]!
     style(id: String): Style
   }
@@ -39,6 +46,10 @@ export const typeDefs = gql`
 
 export const resolvers = {
   Query: {
+    dreamThemes: () => {
+      return prisma.dreamTheme.findMany();
+    },
+
     style: (a, {id}) => {
       return prisma.style.findUnique({where: {id}});
     },

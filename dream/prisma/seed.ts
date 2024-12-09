@@ -2,6 +2,7 @@ import type {Prisma} from '@prisma/client';
 import {PrismaClient} from '@prisma/client';
 
 import styles from '../data/styles.json';
+import dreamThemes from '../data/dream_themes.json';
 
 const db = new PrismaClient();
 
@@ -21,6 +22,9 @@ async function devSeed() {
     });
     await db.style.createMany({
       data: styles,
+    });
+    await db.dreamTheme.createMany({
+      data: dreamThemes,
     });
   } catch (error) {
     console.warn('Please define your seed data.');

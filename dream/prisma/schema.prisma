@@ -71,3 +71,9 @@ model Style {
   id      String @id @unique
   pattern String
 }
+
+model DreamTheme {
+  id          String @id @unique
+  theme       String
+  description String
+}
