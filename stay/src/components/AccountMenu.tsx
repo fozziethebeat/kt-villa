@@ -22,6 +22,12 @@ export async function AccountMenu() {
           <Link href="/me">My Page</Link>
         </li>
         <li>
+          <Link href="/guide">The Stay</Link>
+        </li>
+        <li>
+          <Link href="/guide/the-village">The Village</Link>
+        </li>
+        <li>
           <Link href="/about">About</Link>
         </li>
         {session?.user?.roles == 'admin' && (
