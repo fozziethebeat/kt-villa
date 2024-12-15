@@ -21,6 +21,7 @@
     "@auth/prisma-adapter": "^2.6.0",
     "@aws-sdk/client-s3": "^3.670.0",
     "@google-cloud/aiplatform": "^3.34.0",
+    "@google/generative-ai": "^0.21.0",
     "@hookform/resolvers": "^3.9.1",
     "@prisma/client": "^5.20.0",
     "@radix-ui/react-avatar": "^1.1.1",
