@@ -14,20 +14,27 @@ export default async function Home() {
       <div className="flex flex-col gap-4 py-4 px-4">
         {session?.user ? (
           <div className="flex flex-col gap-2">
+            <div>Let's start dreaming for Ten-Chan ne~</div>
             <DreamThemeGrid />
             <img
               className="rounded"
-              src="/yumegai_banner.png"
+              src="/yumegai_banner_5.png"
               width="1024"
               height="512"
+              className="rounded"
             />
           </div>
         ) : (
           <div className="flex flex-col gap-2">
             <Button asChild>
-              <Link href="/signin">Signin</Link>
+              <Link href="/signin">Start Dreaming</Link>
             </Button>
-            <img src="/yumegai_banner.png" width="1024" height="512" />
+            <img
+              src="/yumegai_banner_5.png"
+              width="1024"
+              height="512"
+              className="rounded"
+            />
           </div>
         )}
       </div>
