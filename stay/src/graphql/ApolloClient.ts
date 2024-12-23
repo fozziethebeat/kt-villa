@@ -26,11 +26,11 @@ const errorLink = onError(({graphQLErrors, networkError}) => {
   }
 });
 
-const authLink = setContext((_, {headers}) => {
-  const cookieStore = cookies() as unknown as UnsafeUnwrappedCookies;
+const authLink = setContext(async (_, {headers}) => {
+  const cookieStore = await cookies();
   const token =
-    cookieStore.get('__Secure-authjs.session-token') ??
-    cookieStore.get('authjs.session-token');
+    (await cookieStore.get('__Secure-authjs.session-token')) ??
+    (await cookieStore.get('authjs.session-token'));
   return {
     headers: {
       ...headers,

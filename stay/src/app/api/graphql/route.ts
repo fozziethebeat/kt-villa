@@ -1,8 +1,5 @@
-import type {NextApiRequest} from 'next';
-
 import {cookies, headers} from 'next/headers';
 import {ApolloServer} from '@apollo/server';
-import {NextResponse} from 'next/server';
 import {startServerAndCreateNextHandler} from '@as-integrations/next';
 
 import {typeDefs, resolvers} from '@/graphql/schema';
