@@ -1,10 +1,21 @@
 import {S3Client, PutObjectCommand} from '@aws-sdk/client-s3';
+import {GoogleGenerativeAI} from '@google/generative-ai';
 import {helpers, PredictionServiceClient} from '@google-cloud/aiplatform';
 import axios from 'axios';
+import {Liquid} from 'liquidjs';
 import ShortUniqueId from 'short-unique-id';
 import Together from 'together-ai';
 
 import {prisma} from '@/lib/prisma';
+
+const IMAGE_PROMPT_SCHEMA = {
+  type: 'object',
+  properties: {
+    imagePrompt: {
+      type: 'string',
+    },
+  },
+};
 
 abstract class ImageGenerationService {
   protected bucketName: string;
@@ -14,6 +25,8 @@ abstract class ImageGenerationService {
     length: 6,
   });
   protected s3Client = new S3Client({});
+  protected engine = new Liquid();
+  protected genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
   constructor(bucketName: string) {
     this.bucketName = bucketName;
@@ -92,10 +105,24 @@ abstract class ImageGenerationService {
     return s3Url;
   }
 
-  protected getPrompt(adapterSettings) {
+  protected async getPrompt(adapterSettings) {
+    const model = this.genAI.getGenerativeModel({
+      model: process.env.GEMINI_MODEL,
+      generationConfig: {
+        responseMimeType: 'application/json',
+        // @ts-expect-error
+        responseSchema: IMAGE_PROMPT_SCHEMA,
+      },
+    });
     const index = Math.floor(Math.random() * adapterSettings.variants.length);
     const fragment = adapterSettings.variants[index];
-    return `${fragment} ${adapterSettings.promptTemplate} ${adapterSettings.adapter}`;
+    const template = this.engine.parse(adapterSettings.promptTemplate);
+    const prompt = await this.engine.render(template, {
+      fragment,
+      adapter: adapterSettings.adapter,
+    });
+    const result = await model.generateContent([prompt]);
+    return JSON.parse(result.response.text())['imagePrompt'];
   }
 }
 
@@ -112,7 +139,7 @@ class TogetherFluxGenerator extends ImageGenerationService {
   async generateImageFromAdapter(itemId, adapterSettings): Promise<string> {
     const request = {
       model: this.modelId,
-      prompt: this.getPrompt(adapterSettings),
+      prompt: await this.getPrompt(adapterSettings),
       steps: Math.min(adapterSettings.steps, 10),
     };
     const response = await this.together.images.create(request);
@@ -137,7 +164,7 @@ class BentoFluxGenerator extends ImageGenerationService {
 
   async generateImageFromAdapter(itemId, adapterSettings): Promise<string> {
     const request = {
-      prompt: this.getPrompt(adapterSettings),
+      prompt: await this.getPrompt(adapterSettings),
       num_inference_steps: adapterSettings.steps,
     };
     const {data} = await axios.post(`${this.apiURL}/txt2img`, request, {
@@ -175,7 +202,7 @@ class GeminiImagenGenerator extends ImageGenerationService {
     });
     const instances = [
       helpers.toValue({
-        prompt: this.getPrompt(adapterSettings),
+        prompt: await this.getPrompt(adapterSettings),
       }),
     ];
     const request = {
@@ -231,3 +258,4 @@ function imageGeneratorFactory() {
 }
 
 export const imageGenerator = imageGeneratorFactory();
+export {TogetherFluxGenerator, GeminiImagenGenerator};

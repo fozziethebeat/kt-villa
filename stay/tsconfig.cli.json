@@ -16,7 +16,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/cli.ts", "src/lib/**/*.ts", "old_prisma/**/*.ts"],
+  "include": ["src/cli.ts", "src/lib/**/*.ts"],
   "exclude": ["node_modules"],
   "references": [
     { "path": "." }
