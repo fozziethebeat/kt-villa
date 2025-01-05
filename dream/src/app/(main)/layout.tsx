@@ -17,7 +17,7 @@ export default async function RootLayout({
           <ApolloWrapper>
             <SidebarProvider defaultOpen={false}>
               <AppSidebar />
-              <main>{children}</main>
+              <main className="w-full">{children}</main>
             </SidebarProvider>
           </ApolloWrapper>
         </SessionProvider>

@@ -171,3 +171,72 @@ This created the following
 ```
 
 The image prompt worked pretty well with Flux while tacking on a theme style at the end.
+
+Other attempt:
+
+```
+const {
+  GoogleGenerativeAI,
+  HarmCategory,
+  HarmBlockThreshold,
+} = require("@google/generative-ai");
+
+const apiKey = process.env.GEMINI_API_KEY;
+const genAI = new GoogleGenerativeAI(apiKey);
+
+const model = genAI.getGenerativeModel({
+  model: "gemini-exp-1206",
+  systemInstruction: "You transform a personal story into a magical dream such as the dreams found in the book Dallergut Dream Department Store.  The dreams will be a fun birthday present for my wife named Tianyi.  Tianyi is a chinese-japanese woman and is turning 36.  When you write a dream it should tell a story that be memorable for Tianyi and fit a specific theme listed below. \n\nThe dream should be written with:\n* A title\n* A 2 to 3 paragraph story\n\nThe specific theme is:\nA dream where the dreamer undergoes a magical or fantastical transformation, either of themselves or their surroundings. This transformation could involve physical changes, the acquisition of unusual abilities, or the appearance of magical objects or entities. Focus on the sense of awe, wonder, or empowerment that comes with these changes.",
+});
+
+const generationConfig = {
+  temperature: 1,
+  topP: 0.95,
+  topK: 64,
+  maxOutputTokens: 8192,
+  responseMimeType: "application/json",
+  responseSchema: {
+    type: "object",
+    properties: {
+      dream: {
+        type: "object",
+        properties: {
+          title: {
+            type: "string"
+          },
+          story: {
+            type: "string"
+          }
+        }
+      }
+    }
+  },
+};
+
+async function run() {
+  const chatSession = model.startChat({
+    generationConfig,
+    history: [
+      {
+        role: "user",
+        parts: [
+          {text: "Tianyi starts her morning waking up next to her cat Mame and her husband Keith.  Then she's off to walk down the nearby shopping street Yumegai, the street where all the shops sell various types of dreams.  She has so many to choose from that she has to spend all her time looking over each option and thinking hard."},
+        ],
+      },
+      {
+        role: "model",
+        parts: [
+          {text: "```json\n"},
+          {text: "{\n  \"dream\": {\n    \"title\": \"The Shimmering Kimono of a Thousand Cranes\",\n    \"story\": \"Tianyi found herself standing at the heart of Yumegai, the dream shopping street, bathed in the soft glow of a thousand paper lanterns. Yet, instead of shops, she saw a vast, tranquil garden. Drawn by an irresistible force, she stepped onto the mossy path, the scent of cherry blossoms filling the air. In the center of the garden stood a single, ancient ginkgo tree, its leaves shimmering with an ethereal golden light. As Tianyi reached out to touch a fallen leaf, it transformed into a magnificent kimono, woven with threads of moonlight and adorned with a thousand intricately embroidered cranes. Each crane seemed to pulse with a life of its own, their wings rustling softly in an unseen breeze.\\n\\nAs Tianyi slipped on the kimono, a wave of warmth surged through her. She looked down to see her hands glowing with a soft, golden light, and with a gasp, she realized she could understand the language of the cranes. They whispered tales of forgotten realms, of celestial dances, and of the boundless power of dreams. With a gentle swish of the kimono, Tianyi felt herself rising into the air, the cranes on her robe taking flight, their wings carrying her higher and higher. The world below shrunk, becoming a tapestry of twinkling lights and swirling colors.\\n\\nShe soared through the starlit sky, a constellation of cranes swirling around her. She danced with the moonbeams, painted the clouds with hues of her imagination, and felt an overwhelming sense of joy and freedom. In this dream, she was not just Tianyi, but a celestial being, a weaver of dreams, a dancer in the cosmos. It was a birthday gift unlike any other, a reminder of the infinite possibilities that lay within her, waiting to be awakened. As she descended back to the tranquil garden, leaving the kimono on a bed of moss, she noticed that her cat Mame and her husband Keith were standing nearby, with a look of wonder on their faces.\"\n  }\n}"},
+          {text: "\n```"},
+        ],
+      },
+    ],
+  });
+
+  const result = await chatSession.sendMessage("INSERT_INPUT_HERE");
+  console.log(result.response.text());
+}
+
+run();
+```

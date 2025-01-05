@@ -8,5 +8,10 @@
     "id": "meetings",
     "theme": "Meeting for the first time",
     "description": "How did you first meet? What were your first impressions?"
+  },
+  {
+    "id": "transform",
+    "theme": "Transforming",
+    "description": "A dream where the dreamer undergoes a magical or fantastical transformation, either of themselves or their surroundings. This transformation could involve physical changes, the acquisition of unusual abilities, or the appearance of magical objects or entities. Focus on the sense of awe, wonder, or empowerment that comes with these changes."
   }
 ]

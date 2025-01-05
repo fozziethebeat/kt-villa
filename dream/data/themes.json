@@ -1,0 +1,41 @@
+{
+"theme": [
+"Dreams of nostalgia and longing for a past time, evoking a strong sense of wistfulness for a time that is gone.",
+"Dreams of self-discovery and personal growth, focusing on confronting inner challenges, overcoming obstacles, and developing a better understanding of oneself.",
+"Dreams of encountering the surreal and fantastical, taking place in strange, impossible locations, featuring bizarre creatures, defying logic and the laws of physics.",
+"Dreams of love and romance, exploring relationships, desires, and connections between individuals, often with a focus on the emotional experience.",
+"Dreams of loss and mourning, confronting themes of grief, sadness, and the passage of time, and coping with the absence of a loved one or something significant.",
+"Dreams of adventure and exploration, characterized by journeys to new and unknown places, often involving challenges and tests of courage.",
+"Dreams of fear and anxiety, creating a feeling of unease and distress and often involving the feeling of being hunted, chased, or trapped.",
+"Dreams of transformation and change, centered on metamorphosis, growth, or significant shifts in oneself or the surrounding world."
+]
+}
+
+{
+"themes": [
+{
+"name": "Lost_In_Familiarity",
+"theme": "A dream where the dreamer finds themselves in a familiar place, but the location has subtly shifted or become distorted, causing confusion, disorientation, and a sense of unease. This can include changes to the layout of the location, the presence of unusual objects, or the disappearance of expected elements."
+},
+{
+"name": "Emotional_Wish_Fulfillment",
+"theme": "A dream where the dreamer experiences the realization of a deep emotional wish or longing, such as reconciliation with a lost loved one, achieving a significant goal, or experiencing a profound sense of belonging. The dream should emphasize the positive emotional impact of fulfilling this desire."
+},
+{
+"name": "Past_Life_Echoes",
+"theme":"A dream where the dreamer experiences fragments or echoes of a past life, characterized by strange, or unfamiliar settings, clothing, languages, and relationships. The dreamer may have glimpses of skills, experiences, or memories that they don't consciously possess in their current life, leading to a sense of wonder, intrigue, or recognition."
+},
+{
+"name": "Imminent_Danger",
+"theme": "A dream where the dreamer is acutely aware of an impending threat or danger, either from an unknown source or from a specific entity, triggering feelings of fear, anxiety, and a desperate need to escape or protect themselves. The danger can be realistic or fantastical, but the emotional response should be very palpable."
+},
+{
+"name": "Magical_Transformation",
+"theme": "A dream where the dreamer undergoes a magical or fantastical transformation, either of themselves or their surroundings. This transformation could involve physical changes, the acquisition of unusual abilities, or the appearance of magical objects or entities. Focus on the sense of awe, wonder, or empowerment that comes with these changes."
+},
+{
+"name": "Symbolic_Journey",
+"theme": "A dream where the dreamer embarks on a journey, often with a metaphorical or symbolic meaning, representing a significant life transition, self-discovery, or exploration of inner conflicts. The journey itself, the obstacles encountered, and the destination reached should all hold deeper symbolic significance for the dreamer."
+}
+]
+}

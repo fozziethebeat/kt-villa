@@ -15,6 +15,9 @@ export default async function Home() {
         {session?.user ? (
           <div className="flex flex-col gap-2">
             <div>Let's start dreaming for Ten-Chan ne~</div>
+            <Button asChild>
+              <Link href="/dream">Begin</Link>
+            </Button>
             <DreamThemeGrid />
             <img
               className="rounded"

@@ -77,3 +77,8 @@ model DreamTheme {
   theme       String
   description String
 }
+
+model PromptTemplate {
+  id          String @id @unique
+  template    String
+}
