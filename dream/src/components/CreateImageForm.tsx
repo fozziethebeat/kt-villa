@@ -1,7 +1,7 @@
 'use client';
 
 import {useForm} from 'react-hook-form';
-import {gql, useSuspenseQuery, useQuery, useMutation} from '@apollo/client';
+import {gql, useMutation} from '@apollo/client';
 
 import {
   Form,
@@ -20,6 +20,7 @@ const MUTATION = gql`
   mutation DreamImage($input: DreamImageGenerateInput!) {
     dreamImage(input: $input) {
       url
+      prompt
     }
   }
 `;
@@ -82,9 +83,11 @@ export function CreateImageForm({onSave, story}) {
             <h2 className="card-title">The Drawn Dream!</h2>
             <div className="card-actions justify-end">
               <button
-                onClick={() => onSave(data.dreamImage.url)}
+                onClick={() =>
+                  onSave(data.dreamImage.url, data.dreamImage.prompt)
+                }
                 className="btn btn-primary">
-                Save
+                Next
               </button>
             </div>
           </div>

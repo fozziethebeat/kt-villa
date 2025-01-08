@@ -1,4 +1,7 @@
 'use client';
+
+import {gql, useMutation} from '@apollo/client';
+import {useRouter} from 'next/navigation';
 import {useState} from 'react';
 
 import {CreateDreamForm} from '@/components/CreateDreamForm';
@@ -21,19 +24,49 @@ She soared through the starlit sky, a constellation of cranes swirling around he
 const DEFAULT_IMAGE =
   'https://stablesoaps-w1.s3.amazonaws.com/results/vfuX7I.png';
 
+const MUTATION = gql`
+  mutation SaveDream($input: DreamInput!) {
+    saveDream(input: $input) {
+      id
+    }
+  }
+`;
+
 export function DreamFlow() {
+  const router = useRouter();
   const [stepState, setStepState] = useState(0);
   const [memory, setMemory] = useState(DEFAULT_MEMORY);
   const [story, setStory] = useState(DEFAULT_STORY);
-  const [image, setImage] = useState(DEFAULT_IMAGE);
+  const [dreamImage, setDreamImage] = useState(DEFAULT_IMAGE);
+  const [prompt, setPrompt] = useState(DEFAULT_IMAGE);
+  const [saveDream, {data, loading}] = useMutation(MUTATION, {
+    onCompleted: () => {
+      router.push('/');
+    },
+  });
+
   const onStorySave = (savedMemory, savedStory) => {
     setMemory(savedMemory);
     setStory(savedStory);
     setStepState(1);
   };
-  const onImageSave = savedImage => {
-    setImage(savedImage);
+  const onImageSave = (savedDreamImage, savedPrompt) => {
+    setDreamImage(savedDreamImage);
+    setPrompt(savedPrompt);
     setStepState(2);
+  };
+
+  const onSaveDream = data => {
+    saveDream({
+      variables: {
+        input: {
+          memory,
+          story,
+          dreamImage,
+          prompt,
+        },
+      },
+    });
   };
 
   return (
@@ -68,7 +101,13 @@ export function DreamFlow() {
             <div className="divider">Becomes</div>
             <p>{story}</p>
             <div className="card-actions justify-end">
-              <button className="btn btn-primary">Submit</button>
+              <button
+                disabled={data || loading}
+                onClick={onSaveDream}
+                className="btn btn-primary">
+                Submit
+              </button>
+              {loading && <progress className="progress w-56"></progress>}
             </div>
           </div>
         </div>

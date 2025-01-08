@@ -29,6 +29,7 @@ export const typeDefs = gql`
 
   type Image {
     url: String!
+    prompt: String!
   }
 
   type Story {
@@ -49,6 +50,28 @@ export const typeDefs = gql`
     initialStory: String!
   }
 
+  input DreamInput {
+    memory: String!
+    story: String!
+    dreamImage: String!
+    prompt: String!
+  }
+
+  type User {
+    id: String!
+    name: String
+    email: String
+  }
+
+  type Dream {
+    id: String!
+    memory: String!
+    story: String!
+    dreamImage: String!
+    prompt: String!
+    user: User!
+  }
+
   type Query {
     dreamThemes: [DreamTheme!]!
     styles: [Style!]!
@@ -59,6 +82,7 @@ export const typeDefs = gql`
     testStyle(input: TestStyleInput!): Image
     dreamImage(input: DreamImageGenerateInput!): Image
     dreamStory(input: DreamStoryGenerateInput!): Story
+    saveDream(input: DreamInput!): Dream
   }
 `;
 
@@ -149,6 +173,7 @@ export const resolvers = {
       // Hard coded during testing to save credits.
       return {
         url: 'https://stablesoaps-w1.s3.amazonaws.com/results/vfuX7I.png',
+        prompt: input.story + 'PROMPT',
       };
 
       const promptTemplate = await prisma.promptTemplate.findUnique({
@@ -188,7 +213,16 @@ export const resolvers = {
       const imagePrompt = JSON.parse(result.response.text())['imagePrompt'];
       const imageID = imageGenerator.itemIdGenerator.rnd();
       const image = await imageGenerator.generateImage(imageID, imagePrompt);
-      return {url: image};
+      return {url: image, prompt: imagePrompt};
+    },
+
+    saveDream: (a, {input}, {user}) => {
+      return prisma.dream.create({
+        data: {
+          ...input,
+          userId: user.id,
+        },
+      });
     },
   },
 

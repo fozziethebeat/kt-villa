@@ -17,6 +17,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  dreams        Dream[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -81,4 +82,15 @@ model DreamTheme {
 model PromptTemplate {
   id          String @id @unique
   template    String
+}
+
+model Dream {
+  id            String    @id @default(cuid())
+  memory        String
+  story         String
+  dreamImage    String
+  prompt        String
+
+  userId        String
+  user          User @relation(fields: [userId], references: [id])
 }

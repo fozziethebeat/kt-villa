@@ -78,7 +78,7 @@ export function CreateDreamForm({onSave, memory}) {
                   onSave(form.getValues().initialStory, data.dreamStory.story)
                 }
                 className="btn btn-primary">
-                Save
+                Next
               </button>
             </div>
           </div>
