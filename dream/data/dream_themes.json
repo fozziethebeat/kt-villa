@@ -1,17 +1,32 @@
 [
   {
-    "id": "origin",
-    "theme": "The land of dreams",
-    "description": "Where do dreams come from? Where does a sleeper go to buy their dream? What dreams would you book on the shelves?"
+    "id": "Lost_In_Familiarity",
+    "theme": "Lost In Familiarity",
+    "description": "A dream where the dreamer finds themselves in a familiar place, but the location has subtly shifted or become distorted, causing confusion, disorientation, and a sense of unease. This can include changes to the layout of the location, the presence of unusual objects, or the disappearance of expected elements."
   },
   {
-    "id": "meetings",
-    "theme": "Meeting for the first time",
-    "description": "How did you first meet? What were your first impressions?"
+    "id": "Emotional_Wish_Fulfillment",
+    "theme": "Emotional Wish Fulfillment",
+    "description": "A dream where the dreamer experiences the realization of a deep emotional wish or longing, such as reconciliation with a lost loved one, achieving a significant goal, or experiencing a profound sense of belonging. The dream should emphasize the positive emotional impact of fulfilling this desire."
   },
   {
-    "id": "transform",
-    "theme": "Transforming",
+    "id": "Past_Life_Echoes",
+    "theme": "Past Life Echoes",
+    "description":"A dream where the dreamer experiences fragments or echoes of a past life, characterized by strange, or unfamiliar settings, clothing, languages, and relationships. The dreamer may have glimpses of skills, experiences, or memories that they don't consciously possess in their current life, leading to a sense of wonder, intrigue, or recognition."
+},
+  {
+    "id": "Imminent_Danger",
+    "theme": "Imminent Danger",
+    "description": "A dream where the dreamer is acutely aware of an impending threat or danger, either from an unknown source or from a specific entity, triggering feelings of fear, anxiety, and a desperate need to escape or protect themselves. The danger can be realistic or fantastical, but the emotional response should be very palpable."
+  },
+  {
+    "id": "Magical_Transformation",
+    "theme": "Magical Transformation",
     "description": "A dream where the dreamer undergoes a magical or fantastical transformation, either of themselves or their surroundings. This transformation could involve physical changes, the acquisition of unusual abilities, or the appearance of magical objects or entities. Focus on the sense of awe, wonder, or empowerment that comes with these changes."
+  },
+  {
+    "id": "Symbolic_Journey",
+    "theme": "Symbolic Journey",
+    "description": "A dream where the dreamer embarks on a journey, often with a metaphorical or symbolic meaning, representing a significant life transition, self-discovery, or exploration of inner conflicts. The journey itself, the obstacles encountered, and the destination reached should all hold deeper symbolic significance for the dreamer."
   }
 ]

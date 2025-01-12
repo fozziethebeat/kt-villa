@@ -8,12 +8,27 @@ const db = new PrismaClient();
 
 async function devSeed() {
   try {
-    await db.user.createMany({
+    const users = await db.user.createManyAndReturn({
       data: [
         {
           name: 'Keith',
           email: 'fozziethebeat@gmail.com',
           roles: 'admin',
+        },
+        {
+          name: 'Friend 1',
+          email: 'fozziethebeat+u1@gmail.com',
+          roles: 'general',
+        },
+        {
+          name: 'Friend 2',
+          email: 'fozziethebeat+u2@gmail.com',
+          roles: 'general',
+        },
+        {
+          name: 'Friend 3',
+          email: 'fozziethebeat+u3@gmail.com',
+          roles: 'general',
         },
       ],
     });
@@ -25,6 +40,34 @@ async function devSeed() {
     });
     await db.dreamTheme.createMany({
       data: dreamThemes,
+    });
+    await db.dream.createMany({
+      data: [
+        {
+          memory: 'm1',
+          story: 's1',
+          dreamImage:
+            'https://stablesoaps-w1.s3.amazonaws.com/results/vfuX7I.png',
+          prompt: 'p1',
+          userId: users[1].id,
+        },
+        {
+          memory: 'm2',
+          story: 's2',
+          dreamImage:
+            'https://stablesoaps-w1.s3.amazonaws.com/results/vfuX7I.png',
+          prompt: 'p2',
+          userId: users[2].id,
+        },
+        {
+          memory: 'm3',
+          story: 's3',
+          dreamImage:
+            'https://stablesoaps-w1.s3.amazonaws.com/results/vfuX7I.png',
+          prompt: 'p3',
+          userId: users[3].id,
+        },
+      ],
     });
     await db.promptTemplate.createMany({
       data: [

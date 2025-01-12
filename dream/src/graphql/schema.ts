@@ -48,6 +48,7 @@ export const typeDefs = gql`
 
   input DreamStoryGenerateInput {
     initialStory: String!
+    themeId: String!
   }
 
   input DreamInput {
@@ -136,7 +137,7 @@ export const resolvers = {
         story: `${input.initialStory} + MAGIC`,
       };
       const theme = await prisma.dreamTheme.findUnique({
-        where: {id: 'transform'},
+        where: {id: input.themeId},
       });
       const promptTemplate = await prisma.promptTemplate.findUnique({
         where: {id: 'dreamStorySystem'},

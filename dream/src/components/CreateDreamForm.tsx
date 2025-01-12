@@ -15,6 +15,23 @@ import {
 import {Button} from '@/components/ui/button';
 import {Textarea} from '@/components/ui/textarea';
 import {Label} from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+const QUERY = gql`
+  query DreamThemes {
+    dreamThemes {
+      id
+      theme
+      description
+    }
+  }
+`;
 
 const MUTATION = gql`
   mutation DreamStory($input: DreamStoryGenerateInput!) {
@@ -30,12 +47,21 @@ Stuff here
 
 interface CreateDreamStoryInput {
   initialStory: string;
+  themeId: string;
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }
 
 export function CreateDreamForm({onSave, memory}) {
+  const {data: themeData} = useSuspenseQuery(QUERY);
+  console.log(themeData);
   const form = useForm<CreateDreamStoryInput>({
     defaultValues: {
       initialStory: memory,
+      themeId:
+        themeData.dreamThemes[getRandomInt(themeData.dreamThemes.length)].id,
     },
   });
   const [dreamStory, {data, loading}] = useMutation(MUTATION);
@@ -61,6 +87,31 @@ export function CreateDreamForm({onSave, memory}) {
                 {...form.register('initialStory')}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="themeId"
+              render={({field}) => (
+                <FormItem>
+                  <FormLabel>Theme</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Theme for your dream" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {themeData.dreamThemes.map(t => (
+                        <SelectItem key={t.id} value={t.id}>
+                          {t.theme}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
 
             <Button type="submit">Dream</Button>
           </div>
