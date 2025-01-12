@@ -1,6 +1,6 @@
 'use client';
 
-import {gql, useMutation} from '@apollo/client';
+import {gql, useSuspenseQuery, useMutation} from '@apollo/client';
 import {useRouter} from 'next/navigation';
 import {useState} from 'react';
 
@@ -32,13 +32,35 @@ const MUTATION = gql`
   }
 `;
 
+const QUERY = gql`
+  query UserDream {
+    userDream {
+      id
+      memory
+      story
+      dreamImage
+      prompt
+    }
+  }
+`;
+
 export function DreamFlow() {
+  const {data: initData} = useSuspenseQuery(QUERY);
+  console.log(initData);
   const router = useRouter();
-  const [stepState, setStepState] = useState(0);
-  const [memory, setMemory] = useState(DEFAULT_MEMORY);
-  const [story, setStory] = useState(DEFAULT_STORY);
-  const [dreamImage, setDreamImage] = useState(DEFAULT_IMAGE);
-  const [prompt, setPrompt] = useState(DEFAULT_IMAGE);
+  const [stepState, setStepState] = useState(
+    initData?.userDream?.dreamImage ? 2 : 0,
+  );
+  const [memory, setMemory] = useState(
+    initData?.userDream?.memory || DEFAULT_MEMORY,
+  );
+  const [story, setStory] = useState(
+    initData?.userDream?.story || DEFAULT_STORY,
+  );
+  const [dreamImage, setDreamImage] = useState(
+    initData?.userDream?.dreamImage || DEFAULT_IMAGE,
+  );
+  const [prompt, setPrompt] = useState(initData?.userDream?.prompt || '');
   const [saveDream, {data, loading}] = useMutation(MUTATION, {
     onCompleted: () => {
       router.push('/');
@@ -82,7 +104,11 @@ export function DreamFlow() {
           className={`step ${stepState >= 2 ? 'step-primary' : ''}`}>
           Draw the Story
         </li>
-        <li className={`step ${stepState >= 3 ? 'step-primary' : ''}`}>Save</li>
+        <li
+          onClick={() => setStepState(2)}
+          className={`step ${stepState >= 3 ? 'step-primary' : ''}`}>
+          Save
+        </li>
       </ul>
 
       {stepState === 0 && (
@@ -94,7 +120,7 @@ export function DreamFlow() {
       {stepState === 2 && (
         <div className="card bg-base-100 w-256 shadow-xl">
           <figure className="h-256 w-256">
-            <img src={image} />
+            <img src={dreamImage} />
           </figure>
           <div className="card-body">
             <p>{memory}</p>

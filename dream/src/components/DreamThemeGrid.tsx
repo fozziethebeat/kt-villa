@@ -3,6 +3,7 @@ import Link from 'next/link';
 import {gql} from '@apollo/client';
 import {getClient} from '@/graphql/ApolloClient';
 
+import {DreamCard} from '@/components/DreamCard';
 import {
   Card,
   CardContent,
@@ -13,28 +14,41 @@ import {
 } from '@/components/ui/card';
 
 const QUERY = gql`
-  query DreamThemes {
-    dreamThemes {
+  query UserDream {
+    userDream {
       id
-      theme
-      description
+      memory
+      story
+      dreamImage
+    }
+  }
+`;
+
+const ALL_QUERY = gql`
+  query Dreams {
+    dreams {
+      id
+      memory
+      story
+      dreamImage
     }
   }
 `;
 
 export async function DreamThemeGrid() {
   const {data, error} = await getClient().query({query: QUERY});
-  return (
-    <div className="grid gap-4 grid-cols-3">
-      {data.dreamThemes.map(theme => (
-        <Card key={theme.id} className="flex w-64 h-32">
-          <CardContent className="flex flex-col text-left text-sm py-2">
-            <div className="font-semibold">{theme.theme} </div>
-            <div className="flex-1 text-xs">{theme.description}</div>
-            <Link href="#">Imagine</Link>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+  const {data: allDreams, error: allError} = await getClient().query({
+    query: ALL_QUERY,
+  });
+  const dreams = [];
+  dreams.push(
+    <DreamCard key="primary" dream={data.userDream} isUserDream={true} />,
   );
+  dreams.push(
+    ...allDreams.dreams.map(d => (
+      <DreamCard key={d.id} dream={d} isUserDream={false} />
+    )),
+  );
+
+  return <div className="grid gap-4 grid-cols-3">{dreams}</div>;
 }

@@ -76,6 +76,8 @@ export const typeDefs = gql`
     dreamThemes: [DreamTheme!]!
     styles: [Style!]!
     style(id: String): Style
+    dreams: [Dream!]!
+    userDream: Dream
   }
 
   type Mutation {
@@ -98,6 +100,18 @@ export const resolvers = {
 
     styles: () => {
       return prisma.style.findMany();
+    },
+
+    dreams: (a, b, {user}) => {
+      return prisma.dream.findMany({
+        where: {userId: {not: user.id}},
+      });
+    },
+
+    userDream: (a, b, {user}) => {
+      return prisma.dream.findUnique({
+        where: {userId: user.id},
+      });
     },
   },
 
