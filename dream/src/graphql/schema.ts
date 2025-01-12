@@ -110,6 +110,9 @@ export const resolvers = {
     },
 
     userDream: (a, b, {user}) => {
+      if (!user?.id) {
+        return undefined;
+      }
       return prisma.dream.findUnique({
         where: {userId: user.id},
       });

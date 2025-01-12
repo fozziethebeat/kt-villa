@@ -1,18 +1,66 @@
 [
   {
     "id": "2d_game_art",
-    "pattern": "2D Game Art {{text}}, 2D Game Art, often for platformers, pixel art, or side-scrolling games."
+    "pattern": "2D Game Art often for platformers, pixel art, or side-scrolling games."
   },
   {
     "id": "abstract_painting",
-    "pattern": "Abstract Painting {{text}}, Painting in abstract styles, often using non-representational shapes, colors, and forms."
+    "pattern": "Abstract Painting often using non-representational shapes, colors, and forms."
   },
   {
     "id": "art_deco_uncategorized",
-    "pattern": "Art Deco style {{text}}. geometric shapes, bold colors, luxurious, elegant, decorative, symmetrical, ornate, detailed"
+    "pattern": "Art Deco style" 
   },
   {
     "id": "art_constructivist_uncategorized",
-    "pattern": "constructivist style {{text}}. geometric shapes, bold colors, dynamic composition, propaganda art style"
+    "pattern": "constructivist style or propaganda art style"
+  },
+  {
+    "id": "clay_animation",
+    "pattern": "Clay Animation style"
+  },
+  {
+    "id": "diorama",
+    "pattern": "Diorama style"
+  },
+  {
+    "id": "japanese_kirigami",
+    "pattern": "Japanese Kirigami Style"
+  },
+  {
+    "id": "picturebook_story",
+    "pattern": "Picture-Story Book Style"
+  },
+  {
+    "id": "picturebook_story",
+    "pattern": "Picture-Story Book Style"
+  },
+  {
+    "id": "mid_centiry_comic",
+    "pattern": "Mid-century Comic Style"
+  },
+  {
+    "id": "vintage_marker",
+    "pattern": "Vintage Marker Style"
+  },
+  {
+    "id": "century_botanical",
+    "pattern": "Century Botanical Illustration style"
+  },
+  {
+    "id": "papier_mache",
+    "pattern": "Papier Mache Style"
+  },
+  {
+    "id": "century_botanical",
+    "pattern": "Century Botanical Illustration style"
+  },
+  {
+    "id": "studio_ghibli",
+    "pattern": "Studio Ghibli Style"
+  },
+  {
+    "id": "paper_quilling",
+    "pattern": "Yanzhi paper quilling style"
   }
 ]

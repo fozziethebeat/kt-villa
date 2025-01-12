@@ -46,7 +46,6 @@ const QUERY = gql`
 
 export function DreamFlow() {
   const {data: initData} = useSuspenseQuery(QUERY);
-  console.log(initData);
   const router = useRouter();
   const [stepState, setStepState] = useState(
     initData?.userDream?.dreamImage ? 2 : 0,

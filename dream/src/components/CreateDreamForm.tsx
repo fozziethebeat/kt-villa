@@ -1,7 +1,7 @@
 'use client';
 
 import {useForm} from 'react-hook-form';
-import {gql, useSuspenseQuery, useQuery, useMutation} from '@apollo/client';
+import {gql, useSuspenseQuery, useMutation} from '@apollo/client';
 
 import {
   Form,
@@ -56,7 +56,6 @@ function getRandomInt(max) {
 
 export function CreateDreamForm({onSave, memory}) {
   const {data: themeData} = useSuspenseQuery(QUERY);
-  console.log(themeData);
   const form = useForm<CreateDreamStoryInput>({
     defaultValues: {
       initialStory: memory,

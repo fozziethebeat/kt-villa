@@ -1,7 +1,7 @@
 'use client';
 
 import {useForm} from 'react-hook-form';
-import {gql, useMutation} from '@apollo/client';
+import {gql, useSuspenseQuery, useQuery, useMutation} from '@apollo/client';
 
 import {
   Form,
@@ -15,6 +15,22 @@ import {
 import {Button} from '@/components/ui/button';
 import {Textarea} from '@/components/ui/textarea';
 import {Label} from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+const QUERY = gql`
+  query Styles {
+    styles {
+      id
+      pattern
+    }
+  }
+`;
 
 const MUTATION = gql`
   mutation DreamImage($input: DreamImageGenerateInput!) {
@@ -31,6 +47,7 @@ interface CreateImageInput {
 }
 
 export function CreateImageForm({onSave, story}) {
+  const {data: styleData} = useSuspenseQuery(QUERY);
   const form = useForm<CreateImageInput>({
     defaultValues: {
       story: story || '',
@@ -44,6 +61,9 @@ export function CreateImageForm({onSave, story}) {
         input: data,
       },
     });
+  };
+  const handleStyleChange = value => {
+    form.setValue('style', value);
   };
 
   return (
@@ -61,7 +81,22 @@ export function CreateImageForm({onSave, story}) {
               />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="style">Style</Label>
+              <Label htmlFor="template">Pre-made Styles</Label>
+              <Select onValueChange={handleStyleChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Start with a pre-made style" />
+                </SelectTrigger>
+                <SelectContent>
+                  {styleData.styles.map(s => (
+                    <SelectItem key={s.id} value={s.pattern}>
+                      {s.pattern}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-3">
+              <Label htmlFor="style">Dream Image Style</Label>
               <Textarea
                 name="style"
                 className="w-full"
