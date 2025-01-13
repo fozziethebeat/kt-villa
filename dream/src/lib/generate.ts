@@ -6,8 +6,8 @@ import Together from 'together-ai';
 
 abstract class ImageGenerationService {
   protected bucketName: string;
-  protected itemIdGenerator = new ShortUniqueId({length: 6});
-  protected itemCodeGenerator = new ShortUniqueId({
+  public itemIdGenerator = new ShortUniqueId({length: 6});
+  public itemCodeGenerator = new ShortUniqueId({
     dictionary: 'number',
     length: 6,
   });
@@ -17,10 +17,7 @@ abstract class ImageGenerationService {
     this.bucketName = bucketName;
   }
 
-  abstract generateImageFromAdapter(
-    itemId: string,
-    prompt: string,
-  ): Promise<string>;
+  abstract generateImage(itemId: string, prompt: string): Promise<string>;
 
   protected async uploadImageToS3(imageBuffer, targetKey: string) {
     await this.s3Client.send(

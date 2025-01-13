@@ -1,7 +1,12 @@
 'use client';
 
 import {useForm} from 'react-hook-form';
-import {gql, useSuspenseQuery, useQuery, useMutation} from '@apollo/client';
+import {
+  gql,
+  useSuspenseQuery,
+  useMutation,
+  TypedDocumentNode,
+} from '@apollo/client';
 
 import {
   Form,
@@ -23,7 +28,14 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const QUERY = gql`
+interface Styles {
+  styles: {
+    id: string;
+    pattern: string;
+  }[];
+}
+
+const QUERY: TypedDocumentNode<Styles> = gql`
   query Styles {
     styles {
       id
@@ -76,7 +88,7 @@ export function CreateImageForm({onSave, story}) {
               <Textarea
                 name="story"
                 className="w-full"
-                rows="10"
+                rows={10}
                 {...form.register('story')}
               />
             </div>

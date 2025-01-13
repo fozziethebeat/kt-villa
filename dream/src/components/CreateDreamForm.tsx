@@ -1,7 +1,12 @@
 'use client';
 
 import {useForm} from 'react-hook-form';
-import {gql, useSuspenseQuery, useMutation} from '@apollo/client';
+import {
+  gql,
+  useSuspenseQuery,
+  useMutation,
+  TypedDocumentNode,
+} from '@apollo/client';
 
 import {
   Form,
@@ -23,7 +28,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const QUERY = gql`
+interface DreamThemes {
+  dreamThemes: {
+    id: string;
+    theme: string;
+    description: string;
+  }[];
+}
+
+const QUERY: TypedDocumentNode<DreamThemes> = gql`
   query DreamThemes {
     dreamThemes {
       id
@@ -82,7 +95,7 @@ export function CreateDreamForm({onSave, memory}) {
               <Textarea
                 name="initialStory"
                 className="w-full"
-                rows="10"
+                rows={10}
                 {...form.register('initialStory')}
               />
             </div>

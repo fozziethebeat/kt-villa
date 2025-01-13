@@ -2,8 +2,6 @@ import {DateTimeResolver, GraphQLJSON} from 'graphql-scalars';
 import {GoogleGenerativeAI} from '@google/generative-ai';
 import {gql} from 'graphql-tag';
 import {Liquid} from 'liquidjs';
-import slug from 'slug';
-import ShortUniqueId from 'short-unique-id';
 
 import {imageGenerator} from '@/lib/generate';
 import {prisma} from '@/lib/prisma';
@@ -182,6 +180,7 @@ export const resolvers = {
           },
         },
       };
+      // @ts-expect-error
       const chatSession = model.startChat({generationConfig});
       const result = await chatSession.sendMessage(input.initialStory);
       return JSON.parse(result.response.text())['dream']['story'];
@@ -226,6 +225,7 @@ export const resolvers = {
           },
         },
       };
+      // @ts-expect-error
       const chatSession = model.startChat({generationConfig});
       const result = await chatSession.sendMessage(input.story);
       const imagePrompt = JSON.parse(result.response.text())['imagePrompt'];

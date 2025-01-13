@@ -10,7 +10,7 @@ export default async function Home() {
   const session = await auth();
   return (
     <>
-      <Header target="Home" />
+      <Header target="Home" links={[]} />
       <div className="flex flex-col gap-4 py-4 px-4">
         {session?.user ? (
           <div className="flex flex-col gap-2">
@@ -20,7 +20,6 @@ export default async function Home() {
               src="/yumegai_banner_5.png"
               width="1024"
               height="512"
-              className="rounded"
             />
           </div>
         ) : (

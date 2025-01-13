@@ -1,6 +1,11 @@
 'use client';
 
-import {gql, useSuspenseQuery, useMutation} from '@apollo/client';
+import {
+  gql,
+  useSuspenseQuery,
+  useMutation,
+  TypedDocumentNode,
+} from '@apollo/client';
 import {ColumnDef} from '@tanstack/react-table';
 import Link from 'next/link';
 import {MoreHorizontal} from 'lucide-react';
@@ -26,7 +31,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const QUERY = gql`
+interface Styles {
+  styles: {
+    id: string;
+    pattern: string;
+  }[];
+}
+
+const QUERY: TypedDocumentNode<Styles> = gql`
   query Styles {
     styles {
       id
@@ -35,7 +47,7 @@ const QUERY = gql`
   }
 `;
 
-export const columns: ColumnDef[] = [
+export const columns: ColumnDef<any>[] = [
   {
     accessorKey: 'id',
     header: 'ID',

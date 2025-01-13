@@ -1,6 +1,11 @@
 'use client';
 
-import {gql, useSuspenseQuery, useMutation} from '@apollo/client';
+import {
+  gql,
+  useSuspenseQuery,
+  useMutation,
+  TypedDocumentNode,
+} from '@apollo/client';
 import {useRouter} from 'next/navigation';
 import {useState} from 'react';
 
@@ -32,7 +37,17 @@ const MUTATION = gql`
   }
 `;
 
-const QUERY = gql`
+interface UserDream {
+  userDream: {
+    id: string;
+    memory: string;
+    story: string;
+    dreamImage: string;
+    prompt: string;
+  };
+}
+
+const QUERY: TypedDocumentNode<UserDream> = gql`
   query UserDream {
     userDream {
       id

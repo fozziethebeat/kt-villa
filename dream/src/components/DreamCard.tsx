@@ -27,7 +27,7 @@ export function DreamCard({dream, isUserDream}) {
     <div className="card bg-base-100 w-96 h-128 shadow-xl">
       <div className="placeholder bg-neutral-content h-96 w-96"></div>
       <div className="card-body">
-        <h2 className="card-title">Let's get dreaming</h2>
+        <h2 className="card-title">Let&apos;s get dreaming</h2>
         <p>Your memory with Tianyi TBD</p>
         <div className="card-actions justify-end">
           <Link href="/dream">

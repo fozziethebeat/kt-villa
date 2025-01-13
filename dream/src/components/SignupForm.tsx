@@ -15,7 +15,7 @@ import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 
 export function SignupForm(props: {
-  searchParams: {callbackUrl: string | undefined};
+  searchParams?: {callbackUrl: string | undefined};
 }) {
   const handleSubmit = async formData => {
     'use server';
