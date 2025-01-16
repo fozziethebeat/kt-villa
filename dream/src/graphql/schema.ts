@@ -238,4 +238,10 @@ export const resolvers = {
 
   DateTime: DateTimeResolver,
   JSON: GraphQLJSON,
+
+  Dream: {
+    user: dream => {
+      return prisma.dream.findUnique({where: {id: dream.id}}).user();
+    },
+  },
 };

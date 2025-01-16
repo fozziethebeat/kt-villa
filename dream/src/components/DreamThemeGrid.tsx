@@ -31,6 +31,9 @@ const ALL_QUERY = gql`
       memory
       story
       dreamImage
+      user {
+        name
+      }
     }
   }
 `;

@@ -9,7 +9,9 @@ export function DreamCard({dream, isUserDream}) {
         </figure>
         <div className="card-body">
           <h2 className="card-title">
-            {isUserDream ? 'Your Dream for Tianyi' : 'Another Dream'}{' '}
+            {isUserDream
+              ? 'Your Dream for Tianyi'
+              : `${dream.user.name}'s Dream`}{' '}
           </h2>
           <p>{dream.story}</p>
           <div className="card-actions justify-end">
