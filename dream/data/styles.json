@@ -32,20 +32,12 @@
     "pattern": "Picture-Story Book Style"
   },
   {
-    "id": "picturebook_story",
-    "pattern": "Picture-Story Book Style"
-  },
-  {
     "id": "mid_centiry_comic",
     "pattern": "Mid-century Comic Style"
   },
   {
     "id": "vintage_marker",
     "pattern": "Vintage Marker Style"
-  },
-  {
-    "id": "century_botanical",
-    "pattern": "Century Botanical Illustration style"
   },
   {
     "id": "papier_mache",

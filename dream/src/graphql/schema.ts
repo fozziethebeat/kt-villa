@@ -134,9 +134,6 @@ export const resolvers = {
     },
 
     dreamStory: async (a, {input}) => {
-      return {
-        story: `${input.initialStory} + MAGIC`,
-      };
       const theme = await prisma.dreamTheme.findUnique({
         where: {id: input.themeId},
       });
@@ -187,12 +184,6 @@ export const resolvers = {
     },
 
     dreamImage: async (a, {input}) => {
-      // Hard coded during testing to save credits.
-      return {
-        url: 'https://stablesoaps-w1.s3.amazonaws.com/results/vfuX7I.png',
-        prompt: input.story + 'PROMPT',
-      };
-
       const promptTemplate = await prisma.promptTemplate.findUnique({
         where: {id: 'dreamImageSystem'},
       });
@@ -229,6 +220,7 @@ export const resolvers = {
       const chatSession = model.startChat({generationConfig});
       const result = await chatSession.sendMessage(input.story);
       const imagePrompt = JSON.parse(result.response.text())['imagePrompt'];
+      console.log(imagePrompt);
       const imageID = imageGenerator.itemIdGenerator.rnd();
       const image = await imageGenerator.generateImage(imageID, imagePrompt);
       return {url: image, prompt: imagePrompt};
