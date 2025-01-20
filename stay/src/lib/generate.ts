@@ -140,7 +140,6 @@ class TogetherFluxGenerator extends ImageGenerationService {
     const request = {
       model: this.modelId,
       prompt: await this.getPrompt(adapterSettings),
-      steps: Math.min(adapterSettings.steps, 10),
     };
     const response = await this.together.images.create(request);
     const urlResponse = await axios({

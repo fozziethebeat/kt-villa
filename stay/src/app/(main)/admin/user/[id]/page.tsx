@@ -25,11 +25,12 @@ const QUERY = gql`
 `;
 
 export default async function EditUserPage({params}) {
+  const {id} = await params;
   await checkAccess('admin', '/');
   try {
     const {data, error} = await getClient().query({
       query: QUERY,
-      variables: {id: params.id},
+      variables: {id},
     });
     return (
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-4">

@@ -1,5 +1,6 @@
 import type {Prisma} from '@prisma/client';
 import {PrismaClient} from '@prisma/client';
+import imageAdapters from '../image_adapters.json';
 
 const db = new PrismaClient();
 
@@ -157,44 +158,13 @@ async function prodSeed() {
         };
       }),
     });
-    await db.signupCode.create({data: {id: 'HakubaOrBust'}});
+    const now = new Date();
+    const adapterData = imageAdapters.map((adapter, i) => ({
+      ...adapter,
+      startDate: createTestDate(now, i * 14),
+    }));
     await db.imageAdapterSetting.createMany({
-      data: [
-        {
-          startDate: '2023-11-09T16:00:00.000Z',
-          adapter: 'hasuikawase',
-          promptTemplate: 'high resolution, mountains, ski slopes, winter',
-          negativePrompt:
-            'misshaped bodies, watermark, misshaped faces, bad eyes',
-          steps: 30,
-          variants: [
-            'snowboarding monkeys',
-            'skiing rabbits',
-            'snowboarding giraffes',
-            'skiing cats',
-            'snowboarding dogs',
-            'telemark skiing ferrets',
-            'snow biking turtles',
-          ],
-        },
-        {
-          startDate: '2023-12-09T16:00:00.000Z',
-          adapter: 'gemmacorrell',
-          promptTemplate: 'high resolution, mountains, ski slopes, winter',
-          negativePrompt:
-            'misshaped bodies, watermark, misshaped faces, bad eyes',
-          steps: 30,
-          variants: [
-            'snowboarding monkeys',
-            'skiing rabbits',
-            'snowboarding giraffes',
-            'skiing cats',
-            'snowboarding dogs',
-            'telemark skiing ferrets',
-            'snow biking turtles',
-          ],
-        },
-      ],
+      data: adapterData,
     });
   } catch (error) {
     console.warn('Please define your seed data.');

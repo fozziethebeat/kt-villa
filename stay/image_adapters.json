@@ -10,84 +10,6 @@
       "telemark skiing ferrets",
       "snow biking turtles"
     ],
-    "adapter": "in style Makoto Shinkai"
-  },
-  {
-    "promptTemplate": "high resolution, mountains, ski slopes, winter",
-    "variants": [
-      "snowboarding monkeys",
-      "skiing rabbits",
-      "snowboarding giraffes",
-      "skiing cats",
-      "snowboarding dogs",
-      "telemark skiing ferrets",
-      "snow biking turtles"
-    ],
-    "adapter": "in  Clay Animation style"
-  },
-  {
-    "promptTemplate": "high resolution, mountains, ski slopes, winter",
-    "variants": [
-      "snowboarding monkeys",
-      "skiing rabbits",
-      "snowboarding giraffes",
-      "skiing cats",
-      "snowboarding dogs",
-      "telemark skiing ferrets",
-      "snow biking turtles"
-    ],
-    "adapter": "in diorama style"
-  },
-  {
-    "promptTemplate": "high resolution, mountains, ski slopes, winter",
-    "variants": [
-      "snowboarding monkeys",
-      "skiing rabbits",
-      "snowboarding giraffes",
-      "skiing cats",
-      "snowboarding dogs",
-      "telemark skiing ferrets",
-      "snow biking turtles"
-    ],
-    "adapter": "in style Gemma Correll"
-  },
-  {
-    "promptTemplate": "high resolution, mountains, ski slopes, winter",
-    "variants": [
-      "snowboarding monkeys",
-      "skiing rabbits",
-      "snowboarding giraffes",
-      "skiing cats",
-      "snowboarding dogs",
-      "telemark skiing ferrets",
-      "snow biking turtles"
-    ],
-    "adapter": "in style Hasui Kawase"
-  },
-  {
-    "promptTemplate": "high resolution, mountains, ski slopes, winter",
-    "variants": [
-      "snowboarding monkeys",
-      "skiing rabbits",
-      "snowboarding giraffes",
-      "skiing cats",
-      "snowboarding dogs",
-      "telemark skiing ferrets",
-      "snow biking turtles"
-    ],
-    "adapter": "in style Kay Nielsen"
-  },
-  {
-    "promptTemplate": "high resolution, mountains, ski slopes, winter",
-    "variants": [
-      "snowboarding monkeys",
-      "skiing rabbits",
-      "snowboarding giraffes",
-      "skiing cats",
-      "snowboarding dogs",
-      "telemark skiing ferrets",
-      "snow biking turtles"
-    ],
     "adapter": "In Japanese Kirigami Style"
   },
   {
@@ -258,5 +180,83 @@
       "snow biking turtles"
     ],
     "adapter": "In Yanzhi paper quilling style"
+  },
+  {
+    "promptTemplate": "high resolution, mountains, ski slopes, winter",
+    "variants": [
+      "snowboarding monkeys",
+      "skiing rabbits",
+      "snowboarding giraffes",
+      "skiing cats",
+      "snowboarding dogs",
+      "telemark skiing ferrets",
+      "snow biking turtles"
+    ],
+    "adapter": "in style Makoto Shinkai"
+  },
+  {
+    "promptTemplate": "high resolution, mountains, ski slopes, winter",
+    "variants": [
+      "snowboarding monkeys",
+      "skiing rabbits",
+      "snowboarding giraffes",
+      "skiing cats",
+      "snowboarding dogs",
+      "telemark skiing ferrets",
+      "snow biking turtles"
+    ],
+    "adapter": "in  Clay Animation style"
+  },
+  {
+    "promptTemplate": "high resolution, mountains, ski slopes, winter",
+    "variants": [
+      "snowboarding monkeys",
+      "skiing rabbits",
+      "snowboarding giraffes",
+      "skiing cats",
+      "snowboarding dogs",
+      "telemark skiing ferrets",
+      "snow biking turtles"
+    ],
+    "adapter": "in diorama style"
+  },
+  {
+    "promptTemplate": "high resolution, mountains, ski slopes, winter",
+    "variants": [
+      "snowboarding monkeys",
+      "skiing rabbits",
+      "snowboarding giraffes",
+      "skiing cats",
+      "snowboarding dogs",
+      "telemark skiing ferrets",
+      "snow biking turtles"
+    ],
+    "adapter": "in style Gemma Correll"
+  },
+  {
+    "promptTemplate": "high resolution, mountains, ski slopes, winter",
+    "variants": [
+      "snowboarding monkeys",
+      "skiing rabbits",
+      "snowboarding giraffes",
+      "skiing cats",
+      "snowboarding dogs",
+      "telemark skiing ferrets",
+      "snow biking turtles"
+    ],
+    "adapter": "in style Hasui Kawase"
+  },
+  {
+    "promptTemplate": "high resolution, mountains, ski slopes, winter",
+    "variants": [
+      "snowboarding monkeys",
+      "skiing rabbits",
+      "snowboarding giraffes",
+      "skiing cats",
+      "snowboarding dogs",
+      "telemark skiing ferrets",
+      "snow biking turtles"
+    ],
+    "adapter": "in style Kay Nielsen"
   }
 ]

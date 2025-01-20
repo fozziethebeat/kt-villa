@@ -40,10 +40,11 @@ const QUERY = gql`
 
 export default async function EditBookingPage({params}) {
   await checkAccess('admin', '/');
+  const {id} = await params;
   try {
     const {data, error} = await getClient().query({
       query: QUERY,
-      variables: {id: parseInt(params.id)},
+      variables: {id: parseInt(id)},
     });
     return (
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-4">

@@ -29,10 +29,11 @@ const QUERY = gql`
 
 export default async function EditAdapterPage({params}) {
   await checkAccess('admin', '/');
+  const {id} = await params;
   try {
     const {data, error} = await getClient().query({
       query: QUERY,
-      variables: {id: parseInt(params.id)},
+      variables: {id: parseInt(id)},
     });
     const imageAdapter = data.imageAdapterSetting;
     return (
