@@ -37,10 +37,11 @@ const QUERY = gql`
 
 export default async function BookingPage({params}) {
   await checkAccess('', '/');
+  const {id} = await params;
   try {
     const {data, error} = await getClient().query({
       query: QUERY,
-      variables: {bookingCode: params.id},
+      variables: {bookingCode: id},
     });
     const userBooking = data.userBooking;
     const numToRegister = Math.max(

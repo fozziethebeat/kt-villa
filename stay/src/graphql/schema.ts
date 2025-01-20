@@ -371,8 +371,10 @@ export const resolvers = {
         subject: 'New Booking Created',
         html: await render(
           CreateBookingMail({
-            code: booking.bookingCode,
-            link: 'https://www.kt-villa.com/admin/bookings',
+            userEmail: user.email,
+            startDate: input.startDate,
+            endDate: input.endDate,
+            link: `${process.env.AUTH_URL}/admin/booking/${booking.id}`,
           }),
         ),
       });

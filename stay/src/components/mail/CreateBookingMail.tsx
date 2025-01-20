@@ -14,11 +14,18 @@ import {
 } from '@react-email/components';
 
 interface CreateBookingProps {
-  code: string;
+  startDate: Date;
+  endDate: Date;
+  userEmail: string;
   link: string;
 }
 
-export function CreateBookingMail({code, link}: CreateBookingProps) {
+export function CreateBookingMail({
+  startDate,
+  endDate,
+  userEmail,
+  link,
+}: CreateBookingProps) {
   return (
     <Html lang="en">
       <Head />
@@ -31,7 +38,16 @@ export function CreateBookingMail({code, link}: CreateBookingProps) {
             </Heading>
             <Hr className="mx-0 my-[26px] w-full border border-solid border-[#eaeaea]" />
             <Text className="text-[12px] leading-[24px] text-[#666666]">
-              Verify the new booking {code}
+              Verify the new booking
+            </Text>
+            <Text className="text-[12px] leading-[24px] text-[#666666]">
+              Person: {userEmail}
+            </Text>
+            <Text className="text-[12px] leading-[24px] text-[#666666]">
+              Start Date: {startDate.toLocaleDateString('en-CA')}
+            </Text>
+            <Text className="text-[12px] leading-[24px] text-[#666666]">
+              End Date: {endDate.toLocaleDateString('en-CA')}
             </Text>
             <Link href={link}>Click Here</Link>
           </Container>

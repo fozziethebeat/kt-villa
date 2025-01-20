@@ -106,14 +106,17 @@ abstract class ImageGenerationService {
   }
 
   protected async getPrompt(adapterSettings) {
+    /*
     const model = this.genAI.getGenerativeModel({
       model: process.env.GEMINI_MODEL,
+      systemInstructions: `You generate a detailed prompt for an image generation model.  Given a few keywords and a specified style, write a 2 to 3 sentence long detailed prompt.  Always return the results as a JSON object.`,
       generationConfig: {
         responseMimeType: 'application/json',
         // @ts-expect-error
         responseSchema: IMAGE_PROMPT_SCHEMA,
       },
     });
+   */
     const index = Math.floor(Math.random() * adapterSettings.variants.length);
     const fragment = adapterSettings.variants[index];
     const template = this.engine.parse(adapterSettings.promptTemplate);
@@ -121,8 +124,13 @@ abstract class ImageGenerationService {
       fragment,
       adapter: adapterSettings.adapter,
     });
+    return prompt;
+    /*
     const result = await model.generateContent([prompt]);
-    return JSON.parse(result.response.text())['imagePrompt'];
+    const imagePrompt = JSON.parse(result.response.text())['imagePrompt'];
+    console.log(imagePrompt);
+    return imagePrompt;
+   */
   }
 }
 
