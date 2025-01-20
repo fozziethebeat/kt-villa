@@ -25,3 +25,7 @@
   * [x] User Booking Edit
   * [X] User Profile Page
   * [x] Public Booking Item Page
+
+# Prompt Template
+
+{{ fragment }}, vibrant, anime style. A snowy mountain landscape, dramatic sky, bright colors. Detailed snow textures {{ adapter }}.

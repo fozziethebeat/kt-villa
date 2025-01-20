@@ -85,7 +85,6 @@ export const typeDefs = gql`
     id: Int!
     adapter: String!
     promptTemplate: String!
-    negativePrompt: String!
     steps: Int!
     variants: [String!]!
   }

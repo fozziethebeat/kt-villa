@@ -30,7 +30,7 @@ const TEST_MUTATION: TypedDocumentNode<any, any> = gql`
 const UPDATE_MUTATION: TypedDocumentNode<any, any> = gql`
   mutation UpdateImageAdapter($id: Int!, $input: ImageAdapterInput!) {
     updateImageAdapter(id: $id, input: $input) {
-      url
+      id
     }
   }
 `;
@@ -38,7 +38,6 @@ const UPDATE_MUTATION: TypedDocumentNode<any, any> = gql`
 type EditAdapterInputs = {
   adapter: string;
   promptTemplate: string;
-  negativePrompt: string;
   steps: number;
   variants: string;
 };
@@ -74,7 +73,6 @@ export function EditAdapterForm({imageAdapter}: EditAdapterFormProps) {
           id: imageAdapter.id,
           adapter: data.adapter,
           promptTemplate: data.promptTemplate,
-          negativePrompt: data.negativePrompt,
           steps: data.steps,
           variants: variants,
         },
@@ -92,7 +90,6 @@ export function EditAdapterForm({imageAdapter}: EditAdapterFormProps) {
           id: imageAdapter.id,
           adapter: data.adapter,
           promptTemplate: data.promptTemplate,
-          negativePrompt: data.negativePrompt,
           steps: data.steps,
           variants: variants,
         },
