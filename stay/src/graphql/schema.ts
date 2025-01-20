@@ -315,8 +315,8 @@ export const resolvers = {
         if (!user) {
           throw new Error('Requires signed in');
         }
-        if (input.numGuests < 0 || input.numGuests > 4) {
-          throw new Error('Pick between 1 and 4 guests');
+        if (input.numGuests < 0 || input.numGuests > 5) {
+          throw new Error('Pick between 1 and 5 guests');
         }
         const candidateConflicts = await prisma.booking.findMany({
           where: {
