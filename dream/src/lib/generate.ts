@@ -17,7 +17,7 @@ abstract class TextGenerationService {
 
 class AnthropicTextGenerationService extends TextGenerationService {
   client: Anthropic;
-  story_schema = {
+  story_schema: Anthropic.Tool = {
     name: 'dream_story',
     description: 'A magical dream story with a title and story',
     input_schema: {
@@ -35,7 +35,7 @@ class AnthropicTextGenerationService extends TextGenerationService {
       required: ['title', 'story'],
     },
   };
-  image_schema = {
+  image_schema: Anthropic.Tool = {
     name: 'image_prompt',
     description: 'A 2 to 3 sentence prompt for an image generation model',
     input_schema: {
@@ -79,7 +79,11 @@ class AnthropicTextGenerationService extends TextGenerationService {
       system: systemInstruction,
       messages: [{role: 'user', content: memory}],
     });
-    return message.content[0].input['story'];
+    const tool = message.content.find(
+      (content): content is Anthropic.ToolUseBlock =>
+        content.type === 'tool_use',
+    );
+    return tool.input['story'];
   }
 
   async generateImagePrompt(story: string, style: string): Promise<string> {
@@ -103,7 +107,11 @@ class AnthropicTextGenerationService extends TextGenerationService {
       system: systemInstruction,
       messages: [{role: 'user', content: story}],
     });
-    return message.content[0].input['imagePrompt'];
+    const tool = message.content.find(
+      (content): content is Anthropic.ToolUseBlock =>
+        content.type === 'tool_use',
+    );
+    return tool.input['imagePrompt'];
   }
 }
 
