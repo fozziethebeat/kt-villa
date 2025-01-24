@@ -1,8 +1,111 @@
+import Anthropic from '@anthropic-ai/sdk';
 import {S3Client, PutObjectCommand} from '@aws-sdk/client-s3';
 import {helpers, PredictionServiceClient} from '@google-cloud/aiplatform';
 import axios from 'axios';
 import ShortUniqueId from 'short-unique-id';
+import {Liquid} from 'liquidjs';
 import Together from 'together-ai';
+
+import {prisma} from '@/lib/prisma';
+
+const engine = new Liquid();
+
+abstract class TextGenerationService {
+  abstract generateStory(memory: string, theme: string): Promise<string>;
+  abstract generateImagePrompt(story: string, style: string): Promise<string>;
+}
+
+class AnthropicTextGenerationService extends TextGenerationService {
+  client: Anthropic;
+  story_schema = {
+    name: 'dream_story',
+    description: 'A magical dream story with a title and story',
+    input_schema: {
+      type: 'object',
+      properties: {
+        title: {
+          type: 'string',
+          description: 'A brief 1 sentence story title',
+        },
+        story: {
+          type: 'string',
+          description: 'The magical dream in 2 to 3 paragraphs',
+        },
+      },
+      required: ['title', 'story'],
+    },
+  };
+  image_schema = {
+    name: 'image_prompt',
+    description: 'A 2 to 3 sentence prompt for an image generation model',
+    input_schema: {
+      type: 'object',
+      properties: {
+        imagePrompt: {
+          type: 'string',
+          description:
+            'A concise but detailed and rich prompt for an image generation model',
+        },
+      },
+      required: ['imagePrompt'],
+    },
+  };
+
+  constructor(apiKey: string) {
+    super();
+    this.client = new Anthropic({
+      apiKey,
+    });
+  }
+
+  async generateStory(memory: string, theme: string): Promise<string> {
+    const promptTemplate = await prisma.promptTemplate.findUnique({
+      where: {id: 'dreamStorySystem'},
+    });
+    if (!promptTemplate || !theme) {
+      throw new Error('System not setup properly');
+    }
+    const systemInstruction = await engine.parseAndRender(
+      promptTemplate.template,
+      {
+        theme,
+      },
+    );
+    const message = await this.client.messages.create({
+      model: 'claude-3-5-sonnet-latest',
+      max_tokens: 1024,
+      tools: [this.story_schema],
+      tool_choice: {type: 'tool', name: this.story_schema['name']},
+      system: systemInstruction,
+      messages: [{role: 'user', content: memory}],
+    });
+    return message.content[0].input['story'];
+  }
+
+  async generateImagePrompt(story: string, style: string): Promise<string> {
+    const promptTemplate = await prisma.promptTemplate.findUnique({
+      where: {id: 'dreamImageSystem'},
+    });
+    if (!promptTemplate) {
+      throw new Error('System not setup properly');
+    }
+    const systemInstruction = await engine.parseAndRender(
+      promptTemplate.template,
+      {
+        style,
+      },
+    );
+    const message = await this.client.messages.create({
+      model: 'claude-3-5-sonnet-latest',
+      max_tokens: 1024,
+      tools: [this.image_schema],
+      tool_choice: {type: 'tool', name: this.image_schema['name']},
+      system: systemInstruction,
+      messages: [{role: 'user', content: story}],
+    });
+    return message.content[0].input['imagePrompt'];
+  }
+}
 
 abstract class ImageGenerationService {
   protected bucketName: string;
@@ -141,6 +244,13 @@ class GeminiImagenGenerator extends ImageGenerationService {
   }
 }
 
+function textGeneratorFactory() {
+  if (process.env.ANTHROPIC_API_KEY) {
+    return new AnthropicTextGenerationService(process.env.ANTHROPIC_API_KEY);
+  }
+  return undefined;
+}
+
 function imageGeneratorFactory() {
   if (process.env.GEMINI_PROJECT_ID && process.env.GEMINI_LOCATION) {
     return new GeminiImagenGenerator(
@@ -166,3 +276,4 @@ function imageGeneratorFactory() {
 }
 
 export const imageGenerator = imageGeneratorFactory();
+export const textGenerator = textGeneratorFactory();

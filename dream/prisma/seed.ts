@@ -31,18 +31,17 @@ async function devSeed() {
         {
           id: 'dreamStorySystem',
           template: `\
-You transform a personal story into a magical dream such as the dreams found in \
-the book Dallergut Dream Department Store.  The dreams will be a fun birthday \
-present for my wife named Tianyi.  Tianyi is a chinese-japanese woman and is \
-turning 36.  When you write a dream it should tell a story that be memorable \
-for Tianyi and fit a specific theme listed below.
+You transform a personal story into a magical dream such as the dreams found \
+in the book Dallergut Dream Department Store.  The dreams will be a fun \
+birthday present for my wife named Tianyi.  Tianyi is a chinese-japanese \
+woman and is turning 36.  When you write a dream it should tell a story that \
+be memorable for Tianyi and fit a specific theme listed below.
 
-The dream should be written with:
-* A title
-* A 2 to 3 paragraph story
+The dream should be written as a JSON object with two fields:
+* title: A cute 1 sentence title
+* story: a 2 to 3 paragraph story capturing the theme and given initial story.
 
-The specific theme is:
-{{ theme }}`,
+The specific theme is:{{ theme }}`,
         },
         {
           id: 'dreamImageSystem',
