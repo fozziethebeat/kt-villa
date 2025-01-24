@@ -8,6 +8,9 @@ import {startServerAndCreateNextHandler} from '@as-integrations/next';
 import {typeDefs, resolvers} from '@/graphql/schema';
 import {prisma} from '@/lib/prisma';
 
+// In seconds.
+export const maxDuration = 120;
+
 async function getToken() {
   const cookieStore = await cookies();
   const cookieToken =
