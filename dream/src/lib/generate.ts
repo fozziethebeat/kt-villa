@@ -1,3 +1,4 @@
+import {GoogleGenerativeAI} from '@google/generative-ai';
 import Anthropic from '@anthropic-ai/sdk';
 import {S3Client, PutObjectCommand} from '@aws-sdk/client-s3';
 import {helpers, PredictionServiceClient} from '@google-cloud/aiplatform';
@@ -112,6 +113,104 @@ class AnthropicTextGenerationService extends TextGenerationService {
         content.type === 'tool_use',
     );
     return tool.input['imagePrompt'];
+  }
+}
+
+class GeminiTextGenerationService extends TextGenerationService {
+  client: GoogleGenerativeAI;
+  story_schema = {
+    type: 'object',
+    properties: {
+      dream: {
+        type: 'object',
+        properties: {
+          title: {
+            type: 'string',
+          },
+          story: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  };
+
+  image_schema = {
+    type: 'object',
+    properties: {
+      imagePrompt: {
+        type: 'string',
+      },
+    },
+  };
+
+  constructor(apiKey: string) {
+    super();
+    this.client = new GoogleGenerativeAI(apiKey);
+  }
+
+  async generateStory(memory: string, theme: string): Promise<string> {
+    const promptTemplate = await prisma.promptTemplate.findUnique({
+      where: {id: 'dreamStorySystem'},
+    });
+    if (!promptTemplate || !theme) {
+      throw new Error('System not setup properly');
+    }
+    const systemInstruction = await engine.parseAndRender(
+      promptTemplate.template,
+      {
+        theme,
+      },
+    );
+    const model = geminiAI.getGenerativeModel({
+      model: process.env.GEMINI_MODEL,
+      systemInstruction,
+    });
+    const generationConfig = {
+      temperature: 1,
+      topP: 0.95,
+      topK: 10,
+      maxOutputTokens: 2000,
+      responseMimeType: 'application/json',
+      responseSchema: this.story_schema,
+    };
+    // @ts-expect-error
+    const chatSession = model.startChat({generationConfig});
+    const result = await chatSession.sendMessage(input.initialStory);
+    const resultRaw = result.response.text();
+    const resultObj = JSON.parse(resultRaw);
+    return resultObj['dream']['story'];
+  }
+
+  async generateImagePrompt(story: string, style: string): Promise<string> {
+    const promptTemplate = await prisma.promptTemplate.findUnique({
+      where: {id: 'dreamImageSystem'},
+    });
+    if (!promptTemplate) {
+      throw new Error('System not setup properly');
+    }
+    const systemInstruction = await engine.parseAndRender(
+      promptTemplate.template,
+      {
+        style,
+      },
+    );
+    const model = geminiAI.getGenerativeModel({
+      model: process.env.GEMINI_MODEL,
+      systemInstruction,
+    });
+    const generationConfig = {
+      temperature: 1,
+      topP: 0.95,
+      topK: 10,
+      maxOutputTokens: 2000,
+      responseMimeType: 'application/json',
+      responseSchema: this.image_schema,
+    };
+    // @ts-expect-error
+    const chatSession = model.startChat({generationConfig});
+    const result = await chatSession.sendMessage(input.story);
+    return JSON.parse(result.response.text())['imagePrompt'];
   }
 }
 

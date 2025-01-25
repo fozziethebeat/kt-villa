@@ -1,5 +1,4 @@
 import {DateTimeResolver, GraphQLJSON} from 'graphql-scalars';
-import {GoogleGenerativeAI} from '@google/generative-ai';
 import {gql} from 'graphql-tag';
 import {Liquid} from 'liquidjs';
 
@@ -7,8 +6,6 @@ import {textGenerator, imageGenerator} from '@/lib/generate';
 import {prisma} from '@/lib/prisma';
 
 const engine = new Liquid();
-
-const geminiAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export const typeDefs = gql`
   scalar DateTime
@@ -137,112 +134,18 @@ export const resolvers = {
       const theme = await prisma.dreamTheme.findUnique({
         where: {id: input.themeId},
       });
-      if (textGenerator) {
-        console.log('using text generator');
-        const story = await textGenerator.generateStory(
-          input.initialStory,
-          theme.description,
-        );
-        return {story};
-      }
-
-      const promptTemplate = await prisma.promptTemplate.findUnique({
-        where: {id: 'dreamStorySystem'},
-      });
-      if (!promptTemplate || !theme) {
-        throw new Error('System not setup properly');
-      }
-      console.log(promptTemplate.template);
-      const systemInstruction = await engine.parseAndRender(
-        promptTemplate.template,
-        {
-          theme: theme.description,
-        },
+      const story = await textGenerator.generateStory(
+        input.initialStory,
+        theme.description,
       );
-      console.log(systemInstruction);
-
-      const model = geminiAI.getGenerativeModel({
-        model: process.env.GEMINI_MODEL,
-        systemInstruction,
-      });
-      const generationConfig = {
-        temperature: 1,
-        topP: 0.95,
-        topK: 10,
-        maxOutputTokens: 2000,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: 'object',
-          properties: {
-            dream: {
-              type: 'object',
-              properties: {
-                title: {
-                  type: 'string',
-                },
-                story: {
-                  type: 'string',
-                },
-              },
-            },
-          },
-        },
-      };
-      // @ts-expect-error
-      const chatSession = model.startChat({generationConfig});
-      const result = await chatSession.sendMessage(input.initialStory);
-      const resultRaw = result.response.text();
-      console.log(resultRaw);
-      const resultObj = JSON.parse(resultRaw);
-      console.log(resultObj);
-      return resultObj['dream']['story'];
+      return {story};
     },
 
     dreamImage: async (a, {input}) => {
-      let imagePrompt = '';
-      if (textGenerator) {
-        imagePrompt = await textGenerator.generateImagePrompt(
-          input.story,
-          input.style,
-        );
-      } else {
-        const promptTemplate = await prisma.promptTemplate.findUnique({
-          where: {id: 'dreamImageSystem'},
-        });
-        if (!promptTemplate) {
-          throw new Error('System not setup properly');
-        }
-        const systemInstruction = await engine.parseAndRender(
-          promptTemplate.template,
-          {
-            style: input.style,
-          },
-        );
-
-        const model = geminiAI.getGenerativeModel({
-          model: process.env.GEMINI_MODEL,
-          systemInstruction,
-        });
-        const generationConfig = {
-          temperature: 1,
-          topP: 0.95,
-          topK: 10,
-          maxOutputTokens: 2000,
-          responseMimeType: 'application/json',
-          responseSchema: {
-            type: 'object',
-            properties: {
-              imagePrompt: {
-                type: 'string',
-              },
-            },
-          },
-        };
-        // @ts-expect-error
-        const chatSession = model.startChat({generationConfig});
-        const result = await chatSession.sendMessage(input.story);
-        imagePrompt = JSON.parse(result.response.text())['imagePrompt'];
-      }
+      const imagePrompt = await textGenerator.generateImagePrompt(
+        input.story,
+        input.style,
+      );
       console.log(imagePrompt);
       const imageID = imageGenerator.itemIdGenerator.rnd();
       const image = await imageGenerator.generateImage(imageID, imagePrompt);
