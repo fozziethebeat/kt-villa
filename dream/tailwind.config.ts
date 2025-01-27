@@ -8,6 +8,7 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  /*
   theme: {
     extend: {
       colors: {
@@ -69,14 +70,15 @@ const config: Config = {
       },
     },
   },
+ */
   plugins: [require('daisyui'), require('tailwindcss-animate')],
   daisyui: {
     themes: [
       'cupcake',
-      catppuccin('macchiato'),
-      catppuccin('latte'),
-      catppuccin('frappe', 'pink'),
-      catppuccin('mocha', {primary: 'sky', secondary: 'rosewater'}),
+      //catppuccin('macchiato'),
+      //catppuccin('latte'),
+      //catppuccin('frappe', 'pink'),
+      //catppuccin('mocha', {primary: 'sky', secondary: 'rosewater'}),
     ],
     logs: false,
   },
