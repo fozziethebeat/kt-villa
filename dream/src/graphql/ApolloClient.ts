@@ -1,4 +1,3 @@
-import type {UnsafeUnwrappedCookies} from 'next/headers';
 import {cookies} from 'next/headers';
 import {createHttpLink, from} from '@apollo/client';
 import {setContext} from '@apollo/client/link/context';

@@ -162,7 +162,7 @@ class GeminiTextGenerationService extends TextGenerationService {
         theme,
       },
     );
-    const model = geminiAI.getGenerativeModel({
+    const model = this.client.getGenerativeModel({
       model: process.env.GEMINI_MODEL,
       systemInstruction,
     });
@@ -176,7 +176,7 @@ class GeminiTextGenerationService extends TextGenerationService {
     };
     // @ts-expect-error
     const chatSession = model.startChat({generationConfig});
-    const result = await chatSession.sendMessage(input.initialStory);
+    const result = await chatSession.sendMessage(memory);
     const resultRaw = result.response.text();
     const resultObj = JSON.parse(resultRaw);
     return resultObj['dream']['story'];
@@ -195,7 +195,7 @@ class GeminiTextGenerationService extends TextGenerationService {
         style,
       },
     );
-    const model = geminiAI.getGenerativeModel({
+    const model = this.client.getGenerativeModel({
       model: process.env.GEMINI_MODEL,
       systemInstruction,
     });
@@ -209,7 +209,7 @@ class GeminiTextGenerationService extends TextGenerationService {
     };
     // @ts-expect-error
     const chatSession = model.startChat({generationConfig});
-    const result = await chatSession.sendMessage(input.story);
+    const result = await chatSession.sendMessage(story);
     return JSON.parse(result.response.text())['imagePrompt'];
   }
 }

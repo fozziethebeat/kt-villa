@@ -53,5 +53,9 @@ export async function DreamThemeGrid() {
     )),
   );
 
-  return <div className="grid gap-4 grid-cols-3">{dreams}</div>;
+  return (
+    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      {dreams}
+    </div>
+  );
 }
