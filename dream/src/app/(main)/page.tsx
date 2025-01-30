@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import {auth} from '@/lib/auth';
 import {DreamThemeGrid} from '@/components/DreamThemeGrid';
+import {UsernameCard} from '@/components/UsernameCard';
 import {Header} from '@/components/Header';
 import {Button} from '@/components/ui/button';
 import {SidebarTrigger} from '@/components/ui/sidebar';
@@ -14,6 +15,7 @@ export default async function Home() {
       <div className="flex flex-col gap-4 py-4 px-4">
         {session?.user ? (
           <div className="flex flex-col gap-2">
+            <UsernameCard />
             <div className="bg-base-100 collapse">
               <input type="checkbox" className="peer" />
               <div className="collapse-title bg-primary text-primary-content peer-checked:bg-secondary peer-checked:text-secondary-content">
