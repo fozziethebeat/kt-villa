@@ -81,6 +81,7 @@ export const typeDefs = gql`
     dreamImage(input: DreamImageGenerateInput!): Image
     dreamStory(input: DreamStoryGenerateInput!): Story
     saveDream(input: DreamInput!): Dream
+    updateDream(id: String!, input: DreamInput!): Dream
     updateUsername(input: String!): User
   }
 `;
@@ -159,6 +160,13 @@ export const resolvers = {
           ...input,
           userId: user.id,
         },
+      });
+    },
+
+    updateDream: (a, {id, input}, {user}) => {
+      return prisma.dream.update({
+        where: {id},
+        data: input,
       });
     },
 

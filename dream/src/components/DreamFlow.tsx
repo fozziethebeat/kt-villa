@@ -37,6 +37,14 @@ const MUTATION = gql`
   }
 `;
 
+const UPDATE = gql`
+  mutation UpdateDream($id: String!, $input: DreamInput!) {
+    updateDream(id: $id, input: $input) {
+      id
+    }
+  }
+`;
+
 interface UserDream {
   userDream: {
     id: string;
@@ -75,7 +83,12 @@ export function DreamFlow() {
     initData?.userDream?.dreamImage || DEFAULT_IMAGE,
   );
   const [prompt, setPrompt] = useState(initData?.userDream?.prompt || '');
-  const [saveDream, {data, loading}] = useMutation(MUTATION, {
+  const [saveDream, {loading: saveLoading}] = useMutation(MUTATION, {
+    onCompleted: () => {
+      router.push('/');
+    },
+  });
+  const [updateDream, {loading: updateLoading}] = useMutation(UPDATE, {
     onCompleted: () => {
       router.push('/');
     },
@@ -93,6 +106,21 @@ export function DreamFlow() {
   };
 
   const onSaveDream = data => {
+    if (initData?.userDream?.id) {
+      updateDream({
+        variables: {
+          id: initData.userDream.id,
+          input: {
+            memory,
+            story,
+            dreamImage,
+            prompt,
+          },
+        },
+      });
+      return;
+    }
+
     saveDream({
       variables: {
         input: {
@@ -104,6 +132,7 @@ export function DreamFlow() {
       },
     });
   };
+  const loading = saveLoading || updateLoading;
 
   return (
     <div className="w-full flex flex-col gap-4 py-4 px-4">
@@ -142,7 +171,7 @@ export function DreamFlow() {
             <p>{story}</p>
             <div className="card-actions justify-end">
               <button
-                disabled={data || loading}
+                disabled={loading}
                 onClick={onSaveDream}
                 className="btn btn-primary">
                 Submit
