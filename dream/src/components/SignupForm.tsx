@@ -16,6 +16,7 @@ import {Label} from '@/components/ui/label';
 
 export function SignupForm(props: {
   searchParams?: {callbackUrl: string | undefined};
+  magicCode?: string;
 }) {
   const handleSubmit = async formData => {
     'use server';
@@ -55,6 +56,7 @@ export function SignupForm(props: {
                 id="code"
                 type="text"
                 placeholder="Magic Code Here..."
+                defaultValue={props?.magicCode ?? ''}
               />
             </div>
             <Button type="submit" className="w-full">
