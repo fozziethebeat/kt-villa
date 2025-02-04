@@ -136,6 +136,11 @@ export function CreateDreamForm({onSave, memory}) {
             <h2 className="card-title">The Dream!</h2>
             <p>{data.dreamStory.story}</p>
             <div className="card-actions justify-end">
+              <div
+                className="tooltip"
+                data-tip="Don't worry about making this perfect, you can edit this in the next step">
+                <button className="btn">?</button>
+              </div>
               <button
                 onClick={() =>
                   onSave(form.getValues().initialStory, data.dreamStory.story)

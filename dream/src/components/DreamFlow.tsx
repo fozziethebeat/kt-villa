@@ -170,14 +170,20 @@ export function DreamFlow() {
             <div className="divider">Becomes</div>
             <p>{story}</p>
             <div className="card-actions justify-end">
+              <div
+                className="tooltip"
+                data-tip="You can always come back to update things if you have new ideas">
+                <button className="btn">?</button>
+              </div>
+
               <button
                 disabled={loading}
                 onClick={onSaveDream}
                 className="btn btn-primary">
                 Submit
               </button>
-              {loading && <progress className="progress w-56"></progress>}
             </div>
+            {loading && <progress className="progress w-56"></progress>}
           </div>
         </div>
       )}

@@ -129,6 +129,12 @@ export function CreateImageForm({onSave, story}) {
           <div className="card-body">
             <h2 className="card-title">The Drawn Dream!</h2>
             <div className="card-actions justify-end">
+              <div
+                className="tooltip"
+                data-tip="This is AI, some of the mistakes are part of the fun">
+                <button className="btn">?</button>
+              </div>
+
               <button
                 onClick={() =>
                   onSave(data.dreamImage.url, data.dreamImage.prompt)
