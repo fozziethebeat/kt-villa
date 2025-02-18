@@ -203,7 +203,11 @@ export const resolvers = {
     },
 
     imageAdapterSettings: () => {
-      return prisma.imageAdapterSetting.findMany();
+      return prisma.imageAdapterSetting.findMany({
+        orderBy: {
+          startDate: 'asc',
+        },
+      });
     },
 
     imageAdapterSetting: (a, {id}) => {
@@ -236,7 +240,11 @@ export const resolvers = {
       if (user?.roles !== 'admin') {
         throw new Error('Access not supported');
       }
-      return prisma.user.findMany();
+      return prisma.user.findMany({
+        orderBy: {
+          email: 'asc',
+        },
+      });
     },
 
     userBookings: (a, b, {user}) => {
