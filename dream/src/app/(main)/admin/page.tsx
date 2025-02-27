@@ -1,7 +1,7 @@
 import {checkAccess} from '@/lib/auth-check';
 
 import {Header} from '@/components/Header';
-import {StyleTable} from '@/components/StyleTable';
+import {AdminDreamsTable} from '@/components/AdminDreamsTable';
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 
 const links = [{url: '/', label: 'Home'}];
@@ -11,7 +11,7 @@ export default async function Home() {
     <>
       <Header links={links} target="Admin" />
       <Tabs defaultValue="stuff" className="">
-        <StyleTable />
+        <AdminDreamsTable />
       </Tabs>
     </>
   );

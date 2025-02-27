@@ -73,6 +73,7 @@ export const typeDefs = gql`
     styles: [Style!]!
     style(id: String): Style
     dreams: [Dream!]!
+    adminDreams: [Dream!]!
     userDream: Dream
   }
 
@@ -103,6 +104,14 @@ export const resolvers = {
     dreams: (a, b, {user}) => {
       return prisma.dream.findMany({
         where: {userId: {not: user.id}},
+      });
+    },
+
+    adminDreams: (a, b) => {
+      return prisma.dream.findMany({
+        orderBy: {
+          id: 'asc',
+        },
       });
     },
 
