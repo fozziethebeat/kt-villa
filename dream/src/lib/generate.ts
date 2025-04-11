@@ -1,4 +1,9 @@
-import {GoogleGenerativeAI} from '@google/generative-ai';
+import {
+  GoogleGenerativeAI,
+  HarmCategory,
+  HarmBlockThreshold,
+} from '@google/generative-ai';
+import {GoogleGenAI, MediaResolution, PersonGeneration} from '@google/genai';
 import Anthropic from '@anthropic-ai/sdk';
 import {S3Client, PutObjectCommand} from '@aws-sdk/client-s3';
 import {helpers, PredictionServiceClient} from '@google-cloud/aiplatform';
@@ -272,82 +277,74 @@ class TogetherFluxGenerator extends ImageGenerationService {
   }
 }
 
-class BentoFluxGenerator extends ImageGenerationService {
-  protected apiURL: string;
+class GeminiImageGenerator extends ImageGenerationService {
+  protected modelID: string;
+  protected client: GoogleGenAI;
 
-  constructor(bucketName: string, apiURL: string) {
+  constructor(bucketName: string, apiKey: string, model: string) {
     super(bucketName);
-    this.apiURL = apiURL;
+
+    this.modelID = model;
+    this.client = new GoogleGenAI({apiKey});
   }
 
   async generateImage(itemId: string, prompt: string): Promise<string> {
-    const request = {
-      prompt,
-      num_inference_steps: 10,
-    };
-    const {data} = await axios.post(`${this.apiURL}/txt2img`, request, {
-      responseType: 'arraybuffer',
+    const response = await this.client.models.generateContent({
+      model: this.modelID,
+      contents: prompt,
+      config: {
+        responseModalities: ['Text', 'Image'],
+      },
     });
-    const imageBuffer = Buffer.from(data, 'binary');
+    const candidates = response.candidates;
+    for (let c = 0; c < candidates.length; c++) {
+      for (let p = 0; p < candidates[c].content.parts.length; p++) {
+        const part = candidates[c].content.parts[p];
+        if (part.inlineData) {
+          try {
+            const imageBuffer = Buffer.from(part.inlineData.data, 'base64');
+            const targetKey = `results/${itemId}.png`;
+            return await this.uploadImageToS3(imageBuffer, targetKey);
+          } catch (err) {
+            console.error(err);
+          }
+        }
+      }
+    }
+
     // Save the image to AWS S3
-    const targetKey = `results/${itemId}.png`;
-    return await this.uploadImageToS3(imageBuffer, targetKey);
+    throw new Error("Gemini Don't work");
   }
 }
 
-class GeminiImagenGenerator extends ImageGenerationService {
-  protected projectID: string;
-  protected location: string;
+class ImagenGenerator extends ImageGenerationService {
+  protected modelID: string;
+  protected client: GoogleGenAI;
 
-  protected predictionServiceClient: PredictionServiceClient;
-  constructor(bucketName: string, projectID: string, location: string) {
+  constructor(bucketName: string, apiKey: string, model: string) {
     super(bucketName);
 
-    this.projectID = projectID;
-    this.location = location;
-    this.predictionServiceClient = new PredictionServiceClient({
-      apiEndpoint: `${location}-aiplatform.googleapis.com`,
-    });
+    this.modelID = model;
+    this.client = new GoogleGenAI({apiKey});
   }
 
   async generateImage(itemId: string, prompt: string): Promise<string> {
-    const endpoint = `projects/${this.projectID}/locations/${this.location}/publishers/google/models/imagen-3.0-generate-001`;
-    const parameters = helpers.toValue({
-      sampleCount: 1,
-      aspectRatio: '1:1',
-      safetyFilterLevel: 'block_none',
-      personGeneration: 'allow_adult',
+    const response = await this.client.models.generateImages({
+      model: this.modelID,
+      prompt: prompt,
+      config: {
+        numberOfImages: 1,
+      },
     });
-    const instances = [
-      helpers.toValue({
-        prompt,
-      }),
-    ];
-    const request = {
-      endpoint,
-      instances,
-      parameters,
-    };
-
-    try {
-      const [response] = await this.predictionServiceClient.predict(request);
-      if (!response || response.predictions.length === 0) {
-        throw new Error('No Gemini Response');
-      }
-
-      const prediction = response.predictions[0];
-      const imageBuffer = Buffer.from(
-        prediction.structValue.fields.bytesBase64Encoded.stringValue,
-        'base64',
-      );
-
-      // Save the image to AWS S3
-      const targetKey = `results/${itemId}.png`;
-      return await this.uploadImageToS3(imageBuffer, targetKey);
-    } catch (e) {
-      console.log(e);
+    if (!response || response.generatedImages.length != 1) {
       throw new Error("Gemini Don't work");
     }
+    const imageBuffer = Buffer.from(
+      response.generatedImages[0].image.imageBytes,
+      'base64',
+    );
+    const targetKey = `results/${itemId}.png`;
+    return await this.uploadImageToS3(imageBuffer, targetKey);
   }
 }
 
@@ -359,24 +356,26 @@ function textGeneratorFactory() {
 }
 
 function imageGeneratorFactory() {
-  if (process.env.GEMINI_PROJECT_ID && process.env.GEMINI_LOCATION) {
-    return new GeminiImagenGenerator(
+  if (process.env.GEMINI_API_KEY && process.env.GEMINI_MODEL) {
+    return new GeminiImageGenerator(
       process.env.AWS_BUCKET,
-      process.env.GEMINI_PROJECT_ID,
-      process.env.GEMINI_LOCATION,
+      process.env.GEMINI_API_KEY,
+      process.env.GEMINI_MODEL,
     );
   }
+  if (process.env.GEMINI_API_KEY && process.env.IMAGEN_MODEL) {
+    return new ImagenGenerator(
+      process.env.AWS_BUCKET,
+      process.env.GEMINI_API_KEY,
+      process.env.IMAGEN_MODEL,
+    );
+  }
+
   if (process.env.TOGETHER_API_KEY && process.env.TOGETHER_API_MODEL) {
     return new TogetherFluxGenerator(
       process.env.AWS_BUCKET,
       process.env.TOGETHER_API_KEY,
       process.env.TOGETHER_API_MODEL,
-    );
-  }
-  if (process.env.BENTO_API_URL) {
-    return new BentoFluxGenerator(
-      process.env.AWS_BUCKET,
-      process.env.BENTO_API_URL,
     );
   }
   return undefined;

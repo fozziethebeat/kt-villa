@@ -1,6 +1,6 @@
-import {GoogleGenerativeAI} from '@google/generative-ai';
 import {Command} from 'commander';
 
+import {imageGenerator} from '@/lib/generate';
 import {PrismaClient} from '@prisma/client';
 
 const program = new Command();
@@ -17,10 +17,8 @@ program
   .description('Generate Test Generative text response')
   .option('-p, --prompt <query>')
   .action(async options => {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({model: process.env.GEMINI_MODEL});
-    const result = await model.generateContent([options.prompt]);
-    console.log(result.response.text());
+    const url = await imageGenerator.generateImage('test', options.prompt);
+    console.log(url);
   });
 
 program.parse();
