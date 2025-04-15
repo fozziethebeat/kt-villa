@@ -234,6 +234,14 @@ abstract class ImageGenerationService {
 
   abstract generateImage(itemId: string, prompt: string): Promise<string>;
 
+  async editImage(
+    itemId: string,
+    base64Image: string,
+    prompt: string,
+  ): Promise<string> {
+    return '';
+  }
+
   protected async uploadImageToS3(imageBuffer, targetKey: string) {
     await this.s3Client.send(
       new PutObjectCommand({
@@ -345,6 +353,39 @@ class ImagenGenerator extends ImageGenerationService {
     );
     const targetKey = `results/${itemId}.png`;
     return await this.uploadImageToS3(imageBuffer, targetKey);
+  }
+
+  async editImage(
+    itemId: string,
+    base64Image: string,
+    prompt: string,
+  ): Promise<string> {
+    const contents = [
+      {text: prompt},
+      {
+        inlineData: {
+          mimeType: 'image/png',
+          data: base64Image,
+        },
+      },
+    ];
+    const response = await this.client.models.generateContent({
+      contents,
+      model: this.modelID,
+      config: {
+        responseModalities: ['Text', 'Image'],
+      },
+    });
+    for (const part of response.candidates[0].content.parts) {
+      if (part.text) {
+        console.log(part.text);
+      } else if (part.inlineData) {
+        const imageData = part.inlineData.data;
+        const buffer = Buffer.from(imageData, 'base64');
+        const targetKey = `results/${itemId}.png`;
+        return await this.uploadImageToS3(buffer, targetKey);
+      }
+    }
   }
 }
 

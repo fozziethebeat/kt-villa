@@ -1,4 +1,5 @@
 import {Command} from 'commander';
+import fs from 'fs';
 
 import {imageGenerator} from '@/lib/generate';
 import {PrismaClient} from '@prisma/client';
@@ -18,6 +19,20 @@ program
   .option('-p, --prompt <query>')
   .action(async options => {
     const url = await imageGenerator.generateImage('test', options.prompt);
+    console.log(url);
+  });
+
+program
+  .command('alter')
+  .description('Modify a given image')
+  .option('-p, --prompt <query>')
+  .option('-s, --start <query>')
+  .action(async options => {
+    const url = await imageGenerator.editImage(
+      'test',
+      fs.readFileSync(options.start).toString('base64'),
+      options.prompt,
+    );
     console.log(url);
   });
 
