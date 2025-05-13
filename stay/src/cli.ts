@@ -3,6 +3,7 @@ import {Command} from 'commander';
 import {writeFileSync} from 'fs';
 
 import {GeminiImagenGenerator, TogetherFluxGenerator} from '@/lib/generate';
+import {prisma} from '@/lib/prisma';
 
 const program = new Command();
 
@@ -55,6 +56,67 @@ program
     const elapsedTime = end - start;
     console.log(elapsedTime);
     console.log(image);
+  });
+
+program
+  .command('db-dump')
+  .description('Dump all contents of the database into a JSON file')
+  .option('-o, --output <path>')
+  .action(async options => {
+    const users = await prisma.user.findMany();
+    const accounts = await prisma.account.findMany();
+    const stableItems = await prisma.stableItem.findMany();
+    const bookings = await prisma.bookings.findMany();
+    const memberBookings = await prisma.memberBooking.findMany();
+    const signupCodes = await prisma.signupCode.findMany();
+    const imageAdapterSettings = await prisma.imageAdapterSetting.findMany();
+    const allData = {
+      user,
+      accounts,
+      signupCodes,
+      stableItems,
+      memberBookings,
+      imageAdapterSettings,
+    };
+    fs.writeFileSync(options.output, JSON.stringify(allData, null, 2));
+  });
+
+program
+  .command('db-restore')
+  .description('Restore all contents of the database from a JSON file')
+  .option('-i, --input <path>')
+  .action(async options => {
+    const allData = JSON.parse(fs.readFileSync(options.input).toString());
+    const {
+      user,
+      accounts,
+      signupCodes,
+      stableItems,
+      bookings,
+      memberBookings,
+      imageAdapterSettings,
+    } = allData;
+    for (const data of user) {
+      await db.user.create({data});
+    }
+    for (const data of accounts) {
+      await db.account.create({data});
+    }
+    for (const data of signupCodes) {
+      await db.signupCode.create({data});
+    }
+    for (const data of bookings) {
+      await db.booking.create({data});
+    }
+    for (const data of memberBookings) {
+      await db.memberBooking.create({data});
+    }
+    for (const data of imageAdapterSettings) {
+      await db.imageAdapterSetting.create({data});
+    }
+    for (const data of stableItems) {
+      await db.stableItem.create({data});
+    }
   });
 
 program.parse();
