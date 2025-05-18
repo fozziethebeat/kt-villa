@@ -73,7 +73,6 @@ class S3ImageSaver extends ImageSaver {
         ContentType: contentType,
       }),
     );
-    console.log('image saved');
     return `https://${this.bucketName}.s3.amazonaws.com/${path}`;
   }
 }
@@ -84,7 +83,6 @@ function createImageSaver() {
     process.env.GOOGLE_CLOUD_PROJECT_ID &&
     process.env.GOOGLE_CLOUD_STORAGE_BUCKET
   ) {
-    console.log('using gcp storage');
     const absoluteKeyFilePath = path.resolve(process.env.GOOGLE_CLOUD_KEY_FILE);
     const keyFileContent = fs.readFileSync(absoluteKeyFilePath, 'utf8');
     const credentials = JSON.parse(keyFileContent);
@@ -100,7 +98,6 @@ function createImageSaver() {
     process.env.AWS_REGION &&
     process.env.AWS_BUCKET
   ) {
-    console.log('using S3 storage');
     return new S3ImageSaver(process.env.AWS_BUCKET);
   }
 

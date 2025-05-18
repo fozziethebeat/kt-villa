@@ -3,7 +3,11 @@ import {DateTimeResolver} from 'graphql-scalars';
 import {gql} from 'graphql-tag';
 import ShortUniqueId from 'short-unique-id';
 
-import {imageGenerator} from '@/lib/generate';
+import {
+  imageGenerator,
+  imagePromptGenerator,
+  itemGenerator,
+} from '@/lib/generate';
 import {mailer} from '@/lib/mailer';
 import {prisma} from '@/lib/prisma';
 import {CreateBookingMail} from '@/components/mail/CreateBookingMail';
@@ -298,7 +302,7 @@ export const resolvers = {
         throw new Error('Not authorized');
       }
       const userId = users[0].id;
-      const userItemId = await imageGenerator.generateItem(
+      const userItemId = await itemGenerator.generateItem(
         userId,
         booking.startDate,
       );
@@ -389,16 +393,17 @@ export const resolvers = {
       if (status === 'pending') {
         return booking;
       }
-      return imageGenerator.generateBookingItem(booking.id);
+      return itemGenerator.generateBookingItem(booking.id);
     },
 
     testImageAdapter: async (a, {input}, {user}) => {
       if (user?.roles !== 'admin') {
         throw new Error('Access not supported');
       }
-      const image = await imageGenerator.generateImageFromAdapter(
+      const prompt = await imagePromptGenerator.generate(input);
+      const image = await imageGenerator.generateImage(
         `test_${input.adapter}`,
-        input,
+        prompt,
       );
       return {url: image};
     },
@@ -437,7 +442,7 @@ export const resolvers = {
       ) {
         return statusSetBooking;
       }
-      const userItemId = await imageGenerator.generateItem(
+      const userItemId = await itemGenerator.generateItem(
         memberBooking.user.id,
         booking.startDate,
       );
@@ -485,7 +490,7 @@ export const resolvers = {
         where: {id},
       });
       if (!booking.userItemId && input.status === 'approved') {
-        const userItemId = await imageGenerator.generateItem(
+        const userItemId = await itemGenerator.generateItem(
           booking.userId,
           booking.startDate,
         );
