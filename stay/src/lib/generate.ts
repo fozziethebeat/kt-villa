@@ -1,12 +1,11 @@
-import {S3Client, PutObjectCommand} from '@aws-sdk/client-s3';
-import {GoogleGenerativeAI} from '@google/generative-ai';
-import {helpers, PredictionServiceClient} from '@google-cloud/aiplatform';
+import {GoogleGenAI} from '@google/genai';
 import axios from 'axios';
 import {Liquid} from 'liquidjs';
 import ShortUniqueId from 'short-unique-id';
 import Together from 'together-ai';
 
 import {prisma} from '@/lib/prisma';
+import {imageSaver, ImageSaver} from '@/lib/storage';
 
 const IMAGE_PROMPT_SCHEMA = {
   type: 'object',
@@ -18,18 +17,16 @@ const IMAGE_PROMPT_SCHEMA = {
 };
 
 abstract class ImageGenerationService {
-  protected bucketName: string;
+  protected imageSaver: ImageSaver;
   protected itemIdGenerator = new ShortUniqueId({length: 6});
   protected itemCodeGenerator = new ShortUniqueId({
     dictionary: 'number',
     length: 6,
   });
-  protected s3Client = new S3Client({});
   protected engine = new Liquid();
-  protected genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-  constructor(bucketName: string) {
-    this.bucketName = bucketName;
+  constructor(imageSaver: ImageSaver) {
+    this.imageSaver = imageSaver;
   }
 
   async generateBookingItem(bookingId: number) {
@@ -92,31 +89,7 @@ abstract class ImageGenerationService {
 
   abstract generateImageFromAdapter(itemId, adapterSettings): Promise<string>;
 
-  protected async uploadImageToS3(imageBuffer, targetKey: string) {
-    await this.s3Client.send(
-      new PutObjectCommand({
-        Bucket: this.bucketName,
-        Key: targetKey,
-        Body: imageBuffer,
-        ContentType: 'image/png',
-      }),
-    );
-    const s3Url = `https://${this.bucketName}.s3.amazonaws.com/${targetKey}`;
-    return s3Url;
-  }
-
   protected async getPrompt(adapterSettings) {
-    /*
-    const model = this.genAI.getGenerativeModel({
-      model: process.env.GEMINI_MODEL,
-      systemInstructions: `You generate a detailed prompt for an image generation model.  Given a few keywords and a specified style, write a 2 to 3 sentence long detailed prompt.  Always return the results as a JSON object.`,
-      generationConfig: {
-        responseMimeType: 'application/json',
-        // @ts-expect-error
-        responseSchema: IMAGE_PROMPT_SCHEMA,
-      },
-    });
-   */
     const index = Math.floor(Math.random() * adapterSettings.variants.length);
     const fragment = adapterSettings.variants[index];
     const template = this.engine.parse(adapterSettings.promptTemplate);
@@ -125,12 +98,6 @@ abstract class ImageGenerationService {
       adapter: adapterSettings.adapter,
     });
     return prompt;
-    /*
-    const result = await model.generateContent([prompt]);
-    const imagePrompt = JSON.parse(result.response.text())['imagePrompt'];
-    console.log(imagePrompt);
-    return imagePrompt;
-   */
   }
 }
 
@@ -138,8 +105,8 @@ class TogetherFluxGenerator extends ImageGenerationService {
   protected together: Together;
   protected modelId: string;
 
-  constructor(bucketName: string, apiKey: string, modelId: string) {
-    super(bucketName);
+  constructor(imageSaver: ImageSaver, apiKey: string, modelId: string) {
+    super(imageSaver);
     this.together = new Together({apiKey});
     this.modelId = modelId;
   }
@@ -157,112 +124,70 @@ class TogetherFluxGenerator extends ImageGenerationService {
     });
     const imageBuffer = urlResponse.data;
     const targetKey = `results/${itemId}.png`;
-    return await this.uploadImageToS3(imageBuffer, targetKey);
+    return await this.imageSaver.uploadImage(
+      imageBuffer,
+      targetKey,
+      'image/png',
+    );
   }
 }
 
-class BentoFluxGenerator extends ImageGenerationService {
-  protected apiURL: string;
+class ImagenGenerator extends ImageGenerationService {
+  protected modelID: string;
+  protected client: GoogleGenAI;
 
-  constructor(bucketName: string, apiURL: string) {
-    super(bucketName);
-    this.apiURL = apiURL;
+  constructor(imageSaver: ImageSaver, apiKey: string, model: string) {
+    super(imageSaver);
+
+    this.modelID = model;
+    this.client = new GoogleGenAI({apiKey});
   }
 
   async generateImageFromAdapter(itemId, adapterSettings): Promise<string> {
-    const request = {
-      prompt: await this.getPrompt(adapterSettings),
-      num_inference_steps: adapterSettings.steps,
-    };
-    const {data} = await axios.post(`${this.apiURL}/txt2img`, request, {
-      responseType: 'arraybuffer',
+    const prompt = await this.getPrompt(adapterSettings);
+    const response = await this.client.models.generateImages({
+      model: this.modelID,
+      prompt: prompt,
+      config: {
+        numberOfImages: 1,
+      },
     });
-    const imageBuffer = Buffer.from(data, 'binary');
-    // Save the image to AWS S3
-    const targetKey = `results/${itemId}.png`;
-    return await this.uploadImageToS3(imageBuffer, targetKey);
-  }
-}
-
-class GeminiImagenGenerator extends ImageGenerationService {
-  protected projectID: string;
-  protected location: string;
-
-  protected predictionServiceClient: PredictionServiceClient;
-  constructor(bucketName: string, projectID: string, location: string) {
-    super(bucketName);
-
-    this.projectID = projectID;
-    this.location = location;
-    this.predictionServiceClient = new PredictionServiceClient({
-      apiEndpoint: `${location}-aiplatform.googleapis.com`,
-    });
-  }
-
-  async generateImageFromAdapter(itemId, adapterSettings): Promise<string> {
-    const endpoint = `projects/${this.projectID}/locations/${this.location}/publishers/google/models/imagen-3.0-generate-001`;
-    const parameters = helpers.toValue({
-      sampleCount: 1,
-      aspectRatio: '1:1',
-      safetyFilterLevel: 'block_none',
-      personGeneration: 'allow_adult',
-    });
-    const instances = [
-      helpers.toValue({
-        prompt: await this.getPrompt(adapterSettings),
-      }),
-    ];
-    const request = {
-      endpoint,
-      instances,
-      parameters,
-    };
-
-    try {
-      const [response] = await this.predictionServiceClient.predict(request);
-      if (!response || response.predictions.length === 0) {
-        throw new Error('No Gemini Response');
-      }
-
-      const prediction = response.predictions[0];
-      const imageBuffer = Buffer.from(
-        prediction.structValue.fields.bytesBase64Encoded.stringValue,
-        'base64',
-      );
-
-      // Save the image to AWS S3
-      const targetKey = `results/${itemId}.png`;
-      return await this.uploadImageToS3(imageBuffer, targetKey);
-    } catch (e) {
-      console.log(e);
+    if (!response || response.generatedImages.length != 1) {
       throw new Error("Gemini Don't work");
     }
+    console.log('image made');
+    const imageBuffer = Buffer.from(
+      response.generatedImages[0].image.imageBytes,
+      'base64',
+    );
+    // Save the image to AWS S3
+    const targetKey = `results/${itemId}.png`;
+    console.log(targetKey);
+    return await this.imageSaver.uploadImage(
+      imageBuffer,
+      targetKey,
+      'image/png',
+    );
   }
 }
 
 function imageGeneratorFactory() {
-  if (process.env.GEMINI_PROJECT_ID && process.env.GEMINI_LOCATION) {
-    return new GeminiImagenGenerator(
-      process.env.AWS_BUCKET,
-      process.env.GEMINI_PROJECT_ID,
-      process.env.GEMINI_LOCATION,
+  if (process.env.GEMINI_API_KEY && process.env.IMAGEN_MODEL) {
+    return new ImagenGenerator(
+      imageSaver,
+      process.env.GEMINI_API_KEY,
+      process.env.IMAGEN_MODEL,
     );
   }
   if (process.env.TOGETHER_API_KEY && process.env.TOGETHER_API_MODEL) {
     return new TogetherFluxGenerator(
-      process.env.AWS_BUCKET,
+      imageSaver,
       process.env.TOGETHER_API_KEY,
       process.env.TOGETHER_API_MODEL,
-    );
-  }
-  if (process.env.BENTO_API_URL) {
-    return new BentoFluxGenerator(
-      process.env.AWS_BUCKET,
-      process.env.BENTO_API_URL,
     );
   }
   return undefined;
 }
 
 export const imageGenerator = imageGeneratorFactory();
-export {TogetherFluxGenerator, GeminiImagenGenerator};
+export {TogetherFluxGenerator, ImagenGenerator};

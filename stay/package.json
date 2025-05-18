@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
+    "dbreset": "npx prisma db push --force-reset && npx prisma db seed",
     "cli": "ts-node -r tsconfig-paths/register -P tsconfig.cli.json src/cli.ts"
   },
   "prisma": {
@@ -21,6 +22,8 @@
     "@auth/prisma-adapter": "^2.6.0",
     "@aws-sdk/client-s3": "^3.670.0",
     "@google-cloud/aiplatform": "^3.34.0",
+    "@google-cloud/storage": "^7.16.0",
+    "@google/genai": "^0.14.1",
     "@google/generative-ai": "^0.21.0",
     "@hookform/resolvers": "^3.9.1",
     "@mdx-js/loader": "^3.1.0",
