@@ -1,4 +1,9 @@
-import {GoogleGenAI} from '@google/genai';
+import {
+  GoogleGenAI,
+  FunctionCallingConfigMode,
+  FunctionDeclaration,
+  Type,
+} from '@google/genai';
 import axios from 'axios';
 import {Liquid} from 'liquidjs';
 import ShortUniqueId from 'short-unique-id';
@@ -7,20 +12,11 @@ import Together from 'together-ai';
 import {prisma} from '@/lib/prisma';
 import {imageSaver, ImageSaver} from '@/lib/storage';
 
-const IMAGE_PROMPT_SCHEMA = {
-  type: 'object',
-  properties: {
-    imagePrompt: {
-      type: 'string',
-    },
-  },
-};
-
 abstract class ImagePromptGenerator {
   abstract generate(adapterSettings): Promise<string>;
 }
 
-class TemplatedImagePromptGenerated extends ImagePromptGenerator {
+class TemplatedImagePromptGenerator extends ImagePromptGenerator {
   protected engine = new Liquid();
 
   async generate(adapterSettings) {
@@ -33,6 +29,72 @@ class TemplatedImagePromptGenerated extends ImagePromptGenerator {
     });
     return prompt;
   }
+}
+
+class GeminiImagePromptGenerator extends ImagePromptGenerator {
+  protected baseGenerator: ImagePromptGenerator;
+  protected client: GoogleGenAI;
+  protected modelID: string;
+
+  protected imagePromptDeclaration: FunctionDeclaration = {
+    name: 'imagePrompt',
+    parameters: {
+      type: Type.OBJECT,
+      description: 'Specifies a text prompt to an image generation model.',
+      properties: {
+        prompt: {
+          type: Type.STRING,
+          description: 'The text prompt.',
+        },
+      },
+      required: ['prompt'],
+    },
+  };
+
+  constructor(apiKey: string, modelID: string) {
+    super();
+    this.baseGenerator = new TemplatedImagePromptGenerator();
+    this.client = new GoogleGenAI({apiKey});
+    this.modelID = modelID;
+  }
+
+  async generate(adapterSettings) {
+    const prompt = await this.baseGenerator.generate(adapterSettings);
+    const contents = `Create a more creative and descriptive prompt for an advanced image generation model.  Start with the base idea ${prompt}.  Output the results with the provided function call`;
+    const response = await this.client.models.generateContent({
+      contents,
+      model: this.modelID,
+      config: {
+        toolConfig: {
+          functionCallingConfig: {
+            mode: FunctionCallingConfigMode.ANY,
+            allowedFunctionNames: ['imagePrompt'],
+          },
+        },
+        tools: [{functionDeclarations: [this.imagePromptDeclaration]}],
+      },
+    });
+    // Fallback on the base templated prompt whenever needed.
+    if (response.functionCalls.length != 1) {
+      return prompt;
+    }
+    const functionCall = response.functionCalls[0];
+    const finalPrompt = functionCall.args['prompt'];
+    if (!finalPrompt) {
+      return prompt;
+    }
+    return finalPrompt as string;
+  }
+}
+
+function imagePromptGeneratorFactory() {
+  if (process.env.GEMINI_API_KEY && process.env.GEMINI_TEXT_MODEL) {
+    return new GeminiImagePromptGenerator(
+      process.env.GEMINI_API_KEY,
+      process.env.GEMINI_TEXT_MODEL,
+    );
+  }
+  return new TemplatedImagePromptGenerator();
 }
 
 abstract class ImageGenerator {
@@ -211,7 +273,7 @@ class ItemGenerator {
 }
 
 export const imageGenerator = imageGeneratorFactory();
-export const imagePromptGenerator = new TemplatedImagePromptGenerated();
+export const imagePromptGenerator = imagePromptGeneratorFactory();
 export const itemGenerator = new ItemGenerator(
   imagePromptGenerator,
   imageGenerator,

@@ -36,6 +36,20 @@ program
   });
 
 program
+  .command('test-full-generate')
+  .description('Generate Test Image')
+  .requiredOption('-a, --adapter <number>', 'Test adapter ID to use', parseInt)
+  .action(async options => {
+    const adapter = await prisma.imageAdapterSetting.findUnique({
+      where: {id: options.adapter},
+    });
+    const prompt = await imagePromptGenerator.generate(adapter);
+    const fakeID = 'test';
+    const imageURL = await imageGenerator.generateImage(fakeID, prompt);
+    console.log(imageURL);
+  });
+
+program
   .command('db-dump')
   .description('Dump all contents of the database into a JSON file')
   .option('-o, --output <path>')
