@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
+    "dbreset": "npx prisma db push --force-reset && npx prisma db seed",
     "cli": "ts-node -r tsconfig-paths/register -P tsconfig.cli.json src/cli.ts"
   },
   "prisma": {

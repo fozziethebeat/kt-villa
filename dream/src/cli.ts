@@ -23,20 +23,6 @@ program
   });
 
 program
-  .command('alter')
-  .description('Modify a given image')
-  .option('-p, --prompt <query>')
-  .option('-s, --start <query>')
-  .action(async options => {
-    const url = await imageGenerator.editImage(
-      'test',
-      fs.readFileSync(options.start).toString('base64'),
-      options.prompt,
-    );
-    console.log(url);
-  });
-
-program
   .command('db-dump')
   .description('Dump all contents of the database into a JSON file')
   .option('-o, --output <path>')
