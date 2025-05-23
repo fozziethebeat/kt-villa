@@ -29,19 +29,40 @@ program
   .action(async options => {
     const dreamThemes = await db.dreamTheme.findMany();
     const promptTemplates = await db.promptTemplate.findMany();
+    const projects = await db.project.findMany();
     const styles = await db.style.findMany();
     const dreams = await db.dream.findMany();
     const magicCodes = await db.magicCode.findMany();
     const accounts = await db.account.findMany();
     const user = await db.user.findMany();
+    const userJoinedProjects = {};
+    for (const u of user) {
+      const {joinedProjects} = await db.user.findUnique({
+        where: {
+          id: u.id,
+        },
+        include: {
+          joinedProjects: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+      if (joinedProjects && joinedProjects.length > 0) {
+        userJoinedProjects[u.id] = joinedProjects;
+      }
+    }
     const allData = {
       dreamThemes,
       promptTemplates,
       styles,
       dreams,
       magicCodes,
+      projects,
       accounts,
       user,
+      userJoinedProjects,
     };
     fs.writeFileSync(options.output, JSON.stringify(allData, null, 2));
   });
@@ -56,16 +77,21 @@ program
       dreamThemes,
       promptTemplates,
       styles,
+      projects,
       dreams,
       magicCodes,
       accounts,
       user,
+      userJoinedProjects,
     } = allData;
     for (const data of user) {
       await db.user.create({data});
     }
     for (const data of accounts) {
       await db.account.create({data});
+    }
+    for (const data of projects) {
+      await db.project.create({data});
     }
     for (const data of magicCodes) {
       await db.magicCode.create({data});
@@ -81,6 +107,21 @@ program
     }
     for (const data of dreamThemes) {
       await db.dreamTheme.create({data});
+    }
+    for (const userID of Object.keys(userJoinedProjects)) {
+      const joinedProjects = userJoinedProjects[userID];
+      for (const project of joinedProjects) {
+        await db.user.update({
+          where: {id: userID},
+          data: {
+            joinedProjects: {
+              connect: {
+                id: project.id,
+              },
+            },
+          },
+        });
+      }
     }
   });
 
