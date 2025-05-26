@@ -11,13 +11,19 @@ import ShortUniqueId from 'short-unique-id';
 import {Liquid} from 'liquidjs';
 import Together from 'together-ai';
 
-import {prisma} from '@/lib/prisma';
-
 const engine = new Liquid();
 
 abstract class TextGenerationService {
-  abstract generateStory(memory: string, theme: string): Promise<string>;
-  abstract generateImagePrompt(story: string, style: string): Promise<string>;
+  abstract generateStory(
+    promptTemplate: string,
+    memory: string,
+    theme: string,
+  ): Promise<string>;
+  abstract generateImagePrompt(
+    promptTemplate: string,
+    story: string,
+    style: string,
+  ): Promise<string>;
 }
 
 class AnthropicTextGenerationService extends TextGenerationService {
@@ -63,19 +69,14 @@ class AnthropicTextGenerationService extends TextGenerationService {
     });
   }
 
-  async generateStory(memory: string, theme: string): Promise<string> {
-    const promptTemplate = await prisma.promptTemplate.findUnique({
-      where: {id: 'dreamStorySystem'},
+  async generateStory(
+    promptTemplate: string,
+    memory: string,
+    theme: string,
+  ): Promise<string> {
+    const systemInstruction = await engine.parseAndRender(promptTemplate, {
+      theme,
     });
-    if (!promptTemplate || !theme) {
-      throw new Error('System not setup properly');
-    }
-    const systemInstruction = await engine.parseAndRender(
-      promptTemplate.template,
-      {
-        theme,
-      },
-    );
     const message = await this.client.messages.create({
       model: 'claude-3-5-sonnet-latest',
       max_tokens: 1024,
@@ -91,19 +92,14 @@ class AnthropicTextGenerationService extends TextGenerationService {
     return tool.input['story'];
   }
 
-  async generateImagePrompt(story: string, style: string): Promise<string> {
-    const promptTemplate = await prisma.promptTemplate.findUnique({
-      where: {id: 'dreamImageSystem'},
+  async generateImagePrompt(
+    promptTemplate: string,
+    story: string,
+    style: string,
+  ): Promise<string> {
+    const systemInstruction = await engine.parseAndRender(promptTemplate, {
+      style,
     });
-    if (!promptTemplate) {
-      throw new Error('System not setup properly');
-    }
-    const systemInstruction = await engine.parseAndRender(
-      promptTemplate.template,
-      {
-        style,
-      },
-    );
     const message = await this.client.messages.create({
       model: 'claude-3-5-sonnet-latest',
       max_tokens: 1024,
@@ -165,19 +161,14 @@ class GeminiTextGenerationService extends TextGenerationService {
     this.modelID = modelID;
   }
 
-  async generateStory(memory: string, theme: string): Promise<string> {
-    const promptTemplate = await prisma.promptTemplate.findUnique({
-      where: {id: 'dreamStorySystem'},
+  async generateStory(
+    promptTemplate: string,
+    memory: string,
+    theme: string,
+  ): Promise<string> {
+    const systemInstruction = await engine.parseAndRender(promptTemplate, {
+      theme,
     });
-    if (!promptTemplate || !theme) {
-      throw new Error('System not setup properly');
-    }
-    const systemInstruction = await engine.parseAndRender(
-      promptTemplate.template,
-      {
-        theme,
-      },
-    );
     const response = await this.client.models.generateContent({
       contents: memory,
       model: this.modelID,
@@ -204,19 +195,14 @@ class GeminiTextGenerationService extends TextGenerationService {
     return finalPrompt as string;
   }
 
-  async generateImagePrompt(story: string, style: string): Promise<string> {
-    const promptTemplate = await prisma.promptTemplate.findUnique({
-      where: {id: 'dreamImageSystem'},
+  async generateImagePrompt(
+    promptTemplate: string,
+    story: string,
+    style: string,
+  ): Promise<string> {
+    const systemInstruction = await engine.parseAndRender(promptTemplate, {
+      style,
     });
-    if (!promptTemplate) {
-      throw new Error('System not setup properly');
-    }
-    const systemInstruction = await engine.parseAndRender(
-      promptTemplate.template,
-      {
-        style,
-      },
-    );
     const response = await this.client.models.generateContent({
       contents: story,
       model: this.modelID,

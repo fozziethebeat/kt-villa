@@ -45,8 +45,8 @@ const QUERY: TypedDocumentNode<Styles> = gql`
 `;
 
 const MUTATION = gql`
-  mutation DreamImage($input: DreamImageGenerateInput!) {
-    dreamImage(input: $input) {
+  mutation DreamImage($projectId: String!, $input: DreamImageGenerateInput!) {
+    dreamImage(projectId: $projectId, input: $input) {
       url
       prompt
     }
@@ -58,7 +58,7 @@ interface CreateImageInput {
   style: string;
 }
 
-export function CreateImageForm({onSave, story}) {
+export function CreateImageForm({onSave, story, project}) {
   const {data: styleData} = useSuspenseQuery(QUERY);
   const form = useForm<CreateImageInput>({
     defaultValues: {
@@ -70,6 +70,7 @@ export function CreateImageForm({onSave, story}) {
   const onSubmit = data => {
     dreamImage({
       variables: {
+        projectId: project.id,
         input: data,
       },
     });

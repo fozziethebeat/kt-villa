@@ -109,10 +109,14 @@ export function DreamFlow({dream, project}) {
       </ul>
 
       {stepState === 0 && (
-        <CreateDreamForm onSave={onStorySave} memory={memory} />
+        <CreateDreamForm
+          onSave={onStorySave}
+          memory={memory}
+          project={project}
+        />
       )}
       {stepState === 1 && (
-        <CreateImageForm onSave={onImageSave} story={story} />
+        <CreateImageForm onSave={onImageSave} story={story} project={project} />
       )}
       {stepState === 2 && (
         <div className="card bg-base-100 w-256 shadow-xl">

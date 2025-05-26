@@ -79,6 +79,9 @@ model Project {
   defaultStory  String?
   defaultDream  String?
 
+  systemTemplateDream String?
+  systemTemplateStory String?
+
   // All the dreams of the project
   dreams Dream[]
 

@@ -45,8 +45,6 @@ export default async function Dream({searchParams}) {
   });
   const dream = dreamData.userDream;
 
-  console.log(project);
-
   return (
     <>
       <Header links={links} target="Dream" />

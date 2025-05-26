@@ -36,7 +36,6 @@ export function TestStyleForm({style}) {
     },
   });
   const [testStyle, {data, loading}] = useMutation(MUTATION);
-  console.log(data);
 
   const onSubmit = data => {
     testStyle({

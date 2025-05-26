@@ -47,15 +47,11 @@ const QUERY: TypedDocumentNode<DreamThemes> = gql`
 `;
 
 const MUTATION = gql`
-  mutation DreamStory($input: DreamStoryGenerateInput!) {
-    dreamStory(input: $input) {
+  mutation DreamStory($projectId: String!, $input: DreamStoryGenerateInput!) {
+    dreamStory(projectId: $projectId, input: $input) {
       story
     }
   }
-`;
-
-const DEFAULT_STORY = `\
-Stuff here
 `;
 
 interface CreateDreamStoryInput {
@@ -67,7 +63,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-export function CreateDreamForm({onSave, memory}) {
+export function CreateDreamForm({onSave, memory, project}) {
   const {data: themeData} = useSuspenseQuery(QUERY);
   const form = useForm<CreateDreamStoryInput>({
     defaultValues: {
@@ -80,6 +76,7 @@ export function CreateDreamForm({onSave, memory}) {
   const onSubmit = data => {
     dreamStory({
       variables: {
+        projectId: project.id,
         input: data,
       },
     });

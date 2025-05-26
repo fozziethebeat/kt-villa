@@ -93,8 +93,8 @@ export const typeDefs = gql`
 
   type Mutation {
     testStyle(input: TestStyleInput!): Image
-    dreamImage(input: DreamImageGenerateInput!): Image
-    dreamStory(input: DreamStoryGenerateInput!): Story
+    dreamImage(projectId: String!, input: DreamImageGenerateInput!): Image
+    dreamStory(projectId: String!, input: DreamStoryGenerateInput!): Story
     saveDream(input: DreamInput!): Dream
     updateDream(id: String!, input: DreamInput!): Dream
     updateUsername(input: String!): User
@@ -176,23 +176,30 @@ export const resolvers = {
       return {url: image};
     },
 
-    dreamStory: async (a, {input}) => {
+    dreamStory: async (a, {projectId, input}) => {
+      const project = await prisma.project.findUnique({
+        where: {id: projectId},
+      });
       const theme = await prisma.dreamTheme.findUnique({
         where: {id: input.themeId},
       });
       const story = await textGenerator.generateStory(
+        project.systemTemplateStory,
         input.initialStory,
         theme.description,
       );
       return {story};
     },
 
-    dreamImage: async (a, {input}) => {
+    dreamImage: async (a, {projectId, input}) => {
+      const project = await prisma.project.findUnique({
+        where: {id: projectId},
+      });
       const imagePrompt = await textGenerator.generateImagePrompt(
+        project.systemTemplateDream,
         input.story,
         input.style,
       );
-      console.log(imagePrompt);
       const imageID = imageGenerator.itemIdGenerator.rnd();
       const image = await imageGenerator.generateImage(imageID, imagePrompt);
       return {url: image, prompt: imagePrompt};
