@@ -75,6 +75,10 @@ model Project {
   code      String
   name      String
 
+  defaultMemory String?
+  defaultStory  String?
+  defaultDream  String?
+
   // All the dreams of the project
   dreams Dream[]
 
@@ -116,9 +120,11 @@ model Dream {
   dreamImage    String
   prompt        String
 
-  projectId String? @unique
-  project   Project? @relation(fields: [projectId], references: [id])
+  projectId     String
+  project       Project @relation(fields: [projectId], references: [id])
 
   userId        String @unique
   user          User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
 }

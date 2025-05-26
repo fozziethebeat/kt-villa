@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import {auth} from '@/lib/auth';
 import {DreamThemeGrid} from '@/components/DreamThemeGrid';
+import {ProjectGrid} from '@/components/ProjectGrid';
 import {UsernameCard} from '@/components/UsernameCard';
 import {Header} from '@/components/Header';
 import {Button} from '@/components/ui/button';
@@ -50,6 +51,8 @@ export default async function Home() {
                 </p>
               </div>
             </div>
+
+            <ProjectGrid />
 
             <DreamThemeGrid />
             <img

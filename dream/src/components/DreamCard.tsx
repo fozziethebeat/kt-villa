@@ -14,9 +14,14 @@ export function DreamCard({dream, isUserDream}) {
               : `${dream.user.name}'s Dream`}{' '}
           </h2>
           <p>{dream.story}</p>
-          <div className="card-actions justify-end">
+          <div className="card-actions justify-around">
+            <Link
+              href={`/project/${dream.project.owner.id}/${dream.project.code}`}>
+              <button className="btn btn-primary">Project</button>
+            </Link>
             {isUserDream && (
-              <Link href="/dream">
+              <Link
+                href={`/dream/edit?id=${dream.id}&owner=${dream.project.owner.id}&project=${dream.project.code}`}>
                 <button className="btn btn-primary">Update</button>
               </Link>
             )}
@@ -32,7 +37,8 @@ export function DreamCard({dream, isUserDream}) {
         <h2 className="card-title">Let&apos;s get dreaming</h2>
         <p>Your memory with Tianyi TBD</p>
         <div className="card-actions justify-end">
-          <Link href="/dream">
+          <Link
+            href={`/dream/new?owner=${dream.project.owner.id}&project=${dream.project.code}`}>
             <button className="btn btn-primary">Dream</button>
           </Link>
         </div>

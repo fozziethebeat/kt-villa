@@ -14,48 +14,29 @@ import {
 } from '@/components/ui/card';
 
 const QUERY = gql`
-  query UserDream {
-    userDream {
+  query UserDreams {
+    userDreams {
       id
       memory
       story
       dreamImage
-    }
-  }
-`;
-
-const ALL_QUERY = gql`
-  query Dreams {
-    dreams {
-      id
-      memory
-      story
-      dreamImage
-      user {
+      project {
+        code
         name
+        owner {
+          id
+        }
       }
     }
   }
 `;
-
 export async function DreamThemeGrid() {
   const {data, error} = await getClient().query({query: QUERY});
-  const {data: allDreams, error: allError} = await getClient().query({
-    query: ALL_QUERY,
-  });
-  const dreams = [];
-  dreams.push(
-    <DreamCard key="primary" dream={data.userDream} isUserDream={true} />,
-  );
-  dreams.push(
-    ...allDreams.dreams.map(d => (
-      <DreamCard key={d.id} dream={d} isUserDream={false} />
-    )),
-  );
-
   return (
     <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-      {dreams}
+      {data.userDreams.map(dream => (
+        <DreamCard key={dream.id} dream={dream} isUserDream={true} />
+      ))}
     </div>
   );
 }

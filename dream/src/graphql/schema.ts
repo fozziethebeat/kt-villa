@@ -59,6 +59,16 @@ export const typeDefs = gql`
     email: String
   }
 
+  type Project {
+    id: String!
+    code: String!
+    name: String!
+    owner: User!
+    defaultDream: String!
+    defaultMemory: String!
+    defaultStory: String!
+  }
+
   type Dream {
     id: String!
     memory: String!
@@ -66,6 +76,7 @@ export const typeDefs = gql`
     dreamImage: String!
     prompt: String!
     user: User!
+    project: Project!
   }
 
   type Query {
@@ -74,7 +85,10 @@ export const typeDefs = gql`
     style(id: String): Style
     dreams: [Dream!]!
     adminDreams: [Dream!]!
-    userDream: Dream
+    projectByUserCode(ownerId: String!, code: String!): Project
+    projects: [Project!]!
+    userDream(id: String!): Dream
+    userDreams: [Dream!]!
   }
 
   type Mutation {
@@ -107,6 +121,18 @@ export const resolvers = {
       });
     },
 
+    projectByUserCode: (a, {ownerId, code}, {user}) => {
+      return prisma.project.findFirst({
+        where: {ownerId, code},
+      });
+    },
+
+    projects: (a, b, {user}) => {
+      return prisma.project.findMany({
+        where: {ownerId: user.id},
+      });
+    },
+
     adminDreams: (a, b) => {
       return prisma.dream.findMany({
         orderBy: {
@@ -115,11 +141,20 @@ export const resolvers = {
       });
     },
 
-    userDream: (a, b, {user}) => {
+    userDream: (a, {id}, {user}) => {
       if (!user?.id) {
         return undefined;
       }
       return prisma.dream.findUnique({
+        where: {id, userId: user.id},
+      });
+    },
+
+    userDreams: (a, b, {user}) => {
+      if (!user?.id) {
+        return undefined;
+      }
+      return prisma.dream.findMany({
         where: {userId: user.id},
       });
     },
@@ -193,6 +228,16 @@ export const resolvers = {
   Dream: {
     user: dream => {
       return prisma.dream.findUnique({where: {id: dream.id}}).user();
+    },
+
+    project: dream => {
+      return prisma.dream.findUnique({where: {id: dream.id}}).project();
+    },
+  },
+
+  Project: {
+    owner: project => {
+      return prisma.project.findUnique({where: {id: project.id}}).owner();
     },
   },
 };
