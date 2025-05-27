@@ -132,6 +132,13 @@ export const resolvers = {
             {
               ownerId: user.username,
             },
+            {
+              members: {
+                some: {
+                  id: user.id,
+                },
+              },
+            },
           ],
         },
       });
