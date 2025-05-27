@@ -54,6 +54,7 @@ export default async function Home() {
 
             <ProjectGrid />
 
+            <div className="divider">Your Dreams</div>
             <DreamThemeGrid />
             <img
               className="rounded"

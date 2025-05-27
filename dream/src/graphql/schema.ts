@@ -88,6 +88,7 @@ export const typeDefs = gql`
     adminDreams: [Dream!]!
     projectByUserCode(ownerId: String!, code: String!): Project
     projects: [Project!]!
+    joinedProjects: [Project!]!
     userDream(id: String!): Dream
     userDreams: [Dream!]!
   }
@@ -124,13 +125,33 @@ export const resolvers = {
 
     projectByUserCode: (a, {ownerId, code}, {user}) => {
       return prisma.project.findFirst({
-        where: {ownerId, code},
+        where: {
+          ownerId,
+          code,
+          OR: [
+            {
+              ownerId: user.username,
+            },
+          ],
+        },
       });
     },
 
     projects: (a, b, {user}) => {
       return prisma.project.findMany({
         where: {ownerId: user.username},
+      });
+    },
+
+    joinedProjects: (a, b, {user}) => {
+      return prisma.project.findMany({
+        where: {
+          members: {
+            some: {
+              id: user.id,
+            },
+          },
+        },
       });
     },
 
