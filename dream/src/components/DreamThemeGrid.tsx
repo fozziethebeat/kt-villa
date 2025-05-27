@@ -24,12 +24,13 @@ const QUERY = gql`
         code
         name
         owner {
-          id
+          username
         }
       }
     }
   }
 `;
+
 export async function DreamThemeGrid() {
   const {data, error} = await getClient().query({query: QUERY});
   return (

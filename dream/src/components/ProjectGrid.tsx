@@ -10,7 +10,7 @@ const QUERY = gql`
       code
       name
       owner {
-        id
+        username
       }
     }
   }
@@ -25,7 +25,7 @@ export async function ProjectGrid() {
           <div className="card-body">
             <h2 className="card-title">{project.name}</h2>
             <div className="card-actions justify-end">
-              <Link href={`/project/${project.owner.id}/${project.code}`}>
+              <Link href={`/project/${project.owner.username}/${project.code}`}>
                 <button className="btn btn-primary">See More</button>
               </Link>
             </div>

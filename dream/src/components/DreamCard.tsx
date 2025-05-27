@@ -16,12 +16,12 @@ export function DreamCard({dream, isUserDream}) {
           <p>{dream.story}</p>
           <div className="card-actions justify-around">
             <Link
-              href={`/project/${dream.project.owner.id}/${dream.project.code}`}>
+              href={`/project/${dream.project.owner.username}/${dream.project.code}`}>
               <button className="btn btn-primary">Project</button>
             </Link>
             {isUserDream && (
               <Link
-                href={`/dream/edit?id=${dream.id}&owner=${dream.project.owner.id}&project=${dream.project.code}`}>
+                href={`/dream/edit?id=${dream.id}&owner=${dream.project.owner.username}&project=${dream.project.code}`}>
                 <button className="btn btn-primary">Update</button>
               </Link>
             )}
@@ -38,7 +38,7 @@ export function DreamCard({dream, isUserDream}) {
         <p>Your memory with Tianyi TBD</p>
         <div className="card-actions justify-end">
           <Link
-            href={`/dream/new?owner=${dream.project.owner.id}&project=${dream.project.code}`}>
+            href={`/dream/new?owner=${dream.project.owner.username}&project=${dream.project.code}`}>
             <button className="btn btn-primary">Dream</button>
           </Link>
         </div>

@@ -56,7 +56,8 @@ export const typeDefs = gql`
   type User {
     id: String!
     name: String
-    email: String
+    username: String
+    email: String!
   }
 
   type Project {
@@ -129,7 +130,7 @@ export const resolvers = {
 
     projects: (a, b, {user}) => {
       return prisma.project.findMany({
-        where: {ownerId: user.id},
+        where: {ownerId: user.username},
       });
     },
 
