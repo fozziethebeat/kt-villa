@@ -64,7 +64,9 @@ export const typeDefs = gql`
     id: String!
     code: String!
     name: String!
+    description: String
     owner: User!
+
     defaultDream: String!
     defaultMemory: String!
     defaultStory: String!
@@ -78,16 +80,17 @@ export const typeDefs = gql`
     prompt: String!
     user: User!
     project: Project!
+    isUserDream: Boolean
   }
 
   type Query {
     dreamThemes: [DreamTheme!]!
-    styles: [Style!]!
     style(id: String): Style
-    dreams: [Dream!]!
+    styles: [Style!]!
     adminDreams: [Dream!]!
-    projectByUserCode(ownerId: String!, code: String!): Project
+    dreamsByProject(projectId: String!): [Dream!]!
     projects: [Project!]!
+    projectByUserCode(ownerId: String!, code: String!): Project
     joinedProjects: [Project!]!
     userDream(id: String!): Dream
     userDreams: [Dream!]!
@@ -115,12 +118,6 @@ export const resolvers = {
 
     styles: () => {
       return prisma.style.findMany();
-    },
-
-    dreams: (a, b, {user}) => {
-      return prisma.dream.findMany({
-        where: {userId: {not: user.id}},
-      });
     },
 
     projectByUserCode: (a, {ownerId, code}, {user}) => {
@@ -168,6 +165,58 @@ export const resolvers = {
           id: 'asc',
         },
       });
+    },
+
+    dreamsByProject: async (a, {projectId}, {user}) => {
+      // First, verify the user has access to this project.
+      const project = await prisma.project.findUnique({
+        where: {
+          id: projectId,
+          OR: [
+            {
+              ownerId: user.username,
+            },
+            {
+              members: {
+                some: {
+                  id: user.id,
+                },
+              },
+            },
+          ],
+        },
+        select: {
+          dreams: true,
+        },
+      });
+      if (!project || project.dreams.length === 0) {
+        return [];
+      }
+      // Now we have all the dreams, just sort them such that the user's dream is first.
+      const dreams = [...project.dreams];
+      dreams.sort((a, b) => {
+        const aIsCurrentUserDream = a.userId === user.id;
+        const bIsCurrentUserDream = b.userId === user.id;
+        if (aIsCurrentUserDream && !bIsCurrentUserDream) {
+          return -1;
+        }
+        if (!aIsCurrentUserDream && bIsCurrentUserDream) {
+          return 1;
+        }
+
+        if (a.createdAt < b.createdAt) {
+          return -1;
+        }
+        if (a.createdAt > b.createdAt) {
+          return 1;
+        }
+
+        return 0;
+      });
+      if (dreams[0].userId === user.id) {
+        dreams[0].isUserDream = true;
+      }
+      return dreams;
     },
 
     userDream: (a, {id}, {user}) => {
