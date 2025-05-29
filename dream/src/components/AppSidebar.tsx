@@ -1,5 +1,13 @@
 import * as React from 'react';
-import {Calendar, Home, Inbox, Search, Settings} from 'lucide-react';
+import {
+  Calendar,
+  CirclePlus,
+  Home,
+  Inbox,
+  Search,
+  Settings,
+} from 'lucide-react';
+
 import Link from 'next/link';
 
 import {auth} from '@/lib/auth';
@@ -22,12 +30,23 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const BASIC_ITEMS = [
   {
     title: 'Home',
     url: '/',
     icon: Home,
+  },
+  {
+    title: 'New Project',
+    url: '/project/new',
+    icon: CirclePlus,
   },
 ];
 
@@ -74,25 +93,39 @@ export async function AppSidebar({
           <SidebarGroupContent>
             <SidebarMenu>
               {BASIC_ITEMS.map(item => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <TooltipProvider key={item.title}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild>
+                          <Link href={item.url}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </TooltipTrigger>
+                    <TooltipContent>{item.title}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               ))}
               {isAdmin &&
                 ADMIN_ITEMS.map(item => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <Link href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  <TooltipProvider key={item.title}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton asChild>
+                            <Link href={item.url}>
+                              <item.icon />
+                              <span>{item.title}</span>
+                            </Link>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      </TooltipTrigger>
+                      <TooltipContent>{item.title}</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 ))}
             </SidebarMenu>
           </SidebarGroupContent>
