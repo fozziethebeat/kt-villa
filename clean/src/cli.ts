@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 
+import { PDFDocument } from "pdf-lib"; // Import PDFDocument for PDF generation
 import { Command } from "commander";
 import { readFileSync, writeFileSync } from "fs";
 import sharp from "sharp";
@@ -214,10 +215,34 @@ async function generateAveryStickerSheet(
   // Composite all circular images onto the sheet
   const finalSheetBuffer = await sheet
     .composite(compositeOperations)
-    .png() // Output as PNG, suitable for printing
+    .png()
     .toBuffer();
 
-  writeFileSync(outputFilePath, finalSheetBuffer);
+  // Convert the generated PNG image to a PDF
+  const pdfDoc = await PDFDocument.create();
+
+  // Embed the PNG image into the PDF document
+  const pngImage = await pdfDoc.embedPng(finalSheetBuffer);
+
+  // Get the page dimensions in points (1 point = 1/72 inch)
+  const pdfPageWidth = SHEET_WIDTH_IN * 72;
+  const pdfPageHeight = SHEET_HEIGHT_IN * 72;
+
+  // Add a blank page to the PDF with the correct dimensions
+  const page = pdfDoc.addPage([pdfPageWidth, pdfPageHeight]);
+
+  // Draw the embedded image onto the page, scaling it to fit the entire page
+  page.drawImage(pngImage, {
+    x: 0,
+    y: 0,
+    width: page.getWidth(),
+    height: page.getHeight(),
+  });
+
+  // Serialize the PDFDocument to bytes (a Uint8Array)
+  const pdfBytes = await pdfDoc.save();
+
+  writeFileSync(outputFilePath, pdfBytes);
   console.log(
     `Successfully generated Avery 22807 sticker sheet: ${outputFilePath}`
   );
