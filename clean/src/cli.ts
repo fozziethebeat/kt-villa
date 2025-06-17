@@ -1,10 +1,16 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 
-import { PDFDocument } from "pdf-lib"; // Import PDFDocument for PDF generation
+import {
+  createCanvas,
+  loadImage,
+  registerFont,
+  CanvasRenderingContext2D,
+} from "canvas";
 import { Command } from "commander";
-import { readFileSync, writeFileSync } from "fs";
-import sharp from "sharp";
+import { existsSync, readFileSync, writeFileSync } from "fs";
+import path from "path";
+import { PDFDocument } from "pdf-lib";
 
 import { imageSaver } from "@/lib/storage";
 import { imageGenerator } from "@/lib/generate";
@@ -36,18 +42,20 @@ program
   .option("-i, --image <path>", "The path to a png image to upload")
   .option("-n, --name <string>", "The name of the image file")
   .action(async (options) => {
-    const buffer = await sharp(options.image).toFormat("png").toBuffer();
+    const img = await loadImage(options.image);
+
+    const canvas = createCanvas(img.width, img.height);
+    const ctx = canvas.getContext("2d");
+
+    ctx.drawImage(img, 0, 0);
+
+    const buffer = canvas.toBuffer("image/png");
     const url = await imageSaver.uploadImage(buffer, options.name, "image/png");
     console.log(url);
   });
 
 interface LabelImage {
   image: string;
-}
-
-function cm_to_pixels(cm: number, dpi = 300) {
-  const inches = cm / 2.54;
-  return Math.floor(inches * dpi);
 }
 
 const DPI = 300; // Dots Per Inch for printing resolution
@@ -59,7 +67,6 @@ const ROWS = 4; // Number of rows on the sheet
 const SHEET_WIDTH_PX = Math.round(SHEET_WIDTH_IN * DPI);
 const SHEET_HEIGHT_PX = Math.round(SHEET_HEIGHT_IN * DPI);
 const LABEL_DIAMETER_PX = Math.round(LABEL_DIAMETER_IN * DPI);
-const LABEL_RADIUS_PX = LABEL_DIAMETER_PX / 2;
 const HORIZONTAL_SPACING_PX =
   (SHEET_WIDTH_PX - COLS * LABEL_DIAMETER_PX) / (COLS + 1);
 const VERTICAL_SPACING_PX =
@@ -67,93 +74,135 @@ const VERTICAL_SPACING_PX =
 const LEFT_MARGIN_PX = HORIZONTAL_SPACING_PX;
 const TOP_MARGIN_PX = VERTICAL_SPACING_PX;
 
-// Avery 22807 specific template offsets (approximate based on common templates)
-// These are the coordinates of the CENTER of the first label (top-left)
-const FIRST_LABEL_CENTER_X_IN = 1.25;
-const FIRST_LABEL_CENTER_Y_IN = 1.0;
-const HORIZONTAL_PITCH_IN = 2.125; // Distance between centers of adjacent labels horizontally
-const VERTICAL_PITCH_IN = 2.5; // Distance between centers of adjacent labels vertically
-const FIRST_LABEL_CENTER_X_PX = Math.round(FIRST_LABEL_CENTER_X_IN * DPI);
-const FIRST_LABEL_CENTER_Y_PX = Math.round(FIRST_LABEL_CENTER_Y_IN * DPI);
-const HORIZONTAL_PITCH_PX = Math.round(HORIZONTAL_PITCH_IN * DPI);
-const VERTICAL_PITCH_PX = Math.round(VERTICAL_PITCH_IN * DPI);
-
 async function createCircularImage(
   imageInput: string | Buffer,
   outputSize: number
 ) {
-  const inputImage = sharp(imageInput);
-  const metadata = await inputImage.metadata();
-  const { width, height } = metadata;
+  const img = await loadImage(imageInput);
 
-  if (!width || !height) {
-    throw new Error(`Could not get dimensions`);
+  const originalWidth = img.width;
+  const originalHeight = img.height;
+
+  if (!originalWidth || !originalHeight) {
+    throw new Error("Could not determine image dimensions");
   }
 
-  const ratio = outputSize / Math.min(width, height);
-  const newWidth = Math.ceil(width * ratio);
-  const newHeight = Math.ceil(height * ratio);
+  const minDim = Math.min(originalWidth, originalHeight);
+  const scale = outputSize / minDim;
+  const newWidth = Math.round(originalWidth * scale);
+  const newHeight = Math.round(originalHeight * scale);
 
-  const cropLeft = Math.floor((newWidth - outputSize) / 2);
-  const cropTop = Math.floor((newHeight - outputSize) / 2);
+  // Resize and center-crop to outputSize
+  const tempCanvas = createCanvas(outputSize, outputSize);
+  const ctx = tempCanvas.getContext("2d");
 
-  const squaredImageBuffer = await sharp(imageInput)
-    .resize(newWidth, newHeight, {
-      fit: "cover",
-      kernel: sharp.kernel.lanczos3,
-    })
-    .extract({
-      left: cropLeft,
-      top: cropTop,
-      width: outputSize,
-      height: outputSize,
-    })
-    .toBuffer();
+  // White background fill
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, outputSize, outputSize);
 
-  const maskSvg = `<svg width="${outputSize}" height="${outputSize}">
-            <circle cx="${outputSize / 2}" cy="${outputSize / 2}" r="${
-    outputSize / 2
-  }" fill="white" />
-        </svg>`;
-  const maskBuffer = await sharp(Buffer.from(maskSvg))
-    .png() // Convert SVG to PNG buffer for use as a mask
-    .toBuffer();
+  // Create circular clipping path
+  ctx.beginPath();
+  ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
+  ctx.clip();
 
-  const maskedSquaredImage = await sharp(squaredImageBuffer)
-    .joinChannel(maskBuffer) //, { raw: false })
-    .toBuffer();
+  // Draw resized image, centered
+  const dx = (outputSize - newWidth) / 2;
+  const dy = (outputSize - newHeight) / 2;
+  ctx.drawImage(img, dx, dy, newWidth, newHeight);
 
-  const parsedBgColor = [255, 255, 255, 1];
-  const bgColorSharp = {
-    r: parsedBgColor[0],
-    g: parsedBgColor[1],
-    b: parsedBgColor[2],
-    alpha: parsedBgColor[3],
-  };
+  // Return PNG buffer
+  return tempCanvas.toBuffer("image/png");
+}
 
-  const solidBgColorSquareBuffer = await sharp({
-    create: {
-      width: outputSize,
-      height: outputSize,
-      channels: 3,
-      background: { r: bgColorSharp.r, g: bgColorSharp.g, b: bgColorSharp.b },
-    },
-  })
-    .joinChannel(maskBuffer)
-    .png()
-    .toBuffer();
+function wrapLines(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number
+): string[] {
+  const rawLines = text.split("\n");
+  const out: string[] = [];
 
-  return await sharp(solidBgColorSquareBuffer)
-    .composite([
-      {
-        input: maskedSquaredImage,
-        top: 0,
-        left: 0,
-        blend: "over",
-      },
-    ])
-    .png()
-    .toBuffer();
+  for (const raw of rawLines) {
+    const words = raw.split(/\s+/);
+    let line = "";
+
+    for (const w of words) {
+      const test = line ? `${line} ${w}` : w;
+      const { width } = ctx.measureText(test);
+
+      if (width > maxWidth && line) {
+        out.push(line);
+        line = w;
+      } else {
+        line = test;
+      }
+    }
+    if (line) out.push(line);
+  }
+  return out;
+}
+
+export function createDetailsLabelCircle(
+  labelText: string,
+  sizePx: number,
+  fontFile: string,
+  fontSize: number,
+  backgroundColor: string,
+  wrapFactor = 1.5
+): Buffer {
+  // ── 1. Canvas setup ──────────────────────────────────────────
+  const canvas = createCanvas(sizePx, sizePx); // RGBA, transparent by default
+  const ctx = canvas.getContext("2d");
+
+  // Optional custom font
+  const fontFamily = path.basename(fontFile, path.extname(fontFile));
+  if (existsSync(fontFile)) {
+    registerFont(fontFile, { family: fontFamily });
+  }
+
+  ctx.font = `${fontSize}px "${fontFamily}"`;
+  ctx.textBaseline = "top";
+  ctx.imageSmoothingEnabled = true;
+
+  // ── 2. Draw circle ───────────────────────────────────────────
+  const center = sizePx / 2;
+  const radius = center - 10; // 10 px margin
+  ctx.beginPath();
+  ctx.arc(center, center, radius, 0, Math.PI * 2);
+  ctx.fillStyle = backgroundColor;
+  ctx.fill();
+
+  // ── 3. Wrap text so it fits inside the circle ────────────────
+  const maxTextWidth = Math.floor(Math.SQRT2 * radius); // ≈ inscribed square
+  // A rough adjustment similar to Python’s wrap_factor
+  const approxMaxChars =
+    Math.floor(maxTextWidth / (fontSize / wrapFactor)) || 1;
+  const wrappedLines = wrapLines(
+    ctx,
+    labelText,
+    maxTextWidth || approxMaxChars * (fontSize / wrapFactor)
+  );
+
+  // ── 4. Vertical centering ────────────────────────────────────
+  const metrics = ctx.measureText("Mg"); // sample to estimate line height
+  const lineHeight =
+    (metrics.actualBoundingBoxAscent ?? fontSize) +
+    (metrics.actualBoundingBoxDescent ?? fontSize * 0.2);
+
+  const totalHeight = lineHeight * wrappedLines.length;
+  let y = center - totalHeight / 2;
+
+  // ── 5. Render each line ──────────────────────────────────────
+  ctx.fillStyle = "black";
+  for (const line of wrappedLines) {
+    const { width } = ctx.measureText(line);
+    const x = center - width / 2;
+    ctx.fillText(line, x, y);
+    y += lineHeight;
+  }
+
+  // ── 6. Return PNG buffer ─────────────────────────────────────
+  return canvas.toBuffer("image/png");
 }
 
 /**
@@ -161,9 +210,12 @@ async function createCircularImage(
  * Each input image is first converted to a circular sticker.
  *
  * @param {string[]} imagePaths Array of 12 paths to the input PNG images.
- * @param {string} outputFilePath Path to save the final sticker sheet image (e.g., 'avery_sheet.png').
- * @param {string} [stickerBackgroundColor='white'] Background color for the circular stickers.
- * @param {string} [sheetBackgroundColor='white'] Background color for the sticker sheet itself (outside the labels).
+ * @param {string} outputFilePath Path to save the final sticker sheet image
+ *     (e.g., 'avery_sheet.png').
+ * @param {string} [stickerBackgroundColor='white'] Background color for the
+ *     circular stickers.
+ * @param {string} [sheetBackgroundColor='white'] Background color for the
+ *     sticker sheet itself (outside the labels).
  */
 async function generateAveryStickerSheet(
   labelImages: LabelImage[],
@@ -171,67 +223,71 @@ async function generateAveryStickerSheet(
   stickerBackgroundColor: string = "white",
   sheetBackgroundColor: string = "white"
 ): Promise<void> {
-  // Create a blank sheet with the specified dimensions and background color
-  const sheet = sharp({
-    create: {
-      width: SHEET_WIDTH_PX,
-      height: SHEET_HEIGHT_PX,
-      channels: 4,
-      background: sheetBackgroundColor,
-    },
-  });
+  const canvas = createCanvas(SHEET_WIDTH_PX, SHEET_HEIGHT_PX);
+  const ctx = canvas.getContext("2d");
 
-  const compositeOperations: sharp.OverlayOptions[] = [];
+  // Fill background
+  ctx.fillStyle = sheetBackgroundColor;
+  ctx.fillRect(0, 0, SHEET_WIDTH_PX, SHEET_HEIGHT_PX);
 
-  for (let i = 0; i < labelImages.length; i++) {
-    const imagePath = labelImages[i].image;
+  let i = 0;
+  for (; i < labelImages.length; i++) {
+    const { image } = labelImages[i];
     const col = i % COLS;
     const row = Math.floor(i / COLS);
 
-    // 1. Create the circular image for the current sticker
-    const circularImageBuffer = await createCircularImage(
-      imagePath,
-      LABEL_DIAMETER_PX
-    );
+    const circularBuffer = await createCircularImage(image, LABEL_DIAMETER_PX);
+    const labelImg = await loadImage(circularBuffer);
 
-    // 2. Calculate the top-left position for placing this circular image on the sheet
-    // The (left, top) for sharp.composite refers to the top-left of the image being composited.
-    // We use the center coordinates from the template and adjust for the label's radius.
-    const xPos = Math.round(
-      LEFT_MARGIN_PX + col * (LABEL_DIAMETER_PX + HORIZONTAL_SPACING_PX)
-    );
-    const yPos = Math.round(
-      TOP_MARGIN_PX + row * (LABEL_DIAMETER_PX + VERTICAL_SPACING_PX)
-    );
+    const xPos =
+      LEFT_MARGIN_PX + col * (LABEL_DIAMETER_PX + HORIZONTAL_SPACING_PX);
+    const yPos =
+      TOP_MARGIN_PX + row * (LABEL_DIAMETER_PX + VERTICAL_SPACING_PX);
 
-    compositeOperations.push({
-      input: circularImageBuffer,
-      left: xPos,
-      top: yPos,
-      blend: "over", // Overlay the sticker onto the sheet
-    });
+    ctx.drawImage(labelImg, xPos, yPos);
+  }
+  for (; i < 12; i++) {
+    const col = i % COLS;
+    const row = Math.floor(i / COLS);
+
+    const circularBuffer = await createDetailsLabelCircle(
+      `Ingredients:
+Olive Oil, Palm Oil, Coconut Oil, Castor Oil, Water, Lye, Rose, Juniper Leaf, Hinoki
+
+
+Magic Code: XaBc1aF
+
+
+Story:
+  A vast and wild monkey king took to the skies to eat a kit-kat.  Much wildness was had
+`,
+      LABEL_DIAMETER_PX,
+      "",
+      32,
+      "lightblue"
+    );
+    const labelImg = await loadImage(circularBuffer);
+
+    const xPos =
+      LEFT_MARGIN_PX + col * (LABEL_DIAMETER_PX + HORIZONTAL_SPACING_PX);
+    const yPos =
+      TOP_MARGIN_PX + row * (LABEL_DIAMETER_PX + VERTICAL_SPACING_PX);
+
+    ctx.drawImage(labelImg, xPos, yPos);
   }
 
-  // Composite all circular images onto the sheet
-  const finalSheetBuffer = await sheet
-    .composite(compositeOperations)
-    .png()
-    .toBuffer();
+  // Export canvas to PNG buffer
+  const finalSheetBuffer = canvas.toBuffer("image/png");
 
-  // Convert the generated PNG image to a PDF
+  // Create PDF from PNG
   const pdfDoc = await PDFDocument.create();
-
-  // Embed the PNG image into the PDF document
   const pngImage = await pdfDoc.embedPng(finalSheetBuffer);
 
-  // Get the page dimensions in points (1 point = 1/72 inch)
   const pdfPageWidth = SHEET_WIDTH_IN * 72;
   const pdfPageHeight = SHEET_HEIGHT_IN * 72;
 
-  // Add a blank page to the PDF with the correct dimensions
   const page = pdfDoc.addPage([pdfPageWidth, pdfPageHeight]);
 
-  // Draw the embedded image onto the page, scaling it to fit the entire page
   page.drawImage(pngImage, {
     x: 0,
     y: 0,
@@ -239,13 +295,9 @@ async function generateAveryStickerSheet(
     height: page.getHeight(),
   });
 
-  // Serialize the PDFDocument to bytes (a Uint8Array)
   const pdfBytes = await pdfDoc.save();
-
   writeFileSync(outputFilePath, pdfBytes);
-  console.log(
-    `Successfully generated Avery 22807 sticker sheet: ${outputFilePath}`
-  );
+  console.log(`✅ Generated sticker sheet at: ${outputFilePath}`);
 }
 
 program
