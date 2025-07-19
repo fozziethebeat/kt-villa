@@ -11,15 +11,24 @@ export const step1Schema = z.object({
 });
 
 export const step2Schema = z.object({
-  features: z.array(z.string()).min(1, "Please select at least one feature"),
+  defaultMemory: z
+    .string()
+    .min(10, ""),
+  systemTemplateStory: z
+    .string()
+    .min(10, ""),
+  defaultStory: z
+    .string()
+    .min(10, ""),
 });
 
 export const step3Schema = z.object({
-  budget: z.preprocess(
-    (a) => parseInt(z.string().parse(a), 10),
-    z.number().min(1000, "Budget must be at least $1000")
-  ),
-  contactEmail: z.string().email("Invalid email address"),
+  defaultDream: z
+    .string()
+    .min(10, ""),
+  systemTemplateDream: z
+    .string()
+    .min(10, ""),
 });
 
 export type Step1Data = z.infer<typeof step1Schema>;

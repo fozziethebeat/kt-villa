@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -22,7 +23,7 @@ import { useCreationStore } from "@/stores/creationStore";
 import { Step3Data, step3Schema } from "./types";
 
 export function Step3Form() {
-  const { projectName, projectType } = useCreationStore(
+  const { defaultDream, systemTemplateDream } = useCreationStore(
     (state) => state.formData
   );
   const nextStep = useCreationStore((state) => state.nextStep);
@@ -31,8 +32,8 @@ export function Step3Form() {
   const form = useForm<Step3Data>({
     resolver: zodResolver(step3Schema),
     defaultValues: {
-      projectName,
-      projectType,
+      defaultDream,
+      systemTemplateDream,
     },
   });
 
@@ -44,68 +45,28 @@ export function Step3Form() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">End</CardTitle>
-        <CardDescription>End.</CardDescription>
+        <CardTitle className="text-2xl font-bold">Dream Creation</CardTitle>
+        <CardDescription>Setup the project so that everyone can visualize their stories in the best ways possible.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="projectName"
+              name="systemTemplateDream"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Project Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="My Awesome Project" {...field} />
+                    <Textarea {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="projectType"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Project Type</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex flex-col space-y-1"
-                    >
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="web" />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          Web Application
-                        </FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="mobile" />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          Mobile App
-                        </FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="" />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          Not sure yet
-                        </FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <img src={defaultDream} />
+
             <Button type="submit" className="w-full">
               Next Step
             </Button>

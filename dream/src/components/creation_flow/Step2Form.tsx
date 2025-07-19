@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -22,7 +23,7 @@ import { useCreationStore } from "@/stores/creationStore";
 import { Step2Data, step2Schema } from "./types";
 
 export function Step2Form() {
-  const { projectName, projectType } = useCreationStore(
+  const { defaultMemory, systemTemplateStory, defaultStory} = useCreationStore(
     (state) => state.formData
   );
   const nextStep = useCreationStore((state) => state.nextStep);
@@ -31,8 +32,9 @@ export function Step2Form() {
   const form = useForm<Step2Data>({
     resolver: zodResolver(step2Schema),
     defaultValues: {
-      projectName,
-      projectType,
+      defaultMemory,
+      systemTemplateStory,
+      defaultStory,
     },
   });
 
@@ -44,20 +46,20 @@ export function Step2Form() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">Features</CardTitle>
-        <CardDescription>Features.</CardDescription>
+        <CardTitle className="text-2xl font-bold">Story Creation</CardTitle>
+        <CardDescription>Setup the project so its super easy for everyone to create fun stories from memories</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="projectName"
+              name="defaultMemory"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Project Name</FormLabel>
+                  <FormLabel>Initial Memory</FormLabel>
                   <FormControl>
-                    <Input placeholder="My Awesome Project" {...field} />
+                    <Textarea {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -66,46 +68,32 @@ export function Step2Form() {
 
             <FormField
               control={form.control}
-              name="projectType"
+              name="systemTemplateStory"
               render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Project Type</FormLabel>
+                <FormItem>
+                  <FormLabel>Story Generator Guidelines</FormLabel>
                   <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex flex-col space-y-1"
-                    >
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="web" />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          Web Application
-                        </FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="mobile" />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          Mobile App
-                        </FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="" />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          Not sure yet
-                        </FormLabel>
-                      </FormItem>
-                    </RadioGroup>
+                    <Textarea {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="defaultStory"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Story Generator Guidelines</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <Button type="submit" className="w-full">
               Next Step
             </Button>
