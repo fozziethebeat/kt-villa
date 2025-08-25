@@ -1,7 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
@@ -11,7 +10,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Card,
   CardContent,
@@ -24,7 +22,7 @@ import { Step3Data, step3Schema } from "./types";
 
 export function Step3Form() {
   const { defaultDream, systemTemplateDream } = useCreationStore(
-    (state) => state.formData
+    (state) => state.formData,
   );
   const nextStep = useCreationStore((state) => state.nextStep);
   const updateFormData = useCreationStore((state) => state.updateFormData);
@@ -46,7 +44,10 @@ export function Step3Form() {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Dream Creation</CardTitle>
-        <CardDescription>Setup the project so that everyone can visualize their stories in the best ways possible.</CardDescription>
+        <CardDescription>
+          Setup the project so that everyone can visualize their stories in the
+          best ways possible.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
