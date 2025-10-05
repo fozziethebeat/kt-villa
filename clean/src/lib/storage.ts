@@ -1,15 +1,18 @@
-import {Storage, Bucket} from '@google-cloud/storage';
-import fs from 'fs';
-import path from 'path';
+import { Storage, Bucket } from "@google-cloud/storage";
+import fs from "fs";
+import path from "path";
 
 /**
  * A generic interface for storing files on remote cloud systems.
  */
 abstract class ImageSaver {
+  /**
+   * Returns the final URL for viewing the image after its been stored.
+   */
   abstract uploadImage(
     imageBuffer: Buffer,
     fileName: string,
-    contentType: string,
+    contentType: string
   ): Promise<string>;
 }
 
@@ -38,8 +41,8 @@ class GCPImageSaver {
       },
     });
     await new Promise((resolve, reject) => {
-      writeStream.on('error', reject);
-      writeStream.on('finish', resolve);
+      writeStream.on("error", reject);
+      writeStream.on("finish", resolve);
       writeStream.end(imageBuffer);
     });
     const url = `https://storage.googleapis.com/${this.bucketName}/${path}`;
@@ -47,6 +50,9 @@ class GCPImageSaver {
   }
 }
 
+/**
+ * Returns a singleton ImageSaver instance given environment variables.
+ */
 function createImageSaver() {
   if (
     process.env.GOOGLE_CLOUD_KEY_FILE &&
@@ -54,17 +60,17 @@ function createImageSaver() {
     process.env.GOOGLE_CLOUD_STORAGE_BUCKET
   ) {
     const absoluteKeyFilePath = path.resolve(process.env.GOOGLE_CLOUD_KEY_FILE);
-    const keyFileContent = fs.readFileSync(absoluteKeyFilePath, 'utf8');
+    const keyFileContent = fs.readFileSync(absoluteKeyFilePath, "utf8");
     const credentials = JSON.parse(keyFileContent);
     return new GCPImageSaver(
       process.env.GOOGLE_CLOUD_PROJECT_ID,
       process.env.GOOGLE_CLOUD_STORAGE_BUCKET,
-      credentials,
+      credentials
     );
   }
-  throw new Error('No imageSaver');
+  throw new Error("No imageSaver");
 }
 
 const imageSaver = createImageSaver();
 
-export {ImageSaver, GCPImageSaver, imageSaver};
+export { ImageSaver, GCPImageSaver, imageSaver };

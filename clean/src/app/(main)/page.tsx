@@ -1,13 +1,13 @@
-import {gql} from '@apollo/client';
-import Image from 'next/image';
+import { gql } from "@apollo/client";
+import Image from "next/image";
 
-import {EntityList} from '@/components/EntityList';
-import {Header} from '@/components/Header';
-import {Button} from '@/components/ui/button';
+import { EntityList } from "@/components/EntityList";
+import { Header } from "@/components/Header";
+import { Button } from "@/components/ui/button";
 
-import {query} from '@/graphql/ApolloClient';
-import {auth} from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { query } from "@/graphql/ApolloClient";
+import { auth } from "@/lib/auth";
+import prisma from "@/lib/prisma";
 
 interface Entities {
   entities: {
@@ -39,8 +39,8 @@ const ADMIN_QUERY: TypedDocumentNode<Entities> = gql`
 
 export default async function Home() {
   const session = await auth();
-  const {data} = await query({query: QUERY});
-  const {data: adminData} = await query({query: ADMIN_QUERY});
+  const { data } = await query({ query: QUERY });
+  const { data: adminData } = await query({ query: ADMIN_QUERY });
   return (
     <>
       <Header />
@@ -59,7 +59,7 @@ export default async function Home() {
           <div>{JSON.stringify(session)}</div>
           <div>
             <div>Server Fetch</div>
-            {data.entities.map(entity => (
+            {data.entities.map((entity) => (
               <li key={entity.id} className="mb-2">
                 {entity.name}
               </li>
@@ -67,7 +67,7 @@ export default async function Home() {
           </div>
           <div>
             <div>Server Admin Fetch</div>
-            {adminData?.adminEntities?.map(entity => (
+            {adminData?.adminEntities?.map((entity) => (
               <li key={entity.id} className="mb-2">
                 {entity.name}
               </li>

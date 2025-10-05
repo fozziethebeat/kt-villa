@@ -1,10 +1,10 @@
-import {checkAccess} from '@/lib/auth-check';
+import { checkAccess } from "@/lib/auth-check";
 
-import {Header} from '@/components/Header';
+import { Header } from "@/components/Header";
 
-const links = [{url: '/', label: 'Home'}];
+const links = [{ url: "/", label: "Home" }];
 export default async function Home() {
-  await checkAccess('admin', '/');
+  await checkAccess("admin", "/");
   return (
     <>
       <Header links={links} target="Admin" />
