@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import {gql, useMutation} from '@apollo/client';
-import {useRouter} from 'next/navigation';
-import {useForm} from 'react-hook-form';
+import { gql, useMutation } from "@apollo/client";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 
-import {Button} from '@/components/ui/button';
-import {Form} from '@/components/ui/form';
-import {Input} from '@/components/ui/input';
-import {Label} from '@/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const MUTATION = gql`
   mutation UpdateUsername($name: String!) {
@@ -24,20 +24,20 @@ type EditUserInput = {
   name: string;
 };
 
-export function EditUserDetails({user}) {
+export function EditUserDetails({ user }) {
   const router = useRouter();
   const form = useForm<EditUserInput>({
-    defaultValues: {name: user.name},
+    defaultValues: { name: user.name },
   });
-  const [updateUsername, {loading, error}] = useMutation(MUTATION, {
+  const [updateUsername, { loading, error }] = useMutation(MUTATION, {
     onCompleted: () => {
       // @ts-ignore
-      document.getElementById('my_modal_2').close();
+      document.getElementById("my_modal_2").close();
       router.refresh();
     },
   });
 
-  const onSubmit = data => {
+  const onSubmit = (data) => {
     updateUsername({
       variables: {
         name: data.name,
@@ -50,8 +50,9 @@ export function EditUserDetails({user}) {
       <span
         /*
         // @ts-ignore */
-        onClick={() => document.getElementById('my_modal_2').showModal()}
-        className="px-4">
+        onClick={() => document.getElementById("my_modal_2").showModal()}
+        className="px-4"
+      >
         Update
       </span>
       <dialog id="my_modal_2" className="modal">
@@ -65,7 +66,7 @@ export function EditUserDetails({user}) {
                     type="text"
                     name="name"
                     className="w-full"
-                    {...form.register('name')}
+                    {...form.register("name")}
                   />
                 </div>
 

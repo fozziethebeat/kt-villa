@@ -17,10 +17,16 @@ generator client {
 
 model User {
   id            String          @id @default(cuid())
-  name          String?
   email         String          @unique
   emailVerified DateTime?
   image         String?
+
+  // Identifying information
+  name          String?
+  referral      String?
+  socialType    String?
+  socialHandle  String?
+
   accounts      Account[]
   sessions      Session[]
  
