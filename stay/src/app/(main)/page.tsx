@@ -12,12 +12,11 @@ export default async function Home() {
       <div
         className="hero min-h-screen bg-base-200"
         style={{
-          backgroundImage:
-            "url(https://www.hakubavalley.com/cms/wp-content/themes/hv_themes/common/img/top-bg-about.jpg)",
+          backgroundImage: "url(/img/background.png)",
         }}
       >
         <div className="z-1 hero-content z-10 flex-col">
-          <div className="lg:-left text-center text-neutral-content">
+          <div className="lg:-left text-center">
             {!session?.user?.name ? (
               <>
                 <h1 className="text-5xl font-bold">
@@ -52,8 +51,9 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      );
-      <BookingItemGrid />
+      <div className="py-6">
+        <BookingItemGrid />
+      </div>
     </div>
   );
 }

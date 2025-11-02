@@ -16,9 +16,10 @@ const QUERY = gql`
 
 export default async function ItemPage({ params }) {
   try {
+    const { id } = await params;
     const { data, error } = await getClient().query({
       query: QUERY,
-      variables: { id: params.id },
+      variables: { id },
     });
     const bookingItem = data.bookingItem;
     return (

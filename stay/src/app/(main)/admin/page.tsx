@@ -1,5 +1,5 @@
-import {getSession} from '@/lib/auth-check';
-import {checkAccess} from '@/lib/auth-check';
+import { getSession } from "@/lib/auth-check";
+import { checkAccess } from "@/lib/auth-check";
 
 import {
   Breadcrumb,
@@ -8,14 +8,29 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import {AdminBookingTable} from '@/components/AdminBookingTable';
-import {AdminAdapterTable} from '@/components/AdminAdapterTable';
-import {AdminUsersTable} from '@/components/AdminUsersTable';
+} from "@/components/ui/breadcrumb";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default async function AdminPage() {
-  await checkAccess('admin', '/');
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { AppWindowIcon, CodeIcon } from "lucide-react";
+import { AdminBookingTable } from "@/components/AdminBookingTable";
+import { AdminAdapterTable } from "@/components/AdminAdapterTable";
+import { AdminUsersTable } from "@/components/AdminUsersTable";
+
+export default async function AdminPage({ searchParams }) {
+  await checkAccess("admin", "/");
   const session = await getSession();
+  const { view } = await searchParams;
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-4">
       <Breadcrumb>
@@ -30,41 +45,22 @@ export default async function AdminPage() {
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div role="tablist" className="tabs tabs-bordered w-full">
-        <input
-          type="radio"
-          name="my_tabs_1"
-          role="tab"
-          className="tab"
-          aria-label="Bookings"
-          defaultChecked
-        />
-        <div role="tabpanel" className="tab-content">
+      <Tabs defaultValue={view || "bookings"}>
+        <TabsList>
+          <TabsTrigger value="bookings">Bookings</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="adapters">Adapters</TabsTrigger>
+        </TabsList>
+        <TabsContent value="bookings">
           <AdminBookingTable />
-        </div>
-
-        <input
-          type="radio"
-          name="my_tabs_1"
-          role="tab"
-          className="tab"
-          aria-label="Adapters"
-        />
-        <div role="tabpanel" className="tab-content">
-          <AdminAdapterTable />
-        </div>
-
-        <input
-          type="radio"
-          name="my_tabs_1"
-          role="tab"
-          className="tab"
-          aria-label="Users"
-        />
-        <div role="tabpanel" className="tab-content">
+        </TabsContent>
+        <TabsContent value="users">
           <AdminUsersTable />
-        </div>
-      </div>
+        </TabsContent>
+        <TabsContent value="adapters">
+          <AdminAdapterTable />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

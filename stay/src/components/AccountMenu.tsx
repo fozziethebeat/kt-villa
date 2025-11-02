@@ -1,6 +1,6 @@
-import {auth, signOut} from '@/lib/auth';
-import Link from 'next/link';
-import {redirect} from 'next/navigation';
+import { auth, signOut } from "@/lib/auth";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export async function AccountMenu() {
   const session = await auth();
@@ -14,7 +14,8 @@ export async function AccountMenu() {
 
       <ul
         tabIndex={0}
-        className="menu dropdown-content rounded-box menu-sm z-[1] mt-3 w-52 bg-base-100 p-2 shadow">
+        className="menu dropdown-content rounded-box menu-sm z-[1] mt-3 w-52 bg-base-100 p-2 shadow"
+      >
         <li>
           <Link href="/">Home</Link>
         </li>
@@ -30,11 +31,17 @@ export async function AccountMenu() {
         <li>
           <Link href="/about">About</Link>
         </li>
-        {session?.user?.roles == 'admin' && (
+        {session?.user?.roles == "admin" && (
           <>
             <div className="divider" />
             <li>
-              <Link href="/admin">Review</Link>
+              <Link href="/admin?view=bookings">Bookings</Link>
+            </li>
+            <li>
+              <Link href="/admin?view=users">Users</Link>
+            </li>
+            <li>
+              <Link href="/admin?view=adapters">Adapters</Link>
             </li>
           </>
         )}
@@ -42,10 +49,11 @@ export async function AccountMenu() {
         <li>
           <form
             action={async () => {
-              'use server';
+              "use server";
 
               await signOut();
-            }}>
+            }}
+          >
             <button type="submit" className="w-full text-left">
               Signout
             </button>
