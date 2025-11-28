@@ -12,6 +12,7 @@ import { mailer } from "@/lib/mailer";
 import { prisma } from "@/lib/prisma";
 import { CreateBookingMail } from "@/components/mail/CreateBookingMail";
 import { JoinApproved } from "@/components/mail/JoinApproved";
+import { BookingApprovedMail } from "@/components/mail/BookingApprovedMail";
 
 export const typeDefs = gql`
   scalar DateTime
@@ -489,16 +490,20 @@ export const resolvers = {
     },
 
     updateBooking: async (a, { id, input }, { user }) => {
+      // Apply any changes that aren't related to status immediately.
       if (!input.status) {
         return prisma.booking.update({
           data: input,
           where: { id },
         });
       }
+
+      // Only apply status changes for admin users.
       if (user?.roles !== "admin") {
         throw new Error("Access not supported");
       }
 
+      // First, create the booking image but don't return early.
       const booking = await prisma.booking.findUnique({
         where: { id },
       });
@@ -507,14 +512,39 @@ export const resolvers = {
           booking.userId,
           booking.startDate
         );
-        return prisma.booking.update({
+        await prisma.booking.update({
           data: {
-            ...input,
             userItemId,
           },
           where: { id },
         });
       }
+
+      // Next, send the booking confirmation email.
+      if (input.status === "approved" && booking.status !== "approved") {
+        const bookingUser = await prisma.user.findUnique({
+          where: { id: booking.userId },
+        });
+
+        if (bookingUser) {
+          await mailer.sendMail({
+            from: process.env.MAILER_FROM,
+            to: bookingUser.email,
+            subject: "Your booking is approved",
+            html: await render(
+              BookingApprovedMail({
+                userEmail: bookingUser.email,
+                name: bookingUser.name || undefined,
+                startDate: booking.startDate!,
+                endDate: booking.endDate!,
+                link: `${process.env.AUTH_URL}/booking/${booking.bookingCode}`,
+              })
+            ),
+          });
+        }
+      }
+
+      // Update the booking status.
       return prisma.booking.update({
         data: input,
         where: { id },

@@ -23,7 +23,7 @@
     "@aws-sdk/client-s3": "^3.670.0",
     "@google-cloud/aiplatform": "^3.34.0",
     "@google-cloud/storage": "^7.16.0",
-    "@google/genai": "^0.14.1",
+    "@google/genai": "^1.30.0",
     "@google/generative-ai": "^0.21.0",
     "@hookform/resolvers": "^3.9.1",
     "@mdx-js/loader": "^3.1.0",
