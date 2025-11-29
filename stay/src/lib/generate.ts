@@ -3,14 +3,14 @@ import {
   FunctionCallingConfigMode,
   FunctionDeclaration,
   Type,
-} from '@google/genai';
-import axios from 'axios';
-import {Liquid} from 'liquidjs';
-import ShortUniqueId from 'short-unique-id';
-import Together from 'together-ai';
+} from "@google/genai";
+import axios from "axios";
+import { Liquid } from "liquidjs";
+import ShortUniqueId from "short-unique-id";
+import Together from "together-ai";
 
-import {prisma} from '@/lib/prisma';
-import {imageSaver, ImageSaver} from '@/lib/storage';
+import { prisma } from "@/lib/prisma";
+import { imageSaver, ImageSaver } from "@/lib/storage";
 
 abstract class ImagePromptGenerator {
   abstract generate(adapterSettings): Promise<string>;
@@ -37,24 +37,24 @@ class GeminiImagePromptGenerator extends ImagePromptGenerator {
   protected modelID: string;
 
   protected imagePromptDeclaration: FunctionDeclaration = {
-    name: 'imagePrompt',
+    name: "imagePrompt",
     parameters: {
       type: Type.OBJECT,
-      description: 'Specifies a text prompt to an image generation model.',
+      description: "Specifies a text prompt to an image generation model.",
       properties: {
         prompt: {
           type: Type.STRING,
-          description: 'The text prompt.',
+          description: "The text prompt.",
         },
       },
-      required: ['prompt'],
+      required: ["prompt"],
     },
   };
 
   constructor(apiKey: string, modelID: string) {
     super();
     this.baseGenerator = new TemplatedImagePromptGenerator();
-    this.client = new GoogleGenAI({apiKey});
+    this.client = new GoogleGenAI({ apiKey });
     this.modelID = modelID;
   }
 
@@ -68,10 +68,10 @@ class GeminiImagePromptGenerator extends ImagePromptGenerator {
         toolConfig: {
           functionCallingConfig: {
             mode: FunctionCallingConfigMode.ANY,
-            allowedFunctionNames: ['imagePrompt'],
+            allowedFunctionNames: ["imagePrompt"],
           },
         },
-        tools: [{functionDeclarations: [this.imagePromptDeclaration]}],
+        tools: [{ functionDeclarations: [this.imagePromptDeclaration] }],
       },
     });
     // Fallback on the base templated prompt whenever needed.
@@ -79,7 +79,7 @@ class GeminiImagePromptGenerator extends ImagePromptGenerator {
       return prompt;
     }
     const functionCall = response.functionCalls[0];
-    const finalPrompt = functionCall.args['prompt'];
+    const finalPrompt = functionCall.args["prompt"];
     if (!finalPrompt) {
       return prompt;
     }
@@ -91,7 +91,7 @@ function imagePromptGeneratorFactory() {
   if (process.env.GEMINI_API_KEY && process.env.GEMINI_TEXT_MODEL) {
     return new GeminiImagePromptGenerator(
       process.env.GEMINI_API_KEY,
-      process.env.GEMINI_TEXT_MODEL,
+      process.env.GEMINI_TEXT_MODEL
     );
   }
   return new TemplatedImagePromptGenerator();
@@ -107,37 +107,6 @@ abstract class ImageGenerator {
   abstract generateImage(itemId: string, prompt: string): Promise<string>;
 }
 
-class TogetherFluxGenerator extends ImageGenerator {
-  protected together: Together;
-  protected modelId: string;
-
-  constructor(imageSaver: ImageSaver, apiKey: string, modelId: string) {
-    super(imageSaver);
-    this.together = new Together({apiKey});
-    this.modelId = modelId;
-  }
-
-  async generateImage(itemId, prompt): Promise<string> {
-    const request = {
-      model: this.modelId,
-      prompt: prompt,
-    };
-    const response = await this.together.images.create(request);
-    const urlResponse = await axios({
-      method: 'GET',
-      url: response.data[0]?.url || '',
-      responseType: 'arraybuffer',
-    });
-    const imageBuffer = urlResponse.data;
-    const targetKey = `results/${itemId}.png`;
-    return await this.imageSaver.uploadImage(
-      imageBuffer,
-      targetKey,
-      'image/png',
-    );
-  }
-}
-
 class ImagenGenerator extends ImageGenerator {
   protected modelID: string;
   protected client: GoogleGenAI;
@@ -146,7 +115,7 @@ class ImagenGenerator extends ImageGenerator {
     super(imageSaver);
 
     this.modelID = model;
-    this.client = new GoogleGenAI({apiKey});
+    this.client = new GoogleGenAI({ apiKey });
   }
 
   async generateImage(itemId, prompt): Promise<string> {
@@ -162,31 +131,91 @@ class ImagenGenerator extends ImageGenerator {
     }
     const imageBuffer = Buffer.from(
       response.generatedImages[0].image.imageBytes,
-      'base64',
+      "base64"
     );
     // Save the image to AWS S3
     const targetKey = `results/${itemId}.png`;
     return await this.imageSaver.uploadImage(
       imageBuffer,
       targetKey,
-      'image/png',
+      "image/png"
     );
   }
 }
 
+class GeminiImageGenerator extends ImageGenerator {
+  protected modelID: string;
+  protected client: GoogleGenAI;
+
+  constructor(imageSaver: ImageSaver, apiKey: string, model: string) {
+    super(imageSaver);
+
+    this.modelID = model;
+    this.client = new GoogleGenAI({ apiKey });
+  }
+
+  async generateImage(itemId, prompt): Promise<string> {
+    const contents = [
+      {
+        role: "user",
+        parts: [
+          {
+            text: prompt,
+          },
+        ],
+      },
+    ];
+    const response = await this.client.models.generateContentStream({
+      model: this.modelID,
+      contents,
+      config: {
+        numberOfImages: 1,
+        responseModalities: ["IMAGE", "TEXT"],
+        imageConfig: {
+          imageSize: "1K",
+        },
+      },
+    });
+    let fileIndex = 0;
+    for await (const chunk of response) {
+      if (
+        !chunk.candidates ||
+        !chunk.candidates[0].content ||
+        !chunk.candidates[0].content.parts
+      ) {
+        continue;
+      }
+      if (chunk.candidates?.[0]?.content?.parts?.[0]?.inlineData) {
+        const inlineData = chunk.candidates[0].content.parts[0].inlineData;
+        const imageBuffer = Buffer.from(inlineData.data || "", "base64");
+        const targetKey = `results/${itemId}.png`;
+        return await this.imageSaver.uploadImage(
+          // Save the image to AWS S3
+          imageBuffer,
+          targetKey,
+          "image/png"
+        );
+      }
+      console.log(chunk.text);
+    }
+    throw new Error("No image generated");
+  }
+}
+
 function imageGeneratorFactory() {
+  // Prefer the gemini image models if both env variables are provided.
+  if (process.env.GEMINI_API_KEY && process.env.GEMINI_IMAGE_MODEL) {
+    return new GeminiImageGenerator(
+      imageSaver,
+      process.env.GEMINI_API_KEY,
+      process.env.GEMINI_IMAGE_MODEL
+    );
+  }
   if (process.env.GEMINI_API_KEY && process.env.IMAGEN_MODEL) {
     return new ImagenGenerator(
       imageSaver,
       process.env.GEMINI_API_KEY,
-      process.env.IMAGEN_MODEL,
-    );
-  }
-  if (process.env.TOGETHER_API_KEY && process.env.TOGETHER_API_MODEL) {
-    return new TogetherFluxGenerator(
-      imageSaver,
-      process.env.TOGETHER_API_KEY,
-      process.env.TOGETHER_API_MODEL,
+      process.env.IMAGEN_MODEL
     );
   }
   return undefined;
@@ -196,39 +225,41 @@ class ItemGenerator {
   protected imagePromptGenerator: ImagePromptGenerator;
   protected imageGenerator: ImageGenerator;
 
-  protected itemIdGenerator = new ShortUniqueId({length: 6});
+  protected itemIdGenerator = new ShortUniqueId({ length: 6 });
   protected itemCodeGenerator = new ShortUniqueId({
-    dictionary: 'number',
+    dictionary: "number",
     length: 6,
   });
   protected engine = new Liquid();
 
   constructor(
     imagePromptGenerator: ImagePromptGenerator,
-    imageGenerator: ImageGenerator,
+    imageGenerator: ImageGenerator
   ) {
     this.imagePromptGenerator = imagePromptGenerator;
     this.imageGenerator = imageGenerator;
   }
 
   async generateBookingItem(bookingId: number) {
-    const booking = await prisma.booking.findUnique({where: {id: bookingId}});
+    const booking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+    });
     if (!booking) {
-      console.error('No booking found');
+      console.error("No booking found");
       return undefined;
     }
     if (booking.userItemId) {
-      console.error('Already has item');
+      console.error("Already has item");
       return undefined;
     }
 
     try {
       const userItemId = await this.generateItem(
         booking.userId,
-        booking.startDate,
+        booking.startDate
       );
       return await prisma.booking.update({
-        where: {id: bookingId},
+        where: { id: bookingId },
         data: {
           userItemId,
         },
@@ -248,8 +279,8 @@ class ItemGenerator {
     // 2) The negative prompt (part of 1 sorta).
     // 3) The current adapter name.
     const adapters = await prisma.imageAdapterSetting.findMany({
-      where: {startDate: {lt: startDate}},
-      orderBy: [{startDate: 'desc'}],
+      where: { startDate: { lt: startDate } },
+      orderBy: [{ startDate: "desc" }],
       take: 1,
     });
     if (!adapters || adapters.length === 0) {
@@ -263,7 +294,7 @@ class ItemGenerator {
         id: itemId,
         image,
         claimCode,
-        claimStatus: 'claimed',
+        claimStatus: "claimed",
         claimVisible: true,
         ownerId: userId,
       },
@@ -276,7 +307,7 @@ export const imageGenerator = imageGeneratorFactory();
 export const imagePromptGenerator = imagePromptGeneratorFactory();
 export const itemGenerator = new ItemGenerator(
   imagePromptGenerator,
-  imageGenerator,
+  imageGenerator
 );
 
-export {TogetherFluxGenerator, ImagenGenerator};
+export { ImagenGenerator };
