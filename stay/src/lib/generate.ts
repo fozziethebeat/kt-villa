@@ -169,14 +169,12 @@ class GeminiImageGenerator extends ImageGenerator {
       model: this.modelID,
       contents,
       config: {
-        numberOfImages: 1,
         responseModalities: ["IMAGE", "TEXT"],
         imageConfig: {
           imageSize: "1K",
         },
       },
     });
-    let fileIndex = 0;
     for await (const chunk of response) {
       if (
         !chunk.candidates ||
