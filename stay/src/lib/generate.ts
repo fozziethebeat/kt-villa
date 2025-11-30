@@ -65,6 +65,9 @@ class GeminiImagePromptGenerator extends ImagePromptGenerator {
       contents,
       model: this.modelID,
       config: {
+        thinkingConfig: {
+          thinkingBudget: 0,
+        },
         toolConfig: {
           functionCallingConfig: {
             mode: FunctionCallingConfigMode.ANY,
@@ -171,6 +174,7 @@ class GeminiImageGenerator extends ImageGenerator {
       config: {
         responseModalities: ["IMAGE", "TEXT"],
         imageConfig: {
+          aspectRatio: "1:1",
           imageSize: "1K",
         },
       },
