@@ -1,6 +1,6 @@
-import {GoogleGenAI} from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 
-import {imageSaver, ImageSaver} from '@/lib/storage';
+import { imageSaver, ImageSaver } from '@/lib/storage';
 
 abstract class ImageGenerationService {
   saver: ImageSaver;
@@ -28,7 +28,7 @@ class GeminiImageGenerator extends ImageGenerationService {
     super(saver);
 
     this.modelID = model;
-    this.client = new GoogleGenAI({apiKey});
+    this.client = new GoogleGenAI({ apiKey });
   }
 
   async generateImage(itemId: string, prompt: string): Promise<string> {
@@ -39,11 +39,11 @@ class GeminiImageGenerator extends ImageGenerationService {
         responseModalities: ['Text', 'Image'],
       },
     });
-    const candidates = response.candidates;
-    for (let c = 0; c < candidates.length; c++) {
-      for (let p = 0; p < candidates[c].content.parts.length; p++) {
-        const part = candidates[c].content.parts[p];
-        if (part.inlineData) {
+    const candidates = response.candidates || [];
+    for (const candidate of candidates) {
+      const parts = candidate.content?.parts || [];
+      for (const part of parts) {
+        if (part.inlineData?.data) {
           try {
             const imageBuffer = Buffer.from(part.inlineData.data, 'base64');
             const targetKey = `results/${itemId}.png`;
@@ -71,7 +71,7 @@ class ImagenGenerator extends ImageGenerationService {
     super(saver);
 
     this.modelID = model;
-    this.client = new GoogleGenAI({apiKey});
+    this.client = new GoogleGenAI({ apiKey });
   }
 
   async generateImage(itemId: string, prompt: string): Promise<string> {
@@ -82,13 +82,18 @@ class ImagenGenerator extends ImageGenerationService {
         numberOfImages: 1,
       },
     });
-    if (!response || response.generatedImages.length != 1) {
+    if (
+      !response ||
+      !response.generatedImages ||
+      response.generatedImages.length != 1
+    ) {
       throw new Error("Gemini Don't work");
     }
-    const imageBuffer = Buffer.from(
-      response.generatedImages[0].image.imageBytes,
-      'base64',
-    );
+    const imageBytes = response.generatedImages[0].image?.imageBytes;
+    if (!imageBytes) {
+      throw new Error("Gemini Don't work");
+    }
+    const imageBuffer = Buffer.from(imageBytes, 'base64');
     const targetKey = `results/${itemId}.png`;
     return await this.saver.uploadImage(imageBuffer, targetKey, 'image/png');
   }
@@ -99,7 +104,7 @@ class ImagenGenerator extends ImageGenerationService {
     prompt: string,
   ): Promise<string> {
     const contents = [
-      {text: prompt},
+      { text: prompt },
       {
         inlineData: {
           mimeType: 'image/png',
@@ -114,16 +119,21 @@ class ImagenGenerator extends ImageGenerationService {
         responseModalities: ['Text', 'Image'],
       },
     });
-    for (const part of response.candidates[0].content.parts) {
+    const candidates = response.candidates || [];
+    if (candidates.length === 0 || !candidates[0].content?.parts) {
+      throw new Error("Gemini Don't work");
+    }
+    for (const part of candidates[0].content.parts) {
       if (part.text) {
         console.log(part.text);
-      } else if (part.inlineData) {
+      } else if (part.inlineData?.data) {
         const imageData = part.inlineData.data;
         const buffer = Buffer.from(imageData, 'base64');
         const targetKey = `results/${itemId}.png`;
         return await this.saver.uploadImage(buffer, targetKey, 'image/png');
       }
     }
+    throw new Error("Gemini Don't work");
   }
 }
 

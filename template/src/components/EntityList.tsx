@@ -1,16 +1,23 @@
 'use client';
 
-import {gql, useQuery, useSuspenseQuery} from '@apollo/client';
+import { gql, TypedDocumentNode } from '@apollo/client';
+import { useSuspenseQuery } from "@apollo/client/react";
 
-interface Entities {
-  entities: {
-    id: string;
-    name: string;
-    content: string;
-  }[];
+interface Entity {
+  id: string;
+  name: string;
+  content: string;
 }
 
-const QUERY: TypedDocumentNode<Entities> = gql`
+interface EntitiesData {
+  entities: Entity[];
+}
+
+interface AdminEntitiesData {
+  adminEntities: Entity[];
+}
+
+const QUERY: TypedDocumentNode<EntitiesData> = gql`
   query Entities {
     entities {
       id
@@ -20,7 +27,7 @@ const QUERY: TypedDocumentNode<Entities> = gql`
   }
 `;
 
-const ADMIN_QUERY: TypedDocumentNode<Entities> = gql`
+const ADMIN_QUERY: TypedDocumentNode<AdminEntitiesData> = gql`
   query AdminEntities {
     adminEntities {
       id
@@ -31,13 +38,11 @@ const ADMIN_QUERY: TypedDocumentNode<Entities> = gql`
 `;
 
 export function EntityList() {
-  const {data} = useSuspenseQuery(QUERY);
-  const {data: adminData} = useSuspenseQuery(ADMIN_QUERY, {
+  const { data } = useSuspenseQuery(QUERY);
+  const { data: adminData } = useSuspenseQuery(ADMIN_QUERY, {
     // We do this because the server components can pre-cache results and we
     // want to avoid that, we want to force credentials to be included.
     fetchPolicy: 'network-only',
-    // Following queries can re-use the cache.
-    nextFetchPolicy: 'cache-first',
   });
   return (
     <div>

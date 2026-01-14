@@ -1,13 +1,13 @@
-import {redirect} from 'next/navigation';
+import { redirect } from 'next/navigation';
 
-import {auth} from '@/lib/auth';
+import { auth } from '@/lib/auth';
 
 export async function hasRole(targetRoles: string[]) {
   const session = await auth();
   return hasRoleInSession(session, targetRoles);
 }
 
-export function hasRoleInSession(session, targetRoles: string[]) {
+export function hasRoleInSession(session: any, targetRoles: string[]) {
   if (targetRoles.length === 0) {
     return true;
   }

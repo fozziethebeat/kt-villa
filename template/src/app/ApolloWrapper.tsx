@@ -1,6 +1,6 @@
 'use client';
 
-import {HttpLink} from '@apollo/client';
+import { HttpLink } from '@apollo/client';
 import {
   ApolloNextAppProvider,
   ApolloClient,
@@ -10,7 +10,7 @@ import {
 function makeClient() {
   const httpLink = new HttpLink({
     uri: process.env.NEXT_PUBLIC_GRAPHQL_CLIENT_URL,
-    fetchOptions: {cache: 'no-store'},
+    fetchOptions: { cache: 'no-store' },
   });
 
   return new ApolloClient({
@@ -20,7 +20,7 @@ function makeClient() {
 }
 
 // you need to create a component to wrap your app in
-export function ApolloWrapper({children}: React.PropsWithChildren) {
+export function ApolloWrapper({ children }: React.PropsWithChildren) {
   return (
     <ApolloNextAppProvider makeClient={makeClient}>
       {children}

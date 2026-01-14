@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import {redirect} from 'next/navigation';
-import {AuthError} from 'next-auth';
+import { redirect } from 'next/navigation';
+import { AuthError } from 'next-auth';
 
-import {signIn} from '@/lib/auth';
+import { signIn } from '@/lib/auth';
 
 export default function Page() {
-  const handleSubmit = async formData => {
+  const handleSubmit = async (formData: FormData) => {
     'use server';
     try {
       await signIn('nodemailer', {

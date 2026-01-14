@@ -1,23 +1,29 @@
-import {gql} from '@apollo/client';
+import { gql, TypedDocumentNode } from '@apollo/client';
 import Image from 'next/image';
 
-import {EntityList} from '@/components/EntityList';
-import {Header} from '@/components/Header';
-import {Button} from '@/components/ui/button';
+import { EntityList } from '@/components/EntityList';
+import { Header } from '@/components/Header';
+import { Button } from '@/components/ui/button';
 
-import {query} from '@/graphql/ApolloClient';
-import {auth} from '@/lib/auth';
+import { query } from '@/graphql/ApolloClient';
+import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
-interface Entities {
-  entities: {
-    id: string;
-    name: string;
-    content: string;
-  }[];
+interface Entity {
+  id: string;
+  name: string;
+  content: string;
 }
 
-const QUERY: TypedDocumentNode<Entities> = gql`
+interface EntitiesData {
+  entities: Entity[];
+}
+
+interface AdminEntitiesData {
+  adminEntities: Entity[];
+}
+
+const QUERY: TypedDocumentNode<EntitiesData> = gql`
   query Entities {
     entities {
       id
@@ -27,7 +33,7 @@ const QUERY: TypedDocumentNode<Entities> = gql`
   }
 `;
 
-const ADMIN_QUERY: TypedDocumentNode<Entities> = gql`
+const ADMIN_QUERY: TypedDocumentNode<AdminEntitiesData> = gql`
   query AdminEntities {
     adminEntities {
       id
@@ -39,8 +45,8 @@ const ADMIN_QUERY: TypedDocumentNode<Entities> = gql`
 
 export default async function Home() {
   const session = await auth();
-  const {data} = await query({query: QUERY});
-  const {data: adminData} = await query({query: ADMIN_QUERY});
+  const { data } = await query({ query: QUERY });
+  const { data: adminData } = await query({ query: ADMIN_QUERY });
   return (
     <>
       <Header />
@@ -59,7 +65,7 @@ export default async function Home() {
           <div>{JSON.stringify(session)}</div>
           <div>
             <div>Server Fetch</div>
-            {data.entities.map(entity => (
+            {data?.entities.map(entity => (
               <li key={entity.id} className="mb-2">
                 {entity.name}
               </li>

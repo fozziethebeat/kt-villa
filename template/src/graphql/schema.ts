@@ -1,6 +1,6 @@
-import {DateTimeResolver, GraphQLJSON} from 'graphql-scalars';
-import {gql} from 'graphql-tag';
-import {Liquid} from 'liquidjs';
+import { DateTimeResolver, GraphQLJSON } from 'graphql-scalars';
+import { gql } from 'graphql-tag';
+import { Liquid } from 'liquidjs';
 
 import prisma from '@/lib/prisma';
 
@@ -28,7 +28,7 @@ export const resolvers = {
       return prisma.entity.findMany();
     },
 
-    adminEntities: async (a, b, {user}) => {
+    adminEntities: async (_parent: any, _args: any, { user }: any) => {
       if (user?.roles !== 'admin') {
         return [];
       }

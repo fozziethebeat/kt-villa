@@ -1,16 +1,16 @@
-import {PrismaClient, Prisma} from '../src/lib/generated/prisma';
+import { PrismaClient, Prisma } from '../src/lib/generated/prisma';
 
 const prisma = new PrismaClient();
 
 const users: Prisma.UserCreateInput[] = [
   {
     name: 'Admin McAdminFace',
-    email: process.env.ADMIN_EMAIL,
+    email: process.env.ADMIN_EMAIL || '',
     roles: 'admin',
   },
   {
     name: 'Testy MctestFace',
-    email: process.env.TEST_USER_EMAIL,
+    email: process.env.TEST_USER_EMAIL || '',
   },
 ];
 
@@ -36,15 +36,15 @@ const magicCodes: Prisma.MagicCodeCreateInput[] = [
 
 export async function main() {
   for (const data of users) {
-    await prisma.user.create({data});
+    await prisma.user.create({ data });
   }
 
   for (const data of entityData) {
-    await prisma.entity.create({data});
+    await prisma.entity.create({ data });
   }
 
   for (const data of magicCodes) {
-    await prisma.magicCode.create({data});
+    await prisma.magicCode.create({ data });
   }
 }
 

@@ -1,12 +1,12 @@
-import {AuthError} from 'next-auth';
+import { AuthError } from 'next-auth';
 
-import {signIn} from '@/lib/auth';
+import { signIn } from '@/lib/auth';
 
 export function SignupForm(props: {
-  searchParams?: {callbackUrl: string | undefined};
+  searchParams?: { callbackUrl: string | undefined };
   magicCode?: string;
 }) {
-  const handleSubmit = async formData => {
+  const handleSubmit = async (formData: FormData) => {
     'use server';
     try {
       await signIn('nodemailer', {
