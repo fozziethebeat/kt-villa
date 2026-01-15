@@ -1,8 +1,8 @@
-import {gql} from '@apollo/client';
-import {getClient} from '@/graphql/ApolloClient';
+import { gql } from '@apollo/client';
+import { getClient } from '@/graphql/ApolloClient';
 
-import {checkAccess} from '@/lib/auth-check';
-import {EditUserBookingForm} from '@/components/EditUserBookingForm';
+import { checkAccess } from '@/lib/auth-check';
+import { EditUserBookingForm } from '@/components/EditUserBookingForm';
 
 const QUERY = gql`
   query BookingItemQuery($bookingCode: String!) {
@@ -32,14 +32,14 @@ const QUERY = gql`
   }
 `;
 
-export default async function EditBookingPage({params}) {
+export default async function EditBookingPage({ params }) {
   await checkAccess('', '/');
   try {
-    const {data, error} = await getClient().query({
+    const { data, error } = await getClient().query({
       query: QUERY,
-      variables: {bookingCode: params.id},
+      variables: { bookingCode: params.id },
     });
-    return <EditUserBookingForm userBooking={data.userBooking} />;
+    return <EditUserBookingForm userBooking={(data as any).userBooking} />;
   } catch (e) {
     console.log(e);
     return <div>whoops</div>;

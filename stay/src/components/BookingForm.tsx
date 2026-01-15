@@ -1,23 +1,25 @@
 'use client';
 
 import Link from 'next/link';
-import {useRouter} from 'next/navigation';
-import {useForm} from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 import {
   gql,
-  useSuspenseQuery,
-  useMutation,
   TypedDocumentNode,
 } from '@apollo/client';
-import {useState} from 'react';
-import {CalendarIcon} from '@radix-ui/react-icons';
-import {addDays, format} from 'date-fns';
-import {DateRange} from 'react-day-picker';
+import {
+  useSuspenseQuery,
+  useMutation,
+} from '@apollo/client/react';
+import { useState } from 'react';
+import { CalendarIcon } from '@radix-ui/react-icons';
+import { addDays, format } from 'date-fns';
+import { DateRange } from 'react-day-picker';
 
-import {cn} from '@/lib/utils';
-import {Button} from '@/components/ui/button';
-import {Calendar} from '@/components/ui/calendar';
-import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface Data {
   futureBookings: {
@@ -53,15 +55,15 @@ export function BookingForm() {
   const [isValidDates, setIsValidDates] = useState(false);
   const router = useRouter();
   const form = useForm();
-  const {data} = useSuspenseQuery(QUERY);
-  const excludedIntervals = data.futureBookings.map(({startDate, endDate}) => ({
+  const { data } = useSuspenseQuery(QUERY);
+  const excludedIntervals = data.futureBookings.map(({ startDate, endDate }) => ({
     start: new Date(startDate),
     end: new Date(endDate),
   }));
-  const [createBooking, {loading, error}] = useMutation(
+  const [createBooking, { loading, error }] = useMutation(
     CREATE_BOOKING_MUTATION,
     {
-      onCompleted: data => {
+      onCompleted: (data: any) => {
         router.push(`/booking/${data.createBooking.bookingCode}`);
       },
     },
@@ -81,7 +83,7 @@ export function BookingForm() {
 
   const validDateMatcher = candidate => {
     return excludedIntervals.some(
-      ({start, end}) => candidate >= start && candidate <= end,
+      ({ start, end }) => candidate >= start && candidate <= end,
     );
   };
   const isValid = (start, end) => {
@@ -166,9 +168,8 @@ export function BookingForm() {
                     timeZone="+09:00"
                     footer={
                       <span
-                        className={`indicator-bottom badge indicator-item ${
-                          isValidDates ? 'badge-primary' : 'badge-accent'
-                        }`}>
+                        className={`indicator-bottom badge indicator-item ${isValidDates ? 'badge-primary' : 'badge-accent'
+                          }`}>
                         {isValidDates ? 'Valid' : 'Invalid'}
                       </span>
                     }
@@ -193,7 +194,7 @@ export function BookingForm() {
             defaultValue={4}
             className="range"
             step="1"
-            {...form.register('maxGuests', {valueAsNumber: true})}
+            {...form.register('maxGuests', { valueAsNumber: true })}
           />
           <div className="flex w-full justify-between px-2 text-xs">
             <span>1</span>
@@ -216,7 +217,7 @@ export function BookingForm() {
             defaultValue={1}
             className="range"
             step="1"
-            {...form.register('numGuests', {valueAsNumber: true})}
+            {...form.register('numGuests', { valueAsNumber: true })}
           />
           <div className="flex w-full justify-between px-2 text-xs">
             <span>1</span>

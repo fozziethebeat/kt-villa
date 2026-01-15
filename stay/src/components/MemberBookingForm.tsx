@@ -1,8 +1,9 @@
 'use client';
 
-import {useRouter} from 'next/navigation';
-import {useForm} from 'react-hook-form';
-import {gql, useSuspenseQuery, useMutation} from '@apollo/client';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { gql } from '@apollo/client';
+import { useSuspenseQuery, useMutation } from '@apollo/client/react';
 
 const MUTATION = gql`
   mutation UpdateMemberBookingStatus($id: Int!, $status: String!) {
@@ -17,14 +18,14 @@ type MemberBookingInput = {
   status: string;
 };
 
-export function MemberBookingForm({memberBooking, booking}) {
+export function MemberBookingForm({ memberBooking, booking }) {
   const router = useRouter();
-  const {handleSubmit, register} = useForm<MemberBookingInput>({
+  const { handleSubmit, register } = useForm<MemberBookingInput>({
     defaultValues: {
       status: memberBooking.status,
     },
   });
-  const [updateMemberBookingStatus, {loading, error}] = useMutation(MUTATION, {
+  const [updateMemberBookingStatus, { loading, error }] = useMutation(MUTATION, {
     onCompleted: () => {
       router.refresh();
     },

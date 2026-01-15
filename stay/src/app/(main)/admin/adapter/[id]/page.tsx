@@ -1,7 +1,7 @@
-import {gql} from '@apollo/client';
-import {getClient} from '@/graphql/ApolloClient';
+import { gql } from '@apollo/client';
+import { getClient } from '@/graphql/ApolloClient';
 
-import {checkAccess} from '@/lib/auth-check';
+import { checkAccess } from '@/lib/auth-check';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +11,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 
-import {EditAdapterForm} from '@/components/EditAdapterForm';
+import { EditAdapterForm } from '@/components/EditAdapterForm';
 
 const QUERY = gql`
   query ImageAdapterSetting($id: Int!) {
@@ -27,15 +27,15 @@ const QUERY = gql`
   }
 `;
 
-export default async function EditAdapterPage({params}) {
+export default async function EditAdapterPage({ params }) {
   await checkAccess('admin', '/');
-  const {id} = await params;
+  const { id } = await params;
   try {
-    const {data, error} = await getClient().query({
+    const { data, error } = await getClient().query({
       query: QUERY,
-      variables: {id: parseInt(id)},
+      variables: { id: parseInt(id) },
     });
-    const imageAdapter = data.imageAdapterSetting;
+    const imageAdapter = (data as any).imageAdapterSetting;
     return (
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-4">
         <Breadcrumb>

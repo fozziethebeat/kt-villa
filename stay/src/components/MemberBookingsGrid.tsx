@@ -27,7 +27,7 @@ export async function MemberBookingsGrid() {
     <div>
       <div className="divider">Member Bookings</div>
       <div className="flex flex-wrap justify-center gap-2">
-        {data?.memberBookings?.map((booking) => (
+        {(data as any)?.memberBookings?.map((booking) => (
           <MemberBookingCard key={booking.id} memberBooking={booking} />
         ))}
       </div>

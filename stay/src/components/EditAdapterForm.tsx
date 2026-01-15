@@ -1,11 +1,12 @@
 'use client';
 
-import {useRouter} from 'next/navigation';
-import {useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {gql, useMutation, TypedDocumentNode} from '@apollo/client';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { gql, TypedDocumentNode } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 
-import {Button} from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -14,10 +15,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {Input} from '@/components/ui/input';
-import {Label} from '@/components/ui/label';
-import {Slider} from '@/components/ui/slider';
-import {Textarea} from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import { Textarea } from '@/components/ui/textarea';
 
 const TEST_MUTATION: TypedDocumentNode<any, any> = gql`
   mutation TestImageAdapter($input: ImageAdapterInput!) {
@@ -46,22 +47,22 @@ interface EditAdapterFormProps {
   imageAdapter: any;
 }
 
-export function EditAdapterForm({imageAdapter}: EditAdapterFormProps) {
+export function EditAdapterForm({ imageAdapter }: EditAdapterFormProps) {
   const router = useRouter();
   const [requestId, setRequestId] = useState(new Date());
-  const {handleSubmit, register, getValues} = useForm<EditAdapterInputs>({
+  const { handleSubmit, register, getValues } = useForm<EditAdapterInputs>({
     defaultValues: {
       ...imageAdapter,
       variants: imageAdapter.variants.join(','),
     },
   });
-  const [updateImageAdapter, {loading, error}] = useMutation(UPDATE_MUTATION, {
+  const [updateImageAdapter, { loading, error }] = useMutation(UPDATE_MUTATION, {
     onCompleted: () => {
       router.push(`/admin/adapter/${imageAdapter.id}`);
     },
   });
 
-  const [testImageAdapter, {data: testImageData, loading: testImageLoading}] =
+  const [testImageAdapter, { data: testImageData, loading: testImageLoading }] =
     useMutation(TEST_MUTATION);
 
   const onSubmit = data => {

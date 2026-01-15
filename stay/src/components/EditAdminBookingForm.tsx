@@ -1,17 +1,18 @@
 'use client';
 
-import {CalendarIcon} from '@radix-ui/react-icons';
-import {useRouter} from 'next/navigation';
+import { CalendarIcon } from '@radix-ui/react-icons';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import {useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {format} from 'date-fns';
-import {gql, useMutation} from '@apollo/client';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { format } from 'date-fns';
+import { gql } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
 
-import {cn} from '@/lib/utils';
-import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
-import {Button} from '@/components/ui/button';
-import {Calendar} from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import {
   Card,
   CardContent,
@@ -36,9 +37,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {Input} from '@/components/ui/input';
-import {Label} from '@/components/ui/label';
-import {Slider} from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 
 const MUTATION = gql`
   mutation UpdateBooking($id: Int!, $input: UpdateBookingInput!) {
@@ -59,12 +60,12 @@ type EditAdminBookingInput = {
   userId: string;
 };
 
-export function EditAdminBookingForm({booking}) {
+export function EditAdminBookingForm({ booking }) {
   const router = useRouter();
   const form = useForm<EditAdminBookingInput>({
     defaultValues: booking,
   });
-  const [updateBooking, {loading}] = useMutation(MUTATION, {
+  const [updateBooking, { loading }] = useMutation(MUTATION, {
     onCompleted: () => {
       router.push(`/admin/booking/${booking.id}`);
     },
@@ -124,7 +125,7 @@ export function EditAdminBookingForm({booking}) {
                   <FormField
                     control={form.control}
                     name="startDate"
-                    render={({field}) => (
+                    render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Start Date</FormLabel>
                         <Popover>
@@ -162,7 +163,7 @@ export function EditAdminBookingForm({booking}) {
                   <FormField
                     control={form.control}
                     name="endDate"
-                    render={({field}) => (
+                    render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>End Date</FormLabel>
                         <Popover>
@@ -250,7 +251,7 @@ export function EditAdminBookingForm({booking}) {
                   <FormField
                     control={form.control}
                     name="status"
-                    render={({field}) => (
+                    render={({ field }) => (
                       <FormItem>
                         <div className="grid gap-3">
                           <Label htmlFor="status">Status</Label>

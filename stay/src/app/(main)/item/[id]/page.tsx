@@ -21,7 +21,7 @@ export default async function ItemPage({ params }) {
       query: QUERY,
       variables: { id },
     });
-    const bookingItem = data.bookingItem;
+    const bookingItem = (data as any).bookingItem;
     return (
       <div className="min-h-screen w-full bg-neutral-200">
         <div className="hero-content flex-col items-start lg:flex-row">

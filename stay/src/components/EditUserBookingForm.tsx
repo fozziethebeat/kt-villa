@@ -1,8 +1,9 @@
 'use client';
 
-import {gql, useMutation} from '@apollo/client';
-import {useRouter} from 'next/navigation';
-import {useForm} from 'react-hook-form';
+import { gql } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 
 const MUTATION = gql`
   mutation UpdateBooking($id: Int!, $input: UpdateBookingInput!) {
@@ -30,15 +31,15 @@ interface EditUserBookingInput {
   numGuests: number;
 }
 
-export function EditUserBookingForm({userBooking}) {
+export function EditUserBookingForm({ userBooking }) {
   const router = useRouter();
-  const {handleSubmit, register} = useForm<EditUserBookingInput>({
+  const { handleSubmit, register } = useForm<EditUserBookingInput>({
     defaultValues: {
       maxGuests: userBooking.maxGuests,
       numGuests: userBooking.numGuests,
     },
   });
-  const [updateBooking, {loading, error}] = useMutation(MUTATION, {
+  const [updateBooking, { loading, error }] = useMutation(MUTATION, {
     onCompleted: () => {
       router.push(`/booking/${userBooking.bookingCode}`);
     },
@@ -98,7 +99,7 @@ export function EditUserBookingForm({userBooking}) {
                 min="1"
                 max="4"
                 step="1"
-                {...register('maxGuests', {valueAsNumber: true})}
+                {...register('maxGuests', { valueAsNumber: true })}
                 className="range"
               />
               <div className="flex w-full justify-between px-2 text-xs">
@@ -120,7 +121,7 @@ export function EditUserBookingForm({userBooking}) {
                 min="1"
                 max="5"
                 step="1"
-                {...register('numGuests', {valueAsNumber: true})}
+                {...register('numGuests', { valueAsNumber: true })}
                 className="range"
               />
               <div className="flex w-full justify-between px-2 text-xs">

@@ -1,21 +1,21 @@
-import type {UnsafeUnwrappedCookies} from 'next/headers';
-import {cookies} from 'next/headers';
-import {createHttpLink, from} from '@apollo/client';
-import {setContext} from '@apollo/client/link/context';
-import {onError} from '@apollo/client/link/error';
+
+import { cookies } from 'next/headers';
+import { createHttpLink, from } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { onError } from '@apollo/client/link/error';
 import {
   registerApolloClient,
   ApolloClient,
   InMemoryCache,
-} from '@apollo/experimental-nextjs-app-support';
+} from '@apollo/client-integration-nextjs';
 
 const httpLink = createHttpLink({
   uri: process.env.GRAPHQL_URL,
   credentials: 'include',
-  fetchOptions: {cache: 'no-store'},
+  fetchOptions: { cache: 'no-store' },
 });
 
-const errorLink = onError(({graphQLErrors, networkError}) => {
+const errorLink = onError(({ graphQLErrors, networkError }: any) => {
   if (graphQLErrors) {
     console.log(graphQLErrors);
   }
@@ -26,7 +26,7 @@ const errorLink = onError(({graphQLErrors, networkError}) => {
   }
 });
 
-const authLink = setContext(async (_, {headers}) => {
+const authLink = setContext(async (_, { headers }) => {
   const cookieStore = await cookies();
   const token =
     (await cookieStore.get('__Secure-authjs.session-token')) ??
@@ -41,7 +41,7 @@ const authLink = setContext(async (_, {headers}) => {
 
 const appLink = from([errorLink, httpLink]);
 
-export const {getClient, query, PreloadQuery} = registerApolloClient(() => {
+export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
   return new ApolloClient({
     cache: new InMemoryCache(),
     link: authLink.concat(appLink),

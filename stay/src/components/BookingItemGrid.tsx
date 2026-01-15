@@ -21,7 +21,7 @@ export async function BookingItemGrid() {
     const { data, error } = await getClient().query({ query: QUERY });
     return (
       <div className="flex flex-wrap justify-center gap-2">
-        {data?.bookingItems?.map((item) => (
+        {(data as any)?.bookingItems?.map((item) => (
           <BookingItemCard key={item.id} item={item} />
         ))}
       </div>

@@ -1,11 +1,11 @@
-import {gql} from '@apollo/client';
+import { gql } from '@apollo/client';
 import Link from 'next/link';
-import {FaCat, FaDog} from 'react-icons/fa';
+import { FaCat, FaDog } from 'react-icons/fa';
 
-import {checkAccess} from '@/lib/auth-check';
-import {getClient} from '@/graphql/ApolloClient';
-import {MemberBookingForm} from '@/components/MemberBookingForm';
-import {MemberRegisterForm} from '@/components/MemberRegisterForm';
+import { checkAccess } from '@/lib/auth-check';
+import { getClient } from '@/graphql/ApolloClient';
+import { MemberBookingForm } from '@/components/MemberBookingForm';
+import { MemberRegisterForm } from '@/components/MemberRegisterForm';
 
 const QUERY = gql`
   query BookingItemQuery($bookingCode: String!) {
@@ -35,15 +35,15 @@ const QUERY = gql`
   }
 `;
 
-export default async function BookingPage({params}) {
+export default async function BookingPage({ params }) {
   await checkAccess('', '/');
-  const {id} = await params;
+  const { id } = await params;
   try {
-    const {data, error} = await getClient().query({
+    const { data, error } = await getClient().query({
       query: QUERY,
-      variables: {bookingCode: id},
+      variables: { bookingCode: id },
     });
-    const userBooking = data.userBooking;
+    const userBooking = (data as any).userBooking;
     const numToRegister = Math.max(
       0,
       userBooking.numGuests - userBooking.member.length - 1,

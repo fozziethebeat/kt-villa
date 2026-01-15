@@ -56,7 +56,7 @@ export async function AdminUsersTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.users.map((user) => (
+              {(data as any).users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>
                     <div className="font-medium">{user.id}</div>

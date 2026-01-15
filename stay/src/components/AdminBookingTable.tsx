@@ -68,7 +68,7 @@ export async function AdminBookingTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.adminBookings.map((booking) => (
+              {(data as any).adminBookings.map((booking) => (
                 <TableRow key={booking.id}>
                   <TableCell>
                     <div className="font-medium">{booking.user.name}</div>

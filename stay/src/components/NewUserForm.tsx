@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { gql, useMutation, TypedDocumentNode } from "@apollo/client";
+import { gql, TypedDocumentNode } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 
 const MUTATION = gql`
   mutation UpdateUserDetails($input: UpdateUserDetailsInput!) {

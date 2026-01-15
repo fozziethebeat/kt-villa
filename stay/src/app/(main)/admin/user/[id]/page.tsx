@@ -1,7 +1,7 @@
-import {gql} from '@apollo/client';
+import { gql } from '@apollo/client';
 
-import {getClient} from '@/graphql/ApolloClient';
-import {checkAccess} from '@/lib/auth-check';
+import { getClient } from '@/graphql/ApolloClient';
+import { checkAccess } from '@/lib/auth-check';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,7 +10,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import {EditUserForm} from '@/components/EditUserForm';
+import { EditUserForm } from '@/components/EditUserForm';
 
 const QUERY = gql`
   query User($id: String!) {
@@ -24,13 +24,13 @@ const QUERY = gql`
   }
 `;
 
-export default async function EditUserPage({params}) {
-  const {id} = await params;
+export default async function EditUserPage({ params }) {
+  const { id } = await params;
   await checkAccess('admin', '/');
   try {
-    const {data, error} = await getClient().query({
+    const { data, error } = await getClient().query({
       query: QUERY,
-      variables: {id},
+      variables: { id },
     });
     return (
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-4">
@@ -49,7 +49,7 @@ export default async function EditUserPage({params}) {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <EditUserForm user={data.user} />
+        <EditUserForm user={(data as any).user} />
       </div>
     );
   } catch (e) {

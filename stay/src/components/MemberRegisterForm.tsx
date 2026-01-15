@@ -1,8 +1,9 @@
 'use client';
 
-import {gql, useMutation} from '@apollo/client';
-import {useRouter} from 'next/navigation';
-import {useForm} from 'react-hook-form';
+import { gql } from '@apollo/client';
+import { useMutation } from '@apollo/client/react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 
 const MUTATION = gql`
   mutation addMemberBooking($id: Int!, $username: String!) {
@@ -17,9 +18,9 @@ interface MemberRegisterInput {
   username: string;
 }
 
-export function MemberRegisterForm({booking}) {
-  const {handleSubmit, register} = useForm<MemberRegisterInput>();
-  const [addMemberBooking, {loading, error}] = useMutation(MUTATION);
+export function MemberRegisterForm({ booking }) {
+  const { handleSubmit, register } = useForm<MemberRegisterInput>();
+  const [addMemberBooking, { loading, error }] = useMutation(MUTATION);
   const onSubmit = data => {
     addMemberBooking({
       variables: {

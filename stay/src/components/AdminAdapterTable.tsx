@@ -64,7 +64,7 @@ export async function AdminAdapterTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.imageAdapterSettings.map((adapter) => (
+              {(data as any).imageAdapterSettings.map((adapter) => (
                 <TableRow key={adapter.id}>
                   <TableCell>
                     <div className="font-medium">{adapter.id}</div>
