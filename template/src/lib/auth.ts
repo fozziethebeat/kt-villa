@@ -15,12 +15,16 @@ export const auth = betterAuth({
   plugins: [
     magicLink({
       sendMagicLink: async ({ email, token, url }, request) => {
+        const now = new Date();
+        const timestamp = now.toISOString();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
         // Send email using your mailer
         await mailer.sendMail({
           from: process.env.MAILER_FROM,
           to: email,
-          subject: "Sign in to app",
-          html: await render(MagicLink({ url })),
+          subject: `Sign in to KT Villa [${timeString}]`,
+          html: await render(MagicLink({ url, timestamp })),
         });
       },
       expiresIn: 60 * 60 * 24 * 7, // 7 days (example)
