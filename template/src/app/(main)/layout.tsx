@@ -1,12 +1,11 @@
-import type {Metadata} from 'next';
-import {SessionProvider} from 'next-auth/react';
-import {Geist, Geist_Mono} from 'next/font/google';
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
 
-import {ApolloWrapper} from '@/app/ApolloWrapper';
+import { ApolloWrapper } from '@/app/ApolloWrapper';
 import '@/app/globals.css';
 
-import {AppSidebar} from '@/components/AppSidebar';
-import {SidebarProvider, SidebarTrigger} from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -21,14 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SessionProvider>
-          <ApolloWrapper>
-            <SidebarProvider defaultOpen={false}>
-              <AppSidebar />
-              <main className="w-full">{children}</main>
-            </SidebarProvider>
-          </ApolloWrapper>
-        </SessionProvider>
+        <ApolloWrapper>
+          <SidebarProvider defaultOpen={false}>
+            <AppSidebar />
+            <main className="w-full">{children}</main>
+          </SidebarProvider>
+        </ApolloWrapper>
       </body>
     </html>
   );

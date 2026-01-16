@@ -1,31 +1,70 @@
-import { AuthError } from 'next-auth';
+"use client";
 
-import { signIn } from '@/lib/auth';
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 export function SignupForm(props: {
   searchParams?: { callbackUrl: string | undefined };
   magicCode?: string;
 }) {
-  const handleSubmit = async (formData: FormData) => {
-    'use server';
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email") as string;
+    const code = formData.get("magicCode") as string;
+
     try {
-      await signIn('nodemailer', {
-        redirectTo: '/',
-        email: formData.get('email'),
-        code: formData.get('code'),
+      await authClient.signIn.magicLink({
+        email,
+        callbackURL: props.searchParams?.callbackUrl || "/",
+      }, {
+        headers: {
+          "x-magic-code": code
+        },
+        onRequest: () => {
+          setLoading(true);
+        },
+        onSuccess: () => {
+          setLoading(false);
+          setSuccess(true);
+        },
+        onError: (ctx) => {
+          setLoading(false);
+          setError(ctx.error.message);
+        }
       });
-    } catch (error) {
-      if (error instanceof AuthError) {
-      }
-      throw error;
+    } catch (err: any) {
+      setLoading(false);
+      setError(err.message || "An error occurred");
     }
   };
+
+  if (success) {
+    return (
+      <div className="flex flex-row min-h-screen justify-center items-center">
+        <div className="card bg-base-100 w-96 shadow-xl">
+          <div className="card-body items-center text-center">
+            <h2 className="card-title text-success">Check your email!</h2>
+            <p>We've sent you a magic link to verify your account.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-row min-h-screen justify-center items-center">
       <div className="card bg-base-100 w-96 shadow-xl">
         <div className="card-body items-center text-center">
           <h2 className="card-title">Signup</h2>
-          <form action={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <label className="input input-bordered flex items-center gap-2">
@@ -52,13 +91,14 @@ export function SignupForm(props: {
                     id="magicCode"
                     type="text"
                     required
-                    placeholder="..."
+                    placeholder="Invitation Code"
                     defaultValue={props?.magicCode ?? ''}
                   />
                 </label>
               </div>
-              <button className="btn btn-primary" type="submit">
-                Login
+              {error && <p className="text-error text-sm">{error}</p>}
+              <button className="btn btn-primary" type="submit" disabled={loading}>
+                {loading ? "Sending..." : "Login"}
               </button>
             </div>
           </form>

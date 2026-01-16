@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Calendar, Home, Inbox } from 'lucide-react';
 import Link from 'next/link';
 
+import { headers } from 'next/headers';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,6 +24,7 @@ import {
 } from '@/components/ui/sidebar';
 import { auth } from '@/lib/auth';
 import { hasRoleInSession } from '@/lib/auth-check';
+import { SignOutButton } from '@/components/SignOutButton';
 
 const BASIC_ITEMS = [
   {
@@ -47,7 +50,9 @@ const ADMIN_ITEMS = [
 export async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
   const isAdmin = hasRoleInSession(session, ['admin']);
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -101,29 +106,40 @@ export async function AppSidebar({
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        {session?.user ? (
-          <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage
-                src={session.user.profileImageUrl || undefined}
-                alt={session.user.name || ''}
-              />
-              <AvatarFallback className="rounded-lg">
-                {session.user.name || 'U'}
-              </AvatarFallback>
-            </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-semibold">
-                {session.user.name || 'User'}
-              </span>
-              <span className="truncate text-xs">{session.user.email}</span>
-            </div>
-          </div>
-        ) : (
-          <Button asChild>
-            <Link href="/signin">Signin</Link>
-          </Button>
-        )}
+        <SidebarMenu>
+          {session?.user ? (
+            <>
+              <SidebarMenuItem>
+                <div className="flex items-center gap-2 px-2 py-1.5 text-left text-sm">
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage
+                      src={(session.user as any).profileImageUrl || undefined}
+                      alt={session.user.name || ''}
+                    />
+                    <AvatarFallback className="rounded-lg">
+                      {session.user.name || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
+                      {session.user.name || 'User'}
+                    </span>
+                    <span className="truncate text-xs">{session.user.email}</span>
+                  </div>
+                </div>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SignOutButton />
+              </SidebarMenuItem>
+            </>
+          ) : (
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/signin">Signin</Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
+        </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -1,8 +1,8 @@
-import {cookies, headers} from 'next/headers';
-import {ApolloServer} from '@apollo/server';
-import {startServerAndCreateNextHandler} from '@as-integrations/next';
+import { cookies, headers } from 'next/headers';
+import { ApolloServer } from '@apollo/server';
+import { startServerAndCreateNextHandler } from '@as-integrations/next';
 
-import {typeDefs, resolvers} from '@/graphql/schema';
+import { typeDefs, resolvers } from '@/graphql/schema';
 import prisma from '@/lib/prisma';
 
 // In seconds.
@@ -11,8 +11,8 @@ export const maxDuration = 120;
 async function getToken() {
   const cookieStore = await cookies();
   const cookieToken =
-    (await cookieStore.get('__Secure-authjs.session-token')) ??
-    (await cookieStore.get('authjs.session-token'));
+    (await cookieStore.get('better-auth.session_token')) ??
+    (await cookieStore.get('__Secure-better-auth.session_token'));
   if (cookieToken) {
     return cookieToken.value;
   }
@@ -24,18 +24,18 @@ async function getToken() {
   return authHeader.substring(7);
 }
 
-const server = new ApolloServer({typeDefs, resolvers});
+const server = new ApolloServer({ typeDefs, resolvers });
 const handler = startServerAndCreateNextHandler(server, {
   context: async req => {
     const token = await getToken();
     if (!token) {
-      return {req, user: null};
+      return { req, user: null };
     }
     // Extract the user token so we can fetch the session.  This ensures
     // graphql resolvers can validate against the current user.
     const session = await prisma.session.findUnique({
-      where: {sessionToken: token},
-      select: {user: true},
+      where: { token: token },
+      select: { user: true }, // standard user includes roles
     });
 
     return {

@@ -1,5 +1,6 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import Image from 'next/image';
+import { headers } from 'next/headers';
 
 import { EntityList } from '@/components/EntityList';
 import { Header } from '@/components/Header';
@@ -44,7 +45,9 @@ const ADMIN_QUERY: TypedDocumentNode<AdminEntitiesData> = gql`
 `;
 
 export default async function Home() {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
   const { data } = await query({ query: QUERY });
   const { data: adminData } = await query({ query: ADMIN_QUERY });
   return (
