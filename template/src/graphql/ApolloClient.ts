@@ -37,6 +37,7 @@ const authLink = setContext(async (_, { headers }) => {
     headers: {
       ...headers,
       authorization: token ? `Bearer ${token.value}` : '',
+      cookie: token ? `${token.name}=${token.value}` : '',
     },
   };
 });

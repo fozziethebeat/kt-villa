@@ -20,6 +20,19 @@ abstract class ImageGenerationService {
   }
 }
 
+const MODEL_CONFIGS: Record<string, any> = {
+  "gemini-3-pro-image-preview": {
+    responseModalities: ["IMAGE", "TEXT"],
+    imageConfig: {
+      aspectRatio: "1:1",
+      imageSize: "1K",
+    },
+  },
+  "gemini-2.5-flash-image": {
+    responseModalities: ["IMAGE", "TEXT"],
+  },
+};
+
 class GeminiImageGenerator extends ImageGenerationService {
   protected modelID: string;
   protected client: GoogleGenAI;
@@ -42,16 +55,13 @@ class GeminiImageGenerator extends ImageGenerationService {
         ],
       },
     ];
+
+    const modelConfig = MODEL_CONFIGS[this.modelID] || MODEL_CONFIGS["gemini-2.0-flash-exp"];
+
     const response = await this.client.models.generateContentStream({
       model: this.modelID,
       contents,
-      config: {
-        responseModalities: ["IMAGE", "TEXT"],
-        // imageConfig: {
-        //   aspectRatio: "1:1",
-        //   imageSize: "1K",
-        // },
-      },
+      config: modelConfig,
     });
     for await (const chunk of response) {
       if (
@@ -72,7 +82,6 @@ class GeminiImageGenerator extends ImageGenerationService {
           "image/png"
         );
       }
-      console.log(chunk.text);
     }
     throw new Error("No image generated");
   }
