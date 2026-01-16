@@ -1,6 +1,6 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI } from "@google/genai";
 
-import { imageSaver, ImageSaver } from '@/lib/storage';
+import { imageSaver, ImageSaver } from "@/lib/storage";
 
 abstract class ImageGenerationService {
   saver: ImageSaver;
@@ -14,9 +14,9 @@ abstract class ImageGenerationService {
   async editImage(
     itemId: string,
     base64Image: string,
-    prompt: string,
+    prompt: string
   ): Promise<string> {
-    throw new Error('unsupported');
+    throw new Error("unsupported");
   }
 }
 
@@ -32,34 +32,49 @@ class GeminiImageGenerator extends ImageGenerationService {
   }
 
   async generateImage(itemId: string, prompt: string): Promise<string> {
-    const response = await this.client.models.generateContent({
+    const contents = [
+      {
+        role: "user",
+        parts: [
+          {
+            text: prompt,
+          },
+        ],
+      },
+    ];
+    const response = await this.client.models.generateContentStream({
       model: this.modelID,
-      contents: prompt,
+      contents,
       config: {
-        responseModalities: ['Text', 'Image'],
+        responseModalities: ["IMAGE", "TEXT"],
+        // imageConfig: {
+        //   aspectRatio: "1:1",
+        //   imageSize: "1K",
+        // },
       },
     });
-    const candidates = response.candidates || [];
-    for (const candidate of candidates) {
-      const parts = candidate.content?.parts || [];
-      for (const part of parts) {
-        if (part.inlineData?.data) {
-          try {
-            const imageBuffer = Buffer.from(part.inlineData.data, 'base64');
-            const targetKey = `results/${itemId}.png`;
-            return await this.saver.uploadImage(
-              imageBuffer,
-              targetKey,
-              'image/png',
-            );
-          } catch (err) {
-            console.error(err);
-          }
-        }
+    for await (const chunk of response) {
+      if (
+        !chunk.candidates ||
+        !chunk.candidates[0].content ||
+        !chunk.candidates[0].content.parts
+      ) {
+        continue;
       }
+      if (chunk.candidates?.[0]?.content?.parts?.[0]?.inlineData) {
+        const inlineData = chunk.candidates[0].content.parts[0].inlineData;
+        const imageBuffer = Buffer.from(inlineData.data || "", "base64");
+        const targetKey = `results/${itemId}.png`;
+        return await this.saver.uploadImage(
+          // Save the image to AWS S3
+          imageBuffer,
+          targetKey,
+          "image/png"
+        );
+      }
+      console.log(chunk.text);
     }
-
-    throw new Error("Gemini Don't work");
+    throw new Error("No image generated");
   }
 }
 
@@ -93,21 +108,21 @@ class ImagenGenerator extends ImageGenerationService {
     if (!imageBytes) {
       throw new Error("Gemini Don't work");
     }
-    const imageBuffer = Buffer.from(imageBytes, 'base64');
+    const imageBuffer = Buffer.from(imageBytes, "base64");
     const targetKey = `results/${itemId}.png`;
-    return await this.saver.uploadImage(imageBuffer, targetKey, 'image/png');
+    return await this.saver.uploadImage(imageBuffer, targetKey, "image/png");
   }
 
   async editImage(
     itemId: string,
     base64Image: string,
-    prompt: string,
+    prompt: string
   ): Promise<string> {
     const contents = [
       { text: prompt },
       {
         inlineData: {
-          mimeType: 'image/png',
+          mimeType: "image/png",
           data: base64Image,
         },
       },
@@ -116,7 +131,7 @@ class ImagenGenerator extends ImageGenerationService {
       contents,
       model: this.modelID,
       config: {
-        responseModalities: ['Text', 'Image'],
+        responseModalities: ["Text", "Image"],
       },
     });
     const candidates = response.candidates || [];
@@ -128,9 +143,9 @@ class ImagenGenerator extends ImageGenerationService {
         console.log(part.text);
       } else if (part.inlineData?.data) {
         const imageData = part.inlineData.data;
-        const buffer = Buffer.from(imageData, 'base64');
+        const buffer = Buffer.from(imageData, "base64");
         const targetKey = `results/${itemId}.png`;
-        return await this.saver.uploadImage(buffer, targetKey, 'image/png');
+        return await this.saver.uploadImage(buffer, targetKey, "image/png");
       }
     }
     throw new Error("Gemini Don't work");
@@ -138,22 +153,34 @@ class ImagenGenerator extends ImageGenerationService {
 }
 
 function imageGeneratorFactory() {
-  if (process.env.GEMINI_API_KEY && process.env.GEMINI_MODEL) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  const geminiModel = process.env.GEMINI_MODEL || process.env.GEMINI_IMAGE_MODEL;
+  const imagenModel = process.env.IMAGEN_MODEL;
+
+  if (apiKey && geminiModel) {
     return new GeminiImageGenerator(
       imageSaver,
-      process.env.GEMINI_API_KEY,
-      process.env.GEMINI_MODEL,
+      apiKey,
+      geminiModel
     );
   }
-  if (process.env.GEMINI_API_KEY && process.env.IMAGEN_MODEL) {
+  if (apiKey && imagenModel) {
     return new ImagenGenerator(
       imageSaver,
-      process.env.GEMINI_API_KEY,
-      process.env.IMAGEN_MODEL,
+      apiKey,
+      imagenModel
     );
   }
 
-  throw new Error('No imageGenerator');
+  // Return a proxy or a dummy if in build time, or throw if used at runtime
+  return {
+    generateImage: async () => {
+      throw new Error("No imageGenerator configured. Check GEMINI_API_KEY and GEMINI_MODEL/IMAGEN_MODEL.");
+    },
+    editImage: async () => {
+      throw new Error("No imageGenerator configured.");
+    }
+  } as any as ImageGenerationService;
 }
 
 export const imageGenerator = imageGeneratorFactory();

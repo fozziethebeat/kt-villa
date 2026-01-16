@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { Calendar, Home, Inbox } from 'lucide-react';
+import { Calendar, Home, Inbox, Image } from 'lucide-react';
 import Link from 'next/link';
 
 import { headers } from 'next/headers';
@@ -44,6 +43,11 @@ const ADMIN_ITEMS = [
     title: 'Admin',
     url: '/admin',
     icon: Calendar,
+  },
+  {
+    title: 'Image Gen',
+    url: '/admin/image-gen',
+    icon: Image,
   },
 ];
 

@@ -29,8 +29,8 @@ const errorLink = onError(({ graphQLErrors, networkError }: any) => {
 const authLink = setContext(async (_, { headers }) => {
   const cookieStore = await cookies();
   const [secureToken, regularToken] = await Promise.all([
-    cookieStore.get('__Secure-authjs.session-token'),
-    cookieStore.get('authjs.session-token'),
+    cookieStore.get('__Secure-better-auth.session_token'),
+    cookieStore.get('better-auth.session_token'),
   ]);
   const token = secureToken ?? regularToken;
   return {
