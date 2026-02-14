@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  ktvilla-db:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=fakepassword
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=ktsoap
