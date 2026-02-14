@@ -17,11 +17,11 @@ export function MagicLink({ url, timestamp }: { url: string, timestamp?: string 
   return (
     <Html lang="en">
       <Head />
-      <Preview>Sign in to KT Villa</Preview>
+      <Preview>Sign in to KT Template App</Preview>
       <Body style={styles.body}>
         <Container style={styles.container}>
           <Heading style={styles.heading}>
-            Sign in to KT Villa
+            Sign in to KT Template App
           </Heading>
           <Text style={styles.text}>
             Click the button below to sign in to your account. This link will expire in 7 days.

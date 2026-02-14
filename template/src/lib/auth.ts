@@ -23,7 +23,7 @@ export const auth = betterAuth({
         await mailer.sendMail({
           from: process.env.MAILER_FROM,
           to: email,
-          subject: `Sign in to KT Villa [${timeString}]`,
+          subject: `Sign in to KT Template App [${timeString}]`,
           html: await render(MagicLink({ url, timestamp })),
         });
       },
