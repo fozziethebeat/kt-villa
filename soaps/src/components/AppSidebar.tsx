@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Image } from 'lucide-react';
+import { Calendar, Home, Inbox, Image, Book, Package } from 'lucide-react';
 import Link from 'next/link';
 
 import { headers } from 'next/headers';
@@ -32,6 +32,11 @@ const BASIC_ITEMS = [
     icon: Home,
   },
   {
+    title: 'Recipes',
+    url: '/recipes',
+    icon: Book,
+  },
+  {
     title: 'Other',
     url: '/other-page',
     icon: Inbox,
@@ -48,6 +53,16 @@ const ADMIN_ITEMS = [
     title: 'Image Gen',
     url: '/admin/image-gen',
     icon: Image,
+  },
+  {
+    title: 'Manage Recipes',
+    url: '/admin/recipes',
+    icon: Book,
+  },
+  {
+    title: 'Inventory',
+    url: '/admin/ingredients',
+    icon: Package,
   },
 ];
 

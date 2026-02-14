@@ -14,6 +14,16 @@ model Entity {
   content String
 }
 
+model Ingredient {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  quantity  Float    @default(0)
+  unit      String   @default("g")
+  notes     String?
+  updatedAt DateTime @updatedAt
+  type      RecipeType @default(STYLE)
+}
+
 model MagicCode {
   id     String @id @unique
 }
@@ -29,6 +39,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   roles         String    @default("general")
+  gifts         SoapGift[]
 
   @@map("user") // Optional: map to lowercase table name if preferred, standardizing on what was there or default. sticking to default naming.
 }
@@ -69,4 +80,56 @@ model Verification {
   expiresAt  DateTime
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
+}
+
+model Recipe {
+  id          String   @id @default(uuid())
+  name        String
+  ingredients Json
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  type        RecipeType @default(BASE)
+  baseBatches Batch[]  @relation("BaseRecipe")
+  styleBatches Batch[] @relation("StyleRecipe")
+}
+
+enum RecipeType {
+  BASE
+  STYLE
+}
+
+model Batch {
+  id        String     @id @default(uuid())
+  name      String
+  baseRecipeId  String
+  baseRecipe    Recipe     @relation("BaseRecipe", fields: [baseRecipeId], references: [id])
+  styleRecipeId String?
+  styleRecipe   Recipe?    @relation("StyleRecipe", fields: [styleRecipeId], references: [id])
+  startedAt DateTime
+  cutAt     DateTime?
+  readyAt   DateTime?
+  imageUrl  String?
+  notes     String?
+  status    BatchStatus @default(STARTED)
+  gifts     SoapGift[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+enum BatchStatus {
+  STARTED
+  CURING
+  READY
+  ARCHIVED
+}
+
+model SoapGift {
+  id        String   @id @default(uuid())
+  batchId   String
+  batch     Batch    @relation(fields: [batchId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  givenAt   DateTime @default(now())
+  note      String?
 }
