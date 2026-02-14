@@ -57,5 +57,9 @@ export const auth = betterAuth({
         return session;
       }
     }
-  }
+  },
+  trustedOrigins: [
+    "template-mobile://",
+    "exp://"
+  ]
 });
