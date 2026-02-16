@@ -2,7 +2,14 @@ import Link from 'next/link'
 import prisma from '@/lib/prisma'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Beaker, Leaf, FlaskConical } from 'lucide-react'
+import { Beaker, Leaf } from 'lucide-react'
+
+// Define the shape of an ingredient in the JSON structure
+interface RecipeIngredient {
+    name: string;
+    quantity: number;
+    unit: string;
+}
 
 export default async function RecipesPage() {
     const recipes = await prisma.recipe.findMany({
@@ -60,9 +67,6 @@ function RecipeSection({ title, icon: Icon, recipes, description }: { title: str
                             <CardHeader className="pb-3">
                                 <CardTitle className="text-lg flex justify-between items-start gap-2">
                                     <span className="truncate">{recipe.name}</span>
-                                    {/* <Badge variant="outline" className="shrink-0 text-xs font-normal text-muted-foreground">
-                                        {recipe.updatedAt.toLocaleDateString()}
-                                    </Badge> */}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
@@ -72,14 +76,14 @@ function RecipeSection({ title, icon: Icon, recipes, description }: { title: str
                                     </div>
 
                                     <div className="flex flex-wrap gap-1">
-                                        {(recipe.ingredients as any[]).slice(0, 4).map((ing, i) => (
+                                        {(recipe.ingredients as unknown as RecipeIngredient[]).slice(0, 4).map((ing, i) => (
                                             <Badge key={i} variant="secondary" className="text-xs font-normal">
                                                 {ing.name}
                                             </Badge>
                                         ))}
-                                        {(recipe.ingredients as any[]).length > 4 && (
+                                        {(recipe.ingredients as unknown as RecipeIngredient[]).length > 4 && (
                                             <Badge variant="secondary" className="text-xs font-normal">
-                                                +{(recipe.ingredients as any[]).length - 4} more
+                                                +{(recipe.ingredients as unknown as RecipeIngredient[]).length - 4} more
                                             </Badge>
                                         )}
                                     </div>

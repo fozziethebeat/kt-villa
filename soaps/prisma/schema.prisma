@@ -109,6 +109,7 @@ model Batch {
   startedAt DateTime
   cutAt     DateTime?
   readyAt   DateTime?
+  numBars   Int?
   imageUrl  String?
   notes     String?
   status    BatchStatus @default(STARTED)

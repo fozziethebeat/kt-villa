@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Image, Book, Package } from 'lucide-react';
+import { Calendar, Home, Inbox, Image, Book, Package, Layers } from 'lucide-react';
 import Link from 'next/link';
 
 import { headers } from 'next/headers';
@@ -63,6 +63,11 @@ const ADMIN_ITEMS = [
     title: 'Inventory',
     url: '/admin/ingredients',
     icon: Package,
+  },
+  {
+    title: 'Batches',
+    url: '/admin/batches',
+    icon: Layers,
   },
 ];
 
@@ -129,14 +134,14 @@ export async function AppSidebar({
           {session?.user ? (
             <>
               <SidebarMenuItem>
-                <div className="flex items-center gap-2 px-2 py-1.5 text-left text-sm">
+                <Link href="/profile" className="flex items-center gap-2 px-1 py-1.5 text-left text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground rounded-lg transition-colors group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2">
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
-                      src={(session.user as any).profileImageUrl || undefined}
+                      src={session.user.image || (session.user as any).profileImageUrl || undefined}
                       alt={session.user.name || ''}
                     />
                     <AvatarFallback className="rounded-lg">
-                      {session.user.name || 'U'}
+                      {session.user.name?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -145,7 +150,7 @@ export async function AppSidebar({
                     </span>
                     <span className="truncate text-xs">{session.user.email}</span>
                   </div>
-                </div>
+                </Link>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SignOutButton />

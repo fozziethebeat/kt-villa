@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: 'Manage your soaps with ease.',
 };
 
+import { Toaster } from "@/components/ui/toaster"
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,6 +28,7 @@ export default function RootLayout({
             <main className="w-full">{children}</main>
           </SidebarProvider>
         </ApolloWrapper>
+        <Toaster />
       </body>
     </html>
   );

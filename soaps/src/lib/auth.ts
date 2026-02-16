@@ -43,14 +43,14 @@ export const auth = betterAuth({
     session: {
       after: async (session: any) => {
         if (session.user.email) {
-          const profileHash = createHash('sha256')
+          const profileHash = createHash('md5')
             .update(session.user.email.trim().toLowerCase())
             .digest('hex');
           return {
             ...session,
             user: {
               ...session.user,
-              profileImageUrl: `https://gravatar.com/avatar/${profileHash}?s=200`
+              profileImageUrl: session.user.image || `https://gravatar.com/avatar/${profileHash}?s=200`
             }
           }
         }

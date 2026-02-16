@@ -1,11 +1,14 @@
 import prisma from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { CalendarDays, Scale, Edit } from "lucide-react"
-import Link from "next/link"
+import { CalendarDays, Scale } from "lucide-react"
+
+interface RecipeIngredient {
+    name: string;
+    quantity: number;
+    unit: string;
+}
 
 interface PageProps {
     params: Promise<{
@@ -25,6 +28,10 @@ export default async function RecipeDetailPage({ params }: PageProps) {
     }
 
     const isBase = recipe.type === "BASE"
+    const ingredients = recipe.ingredients as unknown as RecipeIngredient[]
+
+    // Calculate total weight
+    const totalWeight = ingredients.reduce((sum, ing) => sum + (Number(ing.quantity) || 0), 0)
 
     return (
         <div className="container mx-auto py-10 px-4 md:px-8 max-w-4xl">
@@ -42,19 +49,13 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                     <h1 className="text-4xl font-bold tracking-tight mb-4">{recipe.name}</h1>
                     {recipe.notes && (
                         <p className="text-lg text-muted-foreground leading-relaxed italic">
-                            "{recipe.notes}"
+                            &quot;{recipe.notes}&quot;
                         </p>
                     )}
                 </div>
 
                 <div className="flex gap-2">
                     {/* Add edit link if admin later */}
-                    {/* <Button variant="outline" size="sm" asChild>
-                        <Link href={`/admin/recipes/${recipe.id}/edit`}>
-                            <Edit className="w-4 h-4 mr-2" />
-                            Edit
-                        </Link>
-                    </Button> */}
                 </div>
             </div>
 
@@ -67,13 +68,13 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                                 Ingredients
                             </CardTitle>
                             <CardDescription>
-                                Total weight: {(recipe.ingredients as any[]).reduce((sum, ing) => sum + parseFloat(ing.quantity || 0), 0).toFixed(1)}g
+                                Total weight: {totalWeight.toFixed(1)}g
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
                                 <ul className="divide-y border rounded-md">
-                                    {(recipe.ingredients as any[]).map((ingredient: any, index: number) => (
+                                    {ingredients.map((ingredient, index) => (
                                         <li key={index} className="flex justify-between items-center p-3 hover:bg-muted/50 transition-colors first:rounded-t-md last:rounded-b-md">
                                             <span className="font-medium text-gray-900">{ingredient.name}</span>
                                             <span className="text-muted-foreground font-mono">
@@ -89,17 +90,6 @@ export default async function RecipeDetailPage({ params }: PageProps) {
 
                 <div className="space-y-8">
                     {/* Placeholder for future features like scaling, cost calculation, etc. */}
-                    {/* <Card>
-                        <CardHeader>
-                            <CardTitle>Details</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4 text-sm">
-                            <div className="flex justify-between">
-                                <span className="text-muted-foreground">Type</span>
-                                <span className="font-medium">{recipe.type || "N/A"}</span>
-                            </div>
-                        </CardContent>
-                    </Card> */}
                 </div>
             </div>
         </div>
