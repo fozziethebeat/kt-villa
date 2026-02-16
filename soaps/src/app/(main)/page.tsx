@@ -1,22 +1,16 @@
 import { Header } from '@/components/Header';
-import Link from 'next/link';
 import prisma from '@/lib/prisma';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Droplets, Calendar, Sparkles, Wind } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { RequestButton } from '@/components/RequestButton';
 
-// Helper to calculate days since start (cure time)
 function getAgeInWeeks(date: Date) {
   const diffTime = Math.abs(new Date().getTime() - date.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   return Math.floor(diffDays / 7);
-}
-
-interface RecipeIngredient {
-  name: string;
-  quantity: number;
-  unit: string;
 }
 
 export default async function Home() {
@@ -144,13 +138,12 @@ export default async function Home() {
                   <div className="h-10 w-10 rounded-full bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-600 transition-colors duration-300">
                     <Sparkles className="h-5 w-5 text-indigo-600 group-hover:text-white transition-colors duration-300" />
                   </div>
-                  {/* <ArrowRight /> removed for now */}
                 </div>
                 <h3 className="font-semibold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">{recipe.name}</h3>
                 <p className="text-sm text-slate-500 line-clamp-2 mb-4 flex-1">
-                  {(recipe.ingredients as unknown as RecipeIngredient[]).map((i) => i.name).join(', ')}
+                  {(recipe.ingredients as any[]).map((i: any) => i.name).join(', ')}
                 </p>
-                {/* Removed call to action link text */}
+                <RequestButton recipeId={recipe.id} recipeName={recipe.name} />
               </div>
             ))}
           </div>
@@ -183,13 +176,7 @@ function BatchCard({ batch, isCuring }: { batch: any, isCuring?: boolean }) {
           </div>
         )}
         <div className="absolute top-4 right-4">
-          <Badge
-            variant={isCuring ? "secondary" : "default"}
-            className={isCuring
-              ? "backdrop-blur-md bg-white/90 shadow-sm border-0"
-              : "bg-emerald-600 hover:bg-emerald-700 text-white shadow-md border-0 px-3 py-1 text-sm font-medium"
-            }
-          >
+          <Badge variant={isCuring ? "secondary" : "default"} className="backdrop-blur-md bg-white/90 shadow-sm border-0">
             {isCuring ? 'Curing' : 'Ready'}
           </Badge>
         </div>
@@ -203,7 +190,7 @@ function BatchCard({ batch, isCuring }: { batch: any, isCuring?: boolean }) {
           {isCuring && (
             <span className="flex items-center text-indigo-600 font-medium">
               <Wind className="w-3.5 h-3.5 mr-1" />
-              {ageWeeks < 1 ? 'Just poured' : `Curing for ${ageWeeks} ${ageWeeks === 1 ? 'week' : 'weeks'}`}
+              Curing for {ageWeeks} {ageWeeks === 1 ? 'week' : 'weeks'}
             </span>
           )}
         </div>
@@ -216,13 +203,13 @@ function BatchCard({ batch, isCuring }: { batch: any, isCuring?: boolean }) {
 
         {batch.styleRecipe && (
           <div className="flex flex-wrap gap-1.5">
-            {(batch.styleRecipe.ingredients as unknown as RecipeIngredient[]).slice(0, 3).map((ing, i) => (
+            {(batch.styleRecipe.ingredients as any[]).slice(0, 3).map((ing: any, i: number) => (
               <Badge key={i} variant="outline" className="text-xs font-normal text-slate-600 bg-slate-50">
                 {ing.name}
               </Badge>
             ))}
-            {(batch.styleRecipe.ingredients as unknown as RecipeIngredient[]).length > 3 && (
-              <span className="text-xs text-slate-400 pl-1">+{((batch.styleRecipe.ingredients as unknown as RecipeIngredient[]).length - 3)} more</span>
+            {(batch.styleRecipe.ingredients as any[]).length > 3 && (
+              <span className="text-xs text-slate-400 pl-1">+{((batch.styleRecipe.ingredients as any[]).length - 3)} more</span>
             )}
           </div>
         )}

@@ -38,8 +38,9 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-  roles         String    @default("general")
+  roles         String        @default("general")
   gifts         SoapGift[]
+  requests      BatchRequest[]
 
   @@map("user") // Optional: map to lowercase table name if preferred, standardizing on what was there or default. sticking to default naming.
 }
@@ -90,8 +91,9 @@ model Recipe {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   type        RecipeType @default(BASE)
-  baseBatches Batch[]  @relation("BaseRecipe")
-  styleBatches Batch[] @relation("StyleRecipe")
+  baseBatches   Batch[]      @relation("BaseRecipe")
+  styleBatches  Batch[]      @relation("StyleRecipe")
+  requests      BatchRequest[]
 }
 
 enum RecipeType {
@@ -119,6 +121,7 @@ model Batch {
 }
 
 enum BatchStatus {
+  SCHEDULING
   STARTED
   CURING
   READY
@@ -133,4 +136,22 @@ model SoapGift {
   user      User     @relation(fields: [userId], references: [id])
   givenAt   DateTime @default(now())
   note      String?
+}
+
+model BatchRequest {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  styleRecipe   Recipe    @relation(fields: [styleRecipeId], references: [id])
+  styleRecipeId String
+  status        RequestStatus @default(PENDING)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum RequestStatus {
+  PENDING
+  PLANNED
+  FULFILLED
+  REJECTED
 }
