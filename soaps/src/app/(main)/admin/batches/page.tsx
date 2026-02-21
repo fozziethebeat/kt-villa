@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import prisma from '@/lib/prisma'
 import { Button } from '@/components/ui/button'
-import { Plus, Beaker, Droplets, Calendar, Hash, Inbox } from 'lucide-react'
+import { Plus, Beaker, Droplets, Calendar, Hash, Inbox, KeyRound } from 'lucide-react'
+import { CopyableCode } from '@/components/CopyableCode'
 import { Badge } from '@/components/ui/badge'
 import { Header } from '@/components/Header'
 import { RequestActions } from './RequestActions'
@@ -176,6 +177,9 @@ export default async function BatchesPage() {
                                                     </div>
                                                 )}
                                             </div>
+                                            {batch.magicCodeId && (
+                                                <CopyableCode code={batch.magicCodeId} />
+                                            )}
                                         </div>
                                     </Link>
                                 )

@@ -101,10 +101,12 @@ Open [http://localhost:3000](http://localhost:3000) to see the result.
 
 ## New things to work on
 
-[] Ensure someone can see what style are currently being requested so they don't have to (or can't) double-request something already being scheduled
-[] When a request is made, ensure an email is sent to the admin to check.
-[] Associate a magic code with each batch such that When a user joins, they automatically get the matching soap in their collection.
-[] Create per-user collections of what soaps they've gotten, allow existing users to add a new soap to their collection
+[x] Ensure someone can see what style are currently being requested so they
+don't have to (or can't) double-request something already being scheduled
+[x] When a request is made, ensure an email is sent to the admin to check.
+[x] Associate a magic code with each batch such that When a user joins, they
+automatically get the matching soap in their collection.
+[x] Create per-user collections of what soaps they've gotten, allow existing users to add a new soap to their collection
 [] More little generative tweaks
   [] When creating a batch, tailor the image to the style and base 
   [] when creating a recipie, suggest a name based on the ingredients and a prompt

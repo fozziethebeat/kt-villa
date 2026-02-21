@@ -1,9 +1,15 @@
 'use server'
 
+import { randomBytes } from 'crypto'
 import prisma from "@/lib/prisma"
 import { imageGenerator } from "@/lib/generate"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+
+function generateMagicCode(): string {
+    const bytes = randomBytes(4).toString('hex')
+    return `soap-${bytes}`
+}
 
 export async function createBatch(prevState: any, formData: FormData) {
     const name = formData.get("name") as string
@@ -23,6 +29,10 @@ export async function createBatch(prevState: any, formData: FormData) {
     }
 
     try {
+        // Generate a unique magic code for this batch
+        const magicCodeId = generateMagicCode()
+        await prisma.magicCode.create({ data: { id: magicCodeId } })
+
         const batch = await prisma.batch.create({
             data: {
                 name,
@@ -31,6 +41,7 @@ export async function createBatch(prevState: any, formData: FormData) {
                 startedAt: new Date(startedAt),
                 notes: notes || null,
                 status: "STARTED",
+                magicCodeId,
             }
         })
 

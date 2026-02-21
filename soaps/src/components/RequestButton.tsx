@@ -3,15 +3,17 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { requestBatch } from '@/app/actions/request'
-import { Loader2, Check, Sparkles } from 'lucide-react'
+import { Loader2, Check, Sparkles, CalendarCheck } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
 
 interface RequestButtonProps {
     recipeId: string
     recipeName: string
+    requestCount: number
+    isScheduled: boolean
 }
 
-export function RequestButton({ recipeId, recipeName }: RequestButtonProps) {
+export function RequestButton({ recipeId, recipeName, requestCount, isScheduled }: RequestButtonProps) {
     const [loading, setLoading] = useState(false)
     const [requested, setRequested] = useState(false)
 
@@ -44,6 +46,17 @@ export function RequestButton({ recipeId, recipeName }: RequestButtonProps) {
         }
     }
 
+    // Already scheduled — show a locked-in state
+    if (isScheduled) {
+        return (
+            <Button variant="outline" disabled className="w-full mt-4 bg-emerald-50 text-emerald-700 border-emerald-200 cursor-default">
+                <CalendarCheck className="mr-2 h-4 w-4" />
+                Already Scheduled
+            </Button>
+        )
+    }
+
+    // User just submitted a request this session
     if (requested) {
         return (
             <Button variant="outline" disabled className="w-full mt-4 bg-green-50 text-green-600 border-green-200">
@@ -65,7 +78,7 @@ export function RequestButton({ recipeId, recipeName }: RequestButtonProps) {
             ) : (
                 <Sparkles className="mr-2 h-4 w-4" />
             )}
-            Request This Style
+            {requestCount > 0 ? 'Add Your Request' : 'Request This Style'}
         </Button>
     )
 }

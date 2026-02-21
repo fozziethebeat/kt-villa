@@ -34,6 +34,7 @@ export default async function BatchDetailPage({ params }: { params: Promise<{ id
                     readyAt: batch.readyAt?.toISOString() || null,
                     createdAt: batch.createdAt.toISOString(),
                     updatedAt: batch.updatedAt.toISOString(),
+                    magicCodeId: batch.magicCodeId || null,
                     baseRecipe: {
                         id: batch.baseRecipe.id,
                         name: batch.baseRecipe.name,

@@ -26,6 +26,7 @@ model Ingredient {
 
 model MagicCode {
   id     String @id @unique
+  batch  Batch?
 }
 
 model User {
@@ -115,6 +116,8 @@ model Batch {
   imageUrl  String?
   notes     String?
   status    BatchStatus @default(STARTED)
+  magicCodeId String?  @unique
+  magicCode   MagicCode? @relation(fields: [magicCodeId], references: [id])
   gifts     SoapGift[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt

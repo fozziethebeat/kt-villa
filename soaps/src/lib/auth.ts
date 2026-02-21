@@ -30,6 +30,22 @@ export const auth = betterAuth({
       expiresIn: 60 * 60 * 24 * 7, // 7 days (example)
     }),
   ],
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user: any) => {
+          // When a new user is created, check if they signed up with a batch magic code
+          // and auto-assign the corresponding soap gift
+          try {
+            const { assignPendingGift } = await import("@/app/api/auth/[...all]/route");
+            await assignPendingGift(user.email, user.id);
+          } catch (error) {
+            console.error("[Auth] Failed to run post-signup gift assignment:", error);
+          }
+        },
+      },
+    },
+  },
   user: {
     additionalFields: {
       roles: {

@@ -1,4 +1,4 @@
-import { Home, Book, Package, Layers } from 'lucide-react';
+import { Home, Book, Package, Layers, Droplets } from 'lucide-react';
 import Link from 'next/link';
 
 import { headers } from 'next/headers';
@@ -30,6 +30,11 @@ const BASIC_ITEMS = [
     title: 'Home',
     url: '/',
     icon: Home,
+  },
+  {
+    title: 'My Collection',
+    url: '/collection',
+    icon: Droplets,
   },
   {
     title: 'Recipes',

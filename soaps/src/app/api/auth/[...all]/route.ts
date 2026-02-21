@@ -7,6 +7,9 @@ const { GET, POST: betterAuthPOST } = toNextJsHandler(auth);
 
 export { GET };
 
+// Store magic code per email for post-signup gift assignment
+const pendingGiftCodes = new Map<string, string>();
+
 export const POST = async (req: NextRequest) => {
     // Intercept magic link sign-in to enforce invitation code
     if (req.nextUrl.pathname.endsWith("/sign-in/magic-link")) {
@@ -45,19 +48,60 @@ export const POST = async (req: NextRequest) => {
                         );
                     }
                     console.log("[AuthAPI] Magic code validated for new user:", email);
+
+                    // Store the magic code so we can assign the soap gift after user creation
+                    pendingGiftCodes.set(email.toLowerCase(), magicCode);
                 } else {
                     console.log("[AuthAPI] Existing user login:", email);
-                    // Existing user: Allow (Better Auth handles magic link)
-                    // Ensure we don't accidentally allow signup if logic changes? 
-                    // Logic: If user exists, we trust they verified before.
                 }
             }
         } catch (e) {
             console.error("[AuthAPI] Error in interception:", e);
-            // Fallthrough to let betterAuth handle/fail if body is malformed?
-            // Or return error?
         }
     }
 
-    return betterAuthPOST(req);
+    const response = await betterAuthPOST(req);
+
+    // After successful magic link send, check if we need to queue a gift assignment
+    // The actual gift assignment happens when the user verifies and their account is created
+    // We handle that in the verify callback below
+    return response;
 };
+
+// Background task: Check for pending gift codes when a user is created
+// This runs as a separate export that auth.ts hooks into
+export async function assignPendingGift(email: string, userId: string) {
+    const normalizedEmail = email.toLowerCase();
+    const magicCode = pendingGiftCodes.get(normalizedEmail);
+
+    if (!magicCode) return;
+
+    try {
+        // Find the batch associated with this magic code
+        const batch = await prisma.batch.findFirst({
+            where: { magicCodeId: magicCode }
+        });
+
+        if (batch) {
+            // Check if gift already exists
+            const existingGift = await prisma.soapGift.findFirst({
+                where: { batchId: batch.id, userId }
+            });
+
+            if (!existingGift) {
+                await prisma.soapGift.create({
+                    data: {
+                        batchId: batch.id,
+                        userId,
+                        note: `Auto-assigned via magic code: ${magicCode}`,
+                    }
+                });
+                console.log(`[AuthAPI] Auto-assigned soap gift for batch "${batch.name}" to user ${email}`);
+            }
+        }
+    } catch (error) {
+        console.error("[AuthAPI] Failed to assign pending gift:", error);
+    } finally {
+        pendingGiftCodes.delete(normalizedEmail);
+    }
+}

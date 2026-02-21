@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Droplets, Calendar, Sparkles, Wind } from 'lucide-react';
+import { Droplets, Calendar, Sparkles, Wind, Users, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RequestButton } from '@/components/RequestButton';
 
@@ -34,6 +34,29 @@ export default async function Home() {
     orderBy: { name: 'asc' }
   });
 
+  // Fetch pending/planned batch requests grouped by style
+  const pendingRequests = await prisma.batchRequest.groupBy({
+    by: ['styleRecipeId'],
+    where: {
+      status: { in: ['PENDING', 'PLANNED'] }
+    },
+    _count: { id: true }
+  });
+
+  // Build a map of styleRecipeId -> request count
+  const requestCountMap = new Map(
+    pendingRequests.map(r => [r.styleRecipeId, r._count.id])
+  );
+
+  // Fetch styles that already have a SCHEDULING batch
+  const schedulingBatches = await prisma.batch.findMany({
+    where: { status: 'SCHEDULING', styleRecipeId: { not: null } },
+    select: { styleRecipeId: true }
+  });
+  const scheduledStyleIds = new Set(
+    schedulingBatches.map(b => b.styleRecipeId).filter(Boolean) as string[]
+  );
+
   const readyBatches = batches.filter(b => b.status === 'READY');
   const curingBatches = batches.filter(b => b.status === 'CURING' || b.status === 'STARTED');
 
@@ -58,12 +81,18 @@ export default async function Home() {
             and cured to perfection. Check what's currently curing on the rack
             and what's ready for your shower.
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap justify-center gap-4">
             <Button size="lg" className="rounded-full px-8" asChild>
               <a href="#ready">Shop Ready Batches</a>
             </Button>
             <Button size="lg" variant="outline" className="rounded-full px-8" asChild>
               <a href="#curing">View Curing Rack</a>
+            </Button>
+            <Button size="lg" variant="outline" className="rounded-full px-8 border-indigo-200 text-indigo-600 hover:bg-indigo-50" asChild>
+              <a href="/collection">
+                <Droplets className="mr-2 h-4 w-4" />
+                My Collection
+              </a>
             </Button>
           </div>
         </div>
@@ -129,23 +158,82 @@ export default async function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {styleRecipes.map(recipe => (
-              <div
-                key={recipe.id}
-                className="group relative flex flex-col bg-white rounded-xl border border-slate-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-200 cursor-default"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="h-10 w-10 rounded-full bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-600 transition-colors duration-300">
-                    <Sparkles className="h-5 w-5 text-indigo-600 group-hover:text-white transition-colors duration-300" />
+            {styleRecipes.map(recipe => {
+              const requestCount = requestCountMap.get(recipe.id) || 0;
+              const isScheduled = scheduledStyleIds.has(recipe.id);
+              return (
+                <div
+                  key={recipe.id}
+                  className={cn(
+                    "group relative flex flex-col bg-white rounded-xl border p-6 hover:shadow-lg transition-all duration-200 cursor-default",
+                    isScheduled
+                      ? "border-emerald-200 ring-1 ring-emerald-100"
+                      : requestCount > 0
+                        ? "border-amber-200 ring-1 ring-amber-100"
+                        : "border-slate-200 hover:border-indigo-200"
+                  )}
+                >
+                  {/* Status indicator badges */}
+                  {isScheduled && (
+                    <div className="absolute -top-2.5 right-4">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+                        <Clock className="h-3 w-3" />
+                        Scheduled
+                      </span>
+                    </div>
+                  )}
+                  {!isScheduled && requestCount > 0 && (
+                    <div className="absolute -top-2.5 right-4">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                        <Users className="h-3 w-3" />
+                        {requestCount} {requestCount === 1 ? 'request' : 'requests'}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={cn(
+                      "h-10 w-10 rounded-full flex items-center justify-center transition-colors duration-300",
+                      isScheduled
+                        ? "bg-emerald-50 group-hover:bg-emerald-600"
+                        : "bg-indigo-50 group-hover:bg-indigo-600"
+                    )}>
+                      <Sparkles className={cn(
+                        "h-5 w-5 group-hover:text-white transition-colors duration-300",
+                        isScheduled ? "text-emerald-600" : "text-indigo-600"
+                      )} />
+                    </div>
                   </div>
+                  <h3 className="font-semibold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">{recipe.name}</h3>
+                  <p className="text-sm text-slate-500 line-clamp-2 mb-4 flex-1">
+                    {(recipe.ingredients as any[]).map((i: any) => i.name).join(', ')}
+                  </p>
+
+                  {/* Demand indicator bar */}
+                  {requestCount > 0 && !isScheduled && (
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+                        <span>Demand</span>
+                        <span className="text-amber-600 font-medium">{requestCount} interested</span>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-400 transition-all duration-500"
+                          style={{ width: `${Math.min(requestCount * 20, 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <RequestButton
+                    recipeId={recipe.id}
+                    recipeName={recipe.name}
+                    requestCount={requestCount}
+                    isScheduled={isScheduled}
+                  />
                 </div>
-                <h3 className="font-semibold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">{recipe.name}</h3>
-                <p className="text-sm text-slate-500 line-clamp-2 mb-4 flex-1">
-                  {(recipe.ingredients as any[]).map((i: any) => i.name).join(', ')}
-                </p>
-                <RequestButton recipeId={recipe.id} recipeName={recipe.name} />
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 

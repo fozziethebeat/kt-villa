@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Beaker, Droplets, Calendar, Hash, Sparkles, Loader2, ImageIcon, Trash2 } from 'lucide-react'
+import { Beaker, Droplets, Calendar, Hash, Sparkles, Loader2, ImageIcon, Trash2, KeyRound, Copy, Check } from 'lucide-react'
 import { updateBatch, generateBatchImage, deleteBatch } from '@/app/actions/batch'
 // @ts-ignore
 import { useFormStatus } from 'react-dom'
@@ -37,6 +37,7 @@ interface BatchData {
     imageUrl: string | null
     notes: string | null
     status: string
+    magicCodeId: string | null
     createdAt: string
     updatedAt: string
     baseRecipe: BatchRecipe
@@ -63,6 +64,17 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
     const [generatedImageUrl, setGeneratedImageUrl] = useState(batch.imageUrl || '')
 
     const [isDeleting, setIsDeleting] = useState(false)
+    const [copied, setCopied] = useState(false)
+
+    const signupUrl = batch.magicCodeId
+        ? `${typeof window !== 'undefined' ? window.location.origin : ''}/signup?magicCode=${batch.magicCodeId}`
+        : ''
+
+    const handleCopy = async (text: string) => {
+        await navigator.clipboard.writeText(text)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
 
     const handleGenerateImage = () => {
         if (!imagePrompt.trim()) return
@@ -142,6 +154,45 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                             )}
                         </CardContent>
                     </Card>
+
+                    {/* Invite Code */}
+                    {batch.magicCodeId && (
+                        <Card className="border-indigo-100 bg-indigo-50/30">
+                            <CardHeader>
+                                <CardTitle className="text-base flex items-center gap-2">
+                                    <KeyRound className="h-4 w-4 text-indigo-600" />
+                                    Invite Code
+                                </CardTitle>
+                                <CardDescription>
+                                    Share this code with soap recipients so they can sign up and automatically get this batch in their collection.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <code className="flex-1 bg-white border border-indigo-200 rounded-md px-3 py-2 text-sm font-mono text-indigo-700 select-all">
+                                        {batch.magicCodeId}
+                                    </code>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="shrink-0 border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+                                        onClick={() => handleCopy(batch.magicCodeId!)}
+                                    >
+                                        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                                    </Button>
+                                </div>
+                                <div className="text-xs text-slate-500">
+                                    <span className="font-medium">Signup link:</span>
+                                    <button
+                                        className="block w-full text-left text-indigo-600 hover:text-indigo-700 underline underline-offset-2 mt-1 break-all cursor-pointer"
+                                        onClick={() => handleCopy(signupUrl)}
+                                    >
+                                        {signupUrl || '(loading...)'}
+                                    </button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
 
                     {/* Edit Form */}
                     <Card>

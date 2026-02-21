@@ -1,11 +1,19 @@
 'use server'
 
+import { randomBytes } from 'crypto'
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
 import { mailer } from "@/lib/mailer"
 import { checkAccess } from "@/lib/auth-check"
+import { render } from "@react-email/render"
+import { BatchRequestNotification } from "@/components/mail/BatchRequestNotification"
+
+function generateMagicCode(): string {
+    const bytes = randomBytes(4).toString('hex')
+    return `soap-${bytes}`
+}
 
 export async function requestBatch(styleRecipeId: string) {
     const session = await auth.api.getSession({
@@ -30,6 +38,18 @@ export async function requestBatch(styleRecipeId: string) {
             return { message: "You already have a pending request for this style.", success: false }
         }
 
+        // Check if this style is already being scheduled
+        const schedulingBatch = await prisma.batch.findFirst({
+            where: {
+                styleRecipeId: styleRecipeId,
+                status: 'SCHEDULING'
+            }
+        })
+
+        if (schedulingBatch) {
+            return { message: "This style is already scheduled for an upcoming batch.", success: false }
+        }
+
         const recipe = await prisma.recipe.findUnique({
             where: { id: styleRecipeId }
         })
@@ -48,21 +68,23 @@ export async function requestBatch(styleRecipeId: string) {
         })
 
         // Send notification email to admin
-        const adminEmail = process.env.MAILER_FROM || "admin@example.com"
+        const adminEmail = process.env.ADMIN_EMAIL || process.env.MAILER_FROM || "admin@example.com"
+        const now = new Date()
+        const timestamp = now.toISOString()
+        const manageUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/admin/batches`
 
         try {
             await mailer.sendMail({
                 from: process.env.MAILER_FROM,
                 to: adminEmail,
                 subject: `New Soap Request: ${recipe.name}`,
-                html: `
-                    <div style="font-family: sans-serif; padding: 20px; color: #333;">
-                        <h1>New Batch Request</h1>
-                        <p><strong>User:</strong> ${session.user.name || 'Unknown'} (${session.user.email})</p>
-                        <p><strong>Requested Style:</strong> ${recipe.name}</p>
-                        <p><a href="${process.env.NEXT_PUBLIC_BASE_URL}/admin/batches">Manage Batches</a></p>
-                    </div>
-                `
+                html: await render(BatchRequestNotification({
+                    userName: (session.user as any).name || 'Unknown',
+                    userEmail: session.user.email,
+                    styleName: recipe.name,
+                    manageUrl,
+                    timestamp,
+                })),
             })
         } catch (emailError) {
             console.error("Failed to send notification email:", emailError)
@@ -101,6 +123,10 @@ export async function acceptRequest(requestId: string) {
             return { message: "No base recipe available. Create a base recipe first.", success: false }
         }
 
+        // Generate magic code for the new batch
+        const magicCodeId = generateMagicCode()
+        await prisma.magicCode.create({ data: { id: magicCodeId } })
+
         // Create a new batch in SCHEDULING status and mark request as FULFILLED
         await prisma.$transaction([
             prisma.batch.create({
@@ -110,6 +136,7 @@ export async function acceptRequest(requestId: string) {
                     styleRecipeId: request.styleRecipeId,
                     startedAt: new Date(),
                     status: 'SCHEDULING',
+                    magicCodeId,
                 }
             }),
             prisma.batchRequest.update({
