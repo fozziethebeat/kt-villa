@@ -26,7 +26,7 @@ export function RequestButton({ recipeId, recipeName, requestCount, isScheduled 
                 setRequested(true)
                 toast({
                     title: "Request Sent!",
-                    description: `Admin has been notified for ${recipeName}.`,
+                    description: `We'll let the maker know you're interested in ${recipeName}.`,
                 })
             } else {
                 toast({
@@ -49,7 +49,7 @@ export function RequestButton({ recipeId, recipeName, requestCount, isScheduled 
     // Already scheduled — show a locked-in state
     if (isScheduled) {
         return (
-            <Button variant="outline" disabled className="w-full mt-4 bg-emerald-50 text-emerald-700 border-emerald-200 cursor-default">
+            <Button variant="outline" disabled className="w-full mt-4 bg-brand-sage-light text-brand-sage border-brand-sage/30 cursor-default">
                 <CalendarCheck className="mr-2 h-4 w-4" />
                 Already Scheduled
             </Button>
@@ -59,7 +59,7 @@ export function RequestButton({ recipeId, recipeName, requestCount, isScheduled 
     // User just submitted a request this session
     if (requested) {
         return (
-            <Button variant="outline" disabled className="w-full mt-4 bg-green-50 text-green-600 border-green-200">
+            <Button variant="outline" disabled className="w-full mt-4 bg-brand-sage-light text-brand-sage border-brand-sage/30">
                 <Check className="mr-2 h-4 w-4" />
                 Request Sent
             </Button>
@@ -69,7 +69,7 @@ export function RequestButton({ recipeId, recipeName, requestCount, isScheduled 
     return (
         <Button
             variant="ghost"
-            className="w-full mt-4 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+            className="w-full mt-4 text-brand-terracotta hover:text-brand-warm-brown hover:bg-brand-terracotta-light"
             onClick={handleRequest}
             disabled={loading}
         >

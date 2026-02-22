@@ -75,14 +75,14 @@ export async function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-brand-terracotta text-brand-cream">
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src="/favicon.png" alt="KT Soaps" />
-                    <AvatarFallback className="rounded-lg">YG</AvatarFallback>
+                    <AvatarFallback className="rounded-lg bg-brand-terracotta text-brand-cream text-xs">KT</AvatarFallback>
                   </Avatar>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">KT Soaps</span>
+                  <span className="font-semibold font-serif text-brand-warm-brown">KT Soaps</span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -91,7 +91,7 @@ export async function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Thangs</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-brand-stone/70 uppercase tracking-wider text-xs">Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {BASIC_ITEMS.map(item => (
@@ -130,7 +130,7 @@ export async function AppSidebar({
                       src={session.user.image || (session.user as any).profileImageUrl || undefined}
                       alt={session.user.name || ''}
                     />
-                    <AvatarFallback className="rounded-lg">
+                    <AvatarFallback className="rounded-lg bg-brand-rose-light text-brand-warm-brown">
                       {session.user.name?.charAt(0) || 'U'}
                     </AvatarFallback>
                   </Avatar>
@@ -138,7 +138,7 @@ export async function AppSidebar({
                     <span className="truncate font-semibold">
                       {session.user.name || 'User'}
                     </span>
-                    <span className="truncate text-xs">{session.user.email}</span>
+                    <span className="truncate text-xs text-brand-stone">{session.user.email}</span>
                   </div>
                 </Link>
               </SidebarMenuItem>
@@ -149,7 +149,7 @@ export async function AppSidebar({
           ) : (
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/signin">Signin</Link>
+                <Link href="/signin">Sign In</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}

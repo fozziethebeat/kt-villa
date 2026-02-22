@@ -13,7 +13,7 @@ import { useFormStatus } from 'react-dom'
 function SaveButton() {
     const { pending } = useFormStatus()
     return (
-        <Button type="submit" disabled={pending} size="sm">
+        <Button type="submit" disabled={pending} size="sm" className="bg-brand-warm-brown hover:bg-brand-warm-brown/90 text-brand-cream">
             {pending ? 'Saving...' : 'Save Changes'}
         </Button>
     )
@@ -45,10 +45,10 @@ interface BatchData {
 }
 
 const STATUS_OPTIONS = [
-    { value: 'STARTED', label: 'Started', color: 'bg-blue-100 text-blue-800' },
-    { value: 'CURING', label: 'Curing', color: 'bg-amber-100 text-amber-800' },
-    { value: 'READY', label: 'Ready', color: 'bg-green-100 text-green-800' },
-    { value: 'ARCHIVED', label: 'Archived', color: 'bg-gray-100 text-gray-800' },
+    { value: 'STARTED', label: 'Started', color: 'bg-brand-terracotta-light text-brand-terracotta' },
+    { value: 'CURING', label: 'Curing', color: 'bg-brand-sage-light text-brand-sage' },
+    { value: 'READY', label: 'Ready', color: 'bg-brand-rose-light text-brand-rose' },
+    { value: 'ARCHIVED', label: 'Archived', color: 'bg-brand-linen text-brand-stone' },
 ]
 
 export function BatchDetail({ batch }: { batch: BatchData }) {
@@ -102,8 +102,8 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
             {/* Header & Status */}
             <div className="flex items-start justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">{batch.name}</h1>
-                    <p className="text-muted-foreground mt-1">
+                    <h1 className="text-3xl font-semibold tracking-tight text-brand-warm-brown">{batch.name}</h1>
+                    <p className="text-brand-stone mt-1">
                         Started {new Date(batch.startedAt).toLocaleDateString()}
                     </p>
                 </div>
@@ -127,26 +127,26 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                 {/* Left Column — Info & Edit */}
                 <div className="space-y-6">
                     {/* Recipes */}
-                    <Card>
+                    <Card className="border-border">
                         <CardHeader>
-                            <CardTitle className="text-base">Recipes</CardTitle>
+                            <CardTitle className="text-base text-brand-warm-brown">Recipes</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
-                            <div className="flex items-center gap-3 p-3 rounded-md bg-muted/50">
-                                <Beaker className="h-5 w-5 text-muted-foreground shrink-0" />
+                            <div className="flex items-center gap-3 p-3 rounded-md bg-brand-cream/50">
+                                <Beaker className="h-5 w-5 text-brand-terracotta shrink-0" />
                                 <div>
-                                    <p className="text-sm font-medium">Base: {batch.baseRecipe.name}</p>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-sm font-medium text-brand-warm-brown">Base: {batch.baseRecipe.name}</p>
+                                    <p className="text-xs text-brand-stone">
                                         {(batch.baseRecipe.ingredients as any[]).map((i: any) => i.name).join(', ')}
                                     </p>
                                 </div>
                             </div>
                             {batch.styleRecipe && (
-                                <div className="flex items-center gap-3 p-3 rounded-md bg-muted/50">
-                                    <Droplets className="h-5 w-5 text-muted-foreground shrink-0" />
+                                <div className="flex items-center gap-3 p-3 rounded-md bg-brand-cream/50">
+                                    <Droplets className="h-5 w-5 text-brand-rose shrink-0" />
                                     <div>
-                                        <p className="text-sm font-medium">Style: {batch.styleRecipe.name}</p>
-                                        <p className="text-xs text-muted-foreground">
+                                        <p className="text-sm font-medium text-brand-warm-brown">Style: {batch.styleRecipe.name}</p>
+                                        <p className="text-xs text-brand-stone">
                                             {(batch.styleRecipe.ingredients as any[]).map((i: any) => i.name).join(', ')}
                                         </p>
                                     </div>
@@ -157,34 +157,34 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
 
                     {/* Invite Code */}
                     {batch.magicCodeId && (
-                        <Card className="border-indigo-100 bg-indigo-50/30">
+                        <Card className="border-brand-terracotta/20 bg-brand-terracotta-light/30">
                             <CardHeader>
-                                <CardTitle className="text-base flex items-center gap-2">
-                                    <KeyRound className="h-4 w-4 text-indigo-600" />
+                                <CardTitle className="text-base flex items-center gap-2 text-brand-warm-brown">
+                                    <KeyRound className="h-4 w-4 text-brand-terracotta" />
                                     Invite Code
                                 </CardTitle>
-                                <CardDescription>
+                                <CardDescription className="text-brand-stone">
                                     Share this code with soap recipients so they can sign up and automatically get this batch in their collection.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-3">
                                 <div className="flex items-center gap-2">
-                                    <code className="flex-1 bg-white border border-indigo-200 rounded-md px-3 py-2 text-sm font-mono text-indigo-700 select-all">
+                                    <code className="flex-1 bg-white border border-brand-terracotta/20 rounded-md px-3 py-2 text-sm font-mono text-brand-terracotta select-all">
                                         {batch.magicCodeId}
                                     </code>
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        className="shrink-0 border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+                                        className="shrink-0 border-brand-terracotta/20 text-brand-terracotta hover:bg-brand-terracotta-light"
                                         onClick={() => handleCopy(batch.magicCodeId!)}
                                     >
                                         {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                                     </Button>
                                 </div>
-                                <div className="text-xs text-slate-500">
+                                <div className="text-xs text-brand-stone">
                                     <span className="font-medium">Signup link:</span>
                                     <button
-                                        className="block w-full text-left text-indigo-600 hover:text-indigo-700 underline underline-offset-2 mt-1 break-all cursor-pointer"
+                                        className="block w-full text-left text-brand-terracotta hover:text-brand-warm-brown underline underline-offset-2 mt-1 break-all cursor-pointer"
                                         onClick={() => handleCopy(signupUrl)}
                                     >
                                         {signupUrl || '(loading...)'}
@@ -195,10 +195,10 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                     )}
 
                     {/* Edit Form */}
-                    <Card>
+                    <Card className="border-border">
                         <CardHeader>
-                            <CardTitle className="text-base">Batch Details</CardTitle>
-                            <CardDescription>Update status, bar count, and notes.</CardDescription>
+                            <CardTitle className="text-base text-brand-warm-brown">Batch Details</CardTitle>
+                            <CardDescription className="text-brand-stone">Update status, bar count, and notes.</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <form action={updateAction} className="space-y-4">
@@ -206,7 +206,7 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
 
                                 {/* Status */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1.5">Status</label>
+                                    <label className="block text-sm font-medium text-brand-warm-brown mb-1.5">Status</label>
                                     <select
                                         name="status"
                                         value={status}
@@ -221,7 +221,7 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
 
                                 {/* Number of Bars */}
                                 <div>
-                                    <label htmlFor="num-bars" className="block text-sm font-medium text-gray-700 mb-1.5">
+                                    <label htmlFor="num-bars" className="block text-sm font-medium text-brand-warm-brown mb-1.5">
                                         Number of Bars
                                     </label>
                                     <Input
@@ -234,14 +234,14 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                                         onChange={(e) => setNumBars(e.target.value)}
                                         className="w-32"
                                     />
-                                    <p className="text-xs text-muted-foreground mt-1">
+                                    <p className="text-xs text-brand-stone mt-1">
                                         Set this after the initial 2-day cure when you cut the batch into bars.
                                     </p>
                                 </div>
 
                                 {/* Notes */}
                                 <div>
-                                    <label htmlFor="batch-notes" className="block text-sm font-medium text-gray-700 mb-1.5">Notes</label>
+                                    <label htmlFor="batch-notes" className="block text-sm font-medium text-brand-warm-brown mb-1.5">Notes</label>
                                     <textarea
                                         name="notes"
                                         id="batch-notes"
@@ -254,7 +254,7 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                                 </div>
 
                                 {updateState?.message && (
-                                    <p className={`text-sm ${(updateState as any)?.success ? 'text-green-600' : 'text-red-500'}`}>
+                                    <p className={`text-sm ${(updateState as any)?.success ? 'text-brand-sage' : 'text-red-500'}`}>
                                         {(updateState as any)?.success ? 'Saved successfully!' : updateState.message}
                                     </p>
                                 )}
@@ -270,16 +270,16 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                 {/* Right Column — Image */}
                 <div className="space-y-6">
                     {/* Current Image */}
-                    <Card>
+                    <Card className="border-border">
                         <CardHeader>
-                            <CardTitle className="text-base flex items-center gap-2">
+                            <CardTitle className="text-base flex items-center gap-2 text-brand-warm-brown">
                                 <ImageIcon className="h-4 w-4" />
                                 Batch Image
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {generatedImageUrl ? (
-                                <div className="rounded-lg overflow-hidden border bg-muted">
+                                <div className="rounded-lg overflow-hidden border border-border bg-brand-cream">
                                     <img
                                         src={generatedImageUrl}
                                         alt={batch.name}
@@ -287,23 +287,23 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                                     />
                                 </div>
                             ) : (
-                                <div className="aspect-square w-full rounded-lg border-2 border-dashed border-muted-foreground/20 flex flex-col items-center justify-center bg-muted/30">
-                                    <ImageIcon className="h-12 w-12 text-muted-foreground/30 mb-3" />
-                                    <p className="text-sm text-muted-foreground">No image yet</p>
-                                    <p className="text-xs text-muted-foreground/60">Generate one below</p>
+                                <div className="aspect-square w-full rounded-lg border-2 border-dashed border-brand-terracotta/20 flex flex-col items-center justify-center bg-brand-cream/30">
+                                    <ImageIcon className="h-12 w-12 text-brand-terracotta/20 mb-3" />
+                                    <p className="text-sm text-brand-stone">No image yet</p>
+                                    <p className="text-xs text-brand-stone/60">Generate one below</p>
                                 </div>
                             )}
                         </CardContent>
                     </Card>
 
                     {/* AI Image Generator */}
-                    <Card>
+                    <Card className="border-border">
                         <CardHeader>
-                            <CardTitle className="text-base flex items-center gap-2">
-                                <Sparkles className="h-4 w-4 text-indigo-500" />
+                            <CardTitle className="text-base flex items-center gap-2 text-brand-warm-brown">
+                                <Sparkles className="h-4 w-4 text-brand-terracotta" />
                                 Generate AI Image
                             </CardTitle>
-                            <CardDescription>
+                            <CardDescription className="text-brand-stone">
                                 Describe the image you want for this batch. Reference the soap style, colors, or mood.
                             </CardDescription>
                         </CardHeader>
@@ -318,7 +318,7 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                             <Button
                                 onClick={handleGenerateImage}
                                 disabled={isGenerating || !imagePrompt.trim()}
-                                className="w-full"
+                                className="w-full bg-brand-terracotta-light text-brand-terracotta hover:bg-brand-terracotta hover:text-white"
                                 variant="secondary"
                             >
                                 {isGenerating ? (

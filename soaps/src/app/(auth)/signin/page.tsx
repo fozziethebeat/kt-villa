@@ -42,53 +42,62 @@ export default function Page() {
 
   if (success) {
     return (
-      <div className="flex flex-row min-h-screen justify-center items-center">
-        <div className="card bg-base-100 w-96 shadow-xl">
-          <div className="card-body items-center text-center">
-            <h2 className="card-title text-success">Check your email!</h2>
-            <p>We've sent you a magic link to sign in.</p>
+      <div className="flex min-h-screen justify-center items-center bg-gradient-to-br from-brand-terracotta-light via-brand-cream to-brand-rose-light">
+        <div className="w-full max-w-sm mx-4 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-brand-terracotta/10 p-8 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-brand-sage-light mb-4">
+            <svg className="w-6 h-6 text-brand-sage" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
           </div>
+          <h2 className="text-xl font-semibold text-brand-warm-brown font-serif mb-2">Check your email</h2>
+          <p className="text-brand-stone text-sm">We've sent you a magic link to sign in.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-row min-h-screen justify-center items-center">
-      <div className="card bg-base-100 w-96 shadow-xl">
-        <div className="card-body items-center text-center">
-          <h2 className="card-title">Login to App</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <label className="input input-bordered flex items-center gap-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 16 16"
-                    fill="currentColor"
-                    className="h-4 w-4 opacity-70">
-                    <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
-                    <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
-                  </svg>
-                  <input
-                    name="email"
-                    className="grow"
-                    id="email"
-                    type="email"
-                    required
-                    placeholder="your@email.com"
-                  />
-                </label>
+    <div className="flex min-h-screen justify-center items-center bg-gradient-to-br from-brand-terracotta-light via-brand-cream to-brand-rose-light">
+      <div className="w-full max-w-sm mx-4 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-brand-terracotta/10 p-8">
+        <div className="text-center mb-6">
+          <h1 className="text-2xl font-semibold font-serif text-brand-warm-brown mb-1">Welcome Back</h1>
+          <p className="text-sm text-brand-stone">Sign in to KT Soaps</p>
+        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <label htmlFor="email" className="text-sm font-medium text-brand-warm-brown">Email</label>
+              <div className="relative">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-stone/50">
+                  <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
+                  <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+                </svg>
+                <input
+                  name="email"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border bg-white/50 focus:bg-white focus:ring-2 focus:ring-brand-terracotta/30 focus:border-brand-terracotta/50 outline-none transition-all text-sm"
+                  id="email"
+                  type="email"
+                  required
+                  placeholder="your@email.com"
+                />
               </div>
-              {error && <p className="text-error text-sm">{error}</p>}
-              <button className="btn btn-primary" type="submit" disabled={loading}>
-                {loading ? "Sending..." : "Login"}
-              </button>
             </div>
-          </form>
-          <div className="text-sm mt-4">
-            New user? <Link href="/signup" className="link link-primary">Sign up</Link>
+            {error && <p className="text-red-600 text-sm">{error}</p>}
+            <button
+              className="w-full py-2.5 rounded-lg bg-brand-warm-brown text-brand-cream font-medium text-sm hover:bg-brand-warm-brown/90 transition-colors disabled:opacity-50"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Sending..." : "Send Magic Link"}
+            </button>
           </div>
+        </form>
+        <div className="text-sm mt-6 text-center text-brand-stone">
+          New here? <Link href="/signup" className="text-brand-terracotta hover:text-brand-warm-brown font-medium transition-colors">Sign up</Link>
         </div>
       </div>
     </div>

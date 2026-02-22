@@ -21,6 +21,13 @@ abstract class ImageGenerationService {
 }
 
 const MODEL_CONFIGS: Record<string, any> = {
+  "gemini-3-flash-image-preview": {
+    responseModalities: ["IMAGE", "TEXT"],
+    imageConfig: {
+      aspectRatio: "1:1",
+      imageSize: "1K",
+    },
+  },
   "gemini-3-pro-image-preview": {
     responseModalities: ["IMAGE", "TEXT"],
     imageConfig: {

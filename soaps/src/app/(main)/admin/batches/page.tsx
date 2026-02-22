@@ -21,7 +21,7 @@ const STATUS_STYLES: Record<string, { label: string; variant: "default" | "secon
 }
 
 const STATUS_COLORS: Record<string, string> = {
-    SCHEDULING: 'border-violet-200 text-violet-700 bg-violet-50',
+    SCHEDULING: 'border-brand-sage/40 text-brand-sage bg-brand-sage-light',
 }
 
 export default async function BatchesPage() {
@@ -51,39 +51,39 @@ export default async function BatchesPage() {
                 {pendingRequests.length > 0 && (
                     <section>
                         <div className="flex items-center gap-3 mb-4">
-                            <Inbox className="h-5 w-5 text-amber-600" />
-                            <h2 className="text-xl font-bold tracking-tight text-slate-900">
+                            <Inbox className="h-5 w-5 text-brand-terracotta" />
+                            <h2 className="text-xl font-semibold tracking-tight text-brand-warm-brown">
                                 Incoming Requests
-                                <Badge variant="outline" className="ml-3 bg-amber-100 text-amber-700 border-amber-200">
+                                <Badge variant="outline" className="ml-3 bg-brand-terracotta-light text-brand-terracotta border-brand-terracotta/20">
                                     {pendingRequests.length}
                                 </Badge>
                             </h2>
                         </div>
-                        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                        <div className="bg-card rounded-xl border border-border overflow-hidden">
                             <table className="w-full text-sm">
-                                <thead className="bg-slate-50 border-b border-slate-200">
+                                <thead className="bg-brand-cream border-b border-border">
                                     <tr>
-                                        <th className="text-left px-4 py-3 font-medium text-slate-600">Date</th>
-                                        <th className="text-left px-4 py-3 font-medium text-slate-600">User</th>
-                                        <th className="text-left px-4 py-3 font-medium text-slate-600">Style</th>
-                                        <th className="text-left px-4 py-3 font-medium text-slate-600">Actions</th>
+                                        <th className="text-left px-4 py-3 font-medium text-brand-stone">Date</th>
+                                        <th className="text-left px-4 py-3 font-medium text-brand-stone">User</th>
+                                        <th className="text-left px-4 py-3 font-medium text-brand-stone">Style</th>
+                                        <th className="text-left px-4 py-3 font-medium text-brand-stone">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100">
+                                <tbody className="divide-y divide-border">
                                     {pendingRequests.map(request => (
-                                        <tr key={request.id} className="hover:bg-slate-50 transition-colors">
-                                            <td className="px-4 py-3 text-slate-600">
+                                        <tr key={request.id} className="hover:bg-brand-cream/50 transition-colors">
+                                            <td className="px-4 py-3 text-brand-stone">
                                                 {request.createdAt.toLocaleDateString(undefined, {
                                                     month: 'short', day: 'numeric', year: 'numeric'
                                                 })}
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div>
-                                                    <span className="font-medium text-slate-900">{request.user.name || 'Unknown'}</span>
-                                                    <span className="block text-xs text-slate-500">{request.user.email}</span>
+                                                    <span className="font-medium text-brand-warm-brown">{request.user.name || 'Unknown'}</span>
+                                                    <span className="block text-xs text-brand-stone">{request.user.email}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-3 font-medium text-slate-900">{request.styleRecipe.name}</td>
+                                            <td className="px-4 py-3 font-medium text-brand-warm-brown">{request.styleRecipe.name}</td>
                                             <td className="px-4 py-3">
                                                 <RequestActions requestId={request.id} currentStatus={request.status} />
                                             </td>
@@ -99,12 +99,12 @@ export default async function BatchesPage() {
                 <section>
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h1 className="text-3xl font-bold tracking-tight">Soap Batches</h1>
-                            <p className="text-muted-foreground mt-2">
+                            <h1 className="text-3xl font-semibold tracking-tight text-brand-warm-brown">Soap Batches</h1>
+                            <p className="text-brand-stone mt-2">
                                 Manage your soap production batches.
                             </p>
                         </div>
-                        <Button asChild>
+                        <Button asChild className="bg-brand-warm-brown hover:bg-brand-warm-brown/90 text-brand-cream">
                             <Link href="/admin/batches/new">
                                 <Plus className="mr-2 h-4 w-4" /> New Batch
                             </Link>
@@ -112,13 +112,13 @@ export default async function BatchesPage() {
                     </div>
 
                     {batches.length === 0 ? (
-                        <div className="rounded-md border bg-card text-card-foreground shadow-sm p-12 text-center">
-                            <Droplets className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                            <h2 className="text-lg font-semibold mb-2">No batches yet</h2>
-                            <p className="text-muted-foreground text-sm mb-6">
+                        <div className="rounded-xl border-2 border-dashed border-brand-terracotta/20 bg-brand-cream/50 p-12 text-center">
+                            <Droplets className="h-12 w-12 text-brand-terracotta/30 mx-auto mb-4" />
+                            <h2 className="text-lg font-semibold mb-2 text-brand-warm-brown">No batches yet</h2>
+                            <p className="text-brand-stone text-sm mb-6">
                                 Create your first soap batch to get started.
                             </p>
-                            <Button asChild>
+                            <Button asChild className="bg-brand-warm-brown hover:bg-brand-warm-brown/90 text-brand-cream">
                                 <Link href="/admin/batches/new">
                                     <Plus className="mr-2 h-4 w-4" /> Create Batch
                                 </Link>
@@ -133,10 +133,10 @@ export default async function BatchesPage() {
                                     <Link
                                         key={batch.id}
                                         href={`/admin/batches/${batch.id}`}
-                                        className="group block rounded-xl border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all hover:border-primary/30"
+                                        className="group block rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all hover:border-brand-terracotta/30"
                                     >
                                         {batch.imageUrl ? (
-                                            <div className="aspect-video w-full overflow-hidden rounded-t-xl bg-muted">
+                                            <div className="aspect-video w-full overflow-hidden rounded-t-xl bg-brand-cream">
                                                 <img
                                                     src={batch.imageUrl}
                                                     alt={batch.name}
@@ -144,18 +144,18 @@ export default async function BatchesPage() {
                                                 />
                                             </div>
                                         ) : (
-                                            <div className="aspect-video w-full overflow-hidden rounded-t-xl bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center">
-                                                <Droplets className="h-12 w-12 text-indigo-200" />
+                                            <div className="aspect-video w-full overflow-hidden rounded-t-xl bg-gradient-to-br from-brand-terracotta-light to-brand-rose-light flex items-center justify-center">
+                                                <Droplets className="h-12 w-12 text-brand-terracotta/25" />
                                             </div>
                                         )}
                                         <div className="p-4 space-y-3">
                                             <div className="flex items-start justify-between gap-2">
-                                                <h3 className="font-semibold text-base truncate">{batch.name}</h3>
+                                                <h3 className="font-semibold text-base truncate text-brand-warm-brown">{batch.name}</h3>
                                                 <Badge variant={statusStyle.variant} className={`shrink-0 text-xs ${extraColor}`}>
                                                     {statusStyle.label}
                                                 </Badge>
                                             </div>
-                                            <div className="space-y-1.5 text-sm text-muted-foreground">
+                                            <div className="space-y-1.5 text-sm text-brand-stone">
                                                 <div className="flex items-center gap-2">
                                                     <Beaker className="h-3.5 w-3.5" />
                                                     <span className="truncate">Base: {batch.baseRecipe.name}</span>

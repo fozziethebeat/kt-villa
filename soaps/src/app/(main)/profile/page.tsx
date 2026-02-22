@@ -23,16 +23,16 @@ export default async function ProfilePage() {
     }
 
     return (
-        <div className="flex flex-col min-h-screen bg-slate-50/50">
+        <div className="flex flex-col min-h-screen">
             <Header links={[{ label: "Home", url: "/" }]} target="Profile" />
 
             <main className="flex-1 container max-w-2xl mx-auto py-12 px-4">
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold tracking-tight text-slate-900">Your Profile</h1>
-                    <p className="text-slate-500 mt-2">Manage your account settings and preferences.</p>
+                    <h1 className="text-3xl font-semibold tracking-tight text-brand-warm-brown">Your Profile</h1>
+                    <p className="text-brand-stone mt-2">Manage your account settings and preferences.</p>
                 </div>
 
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
                     <div className="p-6 md:p-8">
                         <ProfileForm user={user} />
                     </div>

@@ -15,14 +15,14 @@ interface HeaderProps {
 
 export function Header({ links, target }: HeaderProps) {
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-      <SidebarTrigger className="-ml-1" />
+    <header className="flex h-16 shrink-0 items-center gap-2 border-b border-border px-4 bg-card/50 backdrop-blur-sm">
+      <SidebarTrigger className="-ml-1 text-brand-stone hover:text-brand-warm-brown" />
       <Breadcrumb>
         <BreadcrumbList>
           {links?.map(l => (
             <div
               key={l.label}
-              className="flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5">
+              className="flex flex-wrap items-center gap-1.5 break-words text-sm text-brand-stone sm:gap-2.5">
               <BreadcrumbItem>
                 <BreadcrumbLink href={l.url}>{l.label}</BreadcrumbLink>
               </BreadcrumbItem>
@@ -30,7 +30,7 @@ export function Header({ links, target }: HeaderProps) {
             </div>
           ))}
           <BreadcrumbItem>
-            <BreadcrumbPage>{target}</BreadcrumbPage>
+            <BreadcrumbPage className="text-brand-warm-brown font-medium">{target}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>

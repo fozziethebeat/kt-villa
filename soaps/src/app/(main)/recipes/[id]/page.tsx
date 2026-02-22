@@ -38,17 +38,17 @@ export default async function RecipeDetailPage({ params }: PageProps) {
             <div className="flex flex-col md:flex-row gap-8 items-start mb-8">
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                        <Badge variant={isBase ? "default" : "secondary"}>
+                        <Badge variant={isBase ? "default" : "secondary"} className={isBase ? "bg-brand-warm-brown" : "bg-brand-terracotta-light text-brand-terracotta"}>
                             {isBase ? "Base Recipe" : "Style Recipe"}
                         </Badge>
-                        <span className="text-sm text-muted-foreground flex items-center gap-1">
+                        <span className="text-sm text-brand-stone flex items-center gap-1">
                             <CalendarDays className="w-4 h-4" />
                             Updated {recipe.updatedAt.toLocaleDateString()}
                         </span>
                     </div>
-                    <h1 className="text-4xl font-bold tracking-tight mb-4">{recipe.name}</h1>
+                    <h1 className="text-4xl font-semibold tracking-tight mb-4 text-brand-warm-brown">{recipe.name}</h1>
                     {recipe.notes && (
-                        <p className="text-lg text-muted-foreground leading-relaxed italic">
+                        <p className="text-lg text-brand-stone leading-relaxed italic">
                             &quot;{recipe.notes}&quot;
                         </p>
                     )}
@@ -61,23 +61,23 @@ export default async function RecipeDetailPage({ params }: PageProps) {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="md:col-span-2 space-y-8">
-                    <Card>
+                    <Card className="border-border">
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-brand-warm-brown">
                                 <Scale className="w-5 h-5" />
                                 Ingredients
                             </CardTitle>
-                            <CardDescription>
+                            <CardDescription className="text-brand-stone">
                                 Total weight: {totalWeight.toFixed(1)}g
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                <ul className="divide-y border rounded-md">
+                                <ul className="divide-y border border-border rounded-md">
                                     {ingredients.map((ingredient, index) => (
-                                        <li key={index} className="flex justify-between items-center p-3 hover:bg-muted/50 transition-colors first:rounded-t-md last:rounded-b-md">
-                                            <span className="font-medium text-gray-900">{ingredient.name}</span>
-                                            <span className="text-muted-foreground font-mono">
+                                        <li key={index} className="flex justify-between items-center p-3 hover:bg-brand-cream/50 transition-colors first:rounded-t-md last:rounded-b-md">
+                                            <span className="font-medium text-brand-warm-brown">{ingredient.name}</span>
+                                            <span className="text-brand-stone font-mono">
                                                 {ingredient.quantity} {ingredient.unit || 'g'}
                                             </span>
                                         </li>

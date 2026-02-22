@@ -1,4 +1,4 @@
-import {Storage, Bucket} from '@google-cloud/storage';
+import { Storage, Bucket } from '@google-cloud/storage';
 import fs from 'fs';
 import path from 'path';
 
@@ -47,24 +47,39 @@ class GCPImageSaver {
   }
 }
 
+function loadGCPCredentials(): any {
+  // Option 1: Local file path (for development)
+  if (process.env.GOOGLE_CLOUD_KEY_FILE) {
+    const absoluteKeyFilePath = path.resolve(process.env.GOOGLE_CLOUD_KEY_FILE);
+    const keyFileContent = fs.readFileSync(absoluteKeyFilePath, 'utf8');
+    return JSON.parse(keyFileContent);
+  }
+
+  // Option 2: Base64-encoded JSON (for Vercel / production)
+  if (process.env.GOOGLE_CLOUD_CREDENTIALS_BASE64) {
+    const decoded = Buffer.from(process.env.GOOGLE_CLOUD_CREDENTIALS_BASE64, 'base64').toString('utf8');
+    return JSON.parse(decoded);
+  }
+
+  return null;
+}
+
 function createImageSaver() {
+  const credentials = loadGCPCredentials();
   if (
-    process.env.GOOGLE_CLOUD_KEY_FILE &&
+    credentials &&
     process.env.GOOGLE_CLOUD_PROJECT_ID &&
     process.env.GOOGLE_CLOUD_STORAGE_BUCKET
   ) {
-    const absoluteKeyFilePath = path.resolve(process.env.GOOGLE_CLOUD_KEY_FILE);
-    const keyFileContent = fs.readFileSync(absoluteKeyFilePath, 'utf8');
-    const credentials = JSON.parse(keyFileContent);
     return new GCPImageSaver(
       process.env.GOOGLE_CLOUD_PROJECT_ID,
       process.env.GOOGLE_CLOUD_STORAGE_BUCKET,
       credentials,
     );
   }
-  throw new Error('No imageSaver');
+  throw new Error('No imageSaver: missing GCP credentials (set GOOGLE_CLOUD_KEY_FILE or GOOGLE_CLOUD_CREDENTIALS_BASE64) and project/bucket env vars');
 }
 
 const imageSaver = createImageSaver();
 
-export {ImageSaver, GCPImageSaver, imageSaver};
+export { ImageSaver, GCPImageSaver, imageSaver };

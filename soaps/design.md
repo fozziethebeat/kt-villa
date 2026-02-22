@@ -75,9 +75,11 @@ The Soaps app is a tool for a home soap maker to track their cold process soap b
 *   `/collection/[batchId]`: Public-facing view of a specific soap batch (Image, Story/Description, Ingredients summary).
 
 ## Visual Style
-*   **Theme**: Clean, artisanal, organic feel.
-*   **Colors**: Pastels, earth tones, soft whites/creams.
-*   **Aesthetics**: Glassmorphism cards for batches, high-quality typography (Serif for headings).
+*   **Target Audience**: Thoughtful, independent, hard-working women (mid-30s Asian American). Sophisticated & feminine, not girly.
+*   **Theme**: Warm, editorial, premium artisan feel — think Aesop meets handmade craft.
+*   **Colors**: Warm terracotta/clay, muted rose, sage green, cream/linen backgrounds. No cold blues or generic tech grays.
+*   **Typography**: Cormorant Garamond (serif) for headings, DM Sans (clean sans-serif) for body text. Elegant but approachable.
+*   **Aesthetics**: Warm organic gradients, subtle backdrop blurs, earthy badge colors. Cards with gentle shadows and warm borders.
 
 ## AI Integration
 *   Use `imageGenerator` (Google GenAI) to create a label/art for the soap based on its name and main ingredients.
