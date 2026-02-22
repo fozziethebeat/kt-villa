@@ -1,19 +1,14 @@
 'use server'
 
-import { randomBytes } from 'crypto'
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
+import { generateMagicCode } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
 import { mailer } from "@/lib/mailer"
 import { checkAccess } from "@/lib/auth-check"
 import { render } from "@react-email/render"
 import { BatchRequestNotification } from "@/components/mail/BatchRequestNotification"
-
-function generateMagicCode(): string {
-    const bytes = randomBytes(4).toString('hex')
-    return `soap-${bytes}`
-}
 
 export async function requestBatch(styleRecipeId: string) {
     const session = await auth.api.getSession({

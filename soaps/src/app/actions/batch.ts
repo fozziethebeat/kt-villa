@@ -1,15 +1,10 @@
 'use server'
 
-import { randomBytes } from 'crypto'
 import prisma from "@/lib/prisma"
 import { imageGenerator } from "@/lib/generate"
+import { generateMagicCode } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-
-function generateMagicCode(): string {
-    const bytes = randomBytes(4).toString('hex')
-    return `soap-${bytes}`
-}
 
 export async function createBatch(prevState: any, formData: FormData) {
     const name = formData.get("name") as string
