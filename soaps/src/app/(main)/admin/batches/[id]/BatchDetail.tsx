@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Beaker, Droplets, Calendar, Hash, Sparkles, Loader2, ImageIcon, Trash2, KeyRound, Copy, Check } from 'lucide-react'
 import { updateBatch, generateBatchImage, deleteBatch } from '@/app/actions/batch'
+import { formatDate } from '@/lib/utils'
 // @ts-ignore
 import { useFormStatus } from 'react-dom'
 
@@ -104,7 +105,7 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                 <div>
                     <h1 className="text-3xl font-semibold tracking-tight text-brand-warm-brown">{batch.name}</h1>
                     <p className="text-brand-stone mt-1">
-                        Started {new Date(batch.startedAt).toLocaleDateString()}
+                        Started {formatDate(batch.startedAt)}
                     </p>
                 </div>
                 <div className="flex items-center gap-2">

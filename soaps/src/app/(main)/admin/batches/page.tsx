@@ -6,6 +6,7 @@ import { CopyableCode } from '@/components/CopyableCode'
 import { Badge } from '@/components/ui/badge'
 import { Header } from '@/components/Header'
 import { RequestActions } from './RequestActions'
+import { formatDate } from '@/lib/utils'
 
 const links = [
     { url: '/', label: 'Home' },
@@ -73,9 +74,7 @@ export default async function BatchesPage() {
                                     {pendingRequests.map(request => (
                                         <tr key={request.id} className="hover:bg-brand-cream/50 transition-colors">
                                             <td className="px-4 py-3 text-brand-stone">
-                                                {request.createdAt.toLocaleDateString(undefined, {
-                                                    month: 'short', day: 'numeric', year: 'numeric'
-                                                })}
+                                                {formatDate(request.createdAt)}
                                             </td>
                                             <td className="px-4 py-3">
                                                 <div>
@@ -168,7 +167,7 @@ export default async function BatchesPage() {
                                                 )}
                                                 <div className="flex items-center gap-2">
                                                     <Calendar className="h-3.5 w-3.5" />
-                                                    <span>{batch.startedAt.toLocaleDateString()}</span>
+                                                    <span>{formatDate(batch.startedAt)}</span>
                                                 </div>
                                                 {batch.numBars !== null && (
                                                     <div className="flex items-center gap-2">

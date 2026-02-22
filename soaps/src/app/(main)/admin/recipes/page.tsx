@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma'
 import { Button } from '@/components/ui/button'
 import { Plus, Beaker, Leaf } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { formatDate } from '@/lib/utils'
 
 export default async function RecipesPage() {
     const recipes = await prisma.recipe.findMany({
@@ -47,7 +48,7 @@ export default async function RecipesPage() {
                                     {summary || <span className="opacity-50 italic">No ingredients</span>}
                                 </div>
                                 <div className="col-span-2 text-right text-brand-stone">
-                                    {recipe.updatedAt.toLocaleDateString()}
+                                    {formatDate(recipe.updatedAt)}
                                 </div>
                             </Link>
                         )

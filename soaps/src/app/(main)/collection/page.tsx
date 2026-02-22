@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Droplets, Calendar, Sparkles, KeyRound } from 'lucide-react';
 import { AddSoapForm } from '@/components/AddSoapForm';
+import { formatDate } from '@/lib/utils';
 
 const links = [
     { url: '/', label: 'Home' },
@@ -109,7 +110,7 @@ function SoapCard({ gift }: { gift: any }) {
                 <div className="absolute top-4 left-4">
                     <Badge className="backdrop-blur-md bg-white/90 shadow-sm border-0 text-brand-warm-brown">
                         <Calendar className="mr-1 h-3 w-3" />
-                        {new Date(gift.givenAt).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
+                        {formatDate(gift.givenAt)}
                     </Badge>
                 </div>
             </div>

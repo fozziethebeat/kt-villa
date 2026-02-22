@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { CalendarDays, Scale } from "lucide-react"
+import { formatDate } from "@/lib/utils"
 
 interface RecipeIngredient {
     name: string;
@@ -43,7 +44,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                         </Badge>
                         <span className="text-sm text-brand-stone flex items-center gap-1">
                             <CalendarDays className="w-4 h-4" />
-                            Updated {recipe.updatedAt.toLocaleDateString()}
+                            Updated {formatDate(recipe.updatedAt)}
                         </span>
                     </div>
                     <h1 className="text-4xl font-semibold tracking-tight mb-4 text-brand-warm-brown">{recipe.name}</h1>

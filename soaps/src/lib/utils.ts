@@ -21,3 +21,11 @@ export function generateMagicCode(): string {
     .join('')
   return `${month}${day}-${suffix}`
 }
+
+/**
+ * Formats a Date (or ISO date string) as YYYY-MM-DD.
+ */
+export function formatDate(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date
+  return d.toISOString().split('T')[0]
+}

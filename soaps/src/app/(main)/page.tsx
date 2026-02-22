@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Droplets, Calendar, Sparkles, Wind, Users, Clock } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { RequestButton } from '@/components/RequestButton';
 
 function getAgeInWeeks(date: Date) {
@@ -283,7 +283,7 @@ function BatchCard({ batch, isCuring }: { batch: any, isCuring?: boolean }) {
         <div className="flex items-center text-xs text-brand-stone mb-3 space-x-3">
           <span className="flex items-center">
             <Calendar className="w-3.5 h-3.5 mr-1" />
-            {batch.startedAt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+            {formatDate(batch.startedAt)}
           </span>
           {isCuring && (
             <span className="flex items-center text-brand-sage font-medium">
