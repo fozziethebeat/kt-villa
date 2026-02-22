@@ -16,6 +16,9 @@ export default async function BatchDetailPage({ params }: { params: Promise<{ id
         include: {
             baseRecipe: true,
             styleRecipe: true,
+            images: {
+                orderBy: { version: 'desc' },
+            },
         }
     })
 
@@ -45,6 +48,13 @@ export default async function BatchDetailPage({ params }: { params: Promise<{ id
                         name: batch.styleRecipe.name,
                         ingredients: batch.styleRecipe.ingredients as any[],
                     } : null,
+                    images: batch.images.map((img) => ({
+                        id: img.id,
+                        imageUrl: img.imageUrl,
+                        prompt: img.prompt,
+                        version: img.version,
+                        createdAt: img.createdAt.toISOString(),
+                    })),
                 }} />
             </div>
         </>

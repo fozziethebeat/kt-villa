@@ -119,8 +119,22 @@ model Batch {
   magicCodeId String?  @unique
   magicCode   MagicCode? @relation(fields: [magicCodeId], references: [id])
   gifts     SoapGift[]
+  images    BatchImage[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+}
+
+model BatchImage {
+  id        String   @id @default(uuid())
+  batchId   String
+  batch     Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  imageUrl  String
+  prompt    String?
+  version   Int
+  createdAt DateTime @default(now())
+
+  @@index([batchId])
+  @@unique([batchId, version])
 }
 
 enum BatchStatus {

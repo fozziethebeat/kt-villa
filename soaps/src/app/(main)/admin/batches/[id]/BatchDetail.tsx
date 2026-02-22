@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Beaker, Droplets, Calendar, Hash, Sparkles, Loader2, ImageIcon, Trash2, KeyRound, Copy, Check } from 'lucide-react'
-import { updateBatch, generateBatchImage, deleteBatch } from '@/app/actions/batch'
+import { Beaker, Droplets, Calendar, Hash, Sparkles, Loader2, ImageIcon, Trash2, KeyRound, Copy, Check, History } from 'lucide-react'
+import { updateBatch, generateBatchImage, selectBatchImage, deleteBatch } from '@/app/actions/batch'
 import { formatDate } from '@/lib/utils'
 // @ts-ignore
 import { useFormStatus } from 'react-dom'
@@ -26,6 +26,14 @@ interface BatchRecipe {
     ingredients: any[]
 }
 
+interface BatchImageData {
+    id: string
+    imageUrl: string
+    prompt: string | null
+    version: number
+    createdAt: string
+}
+
 interface BatchData {
     id: string
     name: string
@@ -43,6 +51,7 @@ interface BatchData {
     updatedAt: string
     baseRecipe: BatchRecipe
     styleRecipe: BatchRecipe | null
+    images: BatchImageData[]
 }
 
 const STATUS_OPTIONS = [
@@ -63,6 +72,8 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
     const [isGenerating, startTransition] = useTransition()
     const [imageError, setImageError] = useState('')
     const [generatedImageUrl, setGeneratedImageUrl] = useState(batch.imageUrl || '')
+    const [imageHistory, setImageHistory] = useState<BatchImageData[]>(batch.images)
+    const [isSelectingImage, startSelectTransition] = useTransition()
 
     const [isDeleting, setIsDeleting] = useState(false)
     const [copied, setCopied] = useState(false)
@@ -84,8 +95,26 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
             const result = await generateBatchImage(batch.id, imagePrompt)
             if (result.success && result.imageUrl) {
                 setGeneratedImageUrl(result.imageUrl)
+                // Prepend new image to front of history
+                const nextVersion = (imageHistory[0]?.version ?? 0) + 1
+                setImageHistory(prev => [{
+                    id: `temp-${nextVersion}`,
+                    imageUrl: result.imageUrl!,
+                    prompt: imagePrompt,
+                    version: nextVersion,
+                    createdAt: new Date().toISOString(),
+                }, ...prev])
             } else {
                 setImageError(result.error || 'Failed to generate image')
+            }
+        })
+    }
+
+    const handleSelectImage = (image: BatchImageData) => {
+        startSelectTransition(async () => {
+            const result = await selectBatchImage(batch.id, image.id)
+            if (result.success && result.imageUrl) {
+                setGeneratedImageUrl(result.imageUrl)
             }
         })
     }
@@ -297,6 +326,52 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                         </CardContent>
                     </Card>
 
+                    {/* Image History */}
+                    {imageHistory.length > 0 && (
+                        <Card className="border-border">
+                            <CardHeader>
+                                <CardTitle className="text-base flex items-center gap-2 text-brand-warm-brown">
+                                    <History className="h-4 w-4 text-brand-terracotta" />
+                                    Image History
+                                </CardTitle>
+                                <CardDescription className="text-brand-stone">
+                                    Click a previous image to set it as the active batch image.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {imageHistory.map((image) => {
+                                        const isActive = image.imageUrl === generatedImageUrl
+                                        return (
+                                            <button
+                                                key={image.id}
+                                                onClick={() => handleSelectImage(image)}
+                                                disabled={isSelectingImage || isActive}
+                                                className={`relative group rounded-md overflow-hidden border-2 transition-all aspect-square ${isActive
+                                                        ? 'border-brand-terracotta ring-2 ring-brand-terracotta/30'
+                                                        : 'border-border hover:border-brand-terracotta/50 cursor-pointer'
+                                                    }`}
+                                                title={image.prompt || `Version ${image.version}`}
+                                            >
+                                                <img
+                                                    src={image.imageUrl}
+                                                    alt={`Version ${image.version}`}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                                <div className={`absolute inset-0 flex items-end justify-center pb-1 bg-gradient-to-t from-black/50 to-transparent transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                                                    }`}>
+                                                    <span className="text-white text-xs font-medium">
+                                                        {isActive ? '✓ Active' : `v${image.version}`}
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
                     {/* AI Image Generator */}
                     <Card className="border-border">
                         <CardHeader>
@@ -305,7 +380,7 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                                 Generate AI Image
                             </CardTitle>
                             <CardDescription className="text-brand-stone">
-                                Describe the image you want for this batch. Reference the soap style, colors, or mood.
+                                Describe the image you want for this batch. Each generation creates a new version you can switch between.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-3">
@@ -330,7 +405,7 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                                 ) : (
                                     <>
                                         <Sparkles className="mr-2 h-4 w-4" />
-                                        Generate Image
+                                        {imageHistory.length > 0 ? 'Generate New Version' : 'Generate Image'}
                                     </>
                                 )}
                             </Button>

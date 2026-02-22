@@ -94,12 +94,32 @@ export async function generateBatchImage(batchId: string, prompt: string) {
     }
 
     try {
-        const imageUrl = await imageGenerator.generateImage(batchId, prompt)
-
-        await prisma.batch.update({
-            where: { id: batchId },
-            data: { imageUrl },
+        // Determine the next version number for this batch
+        const lastImage = await prisma.batchImage.findFirst({
+            where: { batchId },
+            orderBy: { version: 'desc' },
         })
+        const nextVersion = (lastImage?.version ?? 0) + 1
+
+        // Use a versioned key so we never overwrite prior images
+        const versionedId = `${batchId}_v${nextVersion}`
+        const imageUrl = await imageGenerator.generateImage(versionedId, prompt)
+
+        // Save the image record and set it as the active batch image
+        await prisma.$transaction([
+            prisma.batchImage.create({
+                data: {
+                    batchId,
+                    imageUrl,
+                    prompt,
+                    version: nextVersion,
+                },
+            }),
+            prisma.batch.update({
+                where: { id: batchId },
+                data: { imageUrl },
+            }),
+        ])
 
         revalidatePath(`/admin/batches/${batchId}`)
         revalidatePath("/admin/batches")
@@ -107,6 +127,34 @@ export async function generateBatchImage(batchId: string, prompt: string) {
     } catch (error) {
         console.error("Image generation failed:", error)
         return { error: "Failed to generate image. Please try again." }
+    }
+}
+
+export async function selectBatchImage(batchId: string, batchImageId: string) {
+    if (!batchId || !batchImageId) {
+        return { error: "Batch ID and Image ID are required" }
+    }
+
+    try {
+        const batchImage = await prisma.batchImage.findUnique({
+            where: { id: batchImageId },
+        })
+
+        if (!batchImage || batchImage.batchId !== batchId) {
+            return { error: "Image not found for this batch" }
+        }
+
+        await prisma.batch.update({
+            where: { id: batchId },
+            data: { imageUrl: batchImage.imageUrl },
+        })
+
+        revalidatePath(`/admin/batches/${batchId}`)
+        revalidatePath("/admin/batches")
+        return { success: true, imageUrl: batchImage.imageUrl }
+    } catch (error) {
+        console.error("Failed to select batch image:", error)
+        return { error: "Failed to select image. Please try again." }
     }
 }
 
