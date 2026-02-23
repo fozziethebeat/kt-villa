@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Header } from '@/components/Header';
 import prisma from '@/lib/prisma';
 import { Badge } from '@/components/ui/badge';
@@ -253,65 +254,67 @@ function BatchCard({ batch, isCuring }: { batch: any, isCuring?: boolean }) {
   const ageWeeks = getAgeInWeeks(batch.startedAt);
 
   return (
-    <Card className="overflow-hidden border-0 shadow-sm hover:shadow-xl transition-all duration-300 group ring-1 ring-border">
-      <div className="aspect-[4/3] relative overflow-hidden bg-brand-cream">
-        {batch.imageUrl ? (
-          <img
-            src={batch.imageUrl}
-            alt={batch.name}
-            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-terracotta-light to-brand-rose-light">
-            <Droplets className="h-16 w-16 text-brand-terracotta/30" />
-          </div>
-        )}
-        <div className="absolute top-4 right-4">
-          <Badge
-            className={cn(
-              "backdrop-blur-md shadow-sm border-0 text-xs font-medium",
-              isCuring
-                ? "bg-brand-sage-light/90 text-brand-sage"
-                : "bg-brand-cream/90 text-brand-terracotta"
-            )}
-          >
-            {isCuring ? 'Curing' : 'Ready'}
-          </Badge>
-        </div>
-      </div>
-      <CardContent className="p-6">
-        <div className="flex items-center text-xs text-brand-stone mb-3 space-x-3">
-          <span className="flex items-center">
-            <Calendar className="w-3.5 h-3.5 mr-1" />
-            {formatDate(batch.startedAt)}
-          </span>
-          {isCuring && (
-            <span className="flex items-center text-brand-sage font-medium">
-              <Wind className="w-3.5 h-3.5 mr-1" />
-              Curing for {ageWeeks} {ageWeeks === 1 ? 'week' : 'weeks'}
-            </span>
+    <Link href={`/batches/${batch.id}`} className="block">
+      <Card className="overflow-hidden border-0 shadow-sm hover:shadow-xl transition-all duration-300 group ring-1 ring-border cursor-pointer">
+        <div className="aspect-[4/3] relative overflow-hidden bg-brand-cream">
+          {batch.imageUrl ? (
+            <img
+              src={batch.imageUrl}
+              alt={batch.name}
+              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-terracotta-light to-brand-rose-light">
+              <Droplets className="h-16 w-16 text-brand-terracotta/30" />
+            </div>
           )}
+          <div className="absolute top-4 right-4">
+            <Badge
+              className={cn(
+                "backdrop-blur-md shadow-sm border-0 text-xs font-medium",
+                isCuring
+                  ? "bg-brand-sage-light/90 text-brand-sage"
+                  : "bg-brand-cream/90 text-brand-terracotta"
+              )}
+            >
+              {isCuring ? 'Curing' : 'Ready'}
+            </Badge>
+          </div>
         </div>
-        <h3 className="font-semibold text-xl text-brand-warm-brown mb-2 group-hover:text-brand-terracotta transition-colors">
-          {batch.name}
-        </h3>
-        <p className="text-sm text-brand-stone line-clamp-2 mb-4">
-          {batch.notes || `A lovely batch made with ${batch.baseRecipe.name} base.`}
-        </p>
-
-        {batch.styleRecipe && (
-          <div className="flex flex-wrap gap-1.5">
-            {(batch.styleRecipe.ingredients as any[]).slice(0, 3).map((ing: any, i: number) => (
-              <Badge key={i} variant="outline" className="text-xs font-normal text-brand-stone bg-brand-cream border-brand-terracotta/15">
-                {ing.name}
-              </Badge>
-            ))}
-            {(batch.styleRecipe.ingredients as any[]).length > 3 && (
-              <span className="text-xs text-brand-stone/60 pl-1">+{((batch.styleRecipe.ingredients as any[]).length - 3)} more</span>
+        <CardContent className="p-6">
+          <div className="flex items-center text-xs text-brand-stone mb-3 space-x-3">
+            <span className="flex items-center">
+              <Calendar className="w-3.5 h-3.5 mr-1" />
+              {formatDate(batch.startedAt)}
+            </span>
+            {isCuring && (
+              <span className="flex items-center text-brand-sage font-medium">
+                <Wind className="w-3.5 h-3.5 mr-1" />
+                Curing for {ageWeeks} {ageWeeks === 1 ? 'week' : 'weeks'}
+              </span>
             )}
           </div>
-        )}
-      </CardContent>
-    </Card>
+          <h3 className="font-semibold text-xl text-brand-warm-brown mb-2 group-hover:text-brand-terracotta transition-colors">
+            {batch.name}
+          </h3>
+          <p className="text-sm text-brand-stone line-clamp-2 mb-4">
+            {batch.notes || `A lovely batch made with ${batch.baseRecipe.name} base.`}
+          </p>
+
+          {batch.styleRecipe && (
+            <div className="flex flex-wrap gap-1.5">
+              {(batch.styleRecipe.ingredients as any[]).slice(0, 3).map((ing: any, i: number) => (
+                <Badge key={i} variant="outline" className="text-xs font-normal text-brand-stone bg-brand-cream border-brand-terracotta/15">
+                  {ing.name}
+                </Badge>
+              ))}
+              {(batch.styleRecipe.ingredients as any[]).length > 3 && (
+                <span className="text-xs text-brand-stone/60 pl-1">+{((batch.styleRecipe.ingredients as any[]).length - 3)} more</span>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
   )
 }
