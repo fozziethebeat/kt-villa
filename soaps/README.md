@@ -110,3 +110,7 @@ automatically get the matching soap in their collection.
 [] More little generative tweaks
   [] When creating a batch, tailor the image to the style and base 
   [] when creating a recipie, suggest a name based on the ingredients and a prompt
+
+## Physical things
+
+[printer](https://epson.com/For-Home/Printers/Inkjet/EcoTank-ET-2980-Wireless-All-in-One-Color-Supertank-Printer-%E2%80%93-White/p/C11CL41202)
