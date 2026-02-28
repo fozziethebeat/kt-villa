@@ -1,6 +1,14 @@
-import { PrismaClient, Prisma, RecipeType } from '../src/lib/generated/prisma';
+import {
+  PrismaClient,
+  Prisma,
+  RecipeType,
+  BatchStatus,
+  RequestStatus,
+} from '../src/lib/generated/prisma';
 
 const prisma = new PrismaClient();
+
+// ─── Reference Data ────────────────────────────────────────────────
 
 const users: Prisma.UserCreateInput[] = [
   {
@@ -9,7 +17,7 @@ const users: Prisma.UserCreateInput[] = [
     roles: 'admin',
   },
   {
-    name: 'Testy MctestFace',
+    name: 'Testy McTestFace',
     email: process.env.TEST_USER_EMAIL || '',
   },
 ];
@@ -26,12 +34,11 @@ const entityData: Prisma.EntityCreateInput[] = [
 ];
 
 const magicCodes: Prisma.MagicCodeCreateInput[] = [
-  {
-    id: 'testcode',
-  },
-  {
-    id: 'testcode2',
-  },
+  { id: 'testcode' },
+  { id: 'testcode2' },
+  { id: 'lavender-dreams' },
+  { id: 'forest-walk' },
+  { id: 'rose-garden' },
 ];
 
 const ingredients: Prisma.IngredientCreateInput[] = [
@@ -87,6 +94,19 @@ const recipes: Prisma.RecipeCreateInput[] = [
       { name: 'Olive Oil', quantity: '500', unit: 'g' },
       { name: 'Distilled Water', quantity: '150', unit: 'g' },
       { name: 'Lye (NaOH)', quantity: '68', unit: 'g' },
+    ],
+  },
+  {
+    name: 'Shea Butter Luxury Base',
+    type: RecipeType.BASE,
+    notes: 'A rich, moisturizing base with shea butter and coconut oil.',
+    ingredients: [
+      { name: 'Olive Oil', quantity: '350', unit: 'g' },
+      { name: 'Coconut Oil', quantity: '200', unit: 'g' },
+      { name: 'Shea Butter', quantity: '100', unit: 'g' },
+      { name: 'Castor Oil', quantity: '50', unit: 'g' },
+      { name: 'Distilled Water', quantity: '200', unit: 'g' },
+      { name: 'Lye (NaOH)', quantity: '95', unit: 'g' },
     ],
   },
   {
@@ -215,77 +235,408 @@ const recipes: Prisma.RecipeCreateInput[] = [
   },
 ];
 
+// ─── Helpers ───────────────────────────────────────────────────────
+
+/** Returns a Date offset from today by `days` (negative = past). */
+function daysAgo(days: number): Date {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return d;
+}
+
+// ─── Main ──────────────────────────────────────────────────────────
+
 export async function main() {
+  console.log('🌱 Starting seed…\n');
+
+  // ── 1. Users ──────────────────────────────────────────────────────
+  console.log('👤 Seeding users…');
+  const seededUsers: Record<string, string> = {};
   for (const data of users) {
-    // Using upsert for users to avoid unique constraint errors on re-runs
-    await prisma.user.upsert({
+    const user = await prisma.user.upsert({
       where: { email: data.email },
-      update: {},
+      update: { name: data.name, roles: data.roles ?? 'general' },
       create: data,
     });
+    seededUsers[data.email] = user.id;
+    console.log(`   ✓ ${data.name} (${data.email})`);
   }
+  const adminId = seededUsers[process.env.ADMIN_EMAIL || ''];
+  const testUserId = seededUsers[process.env.TEST_USER_EMAIL || ''];
 
+  // ── 2. Entities ───────────────────────────────────────────────────
+  console.log('📦 Seeding entities…');
   for (const data of entityData) {
-    // Entities don't have unique constraints shown here easily besides ID (which is missing in input, usually generated)
-    // But keeping as create for now, or could check.
-    // The original script used create, but let's try to be safer if we can.
-    // Usually Entity keys are not unique.
-    // I'll stick to create for Entity to avoid changing behavior too much,
-    // but users and magic codes have unique keys.
-    try {
+    const existing = await prisma.entity.findFirst({
+      where: { name: data.name },
+    });
+    if (!existing) {
       await prisma.entity.create({ data });
-    } catch (e) {
-      // Ignore duplicate key errors if necessary? No, entity doesn't seem to have unique name in seed.
-      // But if I want to be safe, I'd probably just leave it or improve it.
-      // I will leave entity as create because there's no unique field in the input to upsert on.
+      console.log(`   ✓ Created "${data.name}"`);
+    } else {
+      console.log(`   – "${data.name}" already exists, skipping`);
     }
   }
 
+  // ── 3. Magic Codes ────────────────────────────────────────────────
+  console.log('🪄 Seeding magic codes…');
   for (const data of magicCodes) {
     if (data.id) {
       await prisma.magicCode.upsert({
         where: { id: data.id },
         update: {},
-        create: data
+        create: data,
       });
+      console.log(`   ✓ ${data.id}`);
     }
   }
 
-  console.log('Seeding ingredients...');
+  // ── 4. Ingredients ────────────────────────────────────────────────
+  console.log('🧪 Seeding ingredients…');
   for (const data of ingredients) {
     await prisma.ingredient.upsert({
       where: { name: data.name },
-      update: {
-        // Ensure quantity is updated if it exists but changed in seed
-        quantity: data.quantity,
-        type: data.type
-      },
+      update: { quantity: data.quantity, type: data.type },
       create: data,
     });
   }
+  console.log(`   ✓ ${ingredients.length} ingredients upserted`);
 
-  console.log('Seeding recipes...');
+  // ── 5. Recipes ────────────────────────────────────────────────────
+  console.log('📖 Seeding recipes…');
+  const recipeIds: Record<string, string> = {};
   for (const data of recipes) {
-    // We don't have a unique key for recipes other than ID which isn't provided here.
-    // So we'll check by name.
     const existing = await prisma.recipe.findFirst({
-      where: { name: data.name }
+      where: { name: data.name },
     });
-
     if (!existing) {
-      await prisma.recipe.create({ data });
+      const created = await prisma.recipe.create({ data });
+      recipeIds[data.name] = created.id;
     } else {
-      // Optionally update content?
       await prisma.recipe.update({
         where: { id: existing.id },
         data: {
           ingredients: data.ingredients,
           notes: data.notes,
-          type: data.type
-        }
+          type: data.type,
+        },
       });
+      recipeIds[data.name] = existing.id;
     }
   }
+  console.log(`   ✓ ${recipes.length} recipes upserted`);
+
+  // Look up recipe IDs we need for batches
+  const baseRecipeId =
+    recipeIds['Standard Olive Oil Soap'] ||
+    (await prisma.recipe.findFirst({ where: { type: RecipeType.BASE } }))?.id;
+  const luxuryBaseId =
+    recipeIds['Shea Butter Luxury Base'] ||
+    (await prisma.recipe.findFirst({ where: { name: 'Shea Butter Luxury Base' } }))?.id;
+
+  if (!baseRecipeId) {
+    console.error('❌ Could not resolve a base recipe — skipping batch seeding.');
+    return;
+  }
+
+  // Gather style recipe IDs
+  const styleRecipeNames = [
+    'Labor Day Mess',
+    'Experiment 12-09',
+    'Experiment 25-11-02',
+    'Experiment 25-10-18',
+    'Experiment 25-09-15',
+    'Experiment 24-10-14',
+    'Experiment 24-10-09',
+    'Experiment 24-11-13',
+    'Experiment 24-12-07',
+    'Experiment 24-11-16',
+    'Experiment 24-12-15',
+    'Basic Charcoal Soap',
+  ];
+  const styleIds: Record<string, string> = {};
+  for (const name of styleRecipeNames) {
+    const id = recipeIds[name];
+    if (id) styleIds[name] = id;
+  }
+
+  // ── 6. Batches (clean + recreate to stay idempotent) ──────────────
+  console.log('🧼 Seeding batches…');
+
+  // Clean up volatile relational data that depends on batches
+  // Order matters: delete children before parents
+  await prisma.soapGift.deleteMany({});
+  await prisma.batchRequest.deleteMany({});
+  await prisma.batchImage.deleteMany({});
+  await prisma.batch.deleteMany({});
+  console.log('   ↻ Cleared existing batches & related data');
+
+  // Placeholder image for seeded batches (a nice gradient placeholder)
+  const placeholderImage =
+    'https://placehold.co/600x400/e8d5c4/8b6f5c?text=Soap+Batch';
+
+  interface BatchSeed {
+    name: string;
+    baseRecipeId: string;
+    styleRecipeName?: string;
+    status: BatchStatus;
+    startedAt: Date;
+    cutAt?: Date;
+    readyAt?: Date;
+    numBars?: number;
+    imageUrl?: string;
+    notes?: string;
+    magicCodeId?: string;
+  }
+
+  const batchSeeds: BatchSeed[] = [
+    // READY batches — completed and available
+    {
+      name: 'Lavender Dreams Batch',
+      baseRecipeId: baseRecipeId,
+      styleRecipeName: 'Experiment 25-09-15',
+      status: BatchStatus.READY,
+      startedAt: daysAgo(60),
+      cutAt: daysAgo(58),
+      readyAt: daysAgo(30),
+      numBars: 12,
+      imageUrl: placeholderImage,
+      notes: 'Beautiful purple hue, strong bergamot-lavender scent.',
+      magicCodeId: 'lavender-dreams',
+    },
+    {
+      name: 'Forest Walk Batch',
+      baseRecipeId: luxuryBaseId || baseRecipeId,
+      styleRecipeName: 'Experiment 24-11-16',
+      status: BatchStatus.READY,
+      startedAt: daysAgo(50),
+      cutAt: daysAgo(48),
+      readyAt: daysAgo(20),
+      numBars: 10,
+      imageUrl: placeholderImage,
+      notes: 'Fresh cypress-hinoki blend. Very popular.',
+      magicCodeId: 'forest-walk',
+    },
+    {
+      name: 'Rose Garden Batch',
+      baseRecipeId: baseRecipeId,
+      styleRecipeName: 'Experiment 12-09',
+      status: BatchStatus.READY,
+      startedAt: daysAgo(45),
+      cutAt: daysAgo(43),
+      readyAt: daysAgo(15),
+      numBars: 8,
+      imageUrl: placeholderImage,
+      notes: 'Gorgeous pink clay swirl with rose petals on top.',
+      magicCodeId: 'rose-garden',
+    },
+
+    // CURING batches — cut and drying
+    {
+      name: 'Midnight Charcoal Batch',
+      baseRecipeId: luxuryBaseId || baseRecipeId,
+      styleRecipeName: 'Experiment 24-12-15',
+      status: BatchStatus.CURING,
+      startedAt: daysAgo(20),
+      cutAt: daysAgo(18),
+      numBars: 14,
+      imageUrl: placeholderImage,
+      notes: 'Dark, dramatic bars with balsam-fir scent. Need 2 more weeks.',
+    },
+    {
+      name: 'Jasmine Moonlight Batch',
+      baseRecipeId: baseRecipeId,
+      styleRecipeName: 'Experiment 24-11-13',
+      status: BatchStatus.CURING,
+      startedAt: daysAgo(14),
+      cutAt: daysAgo(12),
+      numBars: 10,
+      notes: 'Jasmine-cedarwood, incredibly fragrant during cure.',
+    },
+
+    // STARTED batches — freshly poured
+    {
+      name: 'Tropical Coconut Batch',
+      baseRecipeId: luxuryBaseId || baseRecipeId,
+      styleRecipeName: 'Experiment 25-10-18',
+      status: BatchStatus.STARTED,
+      startedAt: daysAgo(3),
+      notes: 'Coconut-rose-litsea blend. Still in mold, trace was thick.',
+    },
+    {
+      name: 'Woody Zen Batch',
+      baseRecipeId: baseRecipeId,
+      styleRecipeName: 'Experiment 25-11-02',
+      status: BatchStatus.STARTED,
+      startedAt: daysAgo(1),
+      notes: 'MUJI-inspired minimalism. Very subtle scent.',
+    },
+
+    // SCHEDULING batches — planned but not yet started
+    {
+      name: 'Spring Neroli Batch',
+      baseRecipeId: baseRecipeId,
+      styleRecipeName: 'Experiment 24-10-09',
+      status: BatchStatus.SCHEDULING,
+      startedAt: daysAgo(-7), // scheduled for next week
+      notes: 'Pine-neroli combo requested by a friend. Sourcing neroli.',
+    },
+
+    // ARCHIVED batches — old completed batches
+    {
+      name: 'Labor Day Special',
+      baseRecipeId: baseRecipeId,
+      styleRecipeName: 'Labor Day Mess',
+      status: BatchStatus.ARCHIVED,
+      startedAt: daysAgo(180),
+      cutAt: daysAgo(178),
+      readyAt: daysAgo(150),
+      numBars: 6,
+      notes: 'Our very first batch! Messy but full of love.',
+      magicCodeId: 'testcode',
+    },
+    {
+      name: 'Hinoki Rose Classic',
+      baseRecipeId: baseRecipeId,
+      styleRecipeName: 'Experiment 24-10-14',
+      status: BatchStatus.ARCHIVED,
+      startedAt: daysAgo(120),
+      cutAt: daysAgo(118),
+      readyAt: daysAgo(90),
+      numBars: 8,
+      imageUrl: placeholderImage,
+      notes: 'One of the best-selling blends. All bars given away.',
+      magicCodeId: 'testcode2',
+    },
+  ];
+
+  const createdBatches: { name: string; id: string }[] = [];
+  for (const seed of batchSeeds) {
+    const styleRecipeId = seed.styleRecipeName
+      ? styleIds[seed.styleRecipeName]
+      : undefined;
+
+    const batch = await prisma.batch.create({
+      data: {
+        name: seed.name,
+        baseRecipeId: seed.baseRecipeId,
+        styleRecipeId: styleRecipeId || undefined,
+        status: seed.status,
+        startedAt: seed.startedAt,
+        cutAt: seed.cutAt,
+        readyAt: seed.readyAt,
+        numBars: seed.numBars,
+        imageUrl: seed.imageUrl,
+        notes: seed.notes,
+        magicCodeId: seed.magicCodeId,
+      },
+    });
+    createdBatches.push({ name: seed.name, id: batch.id });
+    console.log(`   ✓ ${seed.name} [${seed.status}]`);
+  }
+
+  // ── 7. BatchImages ────────────────────────────────────────────────
+  console.log('🖼️  Seeding batch images…');
+  const batchesWithImages = createdBatches.filter((b) =>
+    [
+      'Lavender Dreams Batch',
+      'Forest Walk Batch',
+      'Rose Garden Batch',
+      'Hinoki Rose Classic',
+    ].includes(b.name)
+  );
+
+  for (const batch of batchesWithImages) {
+    // Version 1 — initial image
+    await prisma.batchImage.create({
+      data: {
+        batchId: batch.id,
+        imageUrl: placeholderImage,
+        prompt: `A beautiful artisanal soap bar inspired by "${batch.name}", soft natural lighting, elegant botanical styling`,
+        version: 1,
+      },
+    });
+    // Version 2 — regenerated image
+    await prisma.batchImage.create({
+      data: {
+        batchId: batch.id,
+        imageUrl: placeholderImage,
+        prompt: `An artisanal soap bar for "${batch.name}", close-up macro shot, warm tones, dried flowers scattered around`,
+        version: 2,
+      },
+    });
+    console.log(`   ✓ 2 images for "${batch.name}"`);
+  }
+
+  // ── 8. SoapGifts ──────────────────────────────────────────────────
+  console.log('🎁 Seeding soap gifts…');
+  if (testUserId) {
+    const readyBatches = createdBatches.filter((b) =>
+      [
+        'Lavender Dreams Batch',
+        'Rose Garden Batch',
+        'Hinoki Rose Classic',
+      ].includes(b.name)
+    );
+    for (const batch of readyBatches) {
+      await prisma.soapGift.create({
+        data: {
+          batchId: batch.id,
+          userId: testUserId,
+          givenAt: daysAgo(Math.floor(Math.random() * 30)),
+          note: `Enjoy your ${batch.name.replace(' Batch', '')} soap! 🧼`,
+        },
+      });
+      console.log(`   ✓ Gift from "${batch.name}" → test user`);
+    }
+  } else {
+    console.log('   ⚠ No test user found — skipping soap gifts');
+  }
+
+  // ── 9. BatchRequests ──────────────────────────────────────────────
+  console.log('📬 Seeding batch requests…');
+  if (testUserId) {
+    const requestSeeds: {
+      styleRecipeName: string;
+      status: RequestStatus;
+    }[] = [
+        // A pending request the admin hasn't reviewed yet
+        { styleRecipeName: 'Experiment 24-12-07', status: RequestStatus.PENDING },
+        // A planned request the admin accepted
+        { styleRecipeName: 'Experiment 24-10-09', status: RequestStatus.PLANNED },
+        // A fulfilled request
+        { styleRecipeName: 'Experiment 25-09-15', status: RequestStatus.FULFILLED },
+        // A rejected request
+        { styleRecipeName: 'Basic Charcoal Soap', status: RequestStatus.REJECTED },
+      ];
+
+    for (const req of requestSeeds) {
+      const recipeId = styleIds[req.styleRecipeName];
+      if (!recipeId) {
+        console.log(`   ⚠ Style recipe "${req.styleRecipeName}" not found, skipping`);
+        continue;
+      }
+      await prisma.batchRequest.create({
+        data: {
+          userId: testUserId,
+          styleRecipeId: recipeId,
+          status: req.status,
+        },
+      });
+      console.log(`   ✓ Request for "${req.styleRecipeName}" [${req.status}]`);
+    }
+  } else {
+    console.log('   ⚠ No test user found — skipping batch requests');
+  }
+
+  console.log('\n✅ Seed complete!');
 }
 
-main();
+main()
+  .catch((e) => {
+    console.error('❌ Seed failed:', e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

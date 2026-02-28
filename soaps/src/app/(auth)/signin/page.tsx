@@ -2,12 +2,17 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
+
+const IS_DEV = process.env.NEXT_PUBLIC_DEV_LOGIN === "true";
 
 export default function Page() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [devLoading, setDevLoading] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -37,6 +42,28 @@ export default function Page() {
     } catch (err: any) {
       setLoading(false);
       setError(err.message || "An error occurred");
+    }
+  };
+
+  const handleDevLogin = async (role: "admin" | "user") => {
+    setDevLoading(role);
+    setError(null);
+    try {
+      const res = await fetch("/api/auth/dev-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Login failed (${res.status})`);
+      }
+      router.push("/");
+      router.refresh();
+    } catch (err: any) {
+      setError(err.message || "Dev login failed");
+    } finally {
+      setDevLoading(null);
     }
   };
 
@@ -99,6 +126,43 @@ export default function Page() {
         <div className="text-sm mt-6 text-center text-brand-stone">
           New here? <Link href="/signup" className="text-brand-terracotta hover:text-brand-warm-brown font-medium transition-colors">Sign up</Link>
         </div>
+
+        {/* Dev-only quick login */}
+        {IS_DEV && (
+          <div className="mt-6 pt-5 border-t border-dashed border-amber-300/60">
+            <div className="flex items-center gap-2 mb-3 justify-center">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-widest text-amber-600 bg-amber-100 px-2 py-0.5 rounded">
+                Dev Only
+              </span>
+            </div>
+            <div className="grid gap-2">
+              <button
+                id="dev-login-admin"
+                type="button"
+                onClick={() => handleDevLogin("admin")}
+                disabled={devLoading !== null}
+                className="w-full py-2 rounded-lg border-2 border-amber-300 bg-amber-50 text-amber-800 font-medium text-sm hover:bg-amber-100 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                </svg>
+                {devLoading ? "Logging in…" : "Login as Admin"}
+              </button>
+              <button
+                id="dev-login-user"
+                type="button"
+                onClick={() => handleDevLogin("user")}
+                disabled={devLoading !== null}
+                className="w-full py-2 rounded-lg border border-border bg-white/50 text-brand-stone font-medium text-sm hover:bg-brand-cream transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                {devLoading ? "Logging in…" : "Login as Test User"}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

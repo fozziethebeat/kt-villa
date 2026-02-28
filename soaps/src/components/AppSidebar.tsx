@@ -1,4 +1,4 @@
-import { Home, Book, Package, Layers, Droplets } from 'lucide-react';
+import { Home, Book, Package, Layers, Droplets, Users } from 'lucide-react';
 import Link from 'next/link';
 
 import { headers } from 'next/headers';
@@ -58,6 +58,11 @@ const ADMIN_ITEMS = [
     title: 'Batches',
     url: '/admin/batches',
     icon: Layers,
+  },
+  {
+    title: 'Users',
+    url: '/admin/users',
+    icon: Users,
   },
 ];
 
