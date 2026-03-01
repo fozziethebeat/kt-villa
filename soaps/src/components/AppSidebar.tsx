@@ -1,4 +1,4 @@
-import { Home, Book, Package, Layers, Droplets, Users } from 'lucide-react';
+import { Home, Book, Package, Layers, Droplets, Users, Link2 } from 'lucide-react';
 import Link from 'next/link';
 
 import { headers } from 'next/headers';
@@ -63,6 +63,11 @@ const ADMIN_ITEMS = [
     title: 'Users',
     url: '/admin/users',
     icon: Users,
+  },
+  {
+    title: 'Join Codes',
+    url: '/admin/join-codes',
+    icon: Link2,
   },
 ];
 

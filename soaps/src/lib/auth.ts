@@ -19,13 +19,21 @@ export const auth = betterAuth({
         const timestamp = now.toISOString();
         const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        // Send email using your mailer
-        await mailer.sendMail({
-          from: process.env.MAILER_FROM,
-          to: email,
-          subject: `Sign in to KT Soaps [${timeString}]`,
-          html: await render(MagicLink({ url, timestamp })),
-        });
+        try {
+          console.log(`[Auth] Sending magic link email to: ${email}`);
+          console.log(`[Auth] Magic link URL: ${url}`);
+          // Send email using your mailer
+          const result = await mailer.sendMail({
+            from: process.env.MAILER_FROM,
+            to: email,
+            subject: `Sign in to KT Soaps [${timeString}]`,
+            html: await render(MagicLink({ url, timestamp })),
+          });
+          console.log(`[Auth] Magic link email sent successfully to ${email}`, result?.messageId);
+        } catch (error) {
+          console.error(`[Auth] FAILED to send magic link email to ${email}:`, error);
+          throw error; // Re-throw so better-auth knows it failed
+        }
       },
       expiresIn: 60 * 60 * 24 * 7, // 7 days (example)
     }),

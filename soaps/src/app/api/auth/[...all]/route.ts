@@ -47,6 +47,14 @@ export const POST = async (req: NextRequest) => {
                             { status: 403 }
                         );
                     }
+
+                    if (!foundCode.active) {
+                        console.log("[AuthAPI] New user signup blocked: Inactive magic code");
+                        return NextResponse.json(
+                            { message: "This invitation code is no longer active", error: "Inactive magic code" },
+                            { status: 403 }
+                        );
+                    }
                     console.log("[AuthAPI] Magic code validated for new user:", email);
 
                     // Store the magic code so we can assign the soap gift after user creation
