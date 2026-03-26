@@ -1,39 +1,9 @@
 /**
  * Spotify API utilities.
  *
- * Supports two auth flows:
- * - Client Credentials (server-to-server, public playlists only)
- * - Authorization Code (user login via OAuth, private playlists)
+ * Uses OAuth Authorization Code flow with automatic token refresh.
+ * Connect once via the web UI, then tokens auto-refresh forever.
  */
-
-// ─── Client Credentials (for CLI / public playlists) ───────────
-
-export async function getClientCredentialsToken(): Promise<string> {
-  const clientId = process.env.SPOTIFY_CLIENT_ID;
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-  if (!clientId || !clientSecret) {
-    throw new Error('Missing SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET');
-  }
-
-  const response = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization:
-        'Basic ' +
-        Buffer.from(`${clientId}:${clientSecret}`).toString('base64'),
-    },
-    body: 'grant_type=client_credentials',
-  });
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`Spotify auth failed (${response.status}): ${text}`);
-  }
-
-  const data = await response.json();
-  return data.access_token;
-}
 
 export interface SpotifyTrack {
   title: string;
@@ -42,61 +12,52 @@ export interface SpotifyTrack {
   spotifyUrl: string;
 }
 
+interface SpotifyTrackObject {
+  name: string;
+  artists: { name: string }[];
+  album: {
+    images: { url: string; height: number; width: number }[];
+  };
+  external_urls: {
+    spotify: string;
+  };
+}
+
 interface SpotifyPlaylistItem {
-  track: {
-    name: string;
-    artists: { name: string }[];
-    album: {
-      images: { url: string; height: number; width: number }[];
-    };
-    external_urls: {
-      spotify: string;
-    };
-  } | null;
+  // New API (2026) uses "item", old API uses "track"
+  item?: SpotifyTrackObject | null;
+  track?: SpotifyTrackObject | null;
 }
 
-// ─── URL / ID helpers ──────────────────────────────────────────
+// ─── Auth helpers ──────────────────────────────────────────────
 
-/**
- * Extract the playlist ID from various Spotify URL formats.
- * Supports:
- *   - https://open.spotify.com/playlist/726c1eB8UK67ytOo1BISbv?si=abc123
- *   - spotify:playlist:726c1eB8UK67ytOo1BISbv
- *   - 726c1eB8UK67ytOo1BISbv (raw ID)
- */
-export function extractPlaylistId(input: string): string {
-  const uriMatch = input.match(/spotify:playlist:([a-zA-Z0-9]+)/);
-  if (uriMatch) return uriMatch[1];
+const SPOTIFY_SCOPES = "playlist-read-private playlist-read-collaborative";
 
-  const urlMatch = input.match(
-    /open\.spotify\.com\/playlist\/([a-zA-Z0-9]+)/
-  );
-  if (urlMatch) return urlMatch[1];
-
-  if (/^[a-zA-Z0-9]{22}$/.test(input)) return input;
-
-  throw new Error(
-    `Could not extract playlist ID from: "${input}"\n` +
-      'Expected a Spotify playlist URL, URI, or 22-character ID.'
-  );
+function getCredentials() {
+  const clientId = process.env.SPOTIFY_CLIENT_ID;
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+  if (!clientId || !clientSecret) {
+    throw new Error("Missing SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET");
+  }
+  return { clientId, clientSecret };
 }
 
-// ─── OAuth helpers ─────────────────────────────────────────────
-
-const SPOTIFY_SCOPES = 'playlist-read-private playlist-read-collaborative';
+function basicAuth() {
+  const { clientId, clientSecret } = getCredentials();
+  return (
+    "Basic " + Buffer.from(`${clientId}:${clientSecret}`).toString("base64")
+  );
+}
 
 export function getSpotifyAuthUrl(redirectUri: string, state: string): string {
-  const clientId = process.env.SPOTIFY_CLIENT_ID;
-  if (!clientId) throw new Error('Missing SPOTIFY_CLIENT_ID');
-
+  const { clientId } = getCredentials();
   const params = new URLSearchParams({
-    response_type: 'code',
+    response_type: "code",
     client_id: clientId,
     scope: SPOTIFY_SCOPES,
     redirect_uri: redirectUri,
     state,
   });
-
   return `https://accounts.spotify.com/authorize?${params.toString()}`;
 }
 
@@ -104,22 +65,14 @@ export async function exchangeCodeForToken(
   code: string,
   redirectUri: string
 ): Promise<{ accessToken: string; refreshToken: string; expiresIn: number }> {
-  const clientId = process.env.SPOTIFY_CLIENT_ID;
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-  if (!clientId || !clientSecret) {
-    throw new Error('Missing SPOTIFY_CLIENT_ID or SPOTIFY_CLIENT_SECRET');
-  }
-
-  const response = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
+  const response = await fetch("https://accounts.spotify.com/api/token", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization:
-        'Basic ' +
-        Buffer.from(`${clientId}:${clientSecret}`).toString('base64'),
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: basicAuth(),
     },
     body: new URLSearchParams({
-      grant_type: 'authorization_code',
+      grant_type: "authorization_code",
       code,
       redirect_uri: redirectUri,
     }),
@@ -127,7 +80,9 @@ export async function exchangeCodeForToken(
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(`Spotify token exchange failed (${response.status}): ${text}`);
+    throw new Error(
+      `Spotify token exchange failed (${response.status}): ${text}`
+    );
   }
 
   const data = await response.json();
@@ -138,11 +93,61 @@ export async function exchangeCodeForToken(
   };
 }
 
+/**
+ * Use a refresh token to get a new access token.
+ * Refresh tokens don't expire unless revoked.
+ */
+export async function refreshAccessToken(
+  refreshToken: string
+): Promise<{ accessToken: string; expiresIn: number }> {
+  const response = await fetch("https://accounts.spotify.com/api/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization: basicAuth(),
+    },
+    body: new URLSearchParams({
+      grant_type: "refresh_token",
+      refresh_token: refreshToken,
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(
+      `Spotify token refresh failed (${response.status}): ${text}`
+    );
+  }
+
+  const data = await response.json();
+  return {
+    accessToken: data.access_token,
+    expiresIn: data.expires_in,
+  };
+}
+
+// ─── URL helpers ───────────────────────────────────────────────
+
+export function extractPlaylistId(input: string): string {
+  const uriMatch = input.match(/spotify:playlist:([a-zA-Z0-9]+)/);
+  if (uriMatch) return uriMatch[1];
+
+  const urlMatch = input.match(/open\.spotify\.com\/playlist\/([a-zA-Z0-9]+)/);
+  if (urlMatch) return urlMatch[1];
+
+  if (/^[a-zA-Z0-9]{22}$/.test(input)) return input;
+
+  throw new Error(
+    `Could not extract playlist ID from: "${input}"\n` +
+      "Expected a Spotify playlist URL, URI, or 22-character ID."
+  );
+}
+
 // ─── Playlist fetching ─────────────────────────────────────────
 
 /**
- * Fetch all tracks from a Spotify playlist using a user access token.
- * Handles pagination automatically.
+ * Fetch all tracks from a Spotify playlist.
+ * Handles the 2026 API format (items at top level) and pagination.
  */
 export async function fetchPlaylistTracks(
   playlistInput: string,
@@ -152,71 +157,78 @@ export async function fetchPlaylistTracks(
   const tracks: SpotifyTrack[] = [];
   const headers = { Authorization: `Bearer ${accessToken}` };
 
-  // Step 1: Get playlist name
-  const metaResponse = await fetch(
-    `https://api.spotify.com/v1/playlists/${playlistId}?fields=name`,
+  // Fetch the full playlist object — the new Spotify API (2026) puts items
+  // at the top level instead of under tracks.items
+  const response = await fetch(
+    `https://api.spotify.com/v1/playlists/${playlistId}/items`,
     { headers }
   );
 
-  if (!metaResponse.ok) {
-    const text = await metaResponse.text();
-    if (metaResponse.status === 401) {
-      throw new Error('SPOTIFY_AUTH_EXPIRED');
+  if (!response.ok) {
+    const text = await response.text();
+    if (response.status === 401 || response.status === 403) {
+      throw new Error("SPOTIFY_AUTH_EXPIRED");
     }
-    throw new Error(
-      `Spotify API error (${metaResponse.status}): ${text}`
-    );
+    throw new Error(`Spotify API error (${response.status}): ${text}`);
   }
 
-  const meta = await metaResponse.json();
-  const playlistName = meta.name;
+  const playlist = await response.json();
+  const playlistName = playlist.name;
 
-  // Step 2: Fetch tracks via dedicated tracks endpoint (works for private playlists)
-  let url: string | null =
-    `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100`;
+  // Handle both API formats:
+  //   New (2026): items[] at top level
+  //   Old: tracks.items[] nested under tracks object
+  let items: SpotifyPlaylistItem[] = [];
+  let nextUrl: string | null = null;
 
-  while (url) {
-    const response: Response = await fetch(url, { headers });
-
-    if (!response.ok) {
-      const text = await response.text();
-      if (response.status === 401) {
-        throw new Error('SPOTIFY_AUTH_EXPIRED');
-      }
-      console.error(`[Spotify] Tracks fetch failed (${response.status}): ${text}`);
-      break;
-    }
-
-    const page: { items?: SpotifyPlaylistItem[]; next: string | null; total: number } = await response.json();
-    console.log(`[Spotify] Fetched page — ${page.items?.length} items, total: ${page.total}`);
-
-    if (page.items) {
-      for (const item of page.items) {
-        const parsed = parseTrackItem(item);
-        if (parsed) tracks.push(parsed);
-      }
-    }
-
-    url = page.next;
+  if (Array.isArray(playlist.items)) {
+    items = playlist.items;
+    nextUrl = playlist.next ?? null;
+  } else if (playlist.tracks?.items) {
+    items = playlist.tracks.items;
+    nextUrl = playlist.tracks.next ?? null;
+  } else {
+    console.error("[Spotify] No items found in playlist response");
+    return { name: playlistName, tracks: [] };
   }
 
-  console.log(`[Spotify] Playlist "${playlistName}" — parsed ${tracks.length} tracks`);
+  for (const item of items) {
+    const parsed = parseTrackItem(item);
+    if (parsed) tracks.push(parsed);
+  }
+
+  // Paginate
+  while (nextUrl) {
+    const pageResponse: Response = await fetch(nextUrl, { headers });
+    if (!pageResponse.ok) break;
+
+    const page = await pageResponse.json();
+    for (const item of page.items ?? []) {
+      const parsed = parseTrackItem(item);
+      if (parsed) tracks.push(parsed);
+    }
+    nextUrl = page.next ?? null;
+  }
+
+  console.log(`[Spotify] Playlist "${playlistName}" — ${tracks.length} tracks`);
   return { name: playlistName, tracks };
 }
 
 function parseTrackItem(item: SpotifyPlaylistItem): SpotifyTrack | null {
-  if (!item.track) return null;
+  // New API uses "item", old API uses "track"
+  const trackData = item.item ?? item.track;
+  if (!trackData) return null;
 
-  const albumImages = item.track.album.images;
+  const albumImages = trackData.album?.images ?? [];
   const albumArt =
     albumImages.find((img) => img.height === 300)?.url ??
     albumImages[0]?.url ??
     null;
 
   return {
-    title: item.track.name,
-    artist: item.track.artists.map((a) => a.name).join(', '),
+    title: trackData.name,
+    artist: trackData.artists.map((a) => a.name).join(", "),
     albumArt,
-    spotifyUrl: item.track.external_urls.spotify,
+    spotifyUrl: trackData.external_urls.spotify,
   };
 }
