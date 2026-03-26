@@ -2,7 +2,8 @@ import { Header } from '@/components/Header';
 import prisma from '@/lib/prisma';
 import { SongForm } from '@/components/SongForm';
 import { SongAdminCard } from '@/components/SongAdminCard';
-import { Music, Plus } from 'lucide-react';
+import { SpotifyImport } from '@/components/SpotifyImport';
+import { Music, Plus, Disc3 } from 'lucide-react';
 
 const links = [{ url: '/', label: 'Playlist' }];
 
@@ -35,6 +36,17 @@ export default async function AdminPage() {
             <h2 className="text-lg font-semibold text-brand-deep font-serif">Add a Song</h2>
           </div>
           <SongForm />
+        </div>
+
+        {/* Import from Spotify */}
+        <div className="bg-card rounded-xl border border-border p-5 sm:p-6 shadow-sm">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="h-8 w-8 rounded-lg bg-[#1DB954]/10 flex items-center justify-center">
+              <Disc3 className="h-4 w-4 text-[#1DB954]" />
+            </div>
+            <h2 className="text-lg font-semibold text-brand-deep font-serif">Import from Spotify</h2>
+          </div>
+          <SpotifyImport />
         </div>
 
         {/* Songs List */}
