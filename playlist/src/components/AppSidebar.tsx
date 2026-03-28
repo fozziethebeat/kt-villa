@@ -51,12 +51,12 @@ export async function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-brand-wine text-white text-lg">
-                  🎵
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg overflow-hidden shrink-0">
+                  <img src="/icon.png" alt="夢街" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold font-serif">Our Playlist</span>
-                  <span className="text-xs text-brand-warm-gray">Journey Together</span>
+                  <span className="font-semibold font-serif">夢街</span>
+                  <span className="text-xs text-brand-warm-gray">Our Playlist Journey</span>
                 </div>
               </Link>
             </SidebarMenuButton>

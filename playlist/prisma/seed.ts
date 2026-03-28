@@ -1,22 +1,22 @@
-import { PrismaClient, Prisma } from '../src/lib/generated/prisma';
+import { PrismaClient, Prisma } from "../src/lib/generated/prisma";
 
 const prisma = new PrismaClient();
 
 const users: Prisma.UserCreateInput[] = [
   {
-    name: 'Keith',
-    email: process.env.ADMIN_EMAIL || '',
-    roles: 'admin',
+    name: "Keith",
+    email: process.env.ADMIN_EMAIL || "",
+    roles: "admin",
   },
   {
-    name: 'Taiyou',
-    email: process.env.TEST_USER_EMAIL || '',
+    name: "Taiyou",
+    email: process.env.TEST_USER_EMAIL || "",
   },
 ];
 
 const magicCodes: Prisma.MagicCodeCreateInput[] = [
   {
-    id: 'testcode',
+    id: "testcode",
   },
 ];
 
@@ -34,76 +34,76 @@ interface SongSeed {
 
 const songs: SongSeed[] = [
   {
-    title: 'First Day of My Life',
-    artist: 'Bright Eyes',
-    spotifyUrl: 'https://open.spotify.com/track/1TOCeLCH0dWkbmFSbkPsLi',
+    title: "First Day of My Life",
+    artist: "Bright Eyes",
+    spotifyUrl: "https://open.spotify.com/track/1TOCeLCH0dWkbmFSbkPsLi",
     sortOrder: 1,
     journeyEntry: {
       memory:
-        'I remember the first time we danced to this in the kitchen, barefoot on the tile floor. The pasta was boiling over and neither of us cared.',
-      mood: 'tender',
+        "I remember the first time we danced to this in the kitchen, barefoot on the tile floor. The pasta was boiling over and neither of us cared.",
+      mood: "tender",
     },
   },
   {
-    title: 'Lover',
-    artist: 'Taylor Swift',
-    spotifyUrl: 'https://open.spotify.com/track/1dGr1c8CrMLDpV6mPbImSI',
+    title: "Lover",
+    artist: "Taylor Swift",
+    spotifyUrl: "https://open.spotify.com/track/1dGr1c8CrMLDpV6mPbImSI",
     sortOrder: 2,
     journeyEntry: {
       memory:
-        'This was playing on the radio during our road trip to the coast. You sang every word while I tried to keep my eyes on the road.',
-      mood: 'joyful',
+        "This was playing on the radio during our road trip to the coast. You sang every word while I tried to keep my eyes on the road.",
+      mood: "joyful",
     },
   },
   {
-    title: 'Sunday Morning',
-    artist: 'Maroon 5',
-    spotifyUrl: 'https://open.spotify.com/track/0SFJQqnU0k42MoSBbYmnOy',
+    title: "Sunday Morning",
+    artist: "Maroon 5",
+    spotifyUrl: "https://open.spotify.com/track/0SFJQqnU0k42MoSBbYmnOy",
     sortOrder: 3,
     journeyEntry: {
       memory:
-        'Our lazy Sunday mornings together — coffee, sunlight through the window, nowhere to be. This song always brings me back to those quiet moments.',
-      mood: 'warm',
+        "Our lazy Sunday mornings together — coffee, sunlight through the window, nowhere to be. This song always brings me back to those quiet moments.",
+      mood: "warm",
     },
   },
   {
-    title: 'Put Your Records On',
-    artist: 'Corinne Bailey Rae',
-    spotifyUrl: 'https://open.spotify.com/track/2nGFzvICaeAhisjnPMqEgD',
+    title: "Put Your Records On",
+    artist: "Corinne Bailey Rae",
+    spotifyUrl: "https://open.spotify.com/track/2nGFzvICaeAhisjnPMqEgD",
     sortOrder: 4,
     journeyEntry: {
       memory:
-        'You always hummed this while getting ready. The way you tilted your head putting on earrings — I could watch that forever.',
-      mood: 'nostalgic',
+        "You always hummed this while getting ready. The way you tilted your head putting on earrings — I could watch that forever.",
+      mood: "nostalgic",
     },
   },
   {
-    title: 'Better Together',
-    artist: 'Jack Johnson',
-    spotifyUrl: 'https://open.spotify.com/track/2KoHxhBiSKhjvSsVzTAuaN',
+    title: "Better Together",
+    artist: "Jack Johnson",
+    spotifyUrl: "https://open.spotify.com/track/2KoHxhBiSKhjvSsVzTAuaN",
     sortOrder: 5,
     journeyEntry: {
       memory:
-        'Our unofficial theme song. Every summer BBQ, every beach day, every moment where the world felt simple and perfect.',
-      mood: 'happy',
+        "Our unofficial theme song. Every summer BBQ, every beach day, every moment where the world felt simple and perfect.",
+      mood: "happy",
     },
   },
   {
-    title: 'XO',
-    artist: 'Beyoncé',
-    spotifyUrl: 'https://open.spotify.com/track/3mEiU2bVBcMpPqOJM4FGfz',
+    title: "XO",
+    artist: "Beyoncé",
+    spotifyUrl: "https://open.spotify.com/track/3mEiU2bVBcMpPqOJM4FGfz",
     sortOrder: 6,
   },
   {
-    title: 'Everywhere',
-    artist: 'Fleetwood Mac',
-    spotifyUrl: 'https://open.spotify.com/track/65KXHX7UR5HGAGiSOE5yX5',
+    title: "Everywhere",
+    artist: "Fleetwood Mac",
+    spotifyUrl: "https://open.spotify.com/track/65KXHX7UR5HGAGiSOE5yX5",
     sortOrder: 7,
   },
   {
-    title: 'Lucky',
-    artist: 'Jason Mraz & Colbie Caillat',
-    spotifyUrl: 'https://open.spotify.com/track/4bLMDMimhdPWqnpQm1ECGR',
+    title: "Lucky",
+    artist: "Jason Mraz & Colbie Caillat",
+    spotifyUrl: "https://open.spotify.com/track/4bLMDMimhdPWqnpQm1ECGR",
     sortOrder: 8,
   },
 ];
@@ -119,21 +119,27 @@ async function getClientCredentialsToken(): Promise<string | null> {
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
   if (!clientId || !clientSecret) {
-    console.log('  ⚠️  SPOTIFY_CLIENT_ID/SECRET not set — skipping album art fetch');
+    console.log(
+      "  ⚠️  SPOTIFY_CLIENT_ID/SECRET not set — skipping album art fetch"
+    );
     return null;
   }
 
-  const response = await fetch('https://accounts.spotify.com/api/token', {
-    method: 'POST',
+  const response = await fetch("https://accounts.spotify.com/api/token", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: 'Basic ' + Buffer.from(`${clientId}:${clientSecret}`).toString('base64'),
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization:
+        "Basic " +
+        Buffer.from(`${clientId}:${clientSecret}`).toString("base64"),
     },
-    body: new URLSearchParams({ grant_type: 'client_credentials' }),
+    body: new URLSearchParams({ grant_type: "client_credentials" }),
   });
 
   if (!response.ok) {
-    console.log('  ⚠️  Failed to get Spotify client token — skipping album art fetch');
+    console.log(
+      "  ⚠️  Failed to get Spotify client token — skipping album art fetch"
+    );
     return null;
   }
 
@@ -145,7 +151,10 @@ async function getClientCredentialsToken(): Promise<string | null> {
  * Fetch album art for a track from the Spotify API.
  * Returns the ~300px image URL or null.
  */
-async function fetchAlbumArt(spotifyUrl: string, accessToken: string): Promise<string | null> {
+async function fetchAlbumArt(
+  spotifyUrl: string,
+  accessToken: string
+): Promise<string | null> {
   const match = spotifyUrl.match(/track\/([a-zA-Z0-9]+)/);
   if (!match) return null;
 
@@ -158,13 +167,15 @@ async function fetchAlbumArt(spotifyUrl: string, accessToken: string): Promise<s
 
   const track = await response.json();
   const images = track.album?.images ?? [];
-  return images.find((img: any) => img.height === 300)?.url ?? images[0]?.url ?? null;
+  return (
+    images.find((img: any) => img.height === 300)?.url ?? images[0]?.url ?? null
+  );
 }
 
 // ─── Main seed function ────────────────────────────────────────
 
 export async function main() {
-  console.log('🌱 Seeding database...');
+  console.log("🌱 Seeding database...");
 
   // Create users
   for (const data of users) {
@@ -178,44 +189,7 @@ export async function main() {
     console.log(`  ✅ Created magic code: ${data.id}`);
   }
 
-  // Get Spotify token for album art (optional — gracefully skips if unavailable)
-  const spotifyToken = await getClientCredentialsToken();
-  if (spotifyToken) {
-    console.log('  🎧 Spotify connected — fetching album art for seed songs');
-  }
-
-  // Create songs and optional journey entries
-  for (const songData of songs) {
-    const { journeyEntry, ...songFields } = songData;
-
-    // Fetch album art if we have a Spotify token and the song has a Spotify URL
-    let albumArt = songFields.albumArt ?? null;
-    if (!albumArt && spotifyToken && songFields.spotifyUrl) {
-      albumArt = await fetchAlbumArt(songFields.spotifyUrl, spotifyToken);
-    }
-
-    const song = await prisma.song.create({
-      data: {
-        ...songFields,
-        albumArt: albumArt ?? null,
-      },
-    });
-    console.log(`  🎵 Created song: "${song.title}" by ${song.artist}${albumArt ? ' 🖼️' : ''}`);
-
-    if (journeyEntry) {
-      await prisma.journeyEntry.create({
-        data: {
-          songId: song.id,
-          memory: journeyEntry.memory,
-          mood: journeyEntry.mood,
-        },
-      });
-      console.log(`     📝 Added journey entry (mood: ${journeyEntry.mood})`);
-    }
-  }
-
-  console.log('\n✨ Seeding complete!');
+  console.log("\n✨ Seeding complete!");
 }
 
 main();
-
