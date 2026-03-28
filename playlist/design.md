@@ -57,7 +57,8 @@ A birthday present app for displaying a curated playlist of songs paired with wr
 - `/signup`: Sign-up with invitation code
 
 ### Public Views
-- `/`: Hero section + scrollable song list with journey entries
+- `/`: Hero section + clean scrollable song list (compact cards linking to detail pages)
+- `/song/[id]`: Individual song detail page with full story, mood, album art, Spotify link, and prev/next navigation
 
 ### Admin Views
 - `/admin`: Song management dashboard with add form + expandable card list

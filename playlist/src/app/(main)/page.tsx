@@ -1,14 +1,9 @@
 import { Header } from '@/components/Header';
 import prisma from '@/lib/prisma';
-import { auth } from '@/lib/auth';
-import { headers } from 'next/headers';
-import { Music, Heart, Disc3, Headphones, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import { Music, Heart, Disc3, Headphones, ExternalLink, ChevronRight } from 'lucide-react';
 
 export default async function Home() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
-
   const songs = await prisma.song.findMany({
     orderBy: { sortOrder: 'asc' },
     include: { journeyEntry: true },
@@ -35,7 +30,7 @@ export default async function Home() {
           </h1>
           <p className="max-w-xl text-lg text-brand-warm-gray mb-8 leading-relaxed">
             Every song tells a story. Every memory makes the melody richer.
-            Scroll through our musical journey together.
+            Tap a song to discover the story behind it.
           </p>
           <div className="flex items-center gap-2 text-sm text-brand-warm-gray">
             <Disc3 className="h-4 w-4 text-brand-wine animate-spin" style={{ animationDuration: '3s' }} />
@@ -53,70 +48,67 @@ export default async function Home() {
             <p className="text-brand-warm-gray mt-1">The playlist is being curated with love...</p>
           </div>
         ) : (
-          <div className="space-y-6 sm:space-y-8">
+          <div className="space-y-3 sm:space-y-4">
             {songs.map((song, index) => (
-              <div
+              <Link
                 key={song.id}
-                className="animate-fade-in-up group"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                href={`/song/${song.id}`}
+                className="animate-fade-in-up group block"
+                style={{ animationDelay: `${index * 0.06}s` }}
                 id={`song-${song.id}`}
               >
-                {/* Song Card */}
-                <div className="relative rounded-2xl border border-border bg-card shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-                  {/* Track number accent */}
-                  <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-brand-wine via-brand-plum to-brand-rose-gold opacity-60" />
+                <div className="relative rounded-xl border border-border bg-card shadow-sm hover:shadow-lg hover:border-brand-wine/25 transition-all duration-300 overflow-hidden">
+                  {/* Left accent bar */}
+                  <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-brand-wine via-brand-plum to-brand-rose-gold opacity-50 group-hover:opacity-100 transition-opacity" />
 
-                  <div className="p-5 sm:p-6 pl-6 sm:pl-8">
-                    {/* Song Header */}
-                    <div className="flex items-start gap-4">
-                      {/* Track Number */}
-                      <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-brand-wine to-brand-plum text-white font-serif font-bold text-lg sm:text-xl shadow-sm">
+                  <div className="flex items-center gap-4 p-4 sm:p-5 pl-5 sm:pl-7">
+                    {/* Album Art / Track Number */}
+                    {song.albumArt ? (
+                      <div className="flex-shrink-0 relative w-11 h-11 sm:w-13 sm:h-13 rounded-xl overflow-hidden shadow-sm group-hover:scale-105 transition-transform">
+                        <img
+                          src={song.albumArt}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                        {/* Track number overlay */}
+                        <div className="absolute bottom-0 right-0 flex items-center justify-center w-5 h-5 rounded-tl-lg bg-brand-wine/85 text-white text-[10px] font-bold font-serif">
+                          {index + 1}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex-shrink-0 flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 rounded-xl bg-gradient-to-br from-brand-wine to-brand-plum text-white font-serif font-bold text-base sm:text-lg shadow-sm group-hover:scale-105 transition-transform">
                         {index + 1}
                       </div>
+                    )}
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0">
-                            <h3 className="font-serif font-semibold text-lg sm:text-xl text-brand-deep group-hover:text-brand-wine transition-colors truncate">
-                              {song.title}
-                            </h3>
-                            <p className="text-sm text-brand-warm-gray mt-0.5">{song.artist}</p>
-                          </div>
-                          {song.spotifyUrl && (
-                            <a
-                              href={song.spotifyUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex-shrink-0 flex items-center gap-1 text-xs text-brand-wine/70 hover:text-brand-wine transition-colors mt-1 px-2 py-1 rounded-full border border-brand-wine/20 hover:border-brand-wine/40 hover:bg-brand-wine-light"
-                              id={`spotify-link-${song.id}`}
-                            >
-                              <ExternalLink className="h-3 w-3" />
-                              <span className="hidden sm:inline">Listen</span>
-                            </a>
-                          )}
-                        </div>
-                      </div>
+                    {/* Song Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-serif font-semibold text-base sm:text-lg text-brand-deep group-hover:text-brand-wine transition-colors truncate">
+                        {song.title}
+                      </h3>
+                      <p className="text-sm text-brand-warm-gray mt-0.5 truncate">{song.artist}</p>
                     </div>
 
-                    {/* Journey Entry */}
-                    {song.journeyEntry && (
-                      <div className="mt-4 sm:mt-5 ml-14 sm:ml-16">
-                        <div className="relative pl-4 border-l-2 border-brand-rose-gold/30">
-                          {song.journeyEntry.mood && (
-                            <div className="inline-flex items-center gap-1 rounded-full bg-brand-amber-light border border-brand-amber/20 px-2.5 py-0.5 text-xs font-medium text-brand-amber mb-2">
-                              <Heart className="h-3 w-3" />
-                              {song.journeyEntry.mood}
-                            </div>
-                          )}
-                          <p className="text-sm sm:text-base text-brand-deep/80 leading-relaxed whitespace-pre-line">
-                            {song.journeyEntry.memory}
-                          </p>
-                        </div>
-                      </div>
-                    )}
+                    {/* Right side: mood badge + chevron */}
+                    <div className="flex items-center gap-2.5 flex-shrink-0">
+                      {song.journeyEntry?.mood && (
+                        <span className="hidden sm:inline-flex items-center gap-1 rounded-full bg-brand-amber-light border border-brand-amber/20 px-2.5 py-0.5 text-xs font-medium text-brand-amber">
+                          <Heart className="h-3 w-3" />
+                          {song.journeyEntry.mood}
+                        </span>
+                      )}
+
+                      {song.spotifyUrl && (
+                        <span className="hidden sm:flex items-center justify-center w-7 h-7 rounded-full border border-brand-wine/15 text-brand-wine/50">
+                          <ExternalLink className="h-3 w-3" />
+                        </span>
+                      )}
+
+                      <ChevronRight className="h-4 w-4 text-brand-warm-gray/50 group-hover:text-brand-wine group-hover:translate-x-0.5 transition-all" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

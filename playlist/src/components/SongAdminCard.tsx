@@ -57,10 +57,23 @@ export function SongAdminCard({ song, index }: { song: Song; index: number }) {
     >
       {/* Song Header */}
       <div className="flex items-center gap-3 p-4 sm:p-5">
-        {/* Track Number */}
-        <div className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-brand-wine to-brand-plum text-white font-serif font-bold text-sm">
-          {index + 1}
-        </div>
+        {/* Album Art / Track Number */}
+        {song.albumArt ? (
+          <div className="flex-shrink-0 relative w-10 h-10 sm:w-11 sm:h-11 rounded-lg overflow-hidden shadow-sm">
+            <img
+              src={song.albumArt}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute bottom-0 right-0 flex items-center justify-center w-4.5 h-4.5 rounded-tl-md bg-brand-wine/85 text-white text-[9px] font-bold font-serif">
+              {index + 1}
+            </div>
+          </div>
+        ) : (
+          <div className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-brand-wine to-brand-plum text-white font-serif font-bold text-sm">
+            {index + 1}
+          </div>
+        )}
 
         {/* Song Info */}
         <div className="flex-1 min-w-0">

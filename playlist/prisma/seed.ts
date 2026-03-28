@@ -23,6 +23,7 @@ const magicCodes: Prisma.MagicCodeCreateInput[] = [
 interface SongSeed {
   title: string;
   artist: string;
+  albumArt?: string;
   spotifyUrl?: string;
   sortOrder: number;
   journeyEntry?: {
@@ -107,6 +108,61 @@ const songs: SongSeed[] = [
   },
 ];
 
+// ─── Spotify helpers for fetching album art during seed ────────
+
+/**
+ * Get a Spotify access token using Client Credentials flow.
+ * This doesn't require user auth — just SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET.
+ */
+async function getClientCredentialsToken(): Promise<string | null> {
+  const clientId = process.env.SPOTIFY_CLIENT_ID;
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    console.log('  ⚠️  SPOTIFY_CLIENT_ID/SECRET not set — skipping album art fetch');
+    return null;
+  }
+
+  const response = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: 'Basic ' + Buffer.from(`${clientId}:${clientSecret}`).toString('base64'),
+    },
+    body: new URLSearchParams({ grant_type: 'client_credentials' }),
+  });
+
+  if (!response.ok) {
+    console.log('  ⚠️  Failed to get Spotify client token — skipping album art fetch');
+    return null;
+  }
+
+  const data = await response.json();
+  return data.access_token;
+}
+
+/**
+ * Fetch album art for a track from the Spotify API.
+ * Returns the ~300px image URL or null.
+ */
+async function fetchAlbumArt(spotifyUrl: string, accessToken: string): Promise<string | null> {
+  const match = spotifyUrl.match(/track\/([a-zA-Z0-9]+)/);
+  if (!match) return null;
+
+  const trackId = match[1];
+  const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  if (!response.ok) return null;
+
+  const track = await response.json();
+  const images = track.album?.images ?? [];
+  return images.find((img: any) => img.height === 300)?.url ?? images[0]?.url ?? null;
+}
+
+// ─── Main seed function ────────────────────────────────────────
+
 export async function main() {
   console.log('🌱 Seeding database...');
 
@@ -122,11 +178,29 @@ export async function main() {
     console.log(`  ✅ Created magic code: ${data.id}`);
   }
 
+  // Get Spotify token for album art (optional — gracefully skips if unavailable)
+  const spotifyToken = await getClientCredentialsToken();
+  if (spotifyToken) {
+    console.log('  🎧 Spotify connected — fetching album art for seed songs');
+  }
+
   // Create songs and optional journey entries
   for (const songData of songs) {
     const { journeyEntry, ...songFields } = songData;
-    const song = await prisma.song.create({ data: songFields });
-    console.log(`  🎵 Created song: "${song.title}" by ${song.artist}`);
+
+    // Fetch album art if we have a Spotify token and the song has a Spotify URL
+    let albumArt = songFields.albumArt ?? null;
+    if (!albumArt && spotifyToken && songFields.spotifyUrl) {
+      albumArt = await fetchAlbumArt(songFields.spotifyUrl, spotifyToken);
+    }
+
+    const song = await prisma.song.create({
+      data: {
+        ...songFields,
+        albumArt: albumArt ?? null,
+      },
+    });
+    console.log(`  🎵 Created song: "${song.title}" by ${song.artist}${albumArt ? ' 🖼️' : ''}`);
 
     if (journeyEntry) {
       await prisma.journeyEntry.create({
@@ -144,3 +218,4 @@ export async function main() {
 }
 
 main();
+
