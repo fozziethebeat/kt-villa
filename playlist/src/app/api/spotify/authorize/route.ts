@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
   const redirectUri =
     process.env.SPOTIFY_REDIRECT_URI ||
-    'http://127.0.0.1:3000/api/spotify/callback';
+    `${process.env.NEXT_PUBLIC_BASE_URL || 'http://127.0.0.1:3000'}/api/spotify/callback`;
 
   // Generate a random state for CSRF protection
   const state = crypto.randomUUID();

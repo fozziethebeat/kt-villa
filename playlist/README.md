@@ -44,10 +44,3 @@ src/
 ├── graphql/             # Schema + resolvers
 └── lib/                 # Auth, Prisma, utilities
 ```
-
-## Next Steps
-
-[ ] Optimizing the journey writing experience
-[ ] Auto-populating the play list entries given links from Spotify, either one song at a atime or from an entire playlist that's already available
-[ ] Ensuring we can go to a read only page dedicated to each song and its journey entry
-[ ] ensuring that we can see the song album cover and if possible lyrics
