@@ -29,7 +29,14 @@ export default async function RecipeDetailPage({ params }: PageProps) {
     }
 
     const isBase = recipe.type === "BASE"
-    const ingredients = recipe.ingredients as unknown as RecipeIngredient[]
+    let ingredients = recipe.ingredients as unknown as RecipeIngredient[]
+    if (isBase) {
+        ingredients = [
+            ...ingredients,
+            { name: "Water", quantity: 192, unit: "g" },
+            { name: "Lye", quantity: 87, unit: "g" }
+        ]
+    }
 
     // Calculate total weight
     const totalWeight = ingredients.reduce((sum, ing) => sum + (Number(ing.quantity) || 0), 0)

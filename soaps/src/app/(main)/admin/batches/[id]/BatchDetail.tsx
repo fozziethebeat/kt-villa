@@ -47,6 +47,7 @@ interface BatchData {
     notes: string | null
     status: string
     magicCodeId: string | null
+    scale: number
     createdAt: string
     updatedAt: string
     baseRecipe: BatchRecipe
@@ -158,30 +159,92 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                 <div className="space-y-6">
                     {/* Recipes */}
                     <Card className="border-border">
-                        <CardHeader>
-                            <CardTitle className="text-base text-brand-warm-brown">Recipes</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            <div className="flex items-center gap-3 p-3 rounded-md bg-brand-cream/50">
-                                <Beaker className="h-5 w-5 text-brand-terracotta shrink-0" />
-                                <div>
-                                    <p className="text-sm font-medium text-brand-warm-brown">Base: {batch.baseRecipe.name}</p>
-                                    <p className="text-xs text-brand-stone">
-                                        {(batch.baseRecipe.ingredients as any[]).map((i: any) => i.name).join(', ')}
-                                    </p>
-                                </div>
-                            </div>
-                            {batch.styleRecipe && (
-                                <div className="flex items-center gap-3 p-3 rounded-md bg-brand-cream/50">
-                                    <Droplets className="h-5 w-5 text-brand-rose shrink-0" />
-                                    <div>
-                                        <p className="text-sm font-medium text-brand-warm-brown">Style: {batch.styleRecipe.name}</p>
-                                        <p className="text-xs text-brand-stone">
-                                            {(batch.styleRecipe.ingredients as any[]).map((i: any) => i.name).join(', ')}
-                                        </p>
-                                    </div>
-                                </div>
+                        <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
+                            <CardTitle className="text-base text-brand-warm-brown">Recipes & Ingredients</CardTitle>
+                            {batch.scale !== 1.0 && (
+                                <Badge className="bg-brand-terracotta text-brand-cream border-none text-xs font-semibold px-2.5 py-0.5">
+                                    Large Mold (1.4x Scaled)
+                                </Badge>
                             )}
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            {(() => {
+                                let baseIngredients = [
+                                    ...(batch.baseRecipe.ingredients as any[] || []),
+                                    { name: "Water", quantity: 192, unit: "g" },
+                                    { name: "Lye", quantity: 87, unit: "g" }
+                                ]
+                                const scale = batch.scale || 1.0
+                                if (scale !== 1.0) {
+                                    baseIngredients = baseIngredients.map(ing => {
+                                        const rawQty = Number(ing.quantity)
+                                        const scaledQty = isNaN(rawQty) ? ing.quantity : Math.ceil(rawQty * scale)
+                                        return {
+                                            ...ing,
+                                            quantity: scaledQty
+                                        }
+                                    })
+                                }
+                                const baseTotalWeight = baseIngredients.reduce((sum, ing) => sum + (Number(ing.quantity) || 0), 0)
+                                return (
+                                    <div className="p-3 rounded-md bg-brand-cream/50">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <Beaker className="h-5 w-5 text-brand-terracotta shrink-0" />
+                                            <div>
+                                                <p className="text-sm font-semibold text-brand-warm-brown">Base: {batch.baseRecipe.name}</p>
+                                                <p className="text-xs text-brand-stone/85">
+                                                    Total weight: {baseTotalWeight.toFixed(1)}g
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="border border-border/80 rounded-md divide-y divide-border bg-white overflow-hidden mt-2">
+                                            {baseIngredients.map((ing: any, idx: number) => (
+                                                <div key={idx} className="flex justify-between items-center px-3 py-2 text-xs hover:bg-brand-cream/10">
+                                                    <span className="font-medium text-brand-warm-brown">{ing.name}</span>
+                                                    <span className="text-brand-stone font-mono">{ing.quantity} {ing.unit || 'g'}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+                            })()}
+
+                            {batch.styleRecipe && (() => {
+                                let styleIngredients = batch.styleRecipe.ingredients as any[] || []
+                                const scale = batch.scale || 1.0
+                                if (scale !== 1.0) {
+                                    styleIngredients = styleIngredients.map(ing => {
+                                        const rawQty = Number(ing.quantity)
+                                        const scaledQty = isNaN(rawQty) ? ing.quantity : Math.ceil(rawQty * scale)
+                                        return {
+                                            ...ing,
+                                            quantity: scaledQty
+                                        }
+                                    })
+                                }
+                                const styleTotalWeight = styleIngredients.reduce((sum, ing) => sum + (Number(ing.quantity) || 0), 0)
+                                return (
+                                    <div className="p-3 rounded-md bg-brand-cream/50">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <Droplets className="h-5 w-5 text-brand-rose shrink-0" />
+                                            <div>
+                                                <p className="text-sm font-semibold text-brand-warm-brown">Style: {batch.styleRecipe.name}</p>
+                                                <p className="text-xs text-brand-stone/85">
+                                                    Total weight: {styleTotalWeight.toFixed(1)}g
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="border border-border/80 rounded-md divide-y divide-border bg-white overflow-hidden mt-2">
+                                            {styleIngredients.map((ing: any, idx: number) => (
+                                                <div key={idx} className="flex justify-between items-center px-3 py-2 text-xs hover:bg-brand-cream/10">
+                                                    <span className="font-medium text-brand-warm-brown">{ing.name}</span>
+                                                    <span className="text-brand-stone font-mono">{ing.quantity} {ing.unit || 'g'}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+                            })()}
                         </CardContent>
                     </Card>
 

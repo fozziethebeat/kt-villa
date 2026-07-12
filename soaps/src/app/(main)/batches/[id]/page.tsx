@@ -157,7 +157,7 @@ export default async function BatchViewPage({ params }: { params: Promise<{ id: 
                                                 Base: {batch.baseRecipe.name}
                                             </p>
                                             <p className="text-xs text-brand-stone">
-                                                {(batch.baseRecipe.ingredients as any[]).map((i: any) => i.name).join(', ')}
+                                                 {(batch.baseRecipe.ingredients as any[]).map((i: any) => i.name).concat(['Water', 'Lye']).join(', ')}
                                             </p>
                                         </div>
                                     </div>

@@ -125,6 +125,7 @@ model Batch {
   imageUrl  String?
   notes     String?
   status    BatchStatus @default(STARTED)
+  scale     Float       @default(1.0)
   magicCodeId String?  @unique
   magicCode   MagicCode? @relation(fields: [magicCodeId], references: [id])
   gifts     SoapGift[]

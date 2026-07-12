@@ -61,37 +61,48 @@ function RecipeSection({ title, icon: Icon, recipes, description }: { title: str
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {recipes.map((recipe) => (
-                    <Link href={`/recipes/${recipe.id}`} key={recipe.id} className="block transition-transform hover:-translate-y-1">
-                        <Card className="h-full hover:shadow-md transition-shadow border-border">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="text-lg flex justify-between items-start gap-2 text-brand-warm-brown">
-                                    <span className="truncate">{recipe.name}</span>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-4">
-                                    <div className="text-sm text-brand-stone line-clamp-2 min-h-[2.5em]">
-                                        {recipe.notes || "No notes provided."}
-                                    </div>
+                {recipes.map((recipe) => {
+                    const isBase = recipe.type === "BASE"
+                    let ingredients = recipe.ingredients as unknown as RecipeIngredient[]
+                    if (isBase) {
+                        ingredients = [
+                            ...ingredients,
+                            { name: "Water", quantity: 192, unit: "g" },
+                            { name: "Lye", quantity: 87, unit: "g" }
+                        ]
+                    }
+                    return (
+                        <Link href={`/recipes/${recipe.id}`} key={recipe.id} className="block transition-transform hover:-translate-y-1">
+                            <Card className="h-full hover:shadow-md transition-shadow border-border">
+                                <CardHeader className="pb-3">
+                                    <CardTitle className="text-lg flex justify-between items-start gap-2 text-brand-warm-brown">
+                                        <span className="truncate">{recipe.name}</span>
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="space-y-4">
+                                        <div className="text-sm text-brand-stone line-clamp-2 min-h-[2.5em]">
+                                            {recipe.notes || "No notes provided."}
+                                        </div>
 
-                                    <div className="flex flex-wrap gap-1">
-                                        {(recipe.ingredients as unknown as RecipeIngredient[]).slice(0, 4).map((ing, i) => (
-                                            <Badge key={i} variant="secondary" className="text-xs font-normal bg-brand-cream text-brand-stone border-brand-terracotta/10">
-                                                {ing.name}
-                                            </Badge>
-                                        ))}
-                                        {(recipe.ingredients as unknown as RecipeIngredient[]).length > 4 && (
-                                            <Badge variant="secondary" className="text-xs font-normal bg-brand-cream text-brand-stone">
-                                                +{(recipe.ingredients as unknown as RecipeIngredient[]).length - 4} more
-                                            </Badge>
-                                        )}
+                                        <div className="flex flex-wrap gap-1">
+                                            {ingredients.slice(0, 4).map((ing, i) => (
+                                                <Badge key={i} variant="secondary" className="text-xs font-normal bg-brand-cream text-brand-stone border-brand-terracotta/10">
+                                                    {ing.name}
+                                                </Badge>
+                                            ))}
+                                            {ingredients.length > 4 && (
+                                                <Badge variant="secondary" className="text-xs font-normal bg-brand-cream text-brand-stone">
+                                                    +{ingredients.length - 4} more
+                                                </Badge>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </Link>
-                ))}
+                                </CardContent>
+                            </Card>
+                        </Link>
+                    )
+                })}
             </div>
         </section>
     )

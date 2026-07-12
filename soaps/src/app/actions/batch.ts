@@ -12,6 +12,8 @@ export async function createBatch(prevState: any, formData: FormData) {
     const styleRecipeId = formData.get("styleRecipeId") as string
     const startedAt = formData.get("startedAt") as string
     const notes = formData.get("notes") as string
+    const scaleStr = formData.get("scale") as string
+    const scale = scaleStr ? parseFloat(scaleStr) : 1.0
 
     if (!name) {
         return { message: "Batch name is required" }
@@ -36,6 +38,7 @@ export async function createBatch(prevState: any, formData: FormData) {
                 startedAt: new Date(startedAt),
                 notes: notes || null,
                 status: "STARTED",
+                scale: isNaN(scale) ? 1.0 : scale,
                 magicCodeId,
             }
         })
