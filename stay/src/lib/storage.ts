@@ -1,7 +1,7 @@
-import {S3Client, PutObjectCommand} from '@aws-sdk/client-s3';
-import {Storage, Bucket} from '@google-cloud/storage';
-import fs from 'fs';
-import path from 'path';
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { Storage, Bucket } from "@google-cloud/storage";
+import fs from "fs";
+import path from "path";
 
 /**
  * A generic interface for storing files on remote cloud systems.
@@ -10,7 +10,7 @@ abstract class ImageSaver {
   abstract uploadImage(
     imageBuffer: Buffer,
     fileName: string,
-    contentType: string,
+    contentType: string
   ): Promise<string>;
 }
 
@@ -41,8 +41,8 @@ class GCPImageSaver extends ImageSaver {
       },
     });
     await new Promise((resolve, reject) => {
-      writeStream.on('error', reject);
-      writeStream.on('finish', resolve);
+      writeStream.on("error", reject);
+      writeStream.on("finish", resolve);
       writeStream.end(imageBuffer);
     });
     const url = `https://storage.googleapis.com/${this.bucketName}/${path}`;
@@ -71,25 +71,43 @@ class S3ImageSaver extends ImageSaver {
         Key: path,
         Body: imageBuffer,
         ContentType: contentType,
-      }),
+      })
     );
     return `https://${this.bucketName}.s3.amazonaws.com/${path}`;
   }
 }
 
+function loadGCPCredentials(): any {
+  // Option 1: Local file path (for development)
+  if (process.env.GOOGLE_CLOUD_KEY_FILE) {
+    const absoluteKeyFilePath = path.resolve(process.env.GOOGLE_CLOUD_KEY_FILE);
+    const keyFileContent = fs.readFileSync(absoluteKeyFilePath, "utf8");
+    return JSON.parse(keyFileContent);
+  }
+
+  // Option 2: Base64-encoded JSON (for Vercel / production)
+  if (process.env.GOOGLE_CLOUD_CREDENTIALS_BASE64) {
+    const decoded = Buffer.from(
+      process.env.GOOGLE_CLOUD_CREDENTIALS_BASE64,
+      "base64"
+    ).toString("utf8");
+    return JSON.parse(decoded);
+  }
+
+  return null;
+}
+
 function createImageSaver() {
+  const credentials = loadGCPCredentials();
   if (
-    process.env.GOOGLE_CLOUD_KEY_FILE &&
+    credentials &&
     process.env.GOOGLE_CLOUD_PROJECT_ID &&
     process.env.GOOGLE_CLOUD_STORAGE_BUCKET
   ) {
-    const absoluteKeyFilePath = path.resolve(process.env.GOOGLE_CLOUD_KEY_FILE);
-    const keyFileContent = fs.readFileSync(absoluteKeyFilePath, 'utf8');
-    const credentials = JSON.parse(keyFileContent);
     return new GCPImageSaver(
       process.env.GOOGLE_CLOUD_PROJECT_ID,
       process.env.GOOGLE_CLOUD_STORAGE_BUCKET,
-      credentials,
+      credentials
     );
   }
   if (
@@ -101,9 +119,9 @@ function createImageSaver() {
     return new S3ImageSaver(process.env.AWS_BUCKET);
   }
 
-  throw new Error('No imageSaver');
+  throw new Error("No imageSaver");
 }
 
 const imageSaver = createImageSaver();
 
-export {ImageSaver, GCPImageSaver, imageSaver};
+export { ImageSaver, GCPImageSaver, imageSaver };
