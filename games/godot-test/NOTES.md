@@ -18,6 +18,8 @@ A 2D top-down Japanese Role-Playing Game (JRPG) centered around exploring the sc
 - [x] Implement Hakuba terrain (snow fields, stone paths, ski trails, onsen pool).
 - [x] Place sample Japanese village structures (Elder's Lodge, Hakuba Ski Lodge, Tea Pavilion, pine forest).
 - [x] Configure static collision layers for obstacles (buildings, water, trees, map perimeter).
+- [x] Modernize map architecture to native **Godot 4.3+ `TileMapLayer`** and unified `TileSet` resource (`hakuba_tileset.tres`), replacing ~1,800 procedural `Sprite2D` nodes with batched, hardware-accelerated tile layers.
+- [x] Interactive **Visual Sprite Catalog tool** (`tools/sprite_catalog.html`) for 1-click tile picking, zoom preview, and GDScript code copying across all Kenney packs.
 
 ### 2. Player Character
 - [x] Player scene (`CharacterBody2D`) with collision shape tuned for top-down depth.
@@ -47,3 +49,9 @@ A 2D top-down Japanese Role-Playing Game (JRPG) centered around exploring the sc
 - **Phase 2: Dialogue & Quest System** (Multi-branch dialogue, quests e.g. "Collect 3 Nagano Apples for Elder Kenzo", onsen towel delivery).
 - **Phase 3: Turn-Based Combat / Encounters** (Mini-battle screen when interacting or colliding with enemy NPCs).
 - **Phase 4: Village Expansion & Audio** (Day/night or snowfall weather cycle, authentic lofi/traditional Japanese BGM & sound effects).
+
+## Additional References
+
+https://github.com/kavex/gamedev-resources
+https://gameidea.org/category/godot-tutorials/page/5/
+

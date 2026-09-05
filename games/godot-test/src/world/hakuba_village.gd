@@ -2,24 +2,26 @@ extends Node2D
 
 const TILE_SIZE = 16
 
-# Kenney Tiny Ski & Tiny Town tiles
-var snow_tile_tex = preload("res://assets/kenney/tiny-ski/Tiles/tile_0000.png")
-var snow_path_tex = preload("res://assets/kenney/tiny-ski/Tiles/tile_0013.png")
-var stone_path_tex = preload("res://assets/kenney/tiny-town/Tiles/tile_0001.png")
-var water_tile_tex = preload("res://assets/kenney/tiny-town/Tiles/tile_0015.png")
-var grass_tile_tex = preload("res://assets/kenney/tiny-town/Tiles/tile_0000.png")
+# TileSet source IDs:
+const SRC_SKI = 0
+const SRC_TOWN = 1
 
-# Prop / Building tiles
-var roof_brown_left = preload("res://assets/kenney/tiny-town/Tiles/tile_0024.png")
-var roof_brown_mid = preload("res://assets/kenney/tiny-town/Tiles/tile_0025.png")
-var roof_brown_right = preload("res://assets/kenney/tiny-town/Tiles/tile_0026.png")
-var wall_wood_left = preload("res://assets/kenney/tiny-town/Tiles/tile_0036.png")
-var wall_wood_door = preload("res://assets/kenney/tiny-town/Tiles/tile_0037.png")
-var wall_wood_right = preload("res://assets/kenney/tiny-town/Tiles/tile_0038.png")
+# Ground / Terrain Atlas Coordinates (Vector2i(col, row) in packed tilemaps)
+const TILE_SNOW = Vector2i(0, 0)        # Ski: tile_0000 (Plain snow)
+const TILE_SNOW_PATH = Vector2i(1, 1)   # Ski: tile_0013 (Snow trail)
+const TILE_STONE_PATH = Vector2i(1, 0)  # Town: tile_0001 (Cobblestone path)
+const TILE_WATER = Vector2i(3, 1)       # Town: tile_0015 (Hot spring water)
 
-var snow_tree_tex = preload("res://assets/kenney/tiny-ski/Tiles/tile_0037.png")
-var green_tree_tex = preload("res://assets/kenney/tiny-town/Tiles/tile_0048.png")
-var wooden_fence_tex = preload("res://assets/kenney/tiny-town/Tiles/tile_0060.png")
+# Structure / Nature Atlas Coordinates
+const TILE_ROOF_L = Vector2i(0, 2)      # Town: tile_0024
+const TILE_ROOF_M = Vector2i(1, 2)      # Town: tile_0025
+const TILE_ROOF_R = Vector2i(2, 2)      # Town: tile_0026
+const TILE_WALL_L = Vector2i(0, 3)      # Town: tile_0036
+const TILE_WALL_DOOR = Vector2i(1, 3)   # Town: tile_0037
+const TILE_WALL_R = Vector2i(2, 3)      # Town: tile_0038
+const TILE_PINE_SNOW = Vector2i(1, 3)   # Ski: tile_0037
+const TILE_PINE_GREEN = Vector2i(0, 4)  # Town: tile_0048
+const TILE_FENCE = Vector2i(0, 5)       # Town: tile_0060
 
 # Scenes
 var item_scene = preload("res://src/entities/item.tscn")
@@ -42,7 +44,8 @@ var yeti_0 = preload("res://assets/sprites/enemy_yeti_0.png")
 var yeti_1 = preload("res://assets/sprites/enemy_yeti_1.png")
 var yeti_2 = preload("res://assets/sprites/enemy_yeti_2.png")
 
-@onready var ground_container: Node2D = $Ground
+@onready var ground_layer: TileMapLayer = $GroundLayer
+@onready var structures_layer: TileMapLayer = $StructuresLayer
 @onready var obstacles_container: Node2D = $Obstacles
 @onready var items_container: Node2D = $Items
 @onready var npcs_container: Node2D = $NPCs
@@ -63,43 +66,40 @@ func _ready() -> void:
 func _build_terrain() -> void:
 	for y in range(MAP_H):
 		for x in range(MAP_W):
-			var tile_pos = Vector2(x * TILE_SIZE + 8, y * TILE_SIZE + 8)
-			var sprite = Sprite2D.new()
-			sprite.position = tile_pos
+			var cell = Vector2i(x, y)
 			
 			# Terrain zoning:
 			# North-West (Onsen hot springs)
 			if x >= 8 and x <= 14 and y >= 6 and y <= 10:
-				sprite.texture = water_tile_tex
 				if x == 8 or x == 14 or y == 6 or y == 10:
-					sprite.texture = stone_path_tex
+					ground_layer.set_cell(cell, SRC_TOWN, TILE_STONE_PATH)
+				else:
+					ground_layer.set_cell(cell, SRC_TOWN, TILE_WATER)
 			# Village paths (Crossroads)
 			elif (x >= 22 and x <= 26) or (y >= 18 and y <= 21):
-				sprite.texture = stone_path_tex
+				ground_layer.set_cell(cell, SRC_TOWN, TILE_STONE_PATH)
 			# Ski trail to the South
 			elif y >= 26 and x >= 18 and x <= 30:
-				sprite.texture = snow_path_tex
+				ground_layer.set_cell(cell, SRC_SKI, TILE_SNOW_PATH)
 			# Default Hakuba winter terrain
 			else:
 				if (x + y) % 5 == 0:
-					sprite.texture = snow_path_tex
+					ground_layer.set_cell(cell, SRC_SKI, TILE_SNOW_PATH)
 				else:
-					sprite.texture = snow_tile_tex
-			
-			ground_container.add_child(sprite)
+					ground_layer.set_cell(cell, SRC_SKI, TILE_SNOW)
 
 func _build_village_structures() -> void:
 	# 1. Elder's Lodge (Center-North: x=21..27, y=11..13)
-	_create_building(Vector2(21, 11), 6, 3, "Elder Kenzo's Residence")
+	_create_building(Vector2i(21, 11), 6, 3, "Elder Kenzo's Residence")
 	
 	# 2. Hakuba Ski Lodge (South-East: x=32..37, y=24..26)
-	_create_building(Vector2(32, 24), 5, 3, "Hakuba Ski Rental & Lodge")
+	_create_building(Vector2i(32, 24), 5, 3, "Hakuba Ski Rental & Lodge")
 	
 	# 3. Traditional Tea House (West: x=4..8, y=18..20)
-	_create_building(Vector2(4, 18), 5, 3, "Mountain Tea Pavilion")
+	_create_building(Vector2i(4, 18), 5, 3, "Mountain Tea Pavilion")
 
-	# World Boundary Fence / Rocks
-	_create_boundary_fences()
+	# World Boundary Collision Walls
+	_create_boundary_walls()
 
 	# Pine Trees Forest in East & North
 	_create_trees()
@@ -107,24 +107,23 @@ func _build_village_structures() -> void:
 	# Onsen Bath Perimeter Obstacles
 	_create_water_collision(Rect2(9 * TILE_SIZE, 7 * TILE_SIZE, 5 * TILE_SIZE, 3 * TILE_SIZE))
 
-func _create_building(grid_pos: Vector2, width_tiles: int, height_tiles: int, _name: String) -> void:
-	var top_left = grid_pos * TILE_SIZE
-	
-	# Visual tiles
+func _create_building(grid_pos: Vector2i, width_tiles: int, height_tiles: int, _name: String) -> void:
+	# Visual tiles painted onto StructuresLayer
 	for h in range(height_tiles):
 		for w in range(width_tiles):
-			var pos = top_left + Vector2(w * TILE_SIZE + 8, h * TILE_SIZE + 8)
-			var sprite = Sprite2D.new()
-			sprite.position = pos
+			var cell = grid_pos + Vector2i(w, h)
 			if h == 0:
-				sprite.texture = roof_brown_left if w == 0 else (roof_brown_right if w == width_tiles - 1 else roof_brown_mid)
+				var tile = TILE_ROOF_L if w == 0 else (TILE_ROOF_R if w == width_tiles - 1 else TILE_ROOF_M)
+				structures_layer.set_cell(cell, SRC_TOWN, tile)
 			elif h == height_tiles - 1:
-				sprite.texture = wall_wood_door if w == int(width_tiles / 2) else (wall_wood_left if w == 0 else wall_wood_right)
+				var tile = TILE_WALL_DOOR if w == int(width_tiles / 2) else (TILE_WALL_L if w == 0 else TILE_WALL_R)
+				structures_layer.set_cell(cell, SRC_TOWN, tile)
 			else:
-				sprite.texture = wall_wood_left if w == 0 else wall_wood_right
-			obstacles_container.add_child(sprite)
+				var tile = TILE_WALL_L if w == 0 else TILE_WALL_R
+				structures_layer.set_cell(cell, SRC_TOWN, tile)
 	
 	# Static Collision body for building
+	var top_left = Vector2(grid_pos * TILE_SIZE)
 	var body = StaticBody2D.new()
 	body.collision_layer = 1
 	body.collision_mask = 2
@@ -151,23 +150,22 @@ func _create_water_collision(rect: Rect2) -> void:
 func _create_trees() -> void:
 	var tree_coords = [
 		# Eastern Pine Forest
-		Vector2(38, 5), Vector2(40, 7), Vector2(42, 6), Vector2(44, 9),
-		Vector2(39, 12), Vector2(42, 14), Vector2(45, 13), Vector2(40, 18),
-		Vector2(43, 20), Vector2(41, 24), Vector2(44, 26), Vector2(39, 29),
+		Vector2i(38, 5), Vector2i(40, 7), Vector2i(42, 6), Vector2i(44, 9),
+		Vector2i(39, 12), Vector2i(42, 14), Vector2i(45, 13), Vector2i(40, 18),
+		Vector2i(43, 20), Vector2i(41, 24), Vector2i(44, 26), Vector2i(39, 29),
 		# North Alpine Trees
-		Vector2(3, 3), Vector2(6, 4), Vector2(16, 4), Vector2(19, 3),
-		Vector2(29, 3), Vector2(32, 4), Vector2(35, 3),
+		Vector2i(3, 3), Vector2i(6, 4), Vector2i(16, 4), Vector2i(19, 3),
+		Vector2i(29, 3), Vector2i(32, 4), Vector2i(35, 3),
 		# South Mountain Trees
-		Vector2(4, 28), Vector2(7, 30), Vector2(12, 32), Vector2(15, 30)
+		Vector2i(4, 28), Vector2i(7, 30), Vector2i(12, 32), Vector2i(15, 30)
 	]
 	
 	for coord in tree_coords:
-		var pos = coord * TILE_SIZE + Vector2(8, 8)
-		var sprite = Sprite2D.new()
-		sprite.position = pos
-		sprite.texture = snow_tree_tex if coord.y < 20 else green_tree_tex
-		obstacles_container.add_child(sprite)
+		var source = SRC_SKI if coord.y < 20 else SRC_TOWN
+		var tile = TILE_PINE_SNOW if coord.y < 20 else TILE_PINE_GREEN
+		structures_layer.set_cell(coord, source, tile)
 		
+		# Collision circle at base of tree
 		var body = StaticBody2D.new()
 		body.collision_layer = 1
 		body.collision_mask = 2
@@ -175,11 +173,11 @@ func _create_trees() -> void:
 		var circle = CircleShape2D.new()
 		circle.radius = 5.0
 		shape.shape = circle
-		shape.position = pos + Vector2(0, 4)
+		shape.position = Vector2(coord * TILE_SIZE) + Vector2(8, 12)
 		body.add_child(shape)
 		obstacles_container.add_child(body)
 
-func _create_boundary_fences() -> void:
+func _create_boundary_walls() -> void:
 	var thickness = 16.0
 	var map_px_w = MAP_W * TILE_SIZE
 	var map_px_h = MAP_H * TILE_SIZE
