@@ -1,0 +1,9 @@
+# Godot 4+ specific ignores
+.godot/
+
+# Temporary scratch scripts
+scratch/
+
+# OS metadata
+.DS_Store
+*.tmp

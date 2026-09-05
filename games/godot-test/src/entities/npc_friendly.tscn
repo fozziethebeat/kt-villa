@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://dm5k7p9q1r2s3"]
+
+[ext_resource type="Script" path="res://src/entities/npc_friendly.gd" id="1_npc_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/npc_elder.png" id="2_npc_tex"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_body"]
+radius = 6.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_trigger"]
+radius = 24.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_prompt"]
+font_size = 10
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[node name="FriendlyNPC" type="StaticBody2D" groups=["npc"]]
+collision_layer = 1
+collision_mask = 2
+script = ExtResource("1_npc_script")
+npc_sprite = ExtResource("2_npc_tex")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_npc_tex")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 3)
+shape = SubResource("CircleShape2D_body")
+
+[node name="InteractionArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
+shape = SubResource("CircleShape2D_trigger")
+
+[node name="PromptLabel" type="Label" parent="."]
+offset_left = -28.0
+offset_top = -22.0
+offset_right = 28.0
+offset_bottom = -6.0
+text = "💬 [E] Talk"
+label_settings = SubResource("LabelSettings_prompt")
+horizontal_alignment = 1
+vertical_alignment = 1
