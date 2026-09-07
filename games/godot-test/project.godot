@@ -14,6 +14,7 @@ config/icon="res://assets/kenney/tiny-ski/Tiles/tile_0000.png"
 
 [autoload]
 
+AssetRegistry="*res://src/core/asset_registry.gd"
 GameManager="*res://src/core/game_manager.gd"
 
 [display]

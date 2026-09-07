@@ -13,6 +13,13 @@ func _ready() -> void:
 	base_y = sprite.position.y
 	if item_icon and sprite:
 		sprite.texture = item_icon
+		var tex_size = item_icon.get_size()
+		if tex_size.x > 16.0 or tex_size.y > 16.0:
+			var max_dim = max(tex_size.x, tex_size.y)
+			var s = 16.0 / max_dim
+			sprite.scale = Vector2(s, s)
+		else:
+			sprite.scale = Vector2(1.0, 1.0)
 	body_entered.connect(_on_body_entered)
 
 func _process(delta: float) -> void:

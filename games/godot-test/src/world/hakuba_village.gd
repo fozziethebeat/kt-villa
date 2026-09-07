@@ -201,19 +201,26 @@ func _create_boundary_walls() -> void:
 		body.add_child(shape)
 		obstacles_container.add_child(body)
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_R or event.keycode == KEY_F5:
+			print("[HakubaVillage] Reloading AssetRegistry from tools/sprite_usage.json...")
+			AssetRegistry.reload()
+
 func _spawn_items() -> void:
 	var items_data = [
-		{ "name": "Nagano Apple", "icon": apple_tex, "pos": Vector2(16, 17) * TILE_SIZE },
-		{ "name": "Nagano Apple", "icon": apple_tex, "pos": Vector2(28, 17) * TILE_SIZE },
-		{ "name": "Ski Pass", "icon": skipass_tex, "pos": Vector2(30, 27) * TILE_SIZE },
-		{ "name": "Onsen Tea", "icon": tea_tex, "pos": Vector2(7, 12) * TILE_SIZE },
-		{ "name": "Lucky Charm", "icon": charm_tex, "pos": Vector2(11, 4) * TILE_SIZE }
+		{ "name": "Nagano Apple", "key": "apple", "fallback": apple_tex, "pos": Vector2(16, 17) * TILE_SIZE },
+		{ "name": "Nagano Apple", "key": "apple", "fallback": apple_tex, "pos": Vector2(28, 17) * TILE_SIZE },
+		{ "name": "Ski Pass", "key": "skipass", "fallback": skipass_tex, "pos": Vector2(30, 27) * TILE_SIZE },
+		{ "name": "Onsen Tea", "key": "tea", "fallback": tea_tex, "pos": Vector2(7, 12) * TILE_SIZE },
+		{ "name": "Lucky Charm", "key": "charm", "fallback": charm_tex, "pos": Vector2(11, 4) * TILE_SIZE }
 	]
 	
 	for data in items_data:
 		var item = item_scene.instantiate()
 		item.item_name = data["name"]
-		item.item_icon = data["icon"]
+		var tex = AssetRegistry.get_item_texture(data["key"])
+		item.item_icon = tex if tex else data["fallback"]
 		item.position = data["pos"]
 		items_container.add_child(item)
 
@@ -223,7 +230,8 @@ func _spawn_npcs() -> void:
 	elder.npc_name = "Elder Kenzo"
 	elder.npc_role = "Village Elder"
 	elder.dialogue_text = "Konnichiwa! Welcome to Hakuba village. Our snow is celebrated across the world. Feel free to explore, but beware of mischievous snowmen and forest yetis!"
-	elder.npc_sprite = elder_tex
+	var elder_reg = AssetRegistry.get_entity_preview("elder_kenzo")
+	elder.npc_sprite = elder_reg if elder_reg else elder_tex
 	elder.position = Vector2(24 * TILE_SIZE, 15 * TILE_SIZE)
 	npcs_container.add_child(elder)
 
@@ -232,14 +240,16 @@ func _spawn_npcs() -> void:
 	guide.npc_name = "Yuki"
 	guide.npc_role = "Ski Instructor"
 	guide.dialogue_text = "Hey there! The powder snow today is amazing! Grab a Ski Pass if you find one and check out the southern slopes. Hold SHIFT if you want to sprint!"
-	guide.npc_sprite = guide_tex
+	var guide_reg = AssetRegistry.get_entity_preview("guide_yuki")
+	guide.npc_sprite = guide_reg if guide_reg else guide_tex
 	guide.position = Vector2(28 * TILE_SIZE, 23 * TILE_SIZE)
 	npcs_container.add_child(guide)
 
 	# 3. Enemy: Wild Snowman (Near Onsen / North)
 	var monkey = enemy_npc_scene.instantiate()
 	monkey.enemy_name = "Wild Snowman"
-	monkey.enemy_sprite = snowman_tex
+	var snow_reg = AssetRegistry.get_entity_preview("wild_snowman")
+	monkey.enemy_sprite = snow_reg if snow_reg else snowman_tex
 	monkey.patrol_distance = 36.0
 	monkey.patrol_speed = 20.0
 	monkey.position = Vector2(12 * TILE_SIZE, 12 * TILE_SIZE)
@@ -248,10 +258,13 @@ func _spawn_npcs() -> void:
 	# 4. Enemy: Mountain Forest Yeti (Animated 3-frames in Eastern Forest)
 	var boar = enemy_npc_scene.instantiate()
 	boar.enemy_name = "Mountain Forest Yeti"
-	boar.enemy_sprite = yeti_0
-	boar.animation_frames = [yeti_0, yeti_1, yeti_2]
-	boar.animation_fps = 5.0
+	var yeti_frames_reg = AssetRegistry.get_entity_frames("forest_yeti")
+	var yeti_anim = yeti_frames_reg if yeti_frames_reg.size() > 0 else [yeti_0, yeti_1, yeti_2]
+	boar.enemy_sprite = yeti_anim[0]
+	boar.animation_frames = yeti_anim
+	boar.animation_fps = AssetRegistry.get_entity_fps("forest_yeti", 5.0)
 	boar.patrol_distance = 45.0
 	boar.patrol_speed = 24.0
 	boar.position = Vector2(38 * TILE_SIZE, 16 * TILE_SIZE)
 	npcs_container.add_child(boar)
+

@@ -12,11 +12,21 @@
       "name": "Player Explorer",
       "project": "godot-test",
       "entity_type": "character",
-      "fps": 4.0,
+      "fps": 4,
       "preview_img": "../assets/sprites/player_idle.png",
       "frames": [
-        { "name": "Idle", "imgSrc": "../assets/sprites/player_idle.png", "resPath": "res://assets/sprites/player_idle.png", "sourceTile": "tiny-ski/tile_0070" },
-        { "name": "Walk Stride", "imgSrc": "../assets/sprites/player_walk.png", "resPath": "res://assets/sprites/player_walk.png", "sourceTile": "tiny-ski/tile_0071" }
+        {
+          "name": "Idle",
+          "imgSrc": "../assets/sprites/player_idle.png",
+          "resPath": "res://assets/sprites/player_idle.png",
+          "sourceTile": "tiny-ski/tile_0070"
+        },
+        {
+          "name": "Walk Stride",
+          "imgSrc": "../assets/sprites/player_walk.png",
+          "resPath": "res://assets/sprites/player_walk.png",
+          "sourceTile": "tiny-ski/tile_0071"
+        }
       ],
       "notes": "Skier protagonist in Hakuba village square with 2-frame walking cycle"
     },
@@ -25,13 +35,33 @@
       "name": "Mountain Forest Yeti",
       "project": "godot-test",
       "entity_type": "character",
-      "fps": 5.0,
+      "fps": 5,
       "preview_img": "../assets/sprites/enemy_yeti_1.png",
       "frames": [
-        { "name": "Walk Left", "imgSrc": "../assets/sprites/enemy_yeti_0.png", "resPath": "res://assets/sprites/enemy_yeti_0.png", "sourceTile": "tiny-ski/tile_0078" },
-        { "name": "Front Stance", "imgSrc": "../assets/sprites/enemy_yeti_1.png", "resPath": "res://assets/sprites/enemy_yeti_1.png", "sourceTile": "tiny-ski/tile_0080" },
-        { "name": "Walk Right", "imgSrc": "../assets/sprites/enemy_yeti_2.png", "resPath": "res://assets/sprites/enemy_yeti_2.png", "sourceTile": "tiny-ski/tile_0079" },
-        { "name": "Front Stance", "imgSrc": "../assets/sprites/enemy_yeti_1.png", "resPath": "res://assets/sprites/enemy_yeti_1.png", "sourceTile": "tiny-ski/tile_0080" }
+        {
+          "name": "Walk Left",
+          "imgSrc": "../assets/sprites/enemy_yeti_0.png",
+          "resPath": "res://assets/sprites/enemy_yeti_0.png",
+          "sourceTile": "tiny-ski/tile_0078"
+        },
+        {
+          "name": "Front Stance",
+          "imgSrc": "../assets/sprites/enemy_yeti_1.png",
+          "resPath": "res://assets/sprites/enemy_yeti_1.png",
+          "sourceTile": "tiny-ski/tile_0080"
+        },
+        {
+          "name": "Walk Right",
+          "imgSrc": "../assets/sprites/enemy_yeti_2.png",
+          "resPath": "res://assets/sprites/enemy_yeti_2.png",
+          "sourceTile": "tiny-ski/tile_0079"
+        },
+        {
+          "name": "Front Stance",
+          "imgSrc": "../assets/sprites/enemy_yeti_1.png",
+          "resPath": "res://assets/sprites/enemy_yeti_1.png",
+          "sourceTile": "tiny-ski/tile_0080"
+        }
       ],
       "notes": "3-frame animated winter beast enemy patrolling eastern pine woods"
     },
@@ -40,10 +70,15 @@
       "name": "Wild Snowman",
       "project": "godot-test",
       "entity_type": "character",
-      "fps": 2.0,
+      "fps": 2,
       "preview_img": "../assets/sprites/enemy_snow_monkey.png",
       "frames": [
-        { "name": "Idle", "imgSrc": "../assets/sprites/enemy_snow_monkey.png", "resPath": "res://assets/sprites/enemy_snow_monkey.png", "sourceTile": "tiny-ski/tile_0069" }
+        {
+          "name": "Idle",
+          "imgSrc": "../assets/sprites/enemy_snow_monkey.png",
+          "resPath": "res://assets/sprites/enemy_snow_monkey.png",
+          "sourceTile": "tiny-ski/tile_0069"
+        }
       ],
       "notes": "Patrolling snow creature near onsen hot spring baths"
     },
@@ -52,16 +87,33 @@
       "name": "Elder Kenzo",
       "project": "godot-test",
       "entity_type": "character",
-      "fps": 2.0,
+      "fps": 2,
       "preview_img": "../assets/sprites/npc_elder.png",
       "frames": [
-        { "name": "Elder Kenzo", "imgSrc": "../assets/sprites/npc_elder.png", "resPath": "res://assets/sprites/npc_elder.png", "sourceTile": "roguelike-chars (composite)" }
+        {
+          "name": "Elder Kenzo",
+          "imgSrc": "../assets/sprites/npc_elder.png",
+          "resPath": "res://assets/sprites/npc_elder.png",
+          "sourceTile": "roguelike-chars (composite)"
+        }
       ],
       "components": [
-        { "name": "Base Head & Body", "tile": "roguelike-chars/char_r00_c01" },
-        { "name": "White Beard", "tile": "roguelike-chars/char_r00_c08" },
-        { "name": "Kimono / Robe", "tile": "roguelike-chars/char_r00_c23" },
-        { "name": "Walking Cane", "tile": "roguelike-chars/char_r00_c43" }
+        {
+          "name": "Base Head & Body",
+          "tile": "roguelike-chars/char_r00_c01"
+        },
+        {
+          "name": "White Beard",
+          "tile": "roguelike-chars/char_r00_c08"
+        },
+        {
+          "name": "Kimono / Robe",
+          "tile": "roguelike-chars/char_r00_c23"
+        },
+        {
+          "name": "Walking Cane",
+          "tile": "roguelike-chars/char_r00_c43"
+        }
       ],
       "notes": "Wise village elder welcoming adventurers"
     },
@@ -70,15 +122,29 @@
       "name": "Ski Guide Yuki",
       "project": "godot-test",
       "entity_type": "character",
-      "fps": 2.0,
+      "fps": 2,
       "preview_img": "../assets/sprites/npc_guide.png",
       "frames": [
-        { "name": "Yuki", "imgSrc": "../assets/sprites/npc_guide.png", "resPath": "res://assets/sprites/npc_guide.png", "sourceTile": "roguelike-chars (composite)" }
+        {
+          "name": "Yuki",
+          "imgSrc": "../assets/sprites/npc_guide.png",
+          "resPath": "res://assets/sprites/npc_guide.png",
+          "sourceTile": "roguelike-chars (composite)"
+        }
       ],
       "components": [
-        { "name": "Base Head & Body", "tile": "roguelike-chars/char_r00_c00" },
-        { "name": "Hair", "tile": "roguelike-chars/char_r00_c06" },
-        { "name": "Blue Winter Parka", "tile": "roguelike-chars/char_r00_c20" }
+        {
+          "name": "Base Head & Body",
+          "tile": "roguelike-chars/char_r00_c00"
+        },
+        {
+          "name": "Hair",
+          "tile": "roguelike-chars/char_r00_c06"
+        },
+        {
+          "name": "Blue Winter Parka",
+          "tile": "roguelike-chars/char_r00_c20"
+        }
       ],
       "notes": "Winter ski instructor near the southern slope trail"
     },
@@ -87,11 +153,21 @@
       "name": "Red Alpine Skier",
       "project": "preset",
       "entity_type": "character",
-      "fps": 4.0,
+      "fps": 4,
       "preview_img": "../assets/kenney/tiny-ski/Tiles/tile_0060.png",
       "frames": [
-        { "name": "Idle", "imgSrc": "../assets/kenney/tiny-ski/Tiles/tile_0060.png", "resPath": "res://assets/kenney/tiny-ski/Tiles/tile_0060.png", "sourceTile": "tiny-ski/tile_0060" },
-        { "name": "Ski Stride", "imgSrc": "../assets/kenney/tiny-ski/Tiles/tile_0061.png", "resPath": "res://assets/kenney/tiny-ski/Tiles/tile_0061.png", "sourceTile": "tiny-ski/tile_0061" }
+        {
+          "name": "Idle",
+          "imgSrc": "../assets/kenney/tiny-ski/Tiles/tile_0060.png",
+          "resPath": "res://assets/kenney/tiny-ski/Tiles/tile_0060.png",
+          "sourceTile": "tiny-ski/tile_0060"
+        },
+        {
+          "name": "Ski Stride",
+          "imgSrc": "../assets/kenney/tiny-ski/Tiles/tile_0061.png",
+          "resPath": "res://assets/kenney/tiny-ski/Tiles/tile_0061.png",
+          "sourceTile": "tiny-ski/tile_0061"
+        }
       ],
       "notes": "Red ski suit adventurer candidate"
     },
@@ -100,11 +176,21 @@
       "name": "Blue Alpine Skier",
       "project": "preset",
       "entity_type": "character",
-      "fps": 4.0,
+      "fps": 4,
       "preview_img": "../assets/kenney/tiny-ski/Tiles/tile_0063.png",
       "frames": [
-        { "name": "Idle", "imgSrc": "../assets/kenney/tiny-ski/Tiles/tile_0063.png", "resPath": "res://assets/kenney/tiny-ski/Tiles/tile_0063.png", "sourceTile": "tiny-ski/tile_0063" },
-        { "name": "Ski Stride", "imgSrc": "../assets/kenney/tiny-ski/Tiles/tile_0064.png", "resPath": "res://assets/kenney/tiny-ski/Tiles/tile_0064.png", "sourceTile": "tiny-ski/tile_0064" }
+        {
+          "name": "Idle",
+          "imgSrc": "../assets/kenney/tiny-ski/Tiles/tile_0063.png",
+          "resPath": "res://assets/kenney/tiny-ski/Tiles/tile_0063.png",
+          "sourceTile": "tiny-ski/tile_0063"
+        },
+        {
+          "name": "Ski Stride",
+          "imgSrc": "../assets/kenney/tiny-ski/Tiles/tile_0064.png",
+          "resPath": "res://assets/kenney/tiny-ski/Tiles/tile_0064.png",
+          "sourceTile": "tiny-ski/tile_0064"
+        }
       ],
       "notes": "Blue ski suit adventurer candidate"
     },
@@ -113,11 +199,21 @@
       "name": "Tiny Dungeon Knight",
       "project": "preset",
       "entity_type": "character",
-      "fps": 4.0,
+      "fps": 4,
       "preview_img": "../assets/kenney/tiny-dungeon/Tiles/tile_0096.png",
       "frames": [
-        { "name": "Stance", "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0096.png", "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0096.png", "sourceTile": "tiny-dungeon/tile_0096" },
-        { "name": "Walk", "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0097.png", "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0097.png", "sourceTile": "tiny-dungeon/tile_0097" }
+        {
+          "name": "Stance",
+          "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0096.png",
+          "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0096.png",
+          "sourceTile": "tiny-dungeon/tile_0096"
+        },
+        {
+          "name": "Walk",
+          "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0097.png",
+          "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0097.png",
+          "sourceTile": "tiny-dungeon/tile_0097"
+        }
       ],
       "notes": "Armored knight warrior with 2-frame walk cycle"
     },
@@ -126,11 +222,21 @@
       "name": "Tiny Dungeon Skeleton",
       "project": "preset",
       "entity_type": "character",
-      "fps": 4.0,
+      "fps": 4,
       "preview_img": "../assets/kenney/tiny-dungeon/Tiles/tile_0089.png",
       "frames": [
-        { "name": "Stance", "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0089.png", "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0089.png", "sourceTile": "tiny-dungeon/tile_0089" },
-        { "name": "Walk", "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0090.png", "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0090.png", "sourceTile": "tiny-dungeon/tile_0090" }
+        {
+          "name": "Stance",
+          "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0089.png",
+          "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0089.png",
+          "sourceTile": "tiny-dungeon/tile_0089"
+        },
+        {
+          "name": "Walk",
+          "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0090.png",
+          "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0090.png",
+          "sourceTile": "tiny-dungeon/tile_0090"
+        }
       ],
       "notes": "Undead skeleton enemy with 2-frame walk cycle"
     },
@@ -139,11 +245,21 @@
       "name": "Tiny Dungeon Slime",
       "project": "preset",
       "entity_type": "character",
-      "fps": 3.0,
+      "fps": 3,
       "preview_img": "../assets/kenney/tiny-dungeon/Tiles/tile_0108.png",
       "frames": [
-        { "name": "Squish", "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0108.png", "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0108.png", "sourceTile": "tiny-dungeon/tile_0108" },
-        { "name": "Bounce", "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0109.png", "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0109.png", "sourceTile": "tiny-dungeon/tile_0109" }
+        {
+          "name": "Squish",
+          "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0108.png",
+          "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0108.png",
+          "sourceTile": "tiny-dungeon/tile_0108"
+        },
+        {
+          "name": "Bounce",
+          "imgSrc": "../assets/kenney/tiny-dungeon/Tiles/tile_0109.png",
+          "resPath": "res://assets/kenney/tiny-dungeon/Tiles/tile_0109.png",
+          "sourceTile": "tiny-dungeon/tile_0109"
+        }
       ],
       "notes": "Bouncing green slime monster with squish cycle"
     },
@@ -152,15 +268,35 @@
       "name": "Desert Soldier Hero",
       "project": "preset",
       "entity_type": "character",
-      "fps": 6.0,
+      "fps": 6,
       "preview_img": "../assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0000.png",
       "frames": [
-        { "name": "Frame 1", "imgSrc": "../assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0000.png", "resPath": "res://assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0000.png", "sourceTile": "desert-shooter-pack/Players/tile_0000" },
-        { "name": "Frame 2", "imgSrc": "../assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0001.png", "resPath": "res://assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0001.png", "sourceTile": "desert-shooter-pack/Players/tile_0001" },
-        { "name": "Frame 3", "imgSrc": "../assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0002.png", "resPath": "res://assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0002.png", "sourceTile": "desert-shooter-pack/Players/tile_0002" },
-        { "name": "Frame 4", "imgSrc": "../assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0003.png", "resPath": "res://assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0003.png", "sourceTile": "desert-shooter-pack/Players/tile_0003" }
+        {
+          "name": "Frame 1",
+          "imgSrc": "../assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0000.png",
+          "resPath": "res://assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0000.png",
+          "sourceTile": "desert-shooter-pack/Players/tile_0000"
+        },
+        {
+          "name": "Frame 2",
+          "imgSrc": "../assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0001.png",
+          "resPath": "res://assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0001.png",
+          "sourceTile": "desert-shooter-pack/Players/tile_0001"
+        },
+        {
+          "name": "Frame 3",
+          "imgSrc": "../assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0002.png",
+          "resPath": "res://assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0002.png",
+          "sourceTile": "desert-shooter-pack/Players/tile_0002"
+        },
+        {
+          "name": "Frame 4",
+          "imgSrc": "../assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0003.png",
+          "resPath": "res://assets/kenney/desert-shooter-pack/PNG/Players/Tiles/tile_0003.png",
+          "sourceTile": "desert-shooter-pack/Players/tile_0003"
+        }
       ],
-      "notes": "24×24 smooth 4-frame walking soldier hero"
+      "notes": "24\u00d724 smooth 4-frame walking soldier hero"
     }
   ],
   "usages": [
@@ -282,38 +418,6 @@
       "notes": "Friendly ski instructor blue winter coat layer"
     },
     {
-      "pack": "tiny-town",
-      "tile_name": "tile_0114",
-      "project": "godot-test",
-      "entity_type": "item",
-      "role": "Nagano Apple (Food Snack)",
-      "notes": "Restorative food item placed in orchards & paths around Hakuba village"
-    },
-    {
-      "pack": "tiny-ski",
-      "tile_name": "tile_0094",
-      "project": "godot-test",
-      "entity_type": "item",
-      "role": "Hakuba Ski Pass (Key Item)",
-      "notes": "Lift ticket required to access the southern ski slopes"
-    },
-    {
-      "pack": "tiny-town",
-      "tile_name": "tile_0128",
-      "project": "godot-test",
-      "entity_type": "item",
-      "role": "Hot Onsen Tea (Thermal Beverage)",
-      "notes": "Warm green tea cup served near the hot spring pavilion"
-    },
-    {
-      "pack": "tiny-town",
-      "tile_name": "tile_0115",
-      "project": "godot-test",
-      "entity_type": "item",
-      "role": "Lucky Shrine Charm (Talisman)",
-      "notes": "Traditional Shinto amulet hidden in the sacred mountain woods"
-    },
-    {
       "pack": "tiny-ski",
       "tile_name": "tile_0000",
       "project": "godot-test",
@@ -416,6 +520,38 @@
       "entity_type": "nature",
       "role": "Green Pine Tree (SRC_TOWN 0,4)",
       "notes": "Evergreen pine trees in southern foothills"
+    },
+    {
+      "pack": "tiny-town",
+      "tile_name": "tile_0029",
+      "project": "godot-test",
+      "entity_type": "item",
+      "role": "Nagano Apple (Food Snack)",
+      "notes": "Restorative food item placed in orchards & paths around Hakuba village"
+    },
+    {
+      "pack": "tiny-battle",
+      "tile_name": "tile_0191",
+      "project": "godot-test",
+      "entity_type": "item",
+      "role": "Hakuba Ski Pass (Key Item)",
+      "notes": "Lift ticket required to access the southern ski slopes"
+    },
+    {
+      "pack": "generic-items",
+      "tile_name": "genericItem_color_126",
+      "project": "godot-test",
+      "entity_type": "item",
+      "role": "Hot Onsen Tea (Thermal Beverage)",
+      "notes": "Warm green tea cup served near the hot spring pavilion"
+    },
+    {
+      "pack": "generic-items",
+      "tile_name": "genericItem_color_148",
+      "project": "godot-test",
+      "entity_type": "item",
+      "role": "Lucky Shrine Charm (Talisman)",
+      "notes": "Traditional Shinto amulet hidden in the sacred mountain woods"
     }
   ]
 }
