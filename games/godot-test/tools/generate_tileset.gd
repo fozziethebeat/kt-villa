@@ -1,43 +1,78 @@
-@tool
 extends SceneTree
 
 func _init():
-	print("Generating Hakuba TileSet resource...")
-	var tileset = TileSet.new()
-	tileset.tile_size = Vector2i(16, 16)
-	
-	# Source 0: Tiny Ski (packed 192x176, 12x11 tiles, 16x16)
-	var ski_tex = load("res://assets/kenney/tiny-ski/Tilemap/tilemap_packed.png")
-	if ski_tex:
-		var source_ski = TileSetAtlasSource.new()
-		source_ski.texture = ski_tex
-		source_ski.texture_region_size = Vector2i(16, 16)
-		for y in range(11):
-			for x in range(12):
-				source_ski.create_tile(Vector2i(x, y))
-		var id0 = tileset.add_source(source_ski, 0)
-		print("Added source 0 (Tiny Ski): id =", id0)
-	else:
-		printerr("Failed to load tiny-ski packed tilemap")
+	print("Building complete hakuba_tileset.tres...")
+	var ts = TileSet.new()
+	ts.tile_size = Vector2i(16, 16)
 
-	# Source 1: Tiny Town (packed 192x176, 12x11 tiles, 16x16)
-	var town_tex = load("res://assets/kenney/tiny-town/Tilemap/tilemap_packed.png")
-	if town_tex:
-		var source_town = TileSetAtlasSource.new()
-		source_town.texture = town_tex
-		source_town.texture_region_size = Vector2i(16, 16)
-		for y in range(11):
-			for x in range(12):
-				source_town.create_tile(Vector2i(x, y))
-		var id1 = tileset.add_source(source_town, 1)
-		print("Added source 1 (Tiny Town): id =", id1)
-	else:
-		printerr("Failed to load tiny-town packed tilemap")
+	var sources_def = [
+		{
+			"id": 0,
+			"path": "res://assets/kenney/tiny-ski/Tilemap/tilemap_packed.png",
+			"cols": 12,
+			"rows": 11,
+			"sep": Vector2i(0, 0)
+		},
+		{
+			"id": 1,
+			"path": "res://assets/kenney/tiny-town/Tilemap/tilemap_packed.png",
+			"cols": 12,
+			"rows": 11,
+			"sep": Vector2i(0, 0)
+		},
+		{
+			"id": 2,
+			"path": "res://assets/kenney/roguelike-rpg/Spritesheet/roguelikeSheet_transparent.png",
+			"cols": 57,
+			"rows": 31,
+			"sep": Vector2i(1, 1)
+		},
+		{
+			"id": 3,
+			"path": "res://assets/kenney/roguelike-characters/Spritesheet/roguelikeChar_transparent.png",
+			"cols": 54,
+			"rows": 12,
+			"sep": Vector2i(1, 1)
+		},
+		{
+			"id": 4,
+			"path": "res://assets/kenney/tiny-dungeon/Tilemap/tilemap_packed.png",
+			"cols": 12,
+			"rows": 11,
+			"sep": Vector2i(0, 0)
+		},
+		{
+			"id": 5,
+			"path": "res://assets/kenney/tiny-battle/Tilemap/tilemap_packed.png",
+			"cols": 18,
+			"rows": 11,
+			"sep": Vector2i(0, 0)
+		}
+	]
 
-	var err = ResourceSaver.save(tileset, "res://assets/tilesets/hakuba_tileset.tres")
+	for sdef in sources_def:
+		if not ResourceLoader.exists(sdef["path"]):
+			print("Warning: path not found: ", sdef["path"])
+			continue
+		var tex = load(sdef["path"])
+		var atlas = TileSetAtlasSource.new()
+		atlas.texture = tex
+		atlas.texture_region_size = Vector2i(16, 16)
+		atlas.separation = sdef["sep"]
+
+		var added = 0
+		for r in range(sdef["rows"]):
+			for c in range(sdef["cols"]):
+				atlas.create_tile(Vector2i(c, r))
+				added += 1
+
+		ts.add_source(atlas, sdef["id"])
+		print("Added source ", sdef["id"], " (", sdef["path"].get_file(), ") with ", added, " tiles.")
+
+	var err = ResourceSaver.save(ts, "res://assets/tilesets/hakuba_tileset.tres")
 	if err == OK:
-		print("Successfully saved hakuba_tileset.tres!")
+		print("Successfully saved res://assets/tilesets/hakuba_tileset.tres!")
 	else:
-		printerr("Error saving tileset:", err)
+		print("Error saving tileset: ", err)
 
 	quit()

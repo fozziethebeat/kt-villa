@@ -296,7 +296,7 @@
           "sourceTile": "desert-shooter-pack/Players/tile_0003"
         }
       ],
-      "notes": "24\u00d724 smooth 4-frame walking soldier hero"
+      "notes": "24×24 smooth 4-frame walking soldier hero"
     }
   ],
   "usages": [
@@ -442,84 +442,84 @@
       "notes": "Paved stone paths in village crossroads and around onsen"
     },
     {
-      "pack": "tiny-town",
-      "tile_name": "tile_0015",
+      "pack": "roguelike-rpg",
+      "tile_name": "rpg_r00_c00",
       "project": "godot-test",
       "entity_type": "terrain",
       "role": "Hot Spring / Onsen Water (SRC_TOWN 3,1)",
-      "notes": "Steaming mineral hot spring thermal water pool"
+      "notes": "Mapped to Hot Spring Water (SRC_TOWN 3,1)"
     },
     {
       "pack": "tiny-town",
-      "tile_name": "tile_0024",
+      "tile_name": "tile_0064",
       "project": "godot-test",
       "entity_type": "structure",
       "role": "Wooden Roof Left (SRC_TOWN 0,2)",
-      "notes": "Left sloped roof edge for village buildings"
+      "notes": "Mapped to Wooden Roof Left (SRC_TOWN 0,2)"
     },
     {
       "pack": "tiny-town",
-      "tile_name": "tile_0025",
+      "tile_name": "tile_0065",
       "project": "godot-test",
       "entity_type": "structure",
       "role": "Wooden Roof Center (SRC_TOWN 1,2)",
-      "notes": "Center roof ridge span for village buildings"
+      "notes": "Mapped to Wooden Roof Center (SRC_TOWN 1,2)"
     },
     {
       "pack": "tiny-town",
-      "tile_name": "tile_0026",
+      "tile_name": "tile_0066",
       "project": "godot-test",
       "entity_type": "structure",
       "role": "Wooden Roof Right (SRC_TOWN 2,2)",
-      "notes": "Right sloped roof edge for village buildings"
+      "notes": "Mapped to Wooden Roof Right (SRC_TOWN 2,2)"
     },
     {
       "pack": "tiny-town",
-      "tile_name": "tile_0036",
+      "tile_name": "tile_0072",
       "project": "godot-test",
       "entity_type": "structure",
       "role": "Wooden Wall Left (SRC_TOWN 0,3)",
-      "notes": "Left timber wall facade for village buildings"
+      "notes": "Mapped to Wooden Wall Left (SRC_TOWN 0,3)"
     },
     {
       "pack": "tiny-town",
-      "tile_name": "tile_0037",
+      "tile_name": "tile_0074",
       "project": "godot-test",
       "entity_type": "structure",
       "role": "Wooden Wall Door (SRC_TOWN 1,3)",
-      "notes": "Entrance doorway for village buildings"
+      "notes": "Mapped to Wooden Wall Door (SRC_TOWN 1,3)"
     },
     {
       "pack": "tiny-town",
-      "tile_name": "tile_0038",
+      "tile_name": "tile_0075",
       "project": "godot-test",
       "entity_type": "structure",
       "role": "Wooden Wall Right (SRC_TOWN 2,3)",
-      "notes": "Right timber wall facade for village buildings"
+      "notes": "Mapped to Wooden Wall Right (SRC_TOWN 2,3)"
     },
     {
       "pack": "tiny-town",
-      "tile_name": "tile_0060",
+      "tile_name": "tile_0045",
       "project": "godot-test",
       "entity_type": "structure",
       "role": "Wooden Fence (SRC_TOWN 0,5)",
-      "notes": "Rustic timber perimeter fencing"
+      "notes": "Mapped to Wooden Fence (SRC_TOWN 0,5)"
     },
     {
       "pack": "tiny-ski",
-      "tile_name": "tile_0037",
+      "tile_name": "tile_0006",
       "project": "godot-test",
       "entity_type": "nature",
       "role": "Snow Pine Tree (SRC_SKI 1,3)",
-      "notes": "Alpine snow-dusted pine trees in eastern woods and northern peaks"
+      "notes": "Mapped to Snow Pine Tree (SRC_SKI 1,3)"
     },
     {
       "pack": "tiny-town",
-      "tile_name": "tile_0048",
+      "tile_name": "tile_0028",
       "project": "godot-test",
       "entity_type": "nature",
       "role": "Green Pine Tree (SRC_TOWN 0,4)",
-      "notes": "Evergreen pine trees in southern foothills"
+      "notes": "Mapped to Green Pine Tree (SRC_TOWN 0,4)"
     },
     {
       "pack": "tiny-town",

@@ -55,13 +55,22 @@ const MAP_W = 48
 const MAP_H = 36
 
 func _ready() -> void:
+	AssetRegistry.assets_reloaded.connect(_rebuild_world)
+	_rebuild_world()
+	
+	# Place player in village square
+	player.position = Vector2(24 * TILE_SIZE, 20 * TILE_SIZE)
+
+func _rebuild_world() -> void:
 	_build_terrain()
 	_build_village_structures()
 	_spawn_items()
 	_spawn_npcs()
-	
-	# Place player in village square
-	player.position = Vector2(24 * TILE_SIZE, 20 * TILE_SIZE)
+
+func _set_tile(layer: TileMapLayer, cell: Vector2i, key: String, fallback_source: int, fallback_coords: Vector2i) -> void:
+	var src = AssetRegistry.get_tile_source(key, fallback_source)
+	var coords = AssetRegistry.get_tile_coords(key, fallback_coords)
+	layer.set_cell(cell, src, coords)
 
 func _build_terrain() -> void:
 	for y in range(MAP_H):
@@ -72,21 +81,21 @@ func _build_terrain() -> void:
 			# North-West (Onsen hot springs)
 			if x >= 8 and x <= 14 and y >= 6 and y <= 10:
 				if x == 8 or x == 14 or y == 6 or y == 10:
-					ground_layer.set_cell(cell, SRC_TOWN, TILE_STONE_PATH)
+					_set_tile(ground_layer, cell, "stone_path", SRC_TOWN, TILE_STONE_PATH)
 				else:
-					ground_layer.set_cell(cell, SRC_TOWN, TILE_WATER)
+					_set_tile(ground_layer, cell, "water", SRC_TOWN, TILE_WATER)
 			# Village paths (Crossroads)
 			elif (x >= 22 and x <= 26) or (y >= 18 and y <= 21):
-				ground_layer.set_cell(cell, SRC_TOWN, TILE_STONE_PATH)
+				_set_tile(ground_layer, cell, "stone_path", SRC_TOWN, TILE_STONE_PATH)
 			# Ski trail to the South
 			elif y >= 26 and x >= 18 and x <= 30:
-				ground_layer.set_cell(cell, SRC_SKI, TILE_SNOW_PATH)
+				_set_tile(ground_layer, cell, "snow_path", SRC_SKI, TILE_SNOW_PATH)
 			# Default Hakuba winter terrain
 			else:
 				if (x + y) % 5 == 0:
-					ground_layer.set_cell(cell, SRC_SKI, TILE_SNOW_PATH)
+					_set_tile(ground_layer, cell, "snow_path", SRC_SKI, TILE_SNOW_PATH)
 				else:
-					ground_layer.set_cell(cell, SRC_SKI, TILE_SNOW)
+					_set_tile(ground_layer, cell, "snow", SRC_SKI, TILE_SNOW)
 
 func _build_village_structures() -> void:
 	# 1. Elder's Lodge (Center-North: x=21..27, y=11..13)
@@ -113,14 +122,24 @@ func _create_building(grid_pos: Vector2i, width_tiles: int, height_tiles: int, _
 		for w in range(width_tiles):
 			var cell = grid_pos + Vector2i(w, h)
 			if h == 0:
-				var tile = TILE_ROOF_L if w == 0 else (TILE_ROOF_R if w == width_tiles - 1 else TILE_ROOF_M)
-				structures_layer.set_cell(cell, SRC_TOWN, tile)
+				if w == 0:
+					_set_tile(structures_layer, cell, "roof_l", SRC_TOWN, TILE_ROOF_L)
+				elif w == width_tiles - 1:
+					_set_tile(structures_layer, cell, "roof_r", SRC_TOWN, TILE_ROOF_R)
+				else:
+					_set_tile(structures_layer, cell, "roof_m", SRC_TOWN, TILE_ROOF_M)
 			elif h == height_tiles - 1:
-				var tile = TILE_WALL_DOOR if w == int(width_tiles / 2) else (TILE_WALL_L if w == 0 else TILE_WALL_R)
-				structures_layer.set_cell(cell, SRC_TOWN, tile)
+				if w == int(width_tiles / 2.0):
+					_set_tile(structures_layer, cell, "wall_door", SRC_TOWN, TILE_WALL_DOOR)
+				elif w == 0:
+					_set_tile(structures_layer, cell, "wall_l", SRC_TOWN, TILE_WALL_L)
+				else:
+					_set_tile(structures_layer, cell, "wall_r", SRC_TOWN, TILE_WALL_R)
 			else:
-				var tile = TILE_WALL_L if w == 0 else TILE_WALL_R
-				structures_layer.set_cell(cell, SRC_TOWN, tile)
+				if w == 0:
+					_set_tile(structures_layer, cell, "wall_l", SRC_TOWN, TILE_WALL_L)
+				else:
+					_set_tile(structures_layer, cell, "wall_r", SRC_TOWN, TILE_WALL_R)
 	
 	# Static Collision body for building
 	var top_left = Vector2(grid_pos * TILE_SIZE)
@@ -161,9 +180,10 @@ func _create_trees() -> void:
 	]
 	
 	for coord in tree_coords:
-		var source = SRC_SKI if coord.y < 20 else SRC_TOWN
-		var tile = TILE_PINE_SNOW if coord.y < 20 else TILE_PINE_GREEN
-		structures_layer.set_cell(coord, source, tile)
+		if coord.y < 20:
+			_set_tile(structures_layer, coord, "pine_snow", SRC_SKI, TILE_PINE_SNOW)
+		else:
+			_set_tile(structures_layer, coord, "pine_green", SRC_TOWN, TILE_PINE_GREEN)
 		
 		# Collision circle at base of tree
 		var body = StaticBody2D.new()
@@ -183,10 +203,10 @@ func _create_boundary_walls() -> void:
 	var map_px_h = MAP_H * TILE_SIZE
 	
 	var borders = [
-		Rect2(-thickness/2, map_px_h/2, thickness, map_px_h), # Left
-		Rect2(map_px_w + thickness/2, map_px_h/2, thickness, map_px_h), # Right
-		Rect2(map_px_w/2, -thickness/2, map_px_w, thickness), # Top
-		Rect2(map_px_w/2, map_px_h + thickness/2, map_px_w, thickness) # Bottom
+		Rect2(-thickness/2.0, map_px_h/2.0, thickness, map_px_h), # Left
+		Rect2(map_px_w + thickness/2.0, map_px_h/2.0, thickness, map_px_h), # Right
+		Rect2(map_px_w/2.0, -thickness/2.0, map_px_w, thickness), # Top
+		Rect2(map_px_w/2.0, map_px_h + thickness/2.0, map_px_w, thickness) # Bottom
 	]
 	
 	for r in borders:
@@ -208,6 +228,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			AssetRegistry.reload()
 
 func _spawn_items() -> void:
+	for child in items_container.get_children():
+		child.queue_free()
+
 	var items_data = [
 		{ "name": "Nagano Apple", "key": "apple", "fallback": apple_tex, "pos": Vector2(16, 17) * TILE_SIZE },
 		{ "name": "Nagano Apple", "key": "apple", "fallback": apple_tex, "pos": Vector2(28, 17) * TILE_SIZE },
@@ -225,6 +248,8 @@ func _spawn_items() -> void:
 		items_container.add_child(item)
 
 func _spawn_npcs() -> void:
+	for child in npcs_container.get_children():
+		child.queue_free()
 	# 1. Friendly: Elder Kenzo (Near village center)
 	var elder = friendly_npc_scene.instantiate()
 	elder.npc_name = "Elder Kenzo"

@@ -64,3 +64,9 @@ https://gameidea.org/category/godot-tutorials/page/5/
 * https://www.routledge.com/Character-Development-and-Storytelling-for-Games/Sheldon/p/book/9780367248987
 * https://www.youtube.com/@sora_sakurai_en
 * https://www.youtube.com/@extracredits/playlists
+
+## Design questions
+
+1.  what is the progression system?
+2.  What are workable but easy status effect mechanics?
+3.  What is the battle mechanic?

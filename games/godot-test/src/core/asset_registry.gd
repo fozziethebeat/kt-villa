@@ -104,9 +104,10 @@ func _parse_usages() -> void:
 
 		# Parse terrain, structure, nature tiles
 		elif entity_type in ["terrain", "structure", "nature"]:
-			var tile_info = _parse_tile_role(role, pack, tile_name)
-			if tile_info.has("key"):
+			var tile_info = _resolve_tile_info(role, pack, tile_name)
+			if tile_info.has("key") and not tile_info["key"].is_empty():
 				_tiles_by_key[tile_info["key"]] = tile_info
+				print("[AssetRegistry] Tile '", tile_info["key"], "' -> pack: ", pack, ", tile: ", tile_name, ", src: ", tile_info["source_id"], ", coords: ", tile_info["coords"])
 
 func _extract_item_key(role: String) -> String:
 	var lower = role.to_lower()
@@ -119,6 +120,46 @@ func _extract_item_key(role: String) -> String:
 	elif "charm" in lower or "talisman" in lower:
 		return "charm"
 	return lower
+
+func _extract_tile_key(role: String) -> String:
+	var lower = role.to_lower()
+	if "roof left" in lower:
+		return "roof_l"
+	elif "roof center" in lower or "roof middle" in lower:
+		return "roof_m"
+	elif "roof right" in lower:
+		return "roof_r"
+	elif "wall left" in lower:
+		return "wall_l"
+	elif "wall door" in lower or "doorway" in lower:
+		return "wall_door"
+	elif "wall right" in lower:
+		return "wall_r"
+	elif "fence" in lower:
+		return "fence"
+	elif "snow pine" in lower:
+		return "pine_snow"
+	elif "green pine" in lower:
+		return "pine_green"
+	elif "plain snow" in lower:
+		return "snow"
+	elif "snow trail" in lower or "ski path" in lower or "snow path" in lower:
+		return "snow_path"
+	elif "cobblestone" in lower or "stone path" in lower:
+		return "stone_path"
+	elif "hot spring" in lower or "water" in lower or "onsen" in lower:
+		return "water"
+	return ""
+
+func _load_texture_fresh(path: String) -> Texture2D:
+	var global_path = ProjectSettings.globalize_path(path)
+	if FileAccess.file_exists(global_path):
+		var img = Image.load_from_file(global_path)
+		if img:
+			return ImageTexture.create_from_image(img)
+	if ResourceLoader.exists(path):
+		return load(path)
+	return null
 
 func _find_item_texture(item_key: String, pack: String, tile_name: String) -> Texture2D:
 	# 1. Primary: Direct Kenney texture path
@@ -134,83 +175,80 @@ func _find_item_texture(item_key: String, pack: String, tile_name: String) -> Te
 		"res://assets/kenney/" + pack + "/PNG/Interface/Tiles/" + tile_name + ".png"
 	]
 	for p in direct_paths:
-		if ResourceLoader.exists(p):
-			var tex = load(p)
-			if tex:
-				print("[AssetRegistry] Item '", item_key, "' loaded from: ", p)
-				return tex
+		var found_tex = _load_texture_fresh(p)
+		if found_tex:
+			print("[AssetRegistry] Item '", item_key, "' loaded from: ", p)
+			return found_tex
 
 	# 2. Secondary: Check synced texture in assets/sprites/
 	var synced_path = "res://assets/sprites/item_" + item_key + ".png"
-	if ResourceLoader.exists(synced_path):
-		var tex = load(synced_path)
-		if tex:
-			print("[AssetRegistry] Item '", item_key, "' loaded from fallback: ", synced_path)
-			return tex
+	var fallback_tex = _load_texture_fresh(synced_path)
+	if fallback_tex:
+		print("[AssetRegistry] Item '", item_key, "' loaded from fallback: ", synced_path)
+		return fallback_tex
 
 	return null
 
-func _parse_tile_role(role: String, pack: String, tile_name: String) -> Dictionary:
-	var res: Dictionary = {
+func _resolve_tile_info(role: String, pack: String, tile_name: String) -> Dictionary:
+	var key = _extract_tile_key(role)
+	var source_id = 0
+	var coords = Vector2i.ZERO
+
+	# 1. Resolve source_id from pack
+	match pack:
+		"tiny-ski":
+			source_id = 0
+		"tiny-town":
+			source_id = 1
+		"roguelike-rpg":
+			source_id = 2
+		"roguelike-chars":
+			source_id = 3
+		"tiny-dungeon":
+			source_id = 4
+		"tiny-battle":
+			source_id = 5
+		_:
+			if "SRC_SKI" in role:
+				source_id = 0
+			else:
+				source_id = 1
+
+	# 2. Resolve coords from tile_name
+	if tile_name.begins_with("tile_"):
+		var idx_str = tile_name.trim_prefix("tile_")
+		var idx = int(idx_str)
+		var num_cols = 12.0
+		if pack == "tiny-battle":
+			num_cols = 18.0
+		coords = Vector2i(idx % int(num_cols), int(float(idx) / num_cols))
+	elif tile_name.begins_with("rpg_r") or tile_name.begins_with("char_r"):
+		var parts = tile_name.split("_")
+		if parts.size() >= 3:
+			var r = int(parts[1].trim_prefix("r"))
+			var c = int(parts[2].trim_prefix("c"))
+			coords = Vector2i(c, r)
+	else:
+		# Fallback to coordinates in role string e.g. "(SRC_SKI 1,1)"
+		var start_idx = role.find("(")
+		var end_idx = role.find(")")
+		if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+			var inner = role.substr(start_idx + 1, end_idx - start_idx - 1)
+			var parts = inner.split(" ")
+			if parts.size() >= 2:
+				var coord_str = parts[1]
+				var nums = coord_str.split(",")
+				if nums.size() == 2:
+					coords = Vector2i(int(nums[0]), int(nums[1]))
+
+	return {
+		"key": key,
 		"role": role,
 		"pack": pack,
 		"tile_name": tile_name,
-		"source_id": 0,
-		"coords": Vector2i.ZERO
+		"source_id": source_id,
+		"coords": coords
 	}
-
-	# Extract source ID from role string e.g. "(SRC_SKI 0,0)" or "(SRC_TOWN 1,0)"
-	if "SRC_SKI" in role:
-		res["source_id"] = 0
-	elif "SRC_TOWN" in role:
-		res["source_id"] = 1
-	elif pack == "tiny-ski":
-		res["source_id"] = 0
-	else:
-		res["source_id"] = 1
-
-	# Extract coordinates if formatted like "(SRC_... 1,2)"
-	var start_idx = role.find("(")
-	var end_idx = role.find(")")
-	if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
-		var inner = role.substr(start_idx + 1, end_idx - start_idx - 1)
-		var parts = inner.split(" ")
-		if parts.size() >= 2:
-			var coord_str = parts[1]
-			var nums = coord_str.split(",")
-			if nums.size() == 2:
-				res["coords"] = Vector2i(int(nums[0]), int(nums[1]))
-
-	# Determine clean key for world builder
-	var lower = role.to_lower()
-	if "plain snow" in lower:
-		res["key"] = "snow"
-	elif "snow trail" in lower or "ski path" in lower:
-		res["key"] = "snow_path"
-	elif "cobblestone" in lower or "stone path" in lower:
-		res["key"] = "stone_path"
-	elif "hot spring" in lower or "water" in lower:
-		res["key"] = "water"
-	elif "roof left" in lower:
-		res["key"] = "roof_l"
-	elif "roof center" in lower:
-		res["key"] = "roof_m"
-	elif "roof right" in lower:
-		res["key"] = "roof_r"
-	elif "wall left" in lower:
-		res["key"] = "wall_l"
-	elif "wall door" in lower:
-		res["key"] = "wall_door"
-	elif "wall right" in lower:
-		res["key"] = "wall_r"
-	elif "fence" in lower:
-		res["key"] = "fence"
-	elif "snow pine" in lower:
-		res["key"] = "pine_snow"
-	elif "green pine" in lower:
-		res["key"] = "pine_green"
-
-	return res
 
 # Public API
 
