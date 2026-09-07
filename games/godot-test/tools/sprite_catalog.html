@@ -429,34 +429,136 @@
   .strip-section {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
+    background: #0f1218;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+  }
+  .strip-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .badge-sub {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-family: monospace;
+  }
+  .strip-layout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .strip-live-cell {
+    background: #141c26;
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 10px var(--primary-glow);
+    border-radius: 8px;
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    min-width: 68px;
+    user-select: none;
+  }
+  .strip-live-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.04em;
+  }
+  .strip-live-img-box {
+    width: 38px;
+    height: 38px;
+    background: 
+      linear-gradient(45deg, #181d28 25%, transparent 25%), 
+      linear-gradient(-45deg, #181d28 25%, transparent 25%), 
+      linear-gradient(45deg, transparent 75%, #181d28 75%), 
+      linear-gradient(-45deg, transparent 75%, #181d28 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+    background-color: #12151d;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .strip-live-img {
+    width: 30px;
+    height: 30px;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    object-fit: contain;
+  }
+  .strip-live-sub {
+    font-size: 0.65rem;
+    color: var(--accent);
+    font-family: monospace;
+    font-weight: 600;
+  }
+  .strip-divider {
+    width: 1px;
+    height: 52px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+  .strip-frames-scroll {
+    flex: 1;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: thin;
   }
   .strip-frames {
     display: flex;
     gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: thin;
+    align-items: center;
   }
   .strip-card {
-    background: #10131a;
+    background: #151922;
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 6px;
+    padding: 6px 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 4px;
     cursor: pointer;
-    min-width: 60px;
+    min-width: 58px;
     flex-shrink: 0;
+    transition: all 0.15s;
+    user-select: none;
+    position: relative;
   }
-  .strip-card:hover { border-color: var(--primary); }
-  .strip-card.active-frame { border-color: var(--accent); background: #152220; }
+  .strip-card:hover {
+    border-color: var(--primary);
+    background: #1b2230;
+  }
+  .strip-card.active-frame {
+    border-color: var(--accent);
+    background: rgba(92, 230, 176, 0.15);
+    box-shadow: 0 0 8px var(--accent-glow);
+    transform: scale(1.05);
+  }
+  .strip-card-idx {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-family: monospace;
+  }
+  .strip-card.active-frame .strip-card-idx {
+    color: var(--accent);
+  }
   .strip-card img {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
     object-fit: contain;
   }
   .strip-label {
@@ -467,6 +569,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .strip-card.active-frame .strip-label {
+    color: #fff;
+    font-weight: 600;
   }
 
   .prop-list {
@@ -644,8 +750,25 @@
     </div>
 
     <div id="stripSection" class="strip-section" style="display:none;">
-      <span class="prop-label">Animation Frames / Strip</span>
-      <div id="stripFrames" class="strip-frames"></div>
+      <div class="strip-header">
+        <span class="prop-label">Movement Sequence & Individual Frames</span>
+        <span id="stripFrameCount" class="badge-sub">2 frames</span>
+      </div>
+      <div class="strip-layout">
+        <div class="strip-live-cell" id="stripLiveCell" title="Demonstrates live movement animation">
+          <div class="strip-live-badge">🎬 Motion</div>
+          <div class="strip-live-img-box">
+            <img id="stripLiveImg" class="strip-live-img" src="" alt="Motion">
+          </div>
+          <span class="strip-live-sub" id="stripLiveFPS">4 FPS</span>
+        </div>
+
+        <div class="strip-divider"></div>
+
+        <div class="strip-frames-scroll">
+          <div id="stripFrames" class="strip-frames"></div>
+        </div>
+      </div>
     </div>
 
     <div class="prop-list">
@@ -747,6 +870,12 @@ function drawInspectorEntityFrame() {
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   }
 
+  // Update live motion cell image in the strip
+  const liveImg = document.getElementById('stripLiveImg');
+  if (liveImg && frame) {
+    liveImg.src = frame.imgSrc;
+  }
+
   // Update active strip card
   document.querySelectorAll('.strip-card').forEach((c, idx) => {
     c.classList.toggle('active-frame', idx === frameIdx);
@@ -761,6 +890,8 @@ function toggleAnimPlayback() {
 function updateAnimFPS(val) {
   animFPS = parseInt(val, 10);
   document.getElementById('fpsVal').innerText = `${animFPS} FPS`;
+  const stripLiveFPS = document.getElementById('stripLiveFPS');
+  if (stripLiveFPS) stripLiveFPS.innerText = `${animFPS} FPS`;
   if (selectedItem) selectedItem.fps = animFPS;
 }
 
@@ -857,13 +988,23 @@ function selectItem(item) {
     animFPS = item.fps || 4;
     document.getElementById('fpsSlider').value = animFPS;
     document.getElementById('fpsVal').innerText = `${animFPS} FPS`;
+    const stripLiveFPS = document.getElementById('stripLiveFPS');
+    if (stripLiveFPS) stripLiveFPS.innerText = `${animFPS} FPS`;
+    const stripFrameCount = document.getElementById('stripFrameCount');
+    if (stripFrameCount) stripFrameCount.innerText = `${item.frames.length} frame${item.frames.length === 1 ? '' : 's'}`;
+
+    const liveImg = document.getElementById('stripLiveImg');
+    if (liveImg && item.frames[0]) {
+      liveImg.src = item.frames[0].imgSrc;
+    }
 
     // Render Frame Strip
     const stripContainer = document.getElementById('stripFrames');
     let sHtml = '';
     item.frames.forEach((f, idx) => {
       sHtml += `
-        <div class="strip-card ${idx === 0 ? 'active-frame' : ''}" onclick="selectStripFrame(${idx})">
+        <div class="strip-card ${idx === 0 ? 'active-frame' : ''}" onclick="selectStripFrame(${idx})" title="Frame #${idx + 1}: ${f.name || ''}">
+          <span class="strip-card-idx">#${idx + 1}</span>
           <img src="${f.imgSrc}" loading="lazy">
           <span class="strip-label">${f.name || `F${idx+1}`}</span>
         </div>
