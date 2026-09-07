@@ -716,26 +716,6 @@ let lastAnimTime = 0;
 let entityFrameIndices = {}; // entityId -> currentFrameIndex
 
 function animationLoop(timestamp) {
-  if (!lastAnimTime) lastAnimTime = timestamp;
-  const elapsed = timestamp - lastAnimTime;
-
-  // Update card canvases in currentTab if animated-entities
-  const packData = CATALOG[currentTab];
-  if (packData && packData.isEntityPack && animPlaying) {
-    for (const item of packData.tiles) {
-      if (item.frames && item.frames.length > 1) {
-        const itemFps = item.fps || 4;
-        const frameDuration = 1000 / itemFps;
-        if (!item._lastTime) item._lastTime = timestamp;
-        if (timestamp - item._lastTime >= frameDuration) {
-          item._lastTime = timestamp;
-          item._curFrame = ((item._curFrame || 0) + 1) % item.frames.length;
-          drawCardFrame(item);
-        }
-      }
-    }
-  }
-
   // Update Inspector Canvas if an entity is selected
   if (selectedItem && selectedItem.isEntity && selectedItem.frames && selectedItem.frames.length > 0) {
     if (animPlaying && selectedItem.frames.length > 1) {
@@ -752,19 +732,6 @@ function animationLoop(timestamp) {
   requestAnimationFrame(animationLoop);
 }
 requestAnimationFrame(animationLoop);
-
-function drawCardFrame(entity) {
-  const canvas = document.getElementById('card-canvas-' + entity.key);
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  ctx.imageSmoothingEnabled = false;
-  const frame = entity.frames[entity._curFrame || 0];
-  const img = getImage(frame.imgSrc);
-  if (img.complete && img.naturalWidth > 0) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  }
-}
 
 function drawInspectorEntityFrame() {
   const canvas = document.getElementById('inspectorCanvas');
@@ -1042,11 +1009,12 @@ function renderTiles() {
     if (match) {
       visibleCount++;
       if (item.isEntity) {
+        const defaultFrame = (item.frames && item.frames.length > 0) ? item.frames[0].imgSrc : item.imgSrc;
         html += `
           <div class="tile-card is-entity ${hasUsage ? 'has-usage' : ''}" id="card-${item.key}" onclick='selectItem(${JSON.stringify(item)})'>
             <div class="card-entity-pill">${item.project === 'preset' ? '✨ Preset' : '🎮 ' + item.project}</div>
             <div class="tile-img-wrapper">
-              <canvas class="card-canvas" id="card-canvas-${item.key}" width="32" height="32"></canvas>
+              <img class="tile-img" id="card-img-${item.key}" src="${defaultFrame}" loading="lazy" alt="${item.name}">
             </div>
             <span class="tile-id" title="${item.name}">${item.name}</span>
             <span class="tile-sub">${item.frames ? item.frames.length : 1} frames • ${item.fps || 4} FPS</span>
@@ -1074,13 +1042,6 @@ function renderTiles() {
   }
 
   container.innerHTML = html;
-
-  // Initialize canvases for entity cards
-  if (packData.isEntityPack) {
-    for (const item of packData.tiles) {
-      drawCardFrame(item);
-    }
-  }
 
   if (packData.tiles.length > 0 && (!selectedItem || selectedItem.pack !== packData.id)) {
     selectItem(packData.tiles[0]);
