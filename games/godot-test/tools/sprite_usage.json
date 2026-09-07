@@ -1,0 +1,115 @@
+{
+  "projects": {
+    "godot-test": {
+      "name": "Hakuba Village RPG Demo",
+      "description": "2D top-down winter exploration JRPG prototype in Godot 4",
+      "path": "games/godot-test"
+    }
+  },
+  "usages": [
+    {
+      "pack": "tiny-ski",
+      "tile_name": "tile_0070",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Player Explorer (Idle)",
+      "notes": "Main player character idle stance in Hakuba village square"
+    },
+    {
+      "pack": "tiny-ski",
+      "tile_name": "tile_0071",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Player Explorer (Walk)",
+      "notes": "Main player character walking stride animation frame"
+    },
+    {
+      "pack": "tiny-ski",
+      "tile_name": "tile_0069",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Wild Snowman (Enemy NPC)",
+      "notes": "Patrolling snow creature near onsen hot springs (replaces snow monkey placeholder)"
+    },
+    {
+      "pack": "tiny-ski",
+      "tile_name": "tile_0078",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Mountain Forest Yeti (Walk Left)",
+      "notes": "3-frame animated forest yeti enemy patrolling eastern pine woods (frame 1)"
+    },
+    {
+      "pack": "tiny-ski",
+      "tile_name": "tile_0080",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Mountain Forest Yeti (Front Stance)",
+      "notes": "3-frame animated forest yeti enemy patrolling eastern pine woods (frame 2)"
+    },
+    {
+      "pack": "tiny-ski",
+      "tile_name": "tile_0079",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Mountain Forest Yeti (Walk Right)",
+      "notes": "3-frame animated forest yeti enemy patrolling eastern pine woods (frame 3)"
+    },
+    {
+      "pack": "roguelike-chars",
+      "tile_name": "char_r00_c01",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Elder Kenzo (Base Head & Body)",
+      "notes": "Village elder character composited from roguelike modular layer"
+    },
+    {
+      "pack": "roguelike-chars",
+      "tile_name": "char_r00_c08",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Elder Kenzo (White Beard)",
+      "notes": "Village elder beard layer"
+    },
+    {
+      "pack": "roguelike-chars",
+      "tile_name": "char_r00_c23",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Elder Kenzo (Grey Robe)",
+      "notes": "Village elder traditional robe layer"
+    },
+    {
+      "pack": "roguelike-chars",
+      "tile_name": "char_r00_c43",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Elder Kenzo (Walking Staff)",
+      "notes": "Village elder walking cane accessory"
+    },
+    {
+      "pack": "roguelike-chars",
+      "tile_name": "char_r00_c00",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Ski Guide Yuki (Base Head & Body)",
+      "notes": "Friendly ski instructor NPC base character layer"
+    },
+    {
+      "pack": "roguelike-chars",
+      "tile_name": "char_r00_c06",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Ski Guide Yuki (Hair)",
+      "notes": "Friendly ski instructor hair layer"
+    },
+    {
+      "pack": "roguelike-chars",
+      "tile_name": "char_r00_c20",
+      "project": "godot-test",
+      "entity_type": "character",
+      "role": "Ski Guide Yuki (Winter Parka)",
+      "notes": "Friendly ski instructor blue winter coat layer"
+    }
+  ]
+}

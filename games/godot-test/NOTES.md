@@ -55,3 +55,12 @@ A 2D top-down Japanese Role-Playing Game (JRPG) centered around exploring the sc
 https://github.com/kavex/gamedev-resources
 https://gameidea.org/category/godot-tutorials/page/5/
 
+
+## Learning Resources
+
+* https://schellgames.com/art-of-game-design
+* https://www.amazon.com/Advanced-Game-Design-Systems-Approach/dp/0134667603
+* https://www.youtube.com/@DesignDoc
+* https://www.routledge.com/Character-Development-and-Storytelling-for-Games/Sheldon/p/book/9780367248987
+* https://www.youtube.com/@sora_sakurai_en
+* https://www.youtube.com/@extracredits/playlists
