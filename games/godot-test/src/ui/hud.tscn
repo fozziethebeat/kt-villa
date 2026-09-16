@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c3d5e7f9a1b2c"]
 
 [ext_resource type="Script" path="res://src/ui/hud.gd" id="1_hud_script"]
+[ext_resource type="PackedScene" path="res://src/ui/inventory_menu.tscn" id="2_inv_scene"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_topbar"]
 bg_color = Color(0.08, 0.09, 0.12, 0.85)
@@ -97,6 +98,11 @@ layout_mode = 2
 text = "🍎 x0  |  🎿 x0  |  🍵 x0  |  ⛩️ x0"
 label_settings = SubResource("LabelSettings_inv")
 
+[node name="BtnPouch" type="Button" parent="TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "🎒 Pouch (I)"
+
 [node name="WarningPanel" type="PanelContainer" parent="."]
 visible = false
 anchors_preset = 5
@@ -171,12 +177,14 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -310.0
+offset_left = -380.0
 offset_top = -20.0
 offset_right = -10.0
 offset_bottom = -4.0
 grow_horizontal = 0
 grow_vertical = 0
-text = "Move: WASD / Arrows | Sprint: Shift | Talk: E"
+text = "Move: WASD / Arrows | Sprint: Shift | Talk: E | Pouch: I"
 label_settings = SubResource("LabelSettings_controls")
 horizontal_alignment = 2
+
+[node name="InventoryMenu" parent="." instance=ExtResource("2_inv_scene")]

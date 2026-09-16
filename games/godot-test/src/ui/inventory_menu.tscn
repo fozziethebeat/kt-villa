@@ -1,0 +1,298 @@
+[gd_scene format=3 uid="uid://b7c8d9e0f1a2b"]
+
+[ext_resource type="Script" path="res://src/ui/inventory_menu.gd" id="1_inv_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_main"]
+bg_color = Color(0.06, 0.09, 0.15, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.83, 0.64, 0.45, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.04, 0.06, 0.11, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.35, 0.5, 0.5)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icon_frame"]
+bg_color = Color(0.08, 0.12, 0.2, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.83, 0.64, 0.45, 0.6)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_effects"]
+bg_color = Color(0.1, 0.16, 0.26, 0.85)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="InventoryMenu" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_inv_script")
+
+[node name="BackgroundDim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.04, 0.08, 0.78)
+
+[node name="MainPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(580, 316)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -290.0
+offset_top = -158.0
+offset_right = 290.0
+offset_bottom = 158.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_main")
+
+[node name="Margin" type="MarginContainer" parent="MainPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="MainPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="HBoxContainer" parent="MainPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MainPanel/Margin/VBox/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.82, 0.55, 1)
+theme_override_font_sizes/font_size = 12
+text = "❄️ HAKUBA POUCH"
+
+[node name="VSeparator" type="VSeparator" parent="MainPanel/Margin/VBox/Header"]
+layout_mode = 2
+
+[node name="Tabs" type="HBoxContainer" parent="MainPanel/Margin/VBox/Header"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TabAll" type="Button" parent="MainPanel/Margin/VBox/Header/Tabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "All Items"
+
+[node name="TabConsumables" type="Button" parent="MainPanel/Margin/VBox/Header/Tabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "🍎 Food"
+
+[node name="TabKeys" type="Button" parent="MainPanel/Margin/VBox/Header/Tabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "🎫 Key Items"
+
+[node name="TabRelics" type="Button" parent="MainPanel/Margin/VBox/Header/Tabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "⛩️ Relics"
+
+[node name="CountSummary" type="Label" parent="MainPanel/Margin/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_colors/font_color = Color(0.65, 0.75, 0.85, 1)
+theme_override_font_sizes/font_size = 10
+text = "Items: 0 / 48"
+
+[node name="HSeparator" type="HSeparator" parent="MainPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="Body" type="HBoxContainer" parent="MainPanel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="LeftPane" type="VBoxContainer" parent="MainPanel/Margin/VBox/Body"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Scroll" type="ScrollContainer" parent="MainPanel/Margin/VBox/Body/LeftPane"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="MainPanel/Margin/VBox/Body/LeftPane/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 4
+
+[node name="EmptyLabel" type="Label" parent="MainPanel/Margin/VBox/Body/LeftPane"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_colors/font_color = Color(0.5, 0.6, 0.7, 1)
+theme_override_font_sizes/font_size = 10
+text = "No items in this category. Explore Hakuba village to collect apples, tea, ski passes, and charms!"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="MainPanel/Margin/VBox/Body"]
+layout_mode = 2
+
+[node name="RightPane" type="VBoxContainer" parent="MainPanel/Margin/VBox/Body"]
+custom_minimum_size = Vector2(230, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="InspectorCard" type="PanelContainer" parent="MainPanel/Margin/VBox/Body/RightPane"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="IconBox" type="CenterContainer" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox"]
+layout_mode = 2
+
+[node name="Frame" type="PanelContainer" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox/IconBox"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_icon_frame")
+
+[node name="InspectIcon" type="TextureRect" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox/IconBox"]
+texture_filter = 1
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InspectName" type="Label" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "Nagano Apple"
+horizontal_alignment = 1
+
+[node name="InspectSubname" type="Label" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 9
+text = "信州りんご"
+horizontal_alignment = 1
+
+[node name="TagBox" type="HBoxContainer" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="CategoryLabel" type="Label" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox/TagBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 8
+text = "📁 Food"
+
+[node name="RarityLabel" type="Label" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox/TagBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 0.95, 1)
+theme_override_font_sizes/font_size = 8
+text = "✨ Local Specialty"
+
+[node name="InspectLore" type="Label" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.8, 0.85, 0.92, 1)
+theme_override_font_sizes/font_size = 9
+text = "A crisp, sweet apple harvested from the orchard slopes of Nagano Prefecture."
+autowrap_mode = 2
+
+[node name="EffectsBox" type="PanelContainer" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_effects")
+
+[node name="Margin" type="MarginContainer" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox/EffectsBox"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 4
+
+[node name="InspectEffects" type="Label" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox/EffectsBox/Margin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.35, 0.9, 0.65, 1)
+theme_override_font_sizes/font_size = 8
+text = "❤️ Restores +35 HP  •  ❄️ +20s Warmth"
+autowrap_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="BtnUse" type="Button" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox/Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 10
+text = "🍴 Eat Apple"
+
+[node name="BtnClose" type="Button" parent="MainPanel/Margin/VBox/Body/RightPane/InspectorCard/Margin/VBox/Actions"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Close"
+
+[node name="Footer" type="HBoxContainer" parent="MainPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="ControlsHint" type="Label" parent="MainPanel/Margin/VBox/Footer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.55, 0.68, 1)
+theme_override_font_sizes/font_size = 8
+text = "[W/A/S/D / Arrows] Navigate  |  [Q / E] Tabs  |  [Enter / Space] Select  |  [I / Tab / Esc] Close"
+
+[node name="ToastLabel" type="Label" parent="MainPanel/Margin/VBox/Footer"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_colors/font_color = Color(0.95, 0.85, 0.45, 1)
+theme_override_font_sizes/font_size = 9
+text = "Used Nagano Apple!"

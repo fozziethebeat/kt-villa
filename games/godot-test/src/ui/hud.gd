@@ -2,11 +2,13 @@ extends CanvasLayer
 
 @onready var location_label: Label = $TopBar/MarginContainer/HBoxContainer/LocationLabel
 @onready var inventory_label: Label = $TopBar/MarginContainer/HBoxContainer/InventoryLabel
+@onready var btn_pouch: Button = $TopBar/MarginContainer/HBoxContainer/BtnPouch
 @onready var warning_panel: PanelContainer = $WarningPanel
 @onready var warning_label: Label = $WarningPanel/MarginContainer/WarningLabel
 @onready var dialogue_panel: PanelContainer = $DialoguePanel
 @onready var speaker_label: Label = $DialoguePanel/MarginContainer/VBoxContainer/SpeakerLabel
 @onready var text_label: Label = $DialoguePanel/MarginContainer/VBoxContainer/TextLabel
+@onready var inventory_menu: Control = $InventoryMenu
 
 var warning_tween: Tween
 
@@ -15,10 +17,30 @@ func _ready() -> void:
 	dialogue_panel.visible = false
 	_update_inventory_display()
 	
+	btn_pouch.pressed.connect(toggle_inventory)
+	
 	GameManager.item_collected.connect(_on_item_collected)
+	GameManager.item_used.connect(_on_item_used)
 	GameManager.enemy_proximity_changed.connect(_on_enemy_proximity_changed)
 	GameManager.dialogue_started.connect(_on_dialogue_started)
 	GameManager.dialogue_ended.connect(_on_dialogue_ended)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_I or event.keycode == KEY_TAB:
+			get_viewport().set_input_as_handled()
+			toggle_inventory()
+
+func toggle_inventory() -> void:
+	if GameManager.is_dialogue_active:
+		return
+	if inventory_menu.visible:
+		inventory_menu.close_menu()
+	else:
+		inventory_menu.open_menu()
+
+func _on_item_used(_item_name: String, _remaining: int, _msg: String) -> void:
+	_update_inventory_display()
 
 func _update_inventory_display() -> void:
 	var apples = GameManager.get_item_count("Nagano Apple")
