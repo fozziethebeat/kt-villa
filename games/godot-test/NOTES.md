@@ -1,6 +1,7 @@
 # Hakuba RPG — Project Notes & Roadmap
 
-A 2D top-down Japanese Role-Playing Game (JRPG) centered around exploring the scenic mountain village of **Hakuba**, Japan.
+A 2D top-down Japanese Role-Playing Game (JRPG) centered around exploring the
+scenic mountain village of **Hakuba**, Japan.
 
 ---
 
@@ -55,7 +56,6 @@ A 2D top-down Japanese Role-Playing Game (JRPG) centered around exploring the sc
 https://github.com/kavex/gamedev-resources
 https://gameidea.org/category/godot-tutorials/page/5/
 
-
 ## Learning Resources
 
 * https://schellgames.com/art-of-game-design
@@ -67,6 +67,50 @@ https://gameidea.org/category/godot-tutorials/page/5/
 
 ## Design questions
 
-1.  what is the progression system?
-2.  What are workable but easy status effect mechanics?
+
+## Gameplay Systems & Mechanics
+
+Define two systems that overlay with each other that both introduces two
+helpful game loops that reinforce each other.  Both need to be fun and the
+simpler loop needs to help build up towards the larger harder game loop.  Both
+ultimately build towards fitting in with the village and making the village a
+better place to live in and visit.
+
+Things we have to figure out:
+1.  what is the progression system? - A courage system
+2.  What are workable but easy status effect mechanics? - jokes & tricks
 3.  What is the battle mechanic?
+  *  For pests, ways of scaring them off or distracting them
+  *  For beasts, Items you gain, Joke to learn, or other friendly behaviors.
+### Restoring Tourism
+
+The local economy is dependent on tourism and as a new resident its in your
+benefit to help boost that economy, but things are getting harder because pests
+are showing up and scaring off tourists and making bad PR.
+
+1. Wander the village and the surrounding area to find and fend off pests
+2. Battling pests both reduces bad PR, brings more visitors, gives you spending
+   money, and builds your courage
+3. Your in game currency is funded by clearing pests and by tourists visiting
+   your local shop.
+4. The more the economy grows, the more you can buy tricks and items to handle
+   pests
+
+### Restoring Village Life
+
+The village has gotten oddly quiet these days and no one knows why.  The head
+shinto priest vanished.  The coffee shop owner vanished.  The joke master
+vanished.  Where did they go? They got bored with the village and became forest
+spirits.  They too wander the village and surrounding area but in a beast form
+and seem like pests but truly they're transformed villagers.
+
+1. Wander the village and the surrounding area to find and simmer down these
+   beasts
+2. Repeatedly contend with these beasts to calm then down to their true form
+   with with snacks, jokes, and other gimmicks.  But you can't take on a beast
+until you have enough courage.  Until then they seem like pests.
+3. helping these beasts recover back into villages restores the village's
+   normal mode of operating.  Shops open back up which both lets you buy new
+items or discover new details.  Further, it helps boost tourism
+4. The more the economy grows, the more you can buy tricks and items to handle
+   pests and beasts
