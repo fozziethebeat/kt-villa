@@ -1,8 +1,9 @@
-import { gql } from '@apollo/client';
-import { getClient } from '@/graphql/ApolloClient';
+import { redirect } from "next/navigation";
+import { gql } from "@apollo/client";
 
-import { checkAccess } from '@/lib/auth-check';
-import { EditUserBookingForm } from '@/components/EditUserBookingForm';
+import { getClient } from "@/graphql/ApolloClient";
+import { checkAccess } from "@/lib/auth-check";
+import { EditUserBookingForm } from "@/components/EditUserBookingForm";
 
 const QUERY = gql`
   query BookingItemQuery($bookingCode: String!) {
@@ -32,16 +33,29 @@ const QUERY = gql`
   }
 `;
 
-export default async function EditBookingPage({ params }) {
-  await checkAccess('', '/');
+export default async function EditBookingPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  await checkAccess("", "/signin");
+  const { id } = await params;
+
+  let userBooking: any = null;
   try {
-    const { data, error } = await getClient().query({
+    const { data } = await getClient().query({
       query: QUERY,
-      variables: { bookingCode: params.id },
+      variables: { bookingCode: id },
+      fetchPolicy: "no-cache",
     });
-    return <EditUserBookingForm userBooking={(data as any).userBooking} />;
-  } catch (e) {
-    console.log(e);
-    return <div>whoops</div>;
+    userBooking = (data as any)?.userBooking;
+  } catch {
+    userBooking = null;
   }
+
+  if (!userBooking) {
+    redirect(`/public-booking/${id}`);
+  }
+
+  return <EditUserBookingForm userBooking={userBooking} />;
 }

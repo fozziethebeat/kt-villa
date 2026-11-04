@@ -14,6 +14,16 @@ const nextConfig = {
         protocol: "https",
         hostname: "ktvilla-images.s3.amazonaws.com",
         pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "storage.googleapis.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "gravatar.com",
+        pathname: "/**",
       }
     ]
   }

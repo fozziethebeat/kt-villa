@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/item_apple.png" id="2_default_icon"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_item"]
-radius = 8.0
+radius = 22.0
 
 [node name="Item" type="Area2D"]
 collision_layer = 4

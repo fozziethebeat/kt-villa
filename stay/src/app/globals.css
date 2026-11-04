@@ -3,51 +3,89 @@
 @tailwind utilities;
 
 @layer base {
-  /* Theme from https://github.com/Tnixc/shadcn-ui/tree/main */
   :root {
-		--background: 220 23.076923191547394% 94.90196108818054%; /* base */
-		--foreground: 234 16.022099554538727% 35.49019694328308%; /* text */
+    /* Warm Japanese Alpine Chalet Theme */
+    --background: 40 25% 97%;       /* Warm snow / alabaster */
+    --foreground: 160 28% 12%;      /* Deep Hakuba forest slate */
 
-		--muted: 223 15.909090638160706% 82.74509906768799%; /* surface0 */
-		--muted-foreground: 233 12.796208262443542% 41.372549533843994%; /* subtext1 */
+    --muted: 38 18% 92%;            /* Soft warm stone */
+    --muted-foreground: 160 12% 38%;
 
-		--popover: 220 23.076923191547394% 94.90196108818054%; /* base */
-		--popover-foreground: 234 16.022099554538727% 35.49019694328308%; /* text */
+    --popover: 40 30% 99%;
+    --popover-foreground: 160 28% 12%;
 
-		--card: 220 23.076923191547394% 94.90196108818054%; /* base */
-		--card-foreground: 234 16.022099554538727% 35.49019694328308%; /* text */
+    --card: 40 30% 99%;
+    --card-foreground: 160 28% 12%;
 
-		--border: 225 13.55932205915451% 76.86274647712708%; /* surface1 */
-		--input: 225 13.55932205915451% 76.86274647712708%; /* surface1 */
+    --border: 36 16% 85%;
+    --input: 36 16% 82%;
 
-		--primary: 189 69.953054189682% 41.76470637321472%; /* accent - Sapphire */
-		--primary-foreground: 220 23.076923191547394% 94.90196108818054%; /* base */
+    --primary: 162 48% 22%;         /* Deep Alpine Pine */
+    --primary-foreground: 40 30% 98%;
 
-		--secondary: 223 15.909090638160706% 82.74509906768799%; /* surface0 */
-		--secondary-foreground: 234 16.022099554538727% 35.49019694328308%; /* text */
+    --secondary: 34 38% 90%;        /* Warm Hinoki Cedar tint */
+    --secondary-foreground: 160 28% 14%;
 
-		--accent: 223 15.909090638160706% 82.74509906768799%; /* surface0 */
-		--accent-foreground: 234 16.022099554538727% 35.49019694328308%; /* text */
+    --accent: 28 72% 46%;           /* Hearth Amber / Persimmon */
+    --accent-foreground: 40 30% 98%;
 
-		--destructive: 347 86.66666746139526% 44.11764740943909%; /* red */
-		--destructive-foreground: 220 21.95121943950653% 91.96078181266785%; /* mantle */
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 40 30% 98%;
 
-		--ring: 234 16.022099554538727% 35.49019694328308%; /* text */
+    --ring: 162 48% 22%;
+    --radius: 0.75rem;
 
-		--radius: 0.5rem;
+    --chart-1: 162 48% 22%;
+    --chart-2: 28 72% 46%;
+    --chart-3: 200 65% 38%;
+    --chart-4: 43 74% 49%;
+    --chart-5: 340 65% 47%;
+  }
 
-		--chart-1: 347 86.66666746139526% 44.11764740943909%; /* red */
-		--chart-2: 183 73.86363744735718% 34.50980484485626%; /* teal */
-		--chart-3: 220 91.4893627166748% 53.921568393707275%; /* blue */
-		--chart-4: 35 76.98412537574768% 49.41176474094391%; /* yellow */
-		--chart-5: 109 57.63546824455261% 39.803922176361084%; /* green */
-	}
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/15 selection:text-primary;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Native modal dialog scroll containment per modern-web-guidance */
+  dialog:modal {
+    overscroll-behavior: contain;
+  }
+
+  dialog::backdrop {
+    overflow: hidden;
+    overscroll-behavior: contain;
+    background: rgb(15 23 20 / 0.55);
+    backdrop-filter: blur(4px);
+  }
 }
-@layer base {
-	* {
-		@apply border-border;
-	}
-	body {
-		@apply bg-background text-foreground;
-	}
+
+/* Custom utility classes for Alpine Chalet layout & cards */
+@layer components {
+  .alpine-container {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .alpine-card {
+    @apply rounded-xl border border-border/80 bg-card text-card-foreground shadow-sm transition-all duration-200;
+  }
+
+  .alpine-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium tracking-wide;
+  }
+
+  /* Responsive table container query wrapper */
+  .responsive-table-wrapper {
+    overflow-x: auto;
+    max-inline-size: 100%;
+    container-type: inline-size;
+  }
 }

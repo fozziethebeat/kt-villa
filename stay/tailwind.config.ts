@@ -1,5 +1,4 @@
 import type { Config } from "tailwindcss";
-import catppuccin from "@catppuccin/daisyui";
 
 const config: Config = {
   darkMode: ["class"],
@@ -7,6 +6,7 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./mdx-components.tsx",
   ],
   theme: {
     extend: {
@@ -66,11 +66,26 @@ const config: Config = {
   ],
   daisyui: {
     themes: [
-      "cupcake",
-      catppuccin("macchiato"),
-      catppuccin("latte"),
-      catppuccin("frappe", "pink"),
-      catppuccin("mocha", { primary: "sky", secondary: "rosewater" }),
+      {
+        ktvilla: {
+          "primary": "#1d5444",
+          "primary-content": "#f9f8f3",
+          "secondary": "#efe6d5",
+          "secondary-content": "#182822",
+          "accent": "#ca6722",
+          "accent-content": "#f9f8f3",
+          "neutral": "#182822",
+          "neutral-content": "#f9f8f3",
+          "base-100": "#fdfcf9",
+          "base-200": "#f3f0e8",
+          "base-300": "#e5dfd2",
+          "base-content": "#162620",
+          "info": "#2563eb",
+          "success": "#15803d",
+          "warning": "#d97706",
+          "error": "#dc2626",
+        },
+      },
     ],
     logs: false,
   },

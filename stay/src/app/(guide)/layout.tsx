@@ -1,59 +1,40 @@
-import {SessionProvider} from 'next-auth/react';
-import Link from 'next/link';
+import { SessionProvider } from "next-auth/react";
+import type { Metadata } from "next";
 
-import {auth} from '@/lib/auth';
-import {ApolloWrapper} from '@/app/ApolloWrapper';
-import {AccountMenu} from '@/components/AccountMenu';
+import { ApolloWrapper } from "@/app/ApolloWrapper";
+import { Navbar, Footer } from "@/components/Navbar";
+import { GuideSidebar } from "@/components/GuideSidebar";
 
-import '@/app/globals.css';
+import "@/app/globals.css";
+
+export const metadata: Metadata = {
+  title: "House & Village Guide · KT Villa Hakuba",
+  description:
+    "Everything you need to know about finding KT Villa, warming up the house, using the car, and exploring Hakuba.",
+};
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
   return (
     <html lang="en">
-      <body>
+      <body className="flex min-h-screen flex-col bg-background text-foreground antialiased">
         <SessionProvider>
           <ApolloWrapper>
-            <header className="navbar">
-              <div className="flex-1">
-                <Link className="norma-case btn btn-ghost text-xl" href="/">
-                  KT Villa
-                </Link>
-              </div>
-              <div className="flex-1">
-                <Link
-                  className="norma-case btn btn-ghost text-xl"
-                  href="/guide/the-stay">
-                  The Stay
-                </Link>
-              </div>
-              <div className="flex-1">
-                <Link
-                  className="norma-case btn btn-ghost text-xl"
-                  href="/guide/the-village">
-                  The Village
-                </Link>
-              </div>
-
-              <nav className="flex-none">
-                {session ? (
-                  <AccountMenu />
-                ) : (
-                  <Link className="link" href="/api/auth/signin">
-                    Login
-                  </Link>
-                )}
-              </nav>
-            </header>
-            <main>
-              <div className="prose prose-headings:mt-8 prose-headings:font-semibold prose-headings:text-black prose-h1:text-5xl prose-h2:text-4xl prose-h3:text-3xl prose-h4:text-2xl prose-h5:text-xl prose-h6:text-lg dark:prose-headings:text-white p-8">
-                {children}
+            <Navbar />
+            <main className="alpine-container flex-1 py-8 lg:py-12">
+              <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+                <GuideSidebar />
+                <article className="min-w-0 flex-1 rounded-2xl border border-border/80 bg-card p-6 shadow-sm sm:p-10">
+                  <div className="prose prose-stone max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:border prose-img:border-border">
+                    {children}
+                  </div>
+                </article>
               </div>
             </main>
+            <Footer />
           </ApolloWrapper>
         </SessionProvider>
       </body>

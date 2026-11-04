@@ -2,8 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { gql, TypedDocumentNode } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
+import { Loader2, UserPlus } from "lucide-react";
 
 const MUTATION = gql`
   mutation UpdateUserDetails($input: UpdateUserDetailsInput!) {
@@ -20,11 +21,24 @@ type UpdateUserDetails = {
   socialHandle: string;
 };
 
+const SOCIAL_TYPES = [
+  { value: "instagram", label: "Instagram" },
+  { value: "whatsapp", label: "WhatsApp" },
+  { value: "wechat", label: "WeChat" },
+];
+
 export function NewUserForm() {
   const router = useRouter();
   const form = useForm<UpdateUserDetails>({
-    defaultValues: {},
+    defaultValues: {
+      name: "",
+      referral: "",
+      socialType: "instagram",
+      socialHandle: "",
+    },
   });
+
+  const selectedSocialType = form.watch("socialType");
 
   const [update, { loading, error }] = useMutation(MUTATION, {
     onCompleted: () => {
@@ -32,7 +46,7 @@ export function NewUserForm() {
     },
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: UpdateUserDetails) => {
     update({
       variables: {
         input: data,
@@ -41,74 +55,126 @@ export function NewUserForm() {
   };
 
   return (
-    <div className="my-2">
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="grid gap-4">
-          <div className="form-control">
-            <label className="input input-bordered flex items-center gap-2">
-              <span>Name</span>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                placeholder="Name McName"
-                required
-                {...form.register("name")}
-              />
-            </label>
-          </div>
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="w-full space-y-4 text-left"
+    >
+      <div className="border-b border-border/80 pb-3">
+        <h2 className="text-lg font-bold tracking-tight text-foreground">
+          Complete Your Guest Profile
+        </h2>
+        <p className="text-xs text-muted-foreground">
+          Let Keith &amp; Jon know who you are so we can approve your stays.
+        </p>
+      </div>
 
-          <div className="form-control">
-            <label className="input input-bordered flex items-center gap-2">
-              <span>Referral</span>
-              <input
-                type="text"
-                id="referral"
-                name="referral"
-                placeholder="Friend McFriend"
-                required
-                {...form.register("referral")}
-              />
-            </label>
-          </div>
+      <div className="space-y-1.5">
+        <label
+          htmlFor="onboard-name"
+          className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+        >
+          Your Full Name
+        </label>
+        <input
+          type="text"
+          id="onboard-name"
+          autoComplete="name"
+          placeholder="e.g. Alex Tanaka"
+          required
+          className="h-10 w-full rounded-xl border border-input bg-background px-3.5 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          {...form.register("name", { required: true })}
+        />
+      </div>
 
-          <div className="form-control">
-            <select
-              className="select"
-              id="socialType"
-              name="socialType"
-              defaultValue="none"
-              {...form.register("socialType")}
-            >
-              <option disabled value="none">
-                Pick a Social for contact
-              </option>
-              <option value="instagram">Instagram</option>
-              <option value="whatsapp">WhatsApp</option>
-              <option value="wechat">WeChat</option>
-            </select>
-          </div>
+      <div className="space-y-1.5">
+        <label
+          htmlFor="onboard-referral"
+          className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+        >
+          Who Referred You?
+        </label>
+        <input
+          type="text"
+          id="onboard-referral"
+          placeholder="e.g. Keith, Jon, or mutual friend"
+          required
+          className="h-10 w-full rounded-xl border border-input bg-background px-3.5 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          {...form.register("referral", { required: true })}
+        />
+      </div>
 
-          <div className="form-control">
-            <label className="input input-bordered flex items-center gap-2">
-              <span>Social</span>
-              <input
-                type="text"
-                id="socialHandle"
-                name="socialHandle"
-                placeholder="@platform.username"
-                {...form.register("socialHandle")}
-              />
-            </label>
-          </div>
-
-          <div className="form-control mt-2">
-            <button type="submit" className="btn btn-primary btn-sm">
-              Save
-            </button>
-          </div>
+      <fieldset className="space-y-1.5">
+        <legend className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Preferred Messaging App
+        </legend>
+        <div className="grid grid-cols-3 gap-2">
+          {SOCIAL_TYPES.map((st) => {
+            const active = selectedSocialType === st.value;
+            return (
+              <label
+                key={st.value}
+                className={`flex cursor-pointer items-center justify-center rounded-xl border py-2 text-xs font-semibold transition ${
+                  active
+                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                    : "border-border bg-background text-foreground hover:bg-muted"
+                }`}
+              >
+                <input
+                  type="radio"
+                  value={st.value}
+                  className="sr-only"
+                  {...form.register("socialType")}
+                />
+                {st.label}
+              </label>
+            );
+          })}
         </div>
-      </form>
-    </div>
+      </fieldset>
+
+      <div className="space-y-1.5">
+        <label
+          htmlFor="onboard-socialHandle"
+          className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+        >
+          Handle or Phone Number
+        </label>
+        <input
+          type="text"
+          id="onboard-socialHandle"
+          autoCorrect="off"
+          autoCapitalize="none"
+          spellCheck={false}
+          placeholder="@username or +81..."
+          required
+          className="h-10 w-full rounded-xl border border-input bg-background px-3.5 text-sm text-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          {...form.register("socialHandle", { required: true })}
+        />
+      </div>
+
+      {error && (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+          {error.message || "Could not save profile details."}
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:opacity-50"
+      >
+        {loading ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Saving Profile...</span>
+          </>
+        ) : (
+          <>
+            <UserPlus className="h-4 w-4" />
+            <span>Save &amp; Continue to Booking</span>
+          </>
+        )}
+      </button>
+    </form>
   );
 }

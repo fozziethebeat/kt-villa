@@ -1,34 +1,45 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { gql, TypedDocumentNode } from "@apollo/client";
+import { useSuspenseQuery, useMutation } from "@apollo/client/react";
 import {
-  gql,
-  TypedDocumentNode,
-} from '@apollo/client';
+  addDays,
+  differenceInCalendarDays,
+  format,
+  isBefore,
+  startOfDay,
+} from "date-fns";
+import { DateRange } from "react-day-picker";
 import {
-  useSuspenseQuery,
-  useMutation,
-} from '@apollo/client/react';
-import { useState } from 'react';
-import { CalendarIcon } from '@radix-ui/react-icons';
-import { addDays, format } from 'date-fns';
-import { DateRange } from 'react-day-picker';
+  Calendar as CalendarIcon,
+  Cat,
+  CheckCircle2,
+  Dog,
+  Loader2,
+  Sparkles,
+  Users,
+  AlertCircle,
+} from "lucide-react";
 
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
-interface Data {
+interface FutureBookingsData {
   futureBookings: {
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
   }[];
 }
 
-export const QUERY: TypedDocumentNode<Data> = gql`
+export const QUERY: TypedDocumentNode<FutureBookingsData> = gql`
   query FutureBookings {
     futureBookings {
       startDate
@@ -46,198 +57,365 @@ const CREATE_BOOKING_MUTATION = gql`
   }
 `;
 
+const GUEST_OPTIONS = [1, 2, 3, 4, 5];
+
 export function BookingForm() {
-  const now = new Date();
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: now,
-    to: addDays(now, 3),
-  });
-  const [isValidDates, setIsValidDates] = useState(false);
   const router = useRouter();
-  const form = useForm();
   const { data } = useSuspenseQuery(QUERY);
-  const excludedIntervals = data.futureBookings.map(({ startDate, endDate }) => ({
-    start: new Date(startDate),
-    end: new Date(endDate),
-  }));
+
+  const today = useMemo(() => startOfDay(new Date()), []);
+
+  const excludedIntervals = useMemo(
+    () =>
+      (data?.futureBookings ?? []).map(({ startDate, endDate }) => ({
+        start: startOfDay(new Date(startDate)),
+        end: startOfDay(new Date(endDate)),
+      })),
+    [data]
+  );
+
+  const isRangeValid = (start?: Date, end?: Date) => {
+    if (!start || !end) return false;
+    const s = startOfDay(start);
+    const e = startOfDay(end);
+    if (isBefore(s, today)) return false;
+    if (differenceInCalendarDays(e, s) < 1) return false;
+    return !excludedIntervals.some((ex) => s <= ex.end && e >= ex.start);
+  };
+
+  // Find the nearest available 3-night window so the form starts ready to book
+  const initialRange = useMemo<DateRange>(() => {
+    for (let offset = 1; offset <= 180; offset++) {
+      const candidateStart = addDays(today, offset);
+      const candidateEnd = addDays(candidateStart, 3);
+      if (
+        !excludedIntervals.some(
+          (ex) => candidateStart <= ex.end && candidateEnd >= ex.start
+        )
+      ) {
+        return { from: candidateStart, to: candidateEnd };
+      }
+    }
+    return { from: addDays(today, 1), to: addDays(today, 4) };
+  }, [today, excludedIntervals]);
+
+  const [date, setDate] = useState<DateRange | undefined>(initialRange);
+  const [numGuests, setNumGuests] = useState<number>(2);
+  const [maxGuests, setMaxGuests] = useState<number>(4);
+  const [withCat, setWithCat] = useState<boolean>(false);
+  const [withDog, setWithDog] = useState<boolean>(false);
+
+  const isValidDates = isRangeValid(date?.from, date?.to);
+  const nights =
+    date?.from && date?.to
+      ? Math.max(0, differenceInCalendarDays(date.to, date.from))
+      : 0;
+
   const [createBooking, { loading, error }] = useMutation(
     CREATE_BOOKING_MUTATION,
     {
-      onCompleted: (data: any) => {
-        router.push(`/booking/${data.createBooking.bookingCode}`);
+      onCompleted: (res: any) => {
+        if (res?.createBooking?.bookingCode) {
+          router.push(`/booking/${res.createBooking.bookingCode}`);
+        }
       },
-    },
+    }
   );
 
-  const onSubmit = data => {
+  const isDateDisabled = (candidate: Date) => {
+    const c = startOfDay(candidate);
+    if (isBefore(c, today)) return true;
+    return excludedIntervals.some(({ start, end }) => c >= start && c <= end);
+  };
+
+  const handleSelectKnownGuests = (count: number) => {
+    setNumGuests(count);
+    if (maxGuests < count) {
+      setMaxGuests(count);
+    }
+  };
+
+  const handleSelectMaxGuests = (count: number) => {
+    setMaxGuests(count);
+    if (numGuests > count) {
+      setNumGuests(count);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!date?.from || !date?.to || !isValidDates) return;
     createBooking({
       variables: {
         input: {
           startDate: date.from,
           endDate: date.to,
-          ...data,
+          numGuests,
+          maxGuests,
+          withCat,
+          withDog,
         },
       },
     });
   };
 
-  const validDateMatcher = candidate => {
-    return excludedIntervals.some(
-      ({ start, end }) => candidate >= start && candidate <= end,
-    );
-  };
-  const isValid = (start, end) => {
-    if (!start || !end) {
-      return false;
-    }
-    if (excludedIntervals.length === 0) {
-      return true;
-    }
-    for (let i = 0; i < excludedIntervals.length - 1; ++i) {
-      const curr = excludedIntervals[i];
-      const next = excludedIntervals[i + 1];
-      if (end < curr.start) {
-        return true;
-      }
-      if (start <= curr.start && end >= curr.end) {
-        return false;
-      }
-      if (curr.end < start && end < next.start) {
-        return true;
-      }
-    }
-    if (end < excludedIntervals[excludedIntervals.length - 1].start) {
-      return true;
-    }
-    return excludedIntervals[excludedIntervals.length - 1].end < start;
-  };
-
-  const checkAndSetDate = d => {
-    setDate(d);
-    if (d) {
-      const valid = isValid(d.from, d.to);
-      setIsValidDates(valid);
-    }
-  };
-
   return (
-    <div className="my-2">
-      <div className="form-control">
-        <label className="label">
-          <span className="label-text">Trip Dates</span>
-        </label>
-        <div className="flex justify-center">
-          <div className="indicator">
-            <div className={cn('grid gap-2')}>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="date"
-                    variant={'outline'}
-                    className={cn(
-                      'w-[300px] justify-start text-left font-normal',
-                      !date && 'text-muted-foreground',
-                    )}>
-                    <CalendarIcon />
-                    {date?.from ? (
-                      date.to ? (
-                        <>
-                          {format(date.from, 'LLL dd, y')} -{' '}
-                          {format(date.to, 'LLL dd, y')}
-                        </>
-                      ) : (
-                        format(date.from, 'LLL dd, y')
-                      )
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    initialFocus
-                    mode="range"
-                    defaultMonth={date?.from}
-                    selected={date}
-                    onSelect={checkAndSetDate}
-                    numberOfMonths={2}
-                    disabled={validDateMatcher}
-                    /*
-                    // @ts-ignore */
-                    excludeDisabled
-                    timeZone="+09:00"
-                    footer={
-                      <span
-                        className={`indicator-bottom badge indicator-item ${isValidDates ? 'badge-primary' : 'badge-accent'
-                          }`}>
-                        {isValidDates ? 'Valid' : 'Invalid'}
-                      </span>
-                    }
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
+    <form onSubmit={handleSubmit} className="w-full space-y-5 text-left">
+      <div className="flex items-center justify-between border-b border-border/80 pb-3">
+        <div>
+          <h2 className="text-lg font-bold tracking-tight text-foreground">
+            Reserve Your Stay
+          </h2>
+          <p className="text-xs text-muted-foreground">
+            Pick open dates &amp; generate your custom trip emblem
+          </p>
         </div>
+        <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
+          <Sparkles className="h-3.5 w-3.5" />
+          ¥5,000 / night
+        </span>
       </div>
 
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Max Guests</span>
+      {/* Date Range Picker */}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <label
+            htmlFor="booking-date-trigger"
+            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+          >
+            Check-in &amp; Check-out
           </label>
-          <input
-            type="range"
-            name="maxGuests"
-            min={1}
-            max={5}
-            defaultValue={4}
-            className="range"
-            step="1"
-            {...form.register('maxGuests', { valueAsNumber: true })}
-          />
-          <div className="flex w-full justify-between px-2 text-xs">
-            <span>1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
-            <span>5</span>
-          </div>
+          {isValidDates && nights > 0 ? (
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              {nights} {nights === 1 ? "night" : "nights"} available
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700">
+              <AlertCircle className="h-3.5 w-3.5" />
+              Select non-overlapping dates
+            </span>
+          )}
         </div>
 
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Known Guests</span>
-          </label>
-          <input
-            type="range"
-            name="numGuests"
-            min={1}
-            max={5}
-            defaultValue={1}
-            className="range"
-            step="1"
-            {...form.register('numGuests', { valueAsNumber: true })}
-          />
-          <div className="flex w-full justify-between px-2 text-xs">
-            <span>1</span>
-            <span>2</span>
-            <span>3</span>
-            <span>4</span>
-            <span>5</span>
-          </div>
-        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              id="booking-date-trigger"
+              type="button"
+              variant="outline"
+              className={cn(
+                "h-11 w-full justify-between rounded-xl border-border bg-background px-3.5 text-left text-sm font-medium shadow-sm hover:bg-muted/60",
+                !date && "text-muted-foreground"
+              )}
+            >
+              <span className="flex items-center gap-2.5 truncate">
+                <CalendarIcon className="h-4 w-4 shrink-0 text-primary" />
+                {date?.from ? (
+                  date.to ? (
+                    <span>
+                      {format(date.from, "MMM d, yyyy")} –{" "}
+                      {format(date.to, "MMM d, yyyy")}
+                    </span>
+                  ) : (
+                    <span>{format(date.from, "MMM d, yyyy")} – Select end</span>
+                  )
+                ) : (
+                  <span>Choose your dates</span>
+                )}
+              </span>
+              <span className="ml-2 shrink-0 rounded-md bg-muted px-2 py-0.5 text-xs font-semibold text-foreground">
+                Change
+              </span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            className="w-auto rounded-2xl border-border bg-card p-3 shadow-xl"
+            align="end"
+          >
+            <Calendar
+              initialFocus
+              mode="range"
+              defaultMonth={date?.from}
+              selected={date}
+              onSelect={setDate}
+              numberOfMonths={2}
+              disabled={isDateDisabled}
+              /* @ts-ignore */
+              excludeDisabled
+              footer={
+                <div className="mt-2 flex items-center justify-between border-t border-border pt-2 text-xs text-muted-foreground">
+                  <span>Booked &amp; past dates are greyed out</span>
+                  <span
+                    className={cn(
+                      "rounded-full px-2.5 py-0.5 font-semibold",
+                      isValidDates
+                        ? "bg-emerald-500/15 text-emerald-800"
+                        : "bg-amber-500/15 text-amber-800"
+                    )}
+                  >
+                    {isValidDates ? "Dates Available" : "Select Valid Range"}
+                  </span>
+                </div>
+              }
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
 
-        <div className="form-control mt-2">
-          <button
-            disabled={!isValidDates || loading}
-            type="submit"
-            className="btn btn-primary btn-sm">
-            {loading && <span className="loading loading-spinner" />}
-            Book
-          </button>
+      {/* Known Guests (Radio Pill Group) */}
+      <fieldset className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <legend className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Confirmed Guests Now
+          </legend>
+          <span className="text-xs text-muted-foreground">
+            {numGuests} {numGuests === 1 ? "person" : "people"}
+          </span>
         </div>
-      </form>
-    </div>
+        <div className="grid grid-cols-5 gap-1.5">
+          {GUEST_OPTIONS.map((count) => {
+            const active = numGuests === count;
+            return (
+              <label
+                key={`known-${count}`}
+                className={cn(
+                  "flex cursor-pointer items-center justify-center rounded-xl border py-2 text-sm font-semibold transition",
+                  active
+                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                    : "border-border bg-background text-foreground hover:bg-muted"
+                )}
+              >
+                <input
+                  type="radio"
+                  name="numGuests"
+                  value={count}
+                  checked={active}
+                  onChange={() => handleSelectKnownGuests(count)}
+                  className="sr-only"
+                />
+                {count}
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
+
+      {/* Max Guests Open to Friends (Radio Pill Group) */}
+      <fieldset className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <legend className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Max Group Size (Open Spots)
+          </legend>
+          <span className="text-xs text-muted-foreground">
+            Up to {maxGuests} {maxGuests === 1 ? "guest" : "guests"}
+          </span>
+        </div>
+        <div className="grid grid-cols-5 gap-1.5">
+          {GUEST_OPTIONS.map((count) => {
+            const active = maxGuests === count;
+            return (
+              <label
+                key={`max-${count}`}
+                className={cn(
+                  "flex cursor-pointer items-center justify-center rounded-xl border py-2 text-sm font-semibold transition",
+                  active
+                    ? "border-primary bg-primary text-primary-foreground shadow-sm"
+                    : "border-border bg-background text-foreground hover:bg-muted"
+                )}
+              >
+                <input
+                  type="radio"
+                  name="maxGuests"
+                  value={count}
+                  checked={active}
+                  onChange={() => handleSelectMaxGuests(count)}
+                  className="sr-only"
+                />
+                {count}
+              </label>
+            );
+          })}
+        </div>
+      </fieldset>
+
+      {/* Pets Checkboxes */}
+      <div className="grid grid-cols-2 gap-2 pt-0.5">
+        <label
+          className={cn(
+            "flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium transition",
+            withDog
+              ? "border-primary bg-primary/10 text-primary"
+              : "border-border bg-background text-foreground/80 hover:bg-muted"
+          )}
+        >
+          <input
+            type="checkbox"
+            checked={withDog}
+            onChange={(e) => setWithDog(e.target.checked)}
+            className="h-3.5 w-3.5 rounded border-border text-primary focus:ring-primary"
+          />
+          <Dog className="h-4 w-4 shrink-0" />
+          <span>Bringing a Dog</span>
+        </label>
+
+        <label
+          className={cn(
+            "flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium transition",
+            withCat
+              ? "border-primary bg-primary/10 text-primary"
+              : "border-border bg-background text-foreground/80 hover:bg-muted"
+          )}
+        >
+          <input
+            type="checkbox"
+            checked={withCat}
+            onChange={(e) => setWithCat(e.target.checked)}
+            className="h-3.5 w-3.5 rounded border-border text-primary focus:ring-primary"
+          />
+          <Cat className="h-4 w-4 shrink-0" />
+          <span>Bringing a Cat</span>
+        </label>
+      </div>
+
+      {/* Cost Preview & Submit */}
+      <div className="space-y-3 border-t border-border/80 pt-3">
+        {isValidDates && nights > 0 && (
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <Users className="h-3.5 w-3.5 text-primary" />
+              Est. house contribution ({nights}n × {numGuests}g)
+            </span>
+            <span className="font-semibold text-foreground">
+              ¥{(nights * numGuests * 5000).toLocaleString()}
+            </span>
+          </div>
+        )}
+
+        {error && (
+          <div className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+            {error.message || "Could not create booking. Please check your dates."}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={!isValidDates || loading}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Crafting AI Emblem &amp; Reserving...</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="h-4 w-4" />
+              <span>Request Booking</span>
+            </>
+          )}
+        </button>
+      </div>
+    </form>
   );
 }

@@ -1,22 +1,14 @@
-import { gql } from '@apollo/client';
+import Link from "next/link";
+import { gql } from "@apollo/client";
 
-import { checkAccess } from '@/lib/auth-check';
-import { getClient } from '@/graphql/ApolloClient';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { EditAdminBookingForm } from '@/components/EditAdminBookingForm';
+import { checkAccess } from "@/lib/auth-check";
+import { getClient } from "@/graphql/ApolloClient";
+import { EditAdminBookingForm } from "@/components/EditAdminBookingForm";
 
 const QUERY = gql`
   query AdminBooking($id: Int!) {
     adminBooking(id: $id) {
       id
-      startDate
       startDate
       endDate
       numGuests
@@ -26,7 +18,12 @@ const QUERY = gql`
       status
       bookingCode
       item {
+        id
         image
+        text
+        style
+        season
+        subject
       }
       user {
         id
@@ -35,39 +32,80 @@ const QUERY = gql`
       }
       userId
     }
+    users {
+      id
+      name
+      email
+    }
+    imageAdapterSettings {
+      id
+      adapter
+      promptTemplate
+    }
   }
 `;
 
-export default async function EditBookingPage({ params }) {
-  await checkAccess('admin', '/');
+export default async function EditBookingPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  await checkAccess("admin", "/");
   const { id } = await params;
+
   try {
-    const { data, error } = await getClient().query({
+    const { data } = await getClient().query({
       query: QUERY,
-      variables: { id: parseInt(id) },
+      variables: { id: parseInt(id, 10) },
+      fetchPolicy: "no-cache",
     });
+
+    const booking = (data as any)?.adminBooking;
+    const users = (data as any)?.users ?? [];
+    const adapters = (data as any)?.imageAdapterSettings ?? [];
+
+    if (!booking) {
+      return (
+        <div className="alpine-container py-12">
+          <div className="rounded-2xl border border-border bg-card p-8 text-center">
+            <h1 className="text-xl font-bold text-foreground">
+              Booking #{id} Not Found
+            </h1>
+            <Link
+              href="/admin"
+              className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+            >
+              Back to Admin Console
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
     return (
-      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-4">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/admin">Admin</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Edit Booking</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <EditAdminBookingForm booking={(data as any).adminBooking} />
+      <div className="alpine-container py-8 lg:py-12">
+        <EditAdminBookingForm
+          booking={booking}
+          users={users}
+          adapters={adapters}
+        />
       </div>
     );
   } catch (e) {
-    console.log(e);
-    return <div>whoops</div>;
+    return (
+      <div className="alpine-container py-12">
+        <div className="rounded-2xl border border-border bg-card p-8 text-center">
+          <h1 className="text-xl font-bold text-foreground">
+            Unable to Load Booking #{id}
+          </h1>
+          <Link
+            href="/admin"
+            className="mt-4 inline-flex rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+          >
+            Back to Admin Console
+          </Link>
+        </div>
+      </div>
+    );
   }
 }

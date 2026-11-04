@@ -98,6 +98,11 @@ layout_mode = 2
 text = "🍎 x0  |  🎿 x0  |  🍵 x0  |  ⛩️ x0"
 label_settings = SubResource("LabelSettings_inv")
 
+[node name="BtnSeason" type="Button" parent="TopBar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "❄️ Winter (T)"
+
 [node name="BtnPouch" type="Button" parent="TopBar/MarginContainer/HBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
@@ -177,14 +182,68 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -380.0
+offset_left = -450.0
 offset_top = -20.0
 offset_right = -10.0
 offset_bottom = -4.0
 grow_horizontal = 0
 grow_vertical = 0
-text = "Move: WASD / Arrows | Sprint: Shift | Talk: E | Pouch: I"
+text = "Move: WASD / Arrows | Sprint: Shift | Talk: E | Season: T | Pouch: I"
 label_settings = SubResource("LabelSettings_controls")
 horizontal_alignment = 2
+
+[node name="EncounterPanel" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = -65.0
+offset_right = 170.0
+offset_bottom = 65.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dialogue")
+
+[node name="Margin" type="MarginContainer" parent="EncounterPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="EncounterPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="EncounterPanel/Margin/VBox"]
+layout_mode = 2
+text = "🐾 Wild Animal Encounter"
+label_settings = SubResource("LabelSettings_speaker")
+
+[node name="Desc" type="Label" parent="EncounterPanel/Margin/VBox"]
+layout_mode = 2
+text = "A wild animal is nearby! Would you like to approach and start the encounter?"
+label_settings = SubResource("LabelSettings_dialogue")
+autowrap_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="EncounterPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="BtnEngage" type="Button" parent="EncounterPanel/Margin/VBox/Buttons"]
+custom_minimum_size = Vector2(130, 26)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "✨ Engage (ATB)"
+
+[node name="BtnLeave" type="Button" parent="EncounterPanel/Margin/VBox/Buttons"]
+custom_minimum_size = Vector2(110, 26)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "🚶 Step Back"
 
 [node name="InventoryMenu" parent="." instance=ExtResource("2_inv_scene")]

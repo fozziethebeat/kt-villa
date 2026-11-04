@@ -1,0 +1,588 @@
+[gd_scene format=3 uid="uid://c8v9w0x1y2z3b"]
+
+[ext_resource type="Script" path="res://src/battle/battle_scene.gd" id="1_battle_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemy_snow_monkey.png" id="2_enemy_tex"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player_idle.png" id="3_player_tex"]
+
+[sub_resource type="Curve" id="Curve_snow"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_snow"]
+colors = PackedColorArray(1, 1, 1, 0.8, 1, 1, 1, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_banner"]
+bg_color = Color(0.04, 0.07, 0.14, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.5, 0.8, 0.7)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_enemy_card"]
+bg_color = Color(0.05, 0.09, 0.18, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.45, 0.75, 0.6)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_composure_bg"]
+bg_color = Color(0.08, 0.1, 0.15, 0.8)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_composure_fill"]
+bg_color = Color(0.35, 0.65, 0.95, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pacify_fill"]
+bg_color = Color(0.95, 0.45, 0.7, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ff_hud"]
+bg_color = Color(0.03, 0.07, 0.18, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.75, 0.88, 1, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_cmd"]
+bg_color = Color(0.06, 0.12, 0.24, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.45, 0.75, 0.5)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_cmd_hover"]
+bg_color = Color(0.12, 0.24, 0.45, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.85, 1, 0.95)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_courage_fill"]
+bg_color = Color(0.95, 0.75, 0.2, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_atb_fill"]
+bg_color = Color(0.2, 0.85, 0.95, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_end_card"]
+bg_color = Color(0.04, 0.08, 0.16, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.75, 0.35, 0.9)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_size = 10
+
+[node name="BattleScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_battle_script")
+
+[node name="Background" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Sky" type="ColorRect" parent="Background"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.09, 0.13, 0.22, 1)
+
+[node name="MountainPeak1" type="Polygon2D" parent="Background"]
+color = Color(0.16, 0.22, 0.35, 1)
+polygon = PackedVector2Array(0, 240, 80, 110, 180, 240)
+
+[node name="MountainPeak2" type="Polygon2D" parent="Background"]
+color = Color(0.2, 0.27, 0.42, 1)
+polygon = PackedVector2Array(130, 240, 240, 90, 360, 240)
+
+[node name="MountainPeak3" type="Polygon2D" parent="Background"]
+color = Color(0.15, 0.2, 0.32, 1)
+polygon = PackedVector2Array(320, 240, 450, 120, 580, 240)
+
+[node name="MountainPeak4" type="Polygon2D" parent="Background"]
+color = Color(0.18, 0.25, 0.38, 1)
+polygon = PackedVector2Array(490, 240, 590, 105, 640, 240)
+
+[node name="DistantPines" type="Polygon2D" parent="Background"]
+color = Color(0.1, 0.18, 0.22, 1)
+polygon = PackedVector2Array(0, 240, 30, 180, 60, 240, 90, 185, 120, 240, 180, 190, 210, 240, 420, 240, 460, 180, 500, 240, 540, 185, 580, 240, 640, 240)
+
+[node name="GroundSnowBack" type="ColorRect" parent="Background"]
+layout_mode = 0
+offset_top = 180.0
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.68, 0.77, 0.88, 1)
+
+[node name="GroundSnowFront" type="ColorRect" parent="Background"]
+layout_mode = 0
+offset_top = 210.0
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.82, 0.89, 0.96, 1)
+
+[node name="SnowParticles" type="CPUParticles2D" parent="."]
+position = Vector2(640, -10)
+amount = 65
+lifetime = 4.5
+emission_shape = 3
+emission_rect_extents = Vector2(660, 10)
+direction = Vector2(0.5, 1)
+spread = 20.0
+gravity = Vector2(0, 24)
+initial_velocity_min = 35.0
+initial_velocity_max = 65.0
+scale_amount_min = 2.0
+scale_amount_max = 4.5
+scale_amount_curve = SubResource("Curve_snow")
+color_ramp = SubResource("Gradient_snow")
+
+[node name="Arena" type="Node2D" parent="."]
+
+[node name="EnemyAnchor" type="Node2D" parent="Arena"]
+position = Vector2(340, 385)
+
+[node name="Shadow" type="ColorRect" parent="Arena/EnemyAnchor"]
+offset_left = -52.0
+offset_top = 42.0
+offset_right = 52.0
+offset_bottom = 58.0
+color = Color(0.12, 0.18, 0.28, 0.42)
+
+[node name="EnemySprite" type="Sprite2D" parent="Arena/EnemyAnchor"]
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("2_enemy_tex")
+flip_h = false
+
+[node name="PlayerAnchor" type="Node2D" parent="Arena"]
+position = Vector2(940, 385)
+
+[node name="Shadow" type="ColorRect" parent="Arena/PlayerAnchor"]
+offset_left = -52.0
+offset_top = 42.0
+offset_right = 52.0
+offset_bottom = 58.0
+color = Color(0.12, 0.18, 0.28, 0.42)
+
+[node name="PlayerSprite" type="Sprite2D" parent="Arena/PlayerAnchor"]
+scale = Vector2(0.82, 0.82)
+texture = ExtResource("3_player_tex")
+flip_h = true
+
+[node name="FXContainer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TopUI" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 130.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="EnemyPanel" type="PanelContainer" parent="TopUI"]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 20.0
+offset_right = 430.0
+offset_bottom = 135.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_enemy_card")
+
+[node name="VBox" type="VBoxContainer" parent="TopUI/EnemyPanel"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="EnemyName" type="Label" parent="TopUI/EnemyPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.95, 0.8, 1)
+theme_override_font_sizes/font_size = 18
+text = "Wild Snow Monkey"
+
+[node name="EnemyTitle" type="Label" parent="TopUI/EnemyPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.75, 0.9, 1)
+theme_override_font_sizes/font_size = 13
+text = "Mischievous Alpine Primate"
+
+[node name="ComposureRow" type="HBoxContainer" parent="TopUI/EnemyPanel/VBox"]
+layout_mode = 2
+
+[node name="ComposureBar" type="ProgressBar" parent="TopUI/EnemyPanel/VBox/ComposureRow"]
+custom_minimum_size = Vector2(140, 14)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBoxFlat_composure_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_composure_fill")
+value = 100.0
+show_percentage = false
+
+[node name="ComposureLabel" type="Label" parent="TopUI/EnemyPanel/VBox/ComposureRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "Composure: 100%"
+
+[node name="PacifyRow" type="HBoxContainer" parent="TopUI/EnemyPanel/VBox"]
+layout_mode = 2
+
+[node name="PacifyBar" type="ProgressBar" parent="TopUI/EnemyPanel/VBox/PacifyRow"]
+custom_minimum_size = Vector2(140, 14)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBoxFlat_composure_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_pacify_fill")
+show_percentage = false
+
+[node name="PacifyLabel" type="Label" parent="TopUI/EnemyPanel/VBox/PacifyRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.6, 0.8, 1)
+theme_override_font_sizes/font_size = 13
+text = "Pacified: 0%"
+
+[node name="EnemyATBRow" type="HBoxContainer" parent="TopUI/EnemyPanel/VBox"]
+layout_mode = 2
+
+[node name="EnemyATBBar" type="ProgressBar" parent="TopUI/EnemyPanel/VBox/EnemyATBRow"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBoxFlat_composure_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_atb_fill")
+value = 15.0
+show_percentage = false
+
+[node name="MessageBanner" type="PanelContainer" parent="TopUI"]
+layout_mode = 0
+offset_left = 450.0
+offset_top = 20.0
+offset_right = 1252.0
+offset_bottom = 110.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_banner")
+
+[node name="Margin" type="MarginContainer" parent="TopUI/MessageBanner"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="MessageLabel" type="Label" parent="TopUI/MessageBanner/Margin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
+theme_override_font_sizes/font_size = 16
+text = "The Wild Snow Monkey is chattering playfully!"
+autowrap_mode = 2
+
+[node name="BottomHUD" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 28.0
+offset_top = -230.0
+offset_right = -28.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_ff_hud")
+
+[node name="Margin" type="MarginContainer" parent="BottomHUD"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="HBox" type="HBoxContainer" parent="BottomHUD/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CommandPanel" type="PanelContainer" parent="BottomHUD/Margin/HBox"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="BottomHUD/Margin/HBox/CommandPanel"]
+layout_mode = 2
+
+[node name="CmdList" type="VBoxContainer" parent="BottomHUD/Margin/HBox/CommandPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="BtnSpook" type="Button" parent="BottomHUD/Margin/HBox/CommandPanel/Margin/CmdList"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_cmd")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cmd_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_cmd_hover")
+text = "👻 Spook"
+alignment = 0
+
+[node name="BtnCharm" type="Button" parent="BottomHUD/Margin/HBox/CommandPanel/Margin/CmdList"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_cmd")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cmd_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_cmd_hover")
+text = "🎭 Charm / Joke"
+alignment = 0
+
+[node name="BtnItem" type="Button" parent="BottomHUD/Margin/HBox/CommandPanel/Margin/CmdList"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_cmd")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cmd_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_cmd_hover")
+text = "🍎 Item"
+alignment = 0
+
+[node name="BtnFlee" type="Button" parent="BottomHUD/Margin/HBox/CommandPanel/Margin/CmdList"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_cmd")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cmd_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_cmd_hover")
+text = "🏃 Step Back"
+alignment = 0
+
+[node name="SubmenuPanel" type="PanelContainer" parent="BottomHUD/Margin/HBox"]
+custom_minimum_size = Vector2(265, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Margin" type="MarginContainer" parent="BottomHUD/Margin/HBox/SubmenuPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 4
+
+[node name="VBox" type="VBoxContainer" parent="BottomHUD/Margin/HBox/SubmenuPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HeaderHBox" type="HBoxContainer" parent="BottomHUD/Margin/HBox/SubmenuPanel/Margin/VBox"]
+layout_mode = 2
+
+[node name="SubmenuTitle" type="Label" parent="BottomHUD/Margin/HBox/SubmenuPanel/Margin/VBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.9, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 10
+text = "SUBMENU"
+
+[node name="BtnScrollUp" type="Button" parent="BottomHUD/Margin/HBox/SubmenuPanel/Margin/VBox/HeaderHBox"]
+custom_minimum_size = Vector2(22, 16)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 1
+theme_override_font_sizes/font_size = 9
+text = "▲"
+
+[node name="BtnScrollDown" type="Button" parent="BottomHUD/Margin/HBox/SubmenuPanel/Margin/VBox/HeaderHBox"]
+custom_minimum_size = Vector2(22, 16)
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 1
+theme_override_font_sizes/font_size = 9
+text = "▼"
+
+[node name="Scroll" type="ScrollContainer" parent="BottomHUD/Margin/HBox/SubmenuPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="SubmenuList" type="VBoxContainer" parent="BottomHUD/Margin/HBox/SubmenuPanel/Margin/VBox/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="SubmenuInfo" type="Label" parent="BottomHUD/Margin/HBox/SubmenuPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 9
+text = "Action detail info..."
+autowrap_mode = 2
+
+[node name="StatusPanel" type="PanelContainer" parent="BottomHUD/Margin/HBox"]
+custom_minimum_size = Vector2(175, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="BottomHUD/Margin/HBox/StatusPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="VBox" type="VBoxContainer" parent="BottomHUD/Margin/HBox/StatusPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="PlayerName" type="Label" parent="BottomHUD/Margin/HBox/StatusPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "Explorer"
+
+[node name="CourageBar" type="ProgressBar" parent="BottomHUD/Margin/HBox/StatusPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_composure_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_courage_fill")
+value = 85.0
+show_percentage = false
+
+[node name="CourageLabel" type="Label" parent="BottomHUD/Margin/HBox/StatusPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 10
+text = "Courage: 85 / 100"
+
+[node name="ATBBar" type="ProgressBar" parent="BottomHUD/Margin/HBox/StatusPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_composure_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_atb_fill")
+value = 25.0
+show_percentage = false
+
+[node name="ATBLabel" type="Label" parent="BottomHUD/Margin/HBox/StatusPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 9
+text = "ATB: 25%"
+
+[node name="EndOverlay" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -190.0
+offset_top = -105.0
+offset_right = 190.0
+offset_bottom = 105.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_end_card")
+
+[node name="Margin" type="MarginContainer" parent="EndOverlay"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="EndOverlay/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="EndTitle" type="Label" parent="EndOverlay/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 15
+text = "ENCOUNTER RESOLVED"
+horizontal_alignment = 1
+
+[node name="EndDesc" type="Label" parent="EndOverlay/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.95, 1)
+theme_override_font_sizes/font_size = 11
+text = "The beast has wandered off into the snowy forest."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="EndRewards" type="Label" parent="EndOverlay/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 1, 0.6, 1)
+theme_override_font_sizes/font_size = 10
+text = "Rewards gained."
+horizontal_alignment = 1
+
+[node name="BtnEndReturn" type="Button" parent="EndOverlay/Margin/VBox"]
+custom_minimum_size = Vector2(160, 26)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_cmd")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_cmd_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_cmd_hover")
+text = "Continue Journey"
