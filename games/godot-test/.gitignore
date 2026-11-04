@@ -7,3 +7,6 @@ scratch/
 # OS metadata
 .DS_Store
 *.tmp
+
+/node_modules
+tools/sprite-catalog/node_modules
