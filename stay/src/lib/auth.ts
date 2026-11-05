@@ -1,22 +1,27 @@
-import type {DefaultSession} from 'next-auth';
+import type { DefaultSession } from "next-auth";
+import { cache } from "react";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { createHash } from "crypto";
+import NextAuth from "next-auth";
+import Nodemailer from "next-auth/providers/nodemailer";
 
-import {PrismaAdapter} from '@auth/prisma-adapter';
-import {createHash} from 'crypto';
-import NextAuth from 'next-auth';
-import Nodemailer from 'next-auth/providers/nodemailer';
+import { prisma } from "@/lib/prisma";
 
-import {prisma} from '@/lib/prisma';
-
-declare module 'next-auth' {
+declare module "next-auth" {
   interface Session {
     user: {
+      id: string;
       roles: string;
+      trustStatus?: string;
+      referral?: string | null;
+      socialType?: string | null;
+      socialHandle?: string | null;
       profileImageUrl: string;
-    } & DefaultSession['user'];
+    } & DefaultSession["user"];
   }
 }
 
-export const {handlers, signIn, signOut, auth} = NextAuth({
+const nextAuth = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     Nodemailer({
@@ -33,15 +38,27 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
     }),
   ],
   pages: {
-    signIn: '/signin',
+    signIn: "/signin",
   },
   callbacks: {
-    async session({session, user}) {
-      const profileHash = createHash('sha256')
-        .update(user.email.trim().toLowerCase())
-        .digest('hex');
+    async session({ session, user }) {
+      const u = user as any;
+      const email = (u.email || "").trim().toLowerCase();
+      const profileHash = createHash("sha256").update(email).digest("hex");
+      session.user.id = u.id;
+      session.user.roles = u.roles || "general";
+      session.user.trustStatus = u.trustStatus || "new";
+      session.user.referral = u.referral ?? null;
+      session.user.socialType = u.socialType ?? null;
+      session.user.socialHandle = u.socialHandle ?? null;
       session.user.profileImageUrl = `https://gravatar.com/avatar/${profileHash}?s=200`;
       return session;
     },
   },
 });
+
+export const { handlers, signIn, signOut } = nextAuth;
+
+// Memoize auth() per React server request so Layout, Navbar, AccountMenu, Page,
+// and GraphQL resolvers share a single database lookup.
+export const auth = cache(nextAuth.auth);

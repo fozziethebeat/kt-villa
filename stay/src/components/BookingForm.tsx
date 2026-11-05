@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { gql, TypedDocumentNode } from "@apollo/client";
-import { useSuspenseQuery, useMutation } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import {
   addDays,
   differenceInCalendarDays,
@@ -32,11 +32,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+export interface FutureBookingWindow {
+  startDate: string | Date;
+  endDate: string | Date;
+}
+
 interface FutureBookingsData {
-  futureBookings: {
-    startDate: string;
-    endDate: string;
-  }[];
+  futureBookings: FutureBookingWindow[];
 }
 
 export const QUERY: TypedDocumentNode<FutureBookingsData> = gql`
@@ -59,19 +61,28 @@ const CREATE_BOOKING_MUTATION = gql`
 
 const GUEST_OPTIONS = [1, 2, 3, 4, 5];
 
-export function BookingForm() {
+export function BookingForm({
+  initialFutureBookings,
+}: {
+  initialFutureBookings?: FutureBookingWindow[];
+}) {
   const router = useRouter();
-  const { data } = useSuspenseQuery(QUERY);
 
+  // Only fetch on the client if server-provided bookings were not passed
+  const { data } = useQuery(QUERY, {
+    skip: Boolean(initialFutureBookings),
+  });
+
+  const futureBookings = initialFutureBookings ?? data?.futureBookings ?? [];
   const today = useMemo(() => startOfDay(new Date()), []);
 
   const excludedIntervals = useMemo(
     () =>
-      (data?.futureBookings ?? []).map(({ startDate, endDate }) => ({
+      futureBookings.map(({ startDate, endDate }) => ({
         start: startOfDay(new Date(startDate)),
         end: startOfDay(new Date(endDate)),
       })),
-    [data]
+    [futureBookings]
   );
 
   const isRangeValid = (start?: Date, end?: Date) => {

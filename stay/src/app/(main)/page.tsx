@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Suspense } from "react";
 import {
   BookOpen,
   Car,
@@ -12,12 +11,38 @@ import {
 } from "lucide-react";
 
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { BookingForm } from "@/components/BookingForm";
 import { NewUserForm } from "@/components/NewUserForm";
 import { BookingItemGrid } from "@/components/BookingItemGrid";
 
 export default async function Home() {
-  const session = await auth();
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const [session, futureBookings] = await Promise.all([
+    auth(),
+    prisma.booking.findMany({
+      where: {
+        endDate: { gte: startOfToday },
+        status: { in: ["pending", "approved"] },
+      },
+      select: {
+        startDate: true,
+        endDate: true,
+      },
+      orderBy: {
+        startDate: "asc",
+      },
+    }),
+  ]);
+
+  const serializedFutureBookings = futureBookings
+    .filter((b) => b.startDate && b.endDate)
+    .map((b) => ({
+      startDate: b.startDate!.toISOString(),
+      endDate: b.endDate!.toISOString(),
+    }));
 
   return (
     <div className="space-y-16 pb-16">
@@ -91,7 +116,7 @@ export default async function Home() {
                 </Link>
 
                 <Link
-                  href="/guide/the-stay/car"
+                  href="/guide/the-stay/the-car"
                   className="group flex items-start gap-2.5 rounded-xl border border-white/10 bg-white/5 p-3 transition hover:border-white/25 hover:bg-white/10"
                 >
                   <Car className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
@@ -112,15 +137,9 @@ export default async function Home() {
               <div className="rounded-2xl border border-border bg-card p-6 text-card-foreground shadow-2xl sm:p-7">
                 {session ? (
                   session.user?.name ? (
-                    <Suspense
-                      fallback={
-                        <div className="flex h-72 items-center justify-center text-sm text-muted-foreground">
-                          Loading live availability...
-                        </div>
-                      }
-                    >
-                      <BookingForm />
-                    </Suspense>
+                    <BookingForm
+                      initialFutureBookings={serializedFutureBookings}
+                    />
                   ) : (
                     <NewUserForm />
                   )

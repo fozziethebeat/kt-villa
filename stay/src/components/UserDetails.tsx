@@ -2,25 +2,20 @@ import Link from "next/link";
 import { CalendarPlus, Mail, ShieldCheck, Sparkles } from "lucide-react";
 
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { EditUserDetails } from "@/components/EditUserDetails";
 
 export async function UserDetails() {
   const session = await auth();
   if (!session?.user) return null;
 
-  const dbUser = session.user.id
-    ? await prisma.user.findUnique({ where: { id: session.user.id } })
-    : null;
-
   const user = {
     ...session.user,
-    name: dbUser?.name ?? session.user.name,
-    referral: dbUser?.referral ?? "",
-    socialType: dbUser?.socialType ?? "instagram",
-    socialHandle: dbUser?.socialHandle ?? "",
-    trustStatus: dbUser?.trustStatus ?? "new",
-    roles: dbUser?.roles ?? session.user.roles,
+    name: session.user.name,
+    referral: session.user.referral ?? "",
+    socialType: session.user.socialType ?? "instagram",
+    socialHandle: session.user.socialHandle ?? "",
+    trustStatus: session.user.trustStatus ?? "new",
+    roles: session.user.roles ?? "general",
   };
 
   return (

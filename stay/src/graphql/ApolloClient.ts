@@ -1,49 +1,60 @@
+import { ApolloServer } from "@apollo/server";
+import type { DocumentNode } from "graphql";
 
-import { cookies } from 'next/headers';
-import { createHttpLink, from } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
-import { onError } from '@apollo/client/link/error';
-import {
-  registerApolloClient,
-  ApolloClient,
-  InMemoryCache,
-} from '@apollo/client-integration-nextjs';
+import { auth } from "@/lib/auth";
+import { typeDefs, resolvers } from "@/graphql/schema";
 
-const httpLink = createHttpLink({
-  uri: process.env.GRAPHQL_URL,
-  credentials: 'include',
-  fetchOptions: { cache: 'no-store' },
-});
+const globalForApollo = globalThis as unknown as {
+  apolloServer: ApolloServer<{ user: any }> | undefined;
+};
 
-const errorLink = onError(({ graphQLErrors, networkError }: any) => {
-  if (graphQLErrors) {
-    console.log(graphQLErrors);
-  }
+export const apolloServer =
+  globalForApollo.apolloServer ??
+  new ApolloServer<{ user: any }>({
+    typeDefs,
+    resolvers,
+  });
 
-  if (networkError) {
-    // handle network error
-    console.log(networkError);
-  }
-});
+globalForApollo.apolloServer = apolloServer;
 
-const authLink = setContext(async (_, { headers }) => {
-  const cookieStore = await cookies();
-  const token =
-    (await cookieStore.get('__Secure-authjs.session-token')) ??
-    (await cookieStore.get('authjs.session-token'));
+export function getClient() {
   return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token.value}` : '',
+    async query<TData = any>({
+      query,
+      variables,
+    }: {
+      query: DocumentNode | string;
+      variables?: Record<string, any>;
+      fetchPolicy?: string;
+    }): Promise<{ data: TData }> {
+      const session = await auth();
+      const response = await apolloServer.executeOperation(
+        {
+          query,
+          variables,
+        },
+        {
+          contextValue: {
+            user: session?.user ?? null,
+          },
+        }
+      );
+
+      if (response.body.kind !== "single") {
+        throw new Error("Incremental delivery not supported");
+      }
+
+      const { data, errors } = response.body.singleResult;
+      if (errors?.length) {
+        console.error("GraphQL SSR query errors:", errors);
+        throw new Error(errors[0].message);
+      }
+
+      // Normalize null-prototype objects from graphql-js and Date instances
+      // from DateTime scalars into plain JSON-serializable objects/ISO strings
+      // expected by React Server -> Client Component serialization.
+      const plainData = JSON.parse(JSON.stringify(data)) as TData;
+      return { data: plainData };
     },
   };
-});
-
-const appLink = from([errorLink, httpLink]);
-
-export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
-  return new ApolloClient({
-    cache: new InMemoryCache(),
-    link: authLink.concat(appLink),
-  });
-});
+}

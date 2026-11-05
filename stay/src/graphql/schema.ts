@@ -206,6 +206,17 @@ export const resolvers = {
   Query: {
     bookingItems: () => {
       return prisma.stableItem.findMany({
+        include: {
+          owner: {
+            select: { id: true, name: true, email: true },
+          },
+          booking: {
+            select: { bookingCode: true },
+          },
+          memberBooking: {
+            select: { booking: { select: { bookingCode: true } } },
+          },
+        },
         orderBy: {
           createdAt: "desc",
         },
@@ -215,6 +226,17 @@ export const resolvers = {
     bookingItem: (_, { id }) => {
       return prisma.stableItem.findUnique({
         where: { id },
+        include: {
+          owner: {
+            select: { id: true, name: true, email: true },
+          },
+          booking: {
+            select: { bookingCode: true },
+          },
+          memberBooking: {
+            select: { booking: { select: { bookingCode: true } } },
+          },
+        },
       });
     },
 
@@ -223,6 +245,12 @@ export const resolvers = {
         throw new Error("Access not supported");
       }
       return prisma.booking.findMany({
+        include: {
+          userItem: true,
+          user: {
+            select: { id: true, name: true, email: true },
+          },
+        },
         orderBy: {
           startDate: "desc",
         },
@@ -235,6 +263,16 @@ export const resolvers = {
       }
       return prisma.booking.findUnique({
         where: { id },
+        include: {
+          userItem: true,
+          user: true,
+          member: {
+            include: {
+              user: true,
+              userItem: true,
+            },
+          },
+        },
       });
     },
 
@@ -261,6 +299,12 @@ export const resolvers = {
             in: ["pending", "approved"],
           },
         },
+        include: {
+          userItem: true,
+          user: {
+            select: { id: true, name: true, email: true },
+          },
+        },
         orderBy: {
           startDate: "desc",
         },
@@ -270,6 +314,20 @@ export const resolvers = {
     publicBooking: async (_, { bookingCode }, { user }) => {
       const booking = await prisma.booking.findUnique({
         where: { bookingCode },
+        include: {
+          userItem: true,
+          user: {
+            select: { id: true, name: true, email: true },
+          },
+          member: {
+            include: {
+              user: {
+                select: { id: true, name: true, email: true },
+              },
+              userItem: true,
+            },
+          },
+        },
       });
       if (!booking) {
         return null;
@@ -306,6 +364,13 @@ export const resolvers = {
       return prisma.memberBooking.findMany({
         where: {
           userId: user.id,
+        },
+        include: {
+          booking: true,
+          userItem: true,
+          user: {
+            select: { id: true, name: true, email: true },
+          },
         },
         orderBy: {
           booking: {
@@ -344,6 +409,12 @@ export const resolvers = {
             in: ["pending", "approved"],
           },
         },
+        include: {
+          userItem: true,
+          user: {
+            select: { id: true, name: true, email: true },
+          },
+        },
         orderBy: {
           startDate: "desc",
         },
@@ -356,6 +427,20 @@ export const resolvers = {
       }
       const booking = await prisma.booking.findUnique({
         where: { bookingCode },
+        include: {
+          userItem: true,
+          user: {
+            select: { id: true, name: true, email: true },
+          },
+          member: {
+            include: {
+              user: {
+                select: { id: true, name: true, email: true },
+              },
+              userItem: true,
+            },
+          },
+        },
       });
       if (!booking) {
         return null;
@@ -806,17 +891,29 @@ export const resolvers = {
   },
 
   Booking: {
-    item: (item) => {
-      return prisma.booking.findUnique({ where: { id: item.id } }).userItem();
+    item: (booking) => {
+      if (booking.userItem !== undefined) {
+        return booking.userItem;
+      }
+      return prisma.booking.findUnique({ where: { id: booking.id } }).userItem();
     },
-    StableItem: (item) => {
-      return prisma.booking.findUnique({ where: { id: item.id } }).userItem();
+    StableItem: (booking) => {
+      if (booking.userItem !== undefined) {
+        return booking.userItem;
+      }
+      return prisma.booking.findUnique({ where: { id: booking.id } }).userItem();
     },
-    member: (item) => {
-      return prisma.booking.findUnique({ where: { id: item.id } }).member();
+    member: (booking) => {
+      if (booking.member !== undefined) {
+        return booking.member;
+      }
+      return prisma.booking.findUnique({ where: { id: booking.id } }).member();
     },
-    MemberBooking: (item) => {
-      return prisma.booking.findUnique({ where: { id: item.id } }).member();
+    MemberBooking: (booking) => {
+      if (booking.member !== undefined) {
+        return booking.member;
+      }
+      return prisma.booking.findUnique({ where: { id: booking.id } }).member();
     },
     isOwner: (booking, _, { user }) => {
       return Boolean(user && booking.userId === user.id);
@@ -829,10 +926,13 @@ export const resolvers = {
       if (booking.userId === user.id) {
         return user.name ? `${user.name} (You)` : "You";
       }
-      const owner = await prisma.user.findUnique({
-        where: { id: booking.userId },
-        select: { name: true, email: true },
-      });
+      const owner =
+        booking.user !== undefined
+          ? booking.user
+          : await prisma.user.findUnique({
+              where: { id: booking.userId },
+              select: { name: true, email: true },
+            });
       if (!owner) {
         return "KT Villa Guest";
       }
@@ -854,6 +954,15 @@ export const resolvers = {
       return char?.fragment || null;
     },
     bookingCode: async (item) => {
+      if (item.booking?.bookingCode) {
+        return item.booking.bookingCode;
+      }
+      if (item.memberBooking?.booking?.bookingCode) {
+        return item.memberBooking.booking.bookingCode;
+      }
+      if (item.booking !== undefined && item.memberBooking !== undefined) {
+        return null;
+      }
       const b = await prisma.booking.findFirst({
         where: { userItemId: item.id },
         select: { bookingCode: true },
@@ -885,33 +994,48 @@ export const resolvers = {
       if (item.ownerId === user.id) {
         return user.name ? `${user.name} (You)` : "You";
       }
-      const owner = await prisma.user.findUnique({
-        where: { id: item.ownerId },
-        select: { name: true, email: true },
-      });
+      const owner =
+        item.owner !== undefined
+          ? item.owner
+          : await prisma.user.findUnique({
+              where: { id: item.ownerId },
+              select: { name: true, email: true },
+            });
       return owner?.name || owner?.email?.split("@")[0] || "KT Villa Guest";
     },
   },
 
   AdminBooking: {
     user: (booking) => {
+      if (booking.user !== undefined) {
+        return booking.user;
+      }
       return prisma.booking.findUnique({ where: { id: booking?.id } }).user();
     },
     item: (booking) => {
+      if (booking.userItem !== undefined) {
+        return booking.userItem;
+      }
       return prisma.booking
         .findUnique({ where: { id: booking?.id } })
         .userItem();
     },
     member: (booking) => {
+      if (booking.member !== undefined) {
+        return booking.member;
+      }
       return prisma.booking.findUnique({ where: { id: booking?.id } }).member();
     },
   },
 
   MemberBooking: {
     user: async (booking, _, { user }) => {
-      const memberUser = await prisma.memberBooking
-        .findUnique({ where: { id: booking.id } })
-        .user();
+      const memberUser =
+        booking.user !== undefined
+          ? booking.user
+          : await prisma.memberBooking
+              .findUnique({ where: { id: booking.id } })
+              .user();
       if (!user && memberUser) {
         return {
           ...memberUser,
@@ -925,9 +1049,12 @@ export const resolvers = {
       if (!user) {
         return "Travel Companion";
       }
-      const memberUser = await prisma.memberBooking
-        .findUnique({ where: { id: booking.id } })
-        .user();
+      const memberUser =
+        booking.user !== undefined
+          ? booking.user
+          : await prisma.memberBooking
+              .findUnique({ where: { id: booking.id } })
+              .user();
       if (!memberUser) return "Guest";
       if (memberUser.id === user.id) {
         return memberUser.name ? `${memberUser.name} (You)` : "You";
@@ -935,9 +1062,15 @@ export const resolvers = {
       return memberUser.name || memberUser.email.split("@")[0] || "Guest";
     },
     booking: (b) => {
+      if (b.booking !== undefined) {
+        return b.booking;
+      }
       return prisma.memberBooking.findUnique({ where: { id: b.id } }).booking();
     },
     item: (booking) => {
+      if (booking.userItem !== undefined) {
+        return booking.userItem;
+      }
       return prisma.memberBooking
         .findUnique({ where: { id: booking.id } })
         .userItem();
