@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320">
+  <rect width="1280" height="320" fill="#f3f5f7"/>
+  <path d="M0 0 H1280 V14 Q960 30 640 16 T0 18Z" fill="#dfe6ee"/>
+  <!-- cleared stone plaza -->
+  <path d="M120 120 H1160 L1220 300 H60Z" fill="#cfc8bd"/>
+  <path d="M120 120 H1160 L1166 136 H114Z" fill="#b8b0a4"/>
+  <g fill="#e9eef3"><ellipse cx="200" cy="70" rx="90" ry="14"/><ellipse cx="1050" cy="80" rx="120" ry="16"/><ellipse cx="640" cy="60" rx="60" ry="10"/></g>
+</svg>

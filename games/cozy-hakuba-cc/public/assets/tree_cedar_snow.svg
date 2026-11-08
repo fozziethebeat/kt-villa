@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="90" height="160" viewBox="0 0 90 160">
+  <!-- Overlay: snow caps for the cedar (winter variant) -->
+  <path d="M45 6 L56 26 Q45 22 34 26Z" fill="#fbfaf6"/>
+  <path d="M32 56 H58 L64 66 Q45 60 26 66Z M28 96 H62 L70 108 Q45 100 20 108Z M4 132 H86 L82 126 Q45 118 8 126Z" fill="#fbfaf6"/>
+</svg>

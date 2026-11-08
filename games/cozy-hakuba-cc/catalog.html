@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hakuba Asset Catalog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f4ecdc; --ink:#3b3a4a; --card:#fbfaf6; --muted:#7a7686; --line:#e2d8c4; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#23222b; --ink:#ece6d8; --card:#2e2d38; --muted:#a29eae; --line:#3d3b49; } }
+    :root[data-theme="dark"] { --bg:#23222b; --ink:#ece6d8; --card:#2e2d38; --muted:#a29eae; --line:#3d3b49; }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:'Zen Maru Gothic', system-ui, sans-serif; }
+    header { padding:24px 32px 8px; } h1 { margin:0; font-size:28px; } p { color:var(--muted); margin:6px 0 0; }
+    .filters { padding:12px 32px; display:flex; gap:8px; flex-wrap:wrap; }
+    .filters button { border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:999px; padding:6px 14px; font:inherit; cursor:pointer; }
+    .filters button.on { background:var(--ink); color:var(--card); }
+    main { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:16px; padding:16px 32px 48px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+    .stage { height:180px; display:grid; place-items:center; background:repeating-conic-gradient(#0000000a 0 25%, #0000 0 50%) 0 0/16px 16px; }
+    .stage img { max-width:90%; max-height:160px; }
+    .meta { padding:10px 14px 14px; } .id { font-weight:700; } .role { display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; background:var(--line); margin:4px 4px 0 0; }
+    .purpose { font-size:13px; color:var(--muted); margin-top:6px; }
+    .swatches { display:flex; gap:6px; padding:0 32px; flex-wrap:wrap; } .sw { width:56px; font-size:10px; text-align:center; color:var(--muted); } .sw i { display:block; height:28px; border-radius:6px; border:1px solid var(--line); }
+  </style>
+</head>
+<body>
+  <header><h1>Hakuba Wake-Up — Asset Catalog</h1><p id="sub">Every placeholder asset, with its gameplay role. Assets are replaced by id.</p></header>
+  <div class="swatches" id="palette"></div>
+  <div class="filters" id="filters"></div>
+  <main id="grid"></main>
+  <script type="module" src="/src/catalog.ts"></script>
+</body>
+</html>

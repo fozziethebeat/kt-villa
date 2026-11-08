@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="46" viewBox="0 0 36 46">
+  <!-- Kodama: tiny tree spirit; appears only when a region is Stirring+ (soft glow = magical, small = optional) -->
+  <circle cx="18" cy="24" r="17" fill="#b9e08f" opacity="0.55"/><circle cx="18" cy="24" r="12" fill="#e2f4c8" opacity="0.8"/>
+  <path d="M8 40 Q6 26 10 20 Q18 8 26 20 Q30 26 28 40Z" fill="#fbfaf6" stroke="#9aa59a" stroke-width="2"/>
+  <ellipse cx="18" cy="18" rx="10" ry="9" fill="#fbfaf6" stroke="#9aa59a" stroke-width="2"/>
+  <circle cx="14" cy="18" r="2" fill="#3b3a4a"/><circle cx="22" cy="18" r="2" fill="#3b3a4a"/>
+  <ellipse cx="18" cy="24" rx="1.6" ry="2.2" fill="#3b3a4a"/>
+  <path d="M18 9 Q20 3 25 4" stroke="#6fa678" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="25" cy="4" rx="3" ry="2" fill="#8cc084"/>
+</svg>

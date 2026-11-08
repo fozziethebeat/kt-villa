@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="52" viewBox="0 0 48 52">
+  <!-- Quest badge (fetch): speech bubble shape = "talk to me", icon = challenge type -->
+  <path d="M8 4 H40 Q46 4 46 10 V36 Q46 42 40 42 H28 L22 50 L20 42 H8 Q2 42 2 36 V10 Q2 4 8 4Z" fill="#4f8f8a" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round" transform="translate(0 0)"/>
+  <g transform="translate(1 1)"><circle cx="22" cy="19" r="7" fill="none" stroke="#fbfaf6" stroke-width="3"/><line x1="27" y1="24" x2="32" y2="29" stroke="#fbfaf6" stroke-width="3.5" stroke-linecap="round"/></g>
+</svg>

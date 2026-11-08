@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420">
+  <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9cde0"/><stop offset="1" stop-color="#e6edf2"/></linearGradient></defs>
+  <rect width="1280" height="420" fill="url(#sky)"/>
+  <!-- Hakuba Sanzan: far range -->
+  <path d="M0 300 L120 210 L210 250 L330 120 L420 190 L520 90 L610 170 L700 130 L820 220 L930 150 L1040 230 L1160 170 L1280 240 L1280 420 L0 420Z" fill="#8fa3bd"/>
+  <path d="M330 120 L372 158 L350 156 L330 170 L310 152 L290 150Z M520 90 L566 132 L540 130 L520 146 L500 128 L478 134Z M700 130 L740 162 L716 160 L700 172 L684 158 L664 160Z M930 150 L968 180 L946 178 L930 190 L912 176 L894 178Z" fill="#fbfaf6"/>
+  <!-- mid range, offset paper shadow -->
+  <path d="M0 330 L160 260 L260 300 L380 230 L500 290 L640 220 L760 290 L900 240 L1040 300 L1160 250 L1280 290 L1280 420 L0 420Z" fill="#5f7591" transform="translate(4 5)" opacity="0.35"/>
+  <path d="M0 330 L160 260 L260 300 L380 230 L500 290 L640 220 L760 290 L900 240 L1040 300 L1160 250 L1280 290 L1280 420 L0 420Z" fill="#dfe6ee"/>
+  <!-- near snowy cedar ridge -->
+  <path d="M0 370 Q160 330 320 360 T640 350 T960 360 T1280 345 L1280 420 L0 420Z" fill="#3f6b4f"/>
+  <path d="M0 378 Q160 345 320 372 T640 362 T960 372 T1280 358 L1280 420 L0 420Z" fill="#fbfaf6" opacity="0.9"/>
+</svg>

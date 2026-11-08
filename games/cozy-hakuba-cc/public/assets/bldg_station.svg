@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="300" viewBox="0 0 420 300">
+  <!-- JR Hakuba Station: alpine-lodge gable with clock; papercraft offset shadow -->
+  <g transform="translate(6 7)" opacity="0.28" fill="#3b3a4a"><path d="M20 130 L210 20 L400 130 L380 130 L380 290 L40 290 L40 130Z"/></g>
+  <rect x="40" y="130" width="340" height="160" fill="#efe3c2" stroke="#3b3a4a" stroke-width="3" rx="4"/>
+  <path d="M20 132 L210 20 L400 132 L372 140 L210 50 L48 140Z" fill="#7a4b3a" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M48 140 L210 50 L372 140 L372 150 L48 150Z" fill="#a8754b"/>
+  <!-- timber beams -->
+  <g stroke="#7a4b3a" stroke-width="8"><line x1="210" y1="56" x2="210" y2="130"/><line x1="130" y1="100" x2="290" y2="100"/></g>
+  <circle cx="210" cy="96" r="18" fill="#fbfaf6" stroke="#3b3a4a" stroke-width="3"/>
+  <path d="M210 84 V96 L219 101" stroke="#3b3a4a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- sign -->
+  <rect x="120" y="160" width="180" height="34" rx="6" fill="#2d4f3b" stroke="#3b3a4a" stroke-width="3"/>
+  <text x="210" y="184" font-family="sans-serif" font-size="20" font-weight="700" fill="#fbfaf6" text-anchor="middle">白馬駅 HAKUBA</text>
+  <!-- doors & windows -->
+  <rect x="170" y="210" width="80" height="80" fill="#6c7fa3" stroke="#3b3a4a" stroke-width="3"/>
+  <line x1="210" y1="210" x2="210" y2="290" stroke="#3b3a4a" stroke-width="3"/>
+  <g fill="#cfe0ee" stroke="#3b3a4a" stroke-width="3"><rect x="64" y="210" width="74" height="50" rx="3"/><rect x="282" y="210" width="74" height="50" rx="3"/></g>
+  <!-- info desk awning (where Mrs. Kobayashi works) -->
+  <path d="M282 200 h74 l8 14 h-90Z" fill="#c8553d" stroke="#3b3a4a" stroke-width="2"/>
+</svg>

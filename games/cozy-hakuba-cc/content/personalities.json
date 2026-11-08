@@ -1,0 +1,7 @@
+[
+  { "id": "planner", "name": "The Planner", "blurb": "Ex-project manager. Makes spreadsheets of snow conditions.", "mods": { "freeHints": 1, "rhythmWindow": 0.9 } },
+  { "id": "creative", "name": "The Creative", "blurb": "Ex-designer. Names every dish.", "mods": { "craftQuality": 1.1, "fetchHintCost": 1.25 } },
+  { "id": "outdoorsy", "name": "The Outdoorsy", "blurb": "Ex-ski-bum turned salaryman. Knows every trail.", "mods": { "walkSpeed": 1.15, "pickupRadius": 1.25, "prepSpeed": 0.9 } },
+  { "id": "social", "name": "The Social Butterfly", "blurb": "Ex-sales. Everyone's best friend in five minutes.", "mods": { "regularRep": 1.15, "packingUndos": -1 } },
+  { "id": "tinkerer", "name": "The Tinkerer", "blurb": "Ex-engineer. Talks to the van.", "mods": { "moduleCost": 0.85, "tips": 0.95 } }
+]

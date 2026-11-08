@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+  <!-- Stamina pip: an onigiri (action point) -->
+  <path d="M14 3 Q18 3 23 13 Q27 21 22 24 H6 Q1 21 5 13 Q10 3 14 3Z" fill="#fbfaf6" stroke="#3b3a4a" stroke-width="2"/>
+  <rect x="8" y="16" width="12" height="8" fill="#2d4f3b"/>
+</svg>

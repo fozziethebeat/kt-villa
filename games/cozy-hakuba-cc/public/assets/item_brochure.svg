@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
+  <!-- Fetch collectible: tri-fold brochure + sparkle = "pick me up" -->
+  <path d="M8 12 L18 9 L26 12 L36 9 V33 L26 36 L18 33 L8 36Z" fill="#fbfaf6" stroke="#3b3a4a" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M18 9 V33 M26 12 V36" stroke="#3b3a4a" stroke-width="1.5"/>
+  <path d="M10 18 L16 16 M10 22 L16 20 M28 18 L34 16" stroke="#4f8f8a" stroke-width="2" stroke-linecap="round"/>
+  <path d="M19 20 L25 22 L25 28 L19 26Z" fill="#8fa3bd"/>
+  <path d="M38 2 L39.6 6.4 L44 8 L39.6 9.6 L38 14 L36.4 9.6 L32 8 L36.4 6.4Z" fill="#f2a541"/>
+</svg>

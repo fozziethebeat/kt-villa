@@ -1,0 +1,4 @@
+[
+  { "id": "coffee", "name": "Alpine Coffee & Bakery", "icon": "cup", "strongIn": { "winter": 1.1, "green": 1.0 }, "products": ["pour_over", "matcha_latte", "apple_pastry"] },
+  { "id": "soba", "name": "Soba & Oyaki Kitchen", "icon": "bowl", "strongIn": { "winter": 1.2, "green": 0.85 }, "products": ["kake_soba", "nozawana_oyaki", "onigiri"] }
+]

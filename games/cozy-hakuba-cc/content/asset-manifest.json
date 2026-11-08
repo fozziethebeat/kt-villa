@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "style": "washi-papercraft-v0",
+  "palette": {
+    "ink": "#3b3a4a", "paper": "#f4ecdc", "snow": "#fbfaf6", "snowShadow": "#dfe6ee",
+    "cedar": "#3f6b4f", "cedarDark": "#2d4f3b", "lantern": "#f2a541", "noren": "#c8553d",
+    "wood": "#a8754b", "teal": "#4f8f8a", "twilight": "#6c7fa3", "lake": "#4fa3a5",
+    "fresh": "#8cc084", "blossom": "#e89fb0", "puzzle": "#7a5ea8"
+  },
+  "assets": [
+    { "id": "paper_grain", "file": "paper_grain.svg", "w": 512, "h": 512, "role": "texture", "purpose": "Washi grain multiplied over the whole screen" },
+    { "id": "bg_mountains_winter", "file": "bg_mountains_winter.svg", "w": 1280, "h": 420, "role": "backdrop", "season": "winter", "purpose": "Hakuba Sanzan skyline, snowy" },
+    { "id": "bg_mountains_green", "file": "bg_mountains_green.svg", "w": 1280, "h": 420, "role": "backdrop", "season": "green", "purpose": "Hakuba Sanzan skyline, green season" },
+    { "id": "ground_winter", "file": "ground_winter.svg", "w": 1280, "h": 320, "role": "ground", "season": "winter", "purpose": "Station plaza, snow" },
+    { "id": "ground_green", "file": "ground_green.svg", "w": 1280, "h": 320, "role": "ground", "season": "green", "purpose": "Station plaza, grass + wildflowers" },
+    { "id": "bldg_station", "file": "bldg_station.svg", "w": 420, "h": 300, "role": "landmark", "purpose": "JR Hakuba Station; red awning marks the info desk" },
+    { "id": "van_kei", "file": "van_kei.svg", "w": 240, "h": 150, "role": "van", "purpose": "Tier 0 Kei Van; red hatch = business window, rack = upgradable" },
+    { "id": "char_aoi", "file": "char_aoi.svg", "w": 56, "h": 88, "role": "player", "purpose": "Default protagonist; teal beanie + mustard parka read at a glance" },
+    { "id": "char_kobayashi", "file": "char_kobayashi.svg", "w": 56, "h": 88, "role": "key-person", "purpose": "Station key person; red info vest matches the info-desk awning" },
+    { "id": "badge_fetch", "file": "badge_fetch.svg", "w": 48, "h": 52, "role": "quest-badge", "purpose": "Fetch quest available (magnifier)" },
+    { "id": "badge_create", "file": "badge_create.svg", "w": 48, "h": 52, "role": "quest-badge", "purpose": "Creation quest available (tool)" },
+    { "id": "badge_puzzle", "file": "badge_puzzle.svg", "w": 48, "h": 52, "role": "quest-badge", "purpose": "Puzzle quest available (puzzle piece)" },
+    { "id": "item_brochure", "file": "item_brochure.svg", "w": 44, "h": 44, "role": "collectible", "purpose": "Fetch item; sparkle = pick me up" },
+    { "id": "tree_cedar", "file": "tree_cedar.svg", "w": 90, "h": 160, "role": "decor", "purpose": "Japanese cedar" },
+    { "id": "tree_cedar_snow", "file": "tree_cedar_snow.svg", "w": 90, "h": 160, "role": "decor-overlay", "season": "winter", "purpose": "Snow caps layered on the cedar in winter" },
+    { "id": "kodama", "file": "kodama.svg", "w": 36, "h": 46, "role": "collectible", "purpose": "Kodama spirit; only appears at Vitality >= 1" },
+    { "id": "chip_lock", "file": "chip_lock.svg", "w": 40, "h": 44, "role": "ui", "purpose": "Locked; requirement chip text drawn beside it" },
+    { "id": "icon_stamina", "file": "icon_stamina.svg", "w": 28, "h": 28, "role": "ui", "purpose": "One stamina/action point (onigiri)" }
+  ]
+}
