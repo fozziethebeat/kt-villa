@@ -1,14 +1,21 @@
 extends CharacterBody2D
 
-@export var enemy_name: String = "Wild Snow Monkey"
+## Cozy Regional Critter Entity (Snow Monkey, Kitsune, Stoat, Uribo Piglet, Kamoshika Calf).
+## Replaces combat enemies with friendly overworld critters that trade regional fetch/forage items!
+
+@export var enemy_name: String = "Curious Snow Monkey"
 @export var enemy_id: String = "wild_snowman"
 @export var enemy_uid: String = ""
 @export var enemy_sprite: Texture2D
 @export var animation_frames: Array = []
 @export var animation_fps: float = 6.0
-@export var patrol_distance: float = 75.0
-@export var patrol_speed: float = 45.0
-@export var target_height: float = 92.0
+@export var patrol_distance: float = 65.0
+@export var patrol_speed: float = 40.0
+@export var target_height: float = 88.0
+
+var want_item: String = "Nagano Apple"
+var reward_item: String = "Wooden Trail Plaque"
+var critter_dialogue: String = "A curious mountain critter is holding something shiny! Offer a snack or friendly bow?"
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var detection_area: Area2D = $DetectionArea
@@ -18,33 +25,20 @@ extends CharacterBody2D
 
 var start_pos: Vector2
 var patrol_target: Vector2
-var player_ref: Node2D = null
 var player_in_approach_range: bool = false
 var unique_id: String
 var anim_timer: float = 0.0
 var _base_offset_y: float = -42.0
-
 var is_pacified: bool = false
-var is_spooked: bool = false
-var encounter_cooldown: float = 0.0
 
 func _ready() -> void:
 	if enemy_uid.is_empty():
 		enemy_uid = enemy_id + "_" + str(int(global_position.x)) + "_" + str(int(global_position.y))
 	unique_id = enemy_uid
 
-	# Check persistent state from GameManager
-	if GameManager.spooked_enemy_ids.has(unique_id):
-		queue_free()
-		return
-	if GameManager.pacified_enemy_ids.has(unique_id):
-		is_pacified = true
-	if GameManager.enemy_cooldown_timers.has(unique_id):
-		encounter_cooldown = GameManager.enemy_cooldown_timers[unique_id]
-
 	start_pos = global_position
 	patrol_target = start_pos + Vector2(patrol_distance, 0)
-	
+
 	if animation_frames.size() > 0:
 		sprite.texture = animation_frames[0]
 	elif enemy_sprite:
@@ -58,14 +52,11 @@ func _ready() -> void:
 		_base_offset_y = -target_height * 0.44
 		sprite.position = Vector2(0, _base_offset_y)
 
-	prompt_badge.text = "🐾 [E] Approach " + enemy_name
-	if is_pacified:
-		alert_icon.text = "💖 Restored!"
-		alert_icon.visible = true
-	else:
-		alert_icon.visible = false
+	prompt_badge.text = "🐾 [E] Trade with " + enemy_name
+	alert_icon.text = "🎁 Has " + reward_item
+	alert_icon.visible = true
 	prompt_badge.visible = false
-	
+
 	detection_area.body_entered.connect(_on_detection_area_entered)
 	detection_area.body_exited.connect(_on_detection_area_exited)
 	interaction_area.body_entered.connect(_on_interaction_area_entered)
@@ -73,71 +64,48 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	anim_timer += delta
-	if encounter_cooldown > 0.0:
-		encounter_cooldown -= delta
-		if encounter_cooldown <= 0.0:
-			GameManager.enemy_cooldown_timers.erase(unique_id)
 
-	if is_spooked or is_pacified or GameManager.is_in_battle or GameManager.is_encounter_prompt_active:
+	if is_pacified or GameManager.is_dialogue_active or GameManager.is_encounter_prompt_active or GameManager.is_menu_active:
 		velocity = Vector2.ZERO
 		if sprite:
 			sprite.position.y = _base_offset_y + sin(anim_timer * 2.5) * 1.5
 		return
 
-	# Patrol movement
 	if global_position.distance_to(patrol_target) < 4.0:
 		patrol_target = start_pos - (patrol_target - start_pos)
 		sprite.flip_h = (patrol_target.x < global_position.x)
-	
+
 	var dir = (patrol_target - global_position).normalized()
 	velocity = dir * patrol_speed
 	move_and_slide()
-	
-	# Gentle patrol hop
-	if sprite:
-		sprite.position.y = _base_offset_y - abs(sin(anim_timer * 5.0)) * 3.5
 
-	# Cycle animation frames if multiple frames provided
-	if animation_frames.size() > 1:
-		var frame_idx = int(anim_timer * animation_fps) % animation_frames.size()
-		sprite.texture = animation_frames[frame_idx]
-	
-	# Update proximity distance if player is detected
-	if player_ref and not is_pacified and not is_spooked:
-		var dist = global_position.distance_to(player_ref.global_position)
-		GameManager.set_enemy_proximity(unique_id, enemy_name, true, dist)
+	if sprite:
+		sprite.position.y = _base_offset_y - abs(sin(anim_timer * 4.5)) * 3.0
 
 func _unhandled_input(event: InputEvent) -> void:
-	if player_in_approach_range and not is_pacified and not is_spooked and encounter_cooldown <= 0.0:
-		if event.is_action_pressed("interact"):
-			if not GameManager.is_dialogue_active and not GameManager.is_encounter_prompt_active and not GameManager.is_in_battle and not GameManager.is_menu_active:
-				get_viewport().set_input_as_handled()
-				var data = {
-					"id": enemy_id,
-					"name": enemy_name,
-					"unique_id": unique_id
-				}
-				GameManager.request_encounter_prompt(data, self)
+	if player_in_approach_range and event.is_action_pressed("interact"):
+		if not GameManager.is_dialogue_active and not GameManager.is_encounter_prompt_active and not GameManager.is_menu_active:
+			get_viewport().set_input_as_handled()
+			var data = {
+				"id": enemy_id,
+				"name": enemy_name,
+				"unique_id": unique_id,
+				"want_item": want_item,
+				"reward_item": reward_item,
+				"dialogue": critter_dialogue
+			}
+			GameManager.request_encounter_prompt(data, self)
 
-func _on_detection_area_entered(body: Node2D) -> void:
-	if body.is_in_group("player") and not is_pacified and not is_spooked:
-		player_ref = body
-		alert_icon.visible = true
-		var dist = global_position.distance_to(body.global_position)
-		GameManager.set_enemy_proximity(unique_id, enemy_name, true, dist)
+func _on_detection_area_entered(_body: Node2D) -> void:
+	pass
 
-func _on_detection_area_exited(body: Node2D) -> void:
-	if body.is_in_group("player"):
-		player_ref = null
-		if not is_pacified:
-			alert_icon.visible = false
-		GameManager.set_enemy_proximity(unique_id, enemy_name, false)
+func _on_detection_area_exited(_body: Node2D) -> void:
+	pass
 
 func _on_interaction_area_entered(body: Node2D) -> void:
-	if body.is_in_group("player") and not is_pacified and not is_spooked:
+	if body.is_in_group("player"):
 		player_in_approach_range = true
-		if encounter_cooldown <= 0.0:
-			prompt_badge.visible = true
+		prompt_badge.visible = true
 
 func _on_interaction_area_exited(body: Node2D) -> void:
 	if body.is_in_group("player"):
@@ -146,29 +114,16 @@ func _on_interaction_area_exited(body: Node2D) -> void:
 		if GameManager.is_encounter_prompt_active:
 			GameManager.close_encounter_prompt()
 
-func on_spooked() -> void:
-	is_spooked = true
-	alert_icon.text = "💨 Spooked!"
-	alert_icon.visible = true
-	prompt_badge.visible = false
-	GameManager.set_enemy_proximity(unique_id, enemy_name, false)
-
-	var dir = Vector2(-1, -0.5).normalized()
-	var tween = create_tween()
-	tween.tween_property(self, "global_position", global_position + (dir * 160.0), 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.parallel().tween_property(self, "modulate:a", 0.0, 0.8)
-	tween.chain().tween_callback(queue_free)
-
 func on_charmed() -> void:
 	is_pacified = true
-	alert_icon.text = "💖 Pacified!"
+	alert_icon.text = "💖 Happy Critter! (+%s)" % reward_item
 	alert_icon.visible = true
-	prompt_badge.visible = false
-	GameManager.set_enemy_proximity(unique_id, enemy_name, false)
-
 	var tween = create_tween()
-	tween.tween_property(sprite, "position:y", _base_offset_y - 14.0, 0.15)
-	tween.tween_property(sprite, "position:y", _base_offset_y, 0.15)
-
-func _exit_tree() -> void:
-	GameManager.set_enemy_proximity(unique_id, enemy_name, false)
+	tween.tween_property(sprite, "position:y", _base_offset_y - 16.0, 0.16)
+	tween.tween_property(sprite, "position:y", _base_offset_y, 0.16)
+	# Allow trading again after a brief happy bounce so player can never get softlocked on ingredients!
+	tween.tween_interval(1.5)
+	tween.tween_callback(func():
+		is_pacified = false
+		alert_icon.text = "🎁 Has " + reward_item
+	)

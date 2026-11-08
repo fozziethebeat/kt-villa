@@ -1,34 +1,34 @@
 extends Node2D
 
-## Cozy Storybook Illustrated 2.5D Hakuba Village Scene (1280x720)
-## Replaces the legacy Kenney 16x16 tilemap with a full-resolution painted 2.5D diorama
-## supporting Winter ("Japow") and Green Season transitions, Y-sorted 2.5D architectural props,
-## Village NPCs, and Spirit-Animal Enemies ("Villagers Gone Wild").
+## Cozy Storybook Illustrated 2.5D Hakuba Valley World Scene (1280x720)
+## Dynamically renders any of the 10 Hakuba Sub-Regions with:
+## - Spiritfarer-style Day/Night atmospheric lighting
+## - Cozy Grove-style "Lantern Warming" (desaturated misty tint -> warm golden bloom when restored)
+## - Parked Kei Van & Mobile Shop entity
+## - Sub-region Forest Spirit Guardian (3-Stage Restoration Arc -> Human Villager)
+## - Regional Forageables & Friendly Critter Trade entities
+
+const ParkedVanScript = preload("res://src/entities/parked_van.gd")
+const SpiritGuardianScript = preload("res://src/entities/spirit_guardian_npc.gd")
 
 const WORLD_W = 1280.0
 const WORLD_H = 720.0
 
-# Seasonal 2.5D Diorama Backdrops
 var winter_bg_tex: Texture2D
 var green_bg_tex: Texture2D
-
-# 2.5D Storybook Architectural Props
 var lodge_prop_tex: Texture2D
 var kiosk_prop_tex: Texture2D
 var shrine_prop_tex: Texture2D
 
-# Entity Scenes
 var item_scene = preload("res://src/entities/item.tscn")
 var friendly_npc_scene = preload("res://src/entities/npc_friendly.tscn")
 var enemy_npc_scene = preload("res://src/entities/npc_enemy.tscn")
 
-# Collectible Item Icons
 var apple_tex = preload("res://assets/sprites/item_apple.png")
 var skipass_tex = preload("res://assets/sprites/item_skipass.png")
 var tea_tex = preload("res://assets/sprites/item_tea.png")
 var charm_tex = preload("res://assets/sprites/item_charm.png")
 
-# Storybook NPCs & Spirit Beast Sprites
 var elder_tex: Texture2D
 var yuki_tex: Texture2D
 var monkey_tex: Texture2D
@@ -42,6 +42,9 @@ var bear_tex: Texture2D
 @onready var npcs_container: Node2D = $YSortStage/NPCs
 @onready var player: CharacterBody2D = $YSortStage/Player
 @onready var snow_particles: CPUParticles2D = $SnowParticles
+@onready var hud: CanvasLayer = $HUD
+
+var _day_night_modulate: CanvasModulate
 
 func _ready() -> void:
 	winter_bg_tex = GameManager.load_png_texture("res://assets/storybook/world/village_winter_bg.png")
@@ -55,23 +58,58 @@ func _ready() -> void:
 	serow_tex = GameManager.load_png_texture("res://assets/storybook/entities/enemy_sacred_serow.png")
 	bear_tex = GameManager.load_png_texture("res://assets/storybook/entities/enemy_moon_bear.png")
 
-	GameManager.season_changed.connect(func(_new_season): _apply_season_visuals())
-	_rebuild_world()
-	_apply_season_visuals()
+	_day_night_modulate = CanvasModulate.new()
+	add_child(_day_night_modulate)
 
-	# Restore player position from before encounter if available
+	GameManager.season_changed.connect(func(_new_season): _apply_atmosphere_visuals())
+	GameManager.time_changed.connect(func(_d, _p): _apply_atmosphere_visuals())
+	GameManager.region_changed.connect(func(_r):
+		_rebuild_world()
+		_apply_atmosphere_visuals()
+		player.position = Vector2(540, 560)
+	)
+	GameManager.region_restored.connect(func(_r): _animate_region_restoration_bloom())
+
+	_rebuild_world()
+	_apply_atmosphere_visuals()
+
 	if GameManager.player_world_position != Vector2.ZERO:
 		player.position = GameManager.player_world_position
 	else:
-		player.position = Vector2(640, 545)
+		player.position = Vector2(540, 560)
 
-func _apply_season_visuals() -> void:
-	var is_green = (GameManager.current_season == "green")
+func _apply_atmosphere_visuals() -> void:
+	var is_green = (GameManager.current_season == "green") or (GameManager.current_region_id == "lake_aoki")
 	if backdrop_sprite:
 		backdrop_sprite.texture = green_bg_tex if is_green else winter_bg_tex
 		backdrop_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		# Cozy Grove-style visual warming: slightly muted cool mist before restoration, vibrant warm glow once restored!
+		var is_restored = GameManager.is_region_restored()
+		backdrop_sprite.modulate = Color(1.04, 1.0, 0.96, 1.0) if is_restored else Color(0.82, 0.88, 0.96, 1.0)
+
 	if snow_particles:
 		snow_particles.emitting = not is_green
+
+	if _day_night_modulate:
+		var target_col = Color(1.0, 0.98, 0.95)
+		match GameManager.time_of_day:
+			"morning":
+				target_col = Color(1.0, 0.96, 0.92)
+			"afternoon":
+				target_col = Color(1.0, 1.0, 1.0)
+			"evening":
+				target_col = Color(0.96, 0.84, 0.74)
+			"night":
+				target_col = Color(0.68, 0.74, 0.92)
+		var tw = create_tween()
+		tw.tween_property(_day_night_modulate, "color", target_col, 0.6)
+
+func _animate_region_restoration_bloom() -> void:
+	if not backdrop_sprite:
+		return
+	var tw = create_tween()
+	tw.tween_property(backdrop_sprite, "modulate", Color(1.25, 1.18, 0.95, 1.0), 0.35)
+	tw.tween_property(backdrop_sprite, "modulate", Color(1.04, 1.0, 0.96, 1.0), 0.65)
 
 func _rebuild_world() -> void:
 	for child in obstacles_container.get_children():
@@ -85,15 +123,11 @@ func _rebuild_world() -> void:
 	_spawn_npcs()
 
 func _create_diorama_boundaries() -> void:
-	# 1. Horizon mountain line (keep player on the 2.5D village courtyard below y=335)
 	_add_rect_obstacle(Rect2(0, 0, WORLD_W, 335))
-	# 2. Screen perimeter walls
 	_add_rect_obstacle(Rect2(-20, 0, 25, WORLD_H))
 	_add_rect_obstacle(Rect2(WORLD_W - 5, 0, 25, WORLD_H))
 	_add_rect_obstacle(Rect2(0, WORLD_H - 12, WORLD_W, 30))
-	# 3. Upper-Left Steaming Onsen Pool water boundary
 	_add_rect_obstacle(Rect2(130, 320, 310, 125))
-	# 4. Left & Right painted foreground house footprints
 	_add_rect_obstacle(Rect2(0, 480, 175, 190))
 	_add_rect_obstacle(Rect2(1075, 450, 205, 250))
 
@@ -110,9 +144,17 @@ func _add_rect_obstacle(rect: Rect2) -> void:
 	obstacles_container.add_child(body)
 
 func _spawn_storybook_props() -> void:
-	# Place interactive 2.5D Y-sorted Storybook landmarks that the player can walk in front of and behind!
 	_add_prop_landmark(kiosk_prop_tex, Vector2(560, 385), 145.0, Vector2(95, 36))
 	_add_prop_landmark(shrine_prop_tex, Vector2(935, 420), 175.0, Vector2(90, 34))
+
+	# Spawn the Player's Parked Kei Van & Mobile Shop Hub!
+	var van = ParkedVanScript.new()
+	van.position = Vector2(310, 580)
+	van.van_interacted.connect(func():
+		if hud and hud.has_method("toggle_van_overlay"):
+			hud.toggle_van_overlay()
+	)
+	props_container.add_child(van)
 
 func _add_prop_landmark(tex: Texture2D, base_pos: Vector2, target_h: float, footprint: Vector2) -> void:
 	var prop_body = StaticBody2D.new()
@@ -146,19 +188,22 @@ func _spawn_items() -> void:
 	for child in items_container.get_children():
 		child.queue_free()
 
-	var items_data = [
-		{ "name": "Nagano Apple", "key": "apple", "fallback": apple_tex, "pos": Vector2(440, 560) },
-		{ "name": "Nagano Apple", "key": "apple", "fallback": apple_tex, "pos": Vector2(790, 585) },
-		{ "name": "Ski Pass", "key": "skipass", "fallback": skipass_tex, "pos": Vector2(880, 645) },
-		{ "name": "Onsen Tea", "key": "tea", "fallback": tea_tex, "pos": Vector2(485, 435) },
-		{ "name": "Lucky Charm", "key": "charm", "fallback": charm_tex, "pos": Vector2(885, 455) }
-	]
-	
+	var reg = GameManager.get_current_region_data()
+	var items_data: Array = reg.get("forage_items", [])
+
 	for data in items_data:
 		var item = item_scene.instantiate()
 		item.item_name = data["name"]
-		var tex = AssetRegistry.get_item_texture(data["key"])
-		item.item_icon = tex if tex else data["fallback"]
+		var key = data.get("key", "charm")
+		var tex = AssetRegistry.get_item_texture(key)
+		var fallback = charm_tex
+		if key == "apple":
+			fallback = apple_tex
+		elif key == "skipass":
+			fallback = skipass_tex
+		elif key == "tea":
+			fallback = tea_tex
+		item.item_icon = tex if tex else fallback
 		item.position = data["pos"]
 		items_container.add_child(item)
 
@@ -166,58 +211,42 @@ func _spawn_npcs() -> void:
 	for child in npcs_container.get_children():
 		child.queue_free()
 
-	# 1. Friendly: Elder Kenzo (Near the Mountain Tea & Roastery Kiosk)
-	var elder = friendly_npc_scene.instantiate()
-	elder.npc_name = "Elder Kenzo"
-	elder.npc_role = "Village Historian"
-	elder.dialogue_text = "Welcome to Hakuba, Aoi! Leaving that Tokyo desk job was a brave step. Lately our head Shinto priest and coffee roaster got bored and transformed into forest spirits! Use your guidebook, warm tea, and jokes to calm them down!"
-	elder.npc_sprite = elder_tex
-	elder.target_height = 104.0
-	elder.position = Vector2(645, 425)
-	npcs_container.add_child(elder)
+	var reg = GameManager.get_current_region_data()
 
-	# 2. Friendly: Yuki (Ski & Mountain Patrol Instructor on the lower right lane)
+	# 1. Sub-Region Spirit Guardian (or Elder Kenzo in Region 1) -> Transforms to Restored Villager!
+	var guardian = SpiritGuardianScript.new()
+	guardian.region_id = GameManager.current_region_id
+	guardian.target_height = 108.0
+	guardian.position = Vector2(665, 435)
+	npcs_container.add_child(guardian)
+
+	# 2. Friendly VIP Customer / Valley Guide Yuki near the lower-right path
 	var guide = friendly_npc_scene.instantiate()
 	guide.npc_name = "Yuki"
-	guide.npc_role = "Hakuba Ski Instructor"
-	guide.dialogue_text = "Hey Aoi! Press [T] anytime to see Hakuba in both Winter Japow and Summer Green Season! Watch out for the Snow Monkey by the onsen and the transformed villager spirit beasts!"
+	guide.npc_role = "VIP Customer & Valley Guide"
+	guide.dialogue_text = "Hey Aoi! Welcome to %s! Walk up to your Kei Van [V] to brew warm drinks or craft mountain gear, then talk to %s above to restore this region! Press [M] anytime to travel across all 10 Hakuba sub-regions!" % [
+		reg.get("name", "Hakuba"),
+		reg.get("spirit_name", "the Spirit Guardian")
+	]
 	guide.npc_sprite = yuki_tex
-	guide.target_height = 102.0
+	guide.target_height = 100.0
 	guide.position = Vector2(945, 595)
 	npcs_container.add_child(guide)
 
-	# 3. Pest Enemy: Jigokudani Wild Snow Monkey (Near the Onsen Bridge)
-	var monkey = enemy_npc_scene.instantiate()
-	monkey.enemy_name = "Wild Snow Monkey"
-	monkey.enemy_id = "wild_snowman"
-	monkey.enemy_uid = "monkey_onsen"
-	monkey.enemy_sprite = monkey_tex
-	monkey.target_height = 86.0
-	monkey.patrol_distance = 65.0
-	monkey.patrol_speed = 48.0
-	monkey.position = Vector2(355, 505)
-	npcs_container.add_child(monkey)
-
-	# 4. Transformed Villager Spirit Beast: Sacred Japanese Serow (Head Shinto Priest near the Shrine!)
-	var serow = enemy_npc_scene.instantiate()
-	serow.enemy_name = "Sacred Serow Spirit"
-	serow.enemy_id = "sacred_serow"
-	serow.enemy_uid = "serow_shrine"
-	serow.enemy_sprite = serow_tex
-	serow.target_height = 104.0
-	serow.patrol_distance = 70.0
-	serow.patrol_speed = 42.0
-	serow.position = Vector2(825, 485)
-	npcs_container.add_child(serow)
-
-	# 5. Transformed Villager Spirit Beast: Caffeine-Deprived Moon Bear (Coffee Shop Owner in the lower-left plaza)
-	var bear = enemy_npc_scene.instantiate()
-	bear.enemy_name = "Sleepy Moon Bear Spirit"
-	bear.enemy_id = "moon_bear"
-	bear.enemy_uid = "bear_plaza"
-	bear.enemy_sprite = bear_tex
-	bear.target_height = 112.0
-	bear.patrol_distance = 60.0
-	bear.patrol_speed = 36.0
-	bear.position = Vector2(310, 635)
-	npcs_container.add_child(bear)
+	# 3. Cozy Regional Critter (Trades fetch/forage items!)
+	var critter_info: Dictionary = reg.get("critter", {})
+	if not critter_info.is_empty():
+		var critter = enemy_npc_scene.instantiate()
+		critter.enemy_name = critter_info.get("name", "Curious Snow Monkey")
+		critter.enemy_id = "critter_" + GameManager.current_region_id
+		critter.enemy_uid = "critter_" + GameManager.current_region_id
+		var c_tex = GameManager.load_png_texture(critter_info.get("sprite", "res://assets/storybook/entities/enemy_snow_monkey.png"))
+		critter.enemy_sprite = c_tex if c_tex else monkey_tex
+		critter.want_item = critter_info.get("want_item", "Nagano Apple")
+		critter.reward_item = critter_info.get("reward_item", reg.get("fetch_item", "Wooden Trail Plaque"))
+		critter.critter_dialogue = critter_info.get("dialogue", "A friendly critter wants to trade!")
+		critter.target_height = 88.0
+		critter.patrol_distance = 55.0
+		critter.patrol_speed = 38.0
+		critter.position = Vector2(385, 485)
+		npcs_container.add_child(critter)

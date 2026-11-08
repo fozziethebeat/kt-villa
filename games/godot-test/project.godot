@@ -6,8 +6,8 @@ config_version=5
 
 [application]
 
-config/name="Hakuba RPG"
-config/description="A 2D JRPG exploration prototype set in Hakuba village"
+config/name="Hakuba Valley: Cozy Van-Life & Village Restoration"
+config/description="A Cozy Van-Life & Village Restoration game across 10 Hakuba sub-regions"
 run/main_scene="res://src/world/hakuba_village.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://assets/kenney/tiny-ski/Tiles/tile_0000.png"
@@ -15,6 +15,7 @@ config/icon="res://assets/kenney/tiny-ski/Tiles/tile_0000.png"
 [autoload]
 
 AssetRegistry="*res://src/core/asset_registry.gd"
+CozyDatabase="*res://src/core/cozy_database.gd"
 GameManager="*res://src/core/game_manager.gd"
 ItemDatabase="*res://src/core/item_database.gd"
 
