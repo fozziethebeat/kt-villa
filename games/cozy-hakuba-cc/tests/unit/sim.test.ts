@@ -64,7 +64,7 @@ describe('action budget day loop', () => {
     const s = createNewGame();
     spendAction(s, 'questStep');
     expect(endDay(s).newSeason).toBeNull(); // day 2, still autumn
-    expect(staminaLeft(s)).toBe(CONTENT.tuning.baseStamina);
+    expect(staminaLeft(s)).toBe(s.staminaMax);
     expect(endDay(s).newSeason?.season).toBe('winter');
   });
 

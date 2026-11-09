@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" viewBox="0 0 120 140">
+  <!-- Valley Revival Board: noticeboard where Kizuna opens new roads -->
+  <rect x="20" y="70" width="8" height="66" fill="#7a4b3a"/><rect x="92" y="70" width="8" height="66" fill="#7a4b3a"/>
+  <path d="M6 22 L60 4 L114 22Z" fill="#c8553d" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="12" y="22" width="96" height="66" rx="4" fill="#a8754b" stroke="#3b3a4a" stroke-width="3"/>
+  <rect x="20" y="30" width="80" height="50" fill="#efe3c2"/>
+  <path d="M28 66 L44 44 L56 58 L70 40 L92 66Z" fill="#8fa3bd"/><circle cx="36" cy="40" r="5" fill="#f2a541"/>
+  <path d="M30 72 h60" stroke="#c8553d" stroke-width="3" stroke-dasharray="6 5"/>
+</svg>

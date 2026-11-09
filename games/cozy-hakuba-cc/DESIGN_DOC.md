@@ -601,7 +601,7 @@ Each test asset must **show what it's for** before it looks beautiful:
 | Milestone | Scope | Exit criteria (verified by Claude first) |
 |---|---|---|
 | **M0 Skeleton** ✅ | Vite + Phaser 4 + sim core + debug API + asset manifest/catalog + station sandbox (mini fetch loop, restoration filter, season swap, sleep) | Boots; 12 unit tests and the e2e playthrough with 3 golden snapshots pass |
-| **M1 Vertical slice** | Character select (1 personality), JR Hakuba Station region with a 3-step arc, Kei Van interior, Coffee archetype, 1 puzzle engine (grid packing), day loop, winter ↔ green switch, restoration shader | Full slice playable in the browser in about 15 minutes; screenshots in both seasons |
+| **M1 Vertical slice** ✅ | Character select (name, pronouns, 5 personalities), JR Hakuba Station 3-step arc (brochures → valley map sticker craft → lost-luggage grid packing), kodama, seasonal crowds and lanterns, Kei Van interior with drag-and-drop modules + shop + comfort→stamina, Coffee café (pour-timing prep + window service), Valley Revival Board, autosave on sleep + Continue | 25 unit tests; one e2e playthrough of the whole slice by real input in both seasons |
 | **M2 Garage & build** | Snow Peak Land Station, module placement, archetype choice (coffee + soba), chassis Tier 1 | The build changes earnings in the balance sim |
 | **M3 North arm** | Happo terminal, Echoland, Happo Pond, Iwatake, Tsugaike; seating, flow + balance engines | 6 regions playable; Season Report |
 | **M4 South arm** | Goryu, 47, Aokiko; remaining archetypes; helpers; Ranks 1–5 | Full game reaches the ending in the balance sim |

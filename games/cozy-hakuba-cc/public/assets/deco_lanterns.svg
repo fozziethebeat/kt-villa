@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="90" viewBox="0 0 640 90">
+  <!-- Festival lantern string: shown when a region is Thriving -->
+  <path d="M0 10 Q320 60 640 10" fill="none" stroke="#3b3a4a" stroke-width="2.5"/>
+  <g stroke="#3b3a4a" stroke-width="2">
+    <g fill="#c8553d"><ellipse cx="60" cy="38" rx="14" ry="18"/><ellipse cx="220" cy="56" rx="14" ry="18"/><ellipse cx="420" cy="56" rx="14" ry="18"/><ellipse cx="580" cy="38" rx="14" ry="18"/></g>
+    <g fill="#f2a541"><ellipse cx="140" cy="49" rx="14" ry="18"/><ellipse cx="320" cy="60" rx="14" ry="18"/><ellipse cx="500" cy="49" rx="14" ry="18"/></g>
+  </g>
+  <g fill="#fff3c4" opacity="0.7"><ellipse cx="60" cy="38" rx="5" ry="10"/><ellipse cx="140" cy="49" rx="5" ry="10"/><ellipse cx="220" cy="56" rx="5" ry="10"/><ellipse cx="320" cy="60" rx="5" ry="10"/><ellipse cx="420" cy="56" rx="5" ry="10"/><ellipse cx="500" cy="49" rx="5" ry="10"/><ellipse cx="580" cy="38" rx="5" ry="10"/></g>
+</svg>

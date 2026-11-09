@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="460" viewBox="0 0 760 460">
+  <!-- Blank valley map (creation quest). Sticker slots are drawn at runtime. -->
+  <rect x="10" y="12" width="740" height="436" rx="10" fill="#3b3a4a" opacity="0.2" transform="translate(6 6)"/>
+  <rect x="10" y="12" width="740" height="436" rx="10" fill="#f6eedb" stroke="#3b3a4a" stroke-width="3"/>
+  <path d="M40 120 L120 60 L180 100 L260 40 L330 90 L400 50 L470 110" fill="none" stroke="#b7a98e" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>
+  <path d="M380 440 Q400 330 360 250 T420 30" fill="none" stroke="#9cc3d6" stroke-width="10" stroke-linecap="round" opacity="0.8"/>
+  <path d="M120 380 Q260 300 380 300 T700 230" fill="none" stroke="#d6c7a8" stroke-width="6" stroke-dasharray="14 8"/>
+  <text x="700" y="60" font-family="sans-serif" font-size="22" fill="#b7a98e" text-anchor="middle">N ↑</text>
+  <text x="40" y="430" font-family="sans-serif" font-size="18" fill="#b7a98e">白馬村 Hakuba Valley</text>
+</svg>

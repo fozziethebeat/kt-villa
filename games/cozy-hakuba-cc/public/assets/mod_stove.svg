@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="130" viewBox="0 0 160 130">
+  <!-- Van module: mini wood stove (living, comfort +2) -->
+  <rect x="44" y="54" width="72" height="66" rx="10" fill="#3b3a4a"/>
+  <rect x="58" y="70" width="44" height="34" rx="6" fill="#f2a541"/><path d="M70 100 q10 -26 20 0" fill="#c8553d"/>
+  <rect x="72" y="14" width="16" height="42" fill="#5a596a"/>
+  <rect x="0" y="122" width="160" height="8" fill="#a8754b"/>
+</svg>

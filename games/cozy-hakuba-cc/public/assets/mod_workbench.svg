@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="130" viewBox="0 0 160 130">
+  <!-- Van module: workbench (production: crafting) -->
+  <rect x="14" y="56" width="132" height="14" rx="3" fill="#a8754b" stroke="#3b3a4a" stroke-width="3"/>
+  <rect x="24" y="70" width="10" height="52" fill="#7a4b3a"/><rect x="126" y="70" width="10" height="52" fill="#7a4b3a"/>
+  <rect x="30" y="34" width="56" height="22" rx="2" fill="#fbfaf6" stroke="#3b3a4a" stroke-width="2" transform="rotate(-6 58 45)"/>
+  <path d="M100 52 L128 24" stroke="#3b3a4a" stroke-width="5" stroke-linecap="round"/><path d="M124 18 l10 10 l-6 6 l-10 -10Z" fill="#6c7fa3" stroke="#3b3a4a" stroke-width="2"/>
+  <rect x="0" y="122" width="160" height="8" fill="#8a96a8"/>
+</svg>

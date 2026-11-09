@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
 import { art, label, paperGrain, paperPanel } from '../ui/art';
 import { PAL, hex } from '../theme';
+import { loadGame } from '../persist';
+import { store } from '../gameStore';
+import { button } from '../ui/widgets';
 
 export class TitleScene extends Phaser.Scene {
   constructor() { super('Title'); }
@@ -21,24 +24,27 @@ export class TitleScene extends Phaser.Scene {
     const panel = paperPanel(this, width / 2 - 330, 90, 660, 200);
     const title = label(this, width / 2, 150, 'Hakuba Wake-Up', 64, PAL.ink, '900').setOrigin(0.5);
     const sub = label(this, width / 2, 215, '白馬 ・ a cozy van-life revival', 24, PAL.cedar, '500').setOrigin(0.5);
-    const ver = label(this, width / 2, 258, 'M0 skeleton build', 16, PAL.twilight, '500').setOrigin(0.5);
+    const ver = label(this, width / 2, 258, 'M1 vertical slice', 16, PAL.twilight, '500').setOrigin(0.5);
     for (const o of [panel, title, sub, ver]) { o.setAlpha(0); this.tweens.add({ targets: o, alpha: 1, duration: 700, delay: 300 }); }
 
-    const btn = paperPanel(this, width / 2 - 120, 330, 240, 64, PAL.lantern);
-    const btnText = label(this, width / 2, 362, 'Start  ▶', 28).setOrigin(0.5);
-    const hit = this.add.zone(width / 2, 362, 240, 64).setInteractive({ useHandCursor: true });
-    hit.on('pointerover', () => { btn.y = 326; btnText.y = 358; });
-    hit.on('pointerout', () => { btn.y = 330; btnText.y = 362; });
-    hit.on('pointerdown', () => this.begin());
-    this.tweens.add({ targets: [btn, btnText], scale: { from: 1, to: 1.03 }, duration: 900, yoyo: true, repeat: -1 });
-
+    const save = loadGame();
+    if (save) {
+      button(this, width / 2, 350, 260, 60, `Continue · Day ${save.day}`, () => this.begin(save), PAL.lantern, 24);
+      button(this, width / 2, 424, 260, 52, 'New game', () => this.begin(null), PAL.snow, 20);
+    } else {
+      const b = button(this, width / 2, 362, 240, 64, 'Start  ▶', () => this.begin(null), PAL.lantern, 28);
+      this.tweens.add({ targets: b.container, scale: { from: 1, to: 1.03 }, duration: 900, yoyo: true, repeat: -1 });
+    }
     label(this, width / 2, height - 30, 'Enter / click to start  ·  WASD or arrows to walk  ·  E to interact', 16, PAL.ink, '500').setOrigin(0.5).setAlpha(0.7);
-    this.input.keyboard?.once('keydown-ENTER', () => this.begin());
+    this.input.keyboard?.once('keydown-ENTER', () => this.begin(save));
 
     const flash = this.add.rectangle(0, 0, width, height, hex(PAL.snow)).setOrigin(0).setAlpha(0).setDepth(9000);
-    this.events.once('begin', () => this.tweens.add({ targets: flash, alpha: 1, duration: 300, onComplete: () => this.scene.start('Station') }));
+    this.events.once('begin', (next: string) => this.tweens.add({ targets: flash, alpha: 1, duration: 300, onComplete: () => this.scene.start(next) }));
     paperGrain(this);
   }
 
-  private begin() { this.events.emit('begin'); }
+  private begin(save: ReturnType<typeof loadGame>) {
+    if (save) store.replace(save, 'load');
+    this.events.emit('begin', save ? 'Station' : 'CharacterSelect');
+  }
 }

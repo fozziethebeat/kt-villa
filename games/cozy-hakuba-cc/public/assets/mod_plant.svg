@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="130" viewBox="0 0 160 130">
+  <!-- Van module: plant shelf (living, comfort +1) -->
+  <rect x="30" y="76" width="100" height="10" fill="#a8754b" stroke="#3b3a4a" stroke-width="2"/>
+  <path d="M56 76 l-6 -24 h28 l-6 24Z" fill="#c8553d" stroke="#3b3a4a" stroke-width="2"/>
+  <path d="M64 52 q-20 -30 -4 -40 q8 20 4 40 q10 -30 26 -30 q-6 22 -26 30" fill="#6fa678" stroke="#3b3a4a" stroke-width="2"/>
+  <path d="M96 76 l-4 -14 h20 l-4 14Z" fill="#efe3c2" stroke="#3b3a4a" stroke-width="2"/><circle cx="102" cy="56" r="8" fill="#8cc084" stroke="#3b3a4a" stroke-width="2"/>
+  <rect x="0" y="122" width="160" height="8" fill="#a8754b"/>
+</svg>

@@ -41,7 +41,48 @@ export interface PersonalityDef {
   id: string;
   name: string;
   blurb: string;
+  summary: string;
   mods: Record<string, number>;
+}
+
+export type QuestType = 'fetch' | 'create' | 'puzzle';
+export interface QuestStepDef {
+  id: string;
+  type: QuestType;
+  title: string;
+  needs: Record<string, number>;
+  consumes: boolean;
+  rewards: Record<string, number>;
+  vitality: Vitality;
+  unlocks: string[];
+  lines: { intro: string; progress: string; complete: string };
+}
+export interface RegionQuestDef { keyPerson: string; steps: QuestStepDef[]; after: string }
+
+export type Shape = [number, number][];
+export interface ModuleDef {
+  id: string;
+  name: string;
+  category: 'living' | 'production' | 'service' | 'roof' | 'utility';
+  shape: Shape;
+  comfort: number;
+  price: number;
+  enables: string[];
+  blurb: string;
+}
+
+export interface ProductDef { id: string; name: string; price: number; archetype: string; seasonAppeal: Record<ScoredSeason, number> }
+export interface CustomerTypeDef { id: string; name: string; weight: Record<ScoredSeason, number>; prefs: Record<string, number>; patience: number; tip: number }
+export interface BusinessDef {
+  products: ProductDef[];
+  customers: CustomerTypeDef[];
+  shift: {
+    baseCustomers: number; minCustomers: number; maxCustomers: number; durationSec: number;
+    phaseMult: Record<PhaseId, number>; cupsPerPour: number; pours: number; pastryStock: number;
+    qualityMult: number[]; tipRate: number; reputationPerHappy: number; reputationPerMissed: number;
+  };
+  comfortStaminaDivisor: number;
+  comfortStaminaCap: number;
 }
 
 export interface Content {
@@ -49,6 +90,9 @@ export interface Content {
   regions: RegionDef[];
   archetypes: ArchetypeDef[];
   personalities: PersonalityDef[];
+  quests: Record<string, RegionQuestDef>;
+  modules: ModuleDef[];
+  business: BusinessDef;
 }
 
 export interface PlayerProfile {
@@ -59,8 +103,12 @@ export interface PlayerProfile {
 
 export interface RegionState { vitality: Vitality; questStep: number; kodamaFound: number }
 
+export interface Placement { moduleId: string; x: number; y: number; rot: number }
+
+export interface ShiftSummary { day: number; served: number; missed: number; yen: number; tips: number; reputation: number }
+
 export interface GameState {
-  version: 1;
+  version: 2;
   seed: number;
   rngState: number;
   player: PlayerProfile;
@@ -74,6 +122,12 @@ export interface GameState {
   currentRegion: string;
   regions: Record<string, RegionState>;
   inventory: Record<string, number>;
+  /** Feature flags unlocked by quests, e.g. "business:coffee", "module:pour_bar", "revival_board", "road:snowpeak". */
+  unlocks: string[];
+  /** Best star rating per quest step / mini-game id. */
+  stars: Record<string, number>;
+  van: { grid: { w: number; h: number }; owned: string[]; placed: Placement[] };
+  business: { reputation: number; served: number; shifts: number; last: ShiftSummary | null };
   log: string[];
 }
 

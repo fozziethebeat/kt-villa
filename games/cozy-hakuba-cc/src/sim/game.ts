@@ -1,4 +1,5 @@
 import { CONTENT, regionDef } from './content';
+import { comfortStaminaBonus } from './van';
 import { firstDayOfSeason, seasonForDay } from './seasons';
 import type { ActionKind, Content, GameState, PhaseId, PlayerProfile, SeasonId, SeasonInfo, Vitality } from './types';
 
@@ -8,8 +9,8 @@ export function createNewGame(opts: { seed?: number; player?: Partial<PlayerProf
   const seed = (opts.seed ?? 20261108) >>> 0;
   const regions: GameState['regions'] = {};
   for (const r of content.regions) regions[r.id] = { vitality: 0, questStep: 0, kodamaFound: 0 };
-  return {
-    version: 1,
+  const state: GameState = {
+    version: 2,
     seed,
     rngState: seed,
     player: { ...DEFAULT_PLAYER, ...opts.player },
@@ -23,8 +24,21 @@ export function createNewGame(opts: { seed?: number; player?: Partial<PlayerProf
     currentRegion: 'station',
     regions,
     inventory: {},
+    unlocks: [],
+    stars: {},
+    van: {
+      grid: { w: 4, h: 2 },
+      owned: ['futon', 'workbench'],
+      placed: [
+        { moduleId: 'futon', x: 0, y: 1, rot: 0 },
+        { moduleId: 'workbench', x: 3, y: 1, rot: 0 },
+      ],
+    },
+    business: { reputation: 0, served: 0, shifts: 0, last: null },
     log: ['Arrived at JR Hakuba Station in late autumn.'],
   };
+  state.staminaMax = content.tuning.baseStamina + comfortStaminaBonus(state, content);
+  return state;
 }
 
 export function season(state: GameState, content: Content = CONTENT): SeasonInfo {
@@ -55,6 +69,7 @@ export function endDay(state: GameState, content: Content = CONTENT): { newSeaso
   const before = season(state, content);
   state.day += 1;
   state.staminaSpent = 0;
+  state.staminaMax = content.tuning.baseStamina + comfortStaminaBonus(state, content);
   const after = season(state, content);
   const changed = before.season !== after.season;
   if (changed) state.log.push(`Day ${state.day}: ${after.label} begins.`);
@@ -88,4 +103,26 @@ export function grant(state: GameState, item: string, count = 1): void {
 /** Saturation multiplier for rendering a region at a given vitality (0 = mostly grey, 3 = full color). */
 export function saturationFor(v: Vitality): number {
   return [0.25, 0.55, 0.85, 1.0][v];
+}
+
+export function hasUnlock(state: GameState, flag: string): boolean {
+  return state.unlocks.includes(flag);
+}
+
+export function addUnlock(state: GameState, flag: string): void {
+  if (!state.unlocks.includes(flag)) state.unlocks.push(flag);
+}
+
+export function count(state: GameState, item: string): number {
+  if (item === 'yen') return state.yen;
+  if (item === 'kizuna') return state.kizuna;
+  return state.inventory[item] ?? 0;
+}
+
+export function take(state: GameState, item: string, n: number): boolean {
+  if (count(state, item) < n) return false;
+  if (item === 'yen') state.yen -= n;
+  else if (item === 'kizuna') state.kizuna -= n;
+  else { state.inventory[item] -= n; if (state.inventory[item] <= 0) delete state.inventory[item]; }
+  return true;
 }

@@ -5,6 +5,7 @@ import { endDay, phase, season, staminaLeft } from '../sim/game';
 import type { GameState } from '../sim/types';
 import { art, label, paperGrain, paperPanel } from '../ui/art';
 import { PAL, WIDTH, hex } from '../theme';
+import { saveGame } from '../persist';
 
 const VITALITY_NAMES = ['Dormant', 'Stirring', 'Awake', 'Thriving'];
 const PHASE_GLYPH: Record<string, string> = { morning: '☀', afternoon: '◐', evening: '☾', night: '★' };
@@ -31,13 +32,15 @@ export class HudScene extends Phaser.Scene {
     paperPanel(this, 16, 14, 330, 92);
     this.dayText = label(this, 34, 24, '', 24);
     this.phaseText = label(this, 34, 58, '', 18, PAL.twilight, '500');
-    for (let i = 0; i < CONTENT.tuning.baseStamina; i++) this.pips.push(art(this, 200 + (i % 6) * 22, 66 + Math.floor(i / 6) * 22, 'icon_stamina', 0.5, 0.5).setScale(0.36));
+    const maxPips = CONTENT.tuning.baseStamina + CONTENT.business.comfortStaminaCap;
+    this.pips = [];
+    for (let i = 0; i < maxPips; i++) this.pips.push(art(this, 188 + (i % 8) * 19, 64 + Math.floor(i / 8) * 22, 'icon_stamina', 0.5, 0.5).setScale(0.33));
 
     // Wallet card
     paperPanel(this, WIDTH - 236, 14, 220, 92);
     this.yenText = label(this, WIDTH - 218, 24, '', 24);
     this.kizunaText = label(this, WIDTH - 218, 58, '', 20, PAL.noren);
-    this.bagText = label(this, WIDTH - 30, 62, '', 16, PAL.teal, '500').setOrigin(1, 0);
+    this.bagText = label(this, WIDTH - 26, 112, '', 15, PAL.ink, '700').setOrigin(1, 0).setStroke(PAL.snow, 5);
 
     // Region card (bottom-left)
     paperPanel(this, 16, 640, 330, 66);
@@ -53,8 +56,9 @@ export class HudScene extends Phaser.Scene {
     paperGrain(this);
 
     this.game.events.on('endDay', this.onEndDay, this);
+    this.game.events.on('banner', this.showBanner, this);
     this.unsub = store.subscribe((s) => this.refresh(s));
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => { this.unsub?.(); this.game.events.off('endDay', this.onEndDay, this); });
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => { this.unsub?.(); this.game.events.off('endDay', this.onEndDay, this); this.game.events.off('banner', this.showBanner, this); });
     this.refresh(store.state);
     this.showBanner(`Day ${store.state.day} · ${season(store.state).label}`);
   }
@@ -64,7 +68,8 @@ export class HudScene extends Phaser.Scene {
     store.update('endDay', (s) => { newSeason = endDay(s).newSeason; });
     const s = store.state;
     const ns = newSeason as ReturnType<typeof endDay>['newSeason'];
-    this.showBanner(ns ? `${ns.label} begins\nDay ${s.day}` : `Good morning · Day ${s.day}`);
+    const saved = saveGame(s);
+    this.showBanner(ns ? `${ns.label} begins\nDay ${s.day}` : `Good morning · Day ${s.day}${saved ? '  ·  saved' : ''}`);
   }
 
   showBanner(text: string) {
@@ -88,8 +93,8 @@ export class HudScene extends Phaser.Scene {
     this.pips.forEach((p, i) => { p.setVisible(i < s.staminaMax).setAlpha(i < left ? 1 : 0.18); });
     this.yenText.setText(`¥ ${s.yen.toLocaleString('en-US')}`);
     this.kizunaText.setText(`絆 ${s.kizuna}`);
-    const bag = s.inventory.brochure ?? 0;
-    this.bagText.setText(bag ? `brochures ${bag}` : '');
+    const bagItems = Object.entries(s.inventory).filter(([, n]) => n > 0).map(([k, n]) => `${k.replace(/_/g, ' ')} ${n}`);
+    this.bagText.setText(bagItems.join(' · '));
     const r = regionDef(CONTENT, s.currentRegion);
     const v = s.regions[r.id].vitality;
     this.regionText.setText(`${r.name}  ${r.nameJa}`);

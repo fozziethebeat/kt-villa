@@ -1,0 +1,401 @@
+import { GameState, Gender, PersonalityId, RegionId, RegionProgress, Season } from './types';
+import { PERSONALITIES, REGIONS, REGION_MAP, VAN_MODULES } from './content';
+
+type Listener = (state: GameState) => void;
+
+function createInitialRegions(): Record<RegionId, RegionProgress> {
+  const out = {} as Record<RegionId, RegionProgress>;
+  for (const r of REGIONS) {
+    out[r.id] = {
+      unlocked: r.defaultUnlocked,
+      fetchCollected: 0,
+      puzzleSolved: false,
+      stewardHelped: false,
+      greenPivotBuilt: false,
+      vitalityWinter: r.defaultUnlocked ? 35 : 0,
+      vitalityGreen: r.defaultUnlocked ? 15 : 0,
+    };
+  }
+  return out;
+}
+
+class GameStore {
+  private state: GameState;
+  private listeners: Set<Listener> = new Set();
+
+  constructor() {
+    this.state = {
+      started: false,
+      playerName: 'Yuki',
+      gender: 'female',
+      personality: 'barista',
+      day: 1,
+      dayInCycle: 1,
+      season: 'winter',
+      isPrepDay: false,
+      yen: 520,
+      stamina: 100,
+      maxStamina: 125,
+      cozyRating: 34,
+      reputation: 10,
+      currentRegion: 'station',
+      vanParkedAndOpen: false,
+      vanTier: 1,
+      gridCols: 4,
+      gridRows: 3,
+      ownedModules: ['espresso_bar', 'ski_wax_bench', 'futon_bunk'],
+      placedModules: [
+        { instanceId: 'mod_1', moduleId: 'espresso_bar', gridX: 0, gridY: 0 },
+        { instanceId: 'mod_2', moduleId: 'ski_wax_bench', gridX: 2, gridY: 0 },
+        { instanceId: 'mod_3', moduleId: 'futon_bunk', gridX: 0, gridY: 2 },
+      ],
+      inventory: {
+        'Cedar Branch': 0,
+        'Birch Bark': 0,
+        'Route Plaque': 0,
+      },
+      regions: createInitialRegions(),
+      customersServedTotal: 0,
+      customersServedToday: 0,
+      log: ['Arrived at Hakuba Station in your Kei Camper Van! Help Stationmaster Kenji wake up the plaza.'],
+    };
+    this.recalculateVanStats();
+  }
+
+  public getState(): GameState {
+    return this.state;
+  }
+
+  public subscribe(fn: Listener): () => void {
+    this.listeners.add(fn);
+    return () => this.listeners.delete(fn);
+  }
+
+  private emit(): void {
+    this.recalculateVanStats();
+    for (const fn of this.listeners) {
+      fn(this.state);
+    }
+  }
+
+  public addLog(msg: string): void {
+    this.state.log = [msg, ...this.state.log.slice(0, 14)];
+  }
+
+  public startNewJourney(name: string, gender: Gender, personality: PersonalityId): void {
+    this.state.playerName = name.trim() || 'Yuki';
+    this.state.gender = gender;
+    this.state.personality = personality;
+    this.state.started = true;
+
+    const pDef = PERSONALITIES.find((p) => p.id === personality)!;
+    this.state.inventory[pDef.startingItem] = 1;
+    this.addLog(`Welcome to Hakuba, ${this.state.playerName} (${pDef.name})! Starting perk active: ${pDef.perkTitle}.`);
+    this.emit();
+  }
+
+  public recalculateVanStats(): void {
+    let cozy = 0;
+    for (const placed of this.state.placedModules) {
+      const def = VAN_MODULES.find((m) => m.id === placed.moduleId);
+      if (!def) continue;
+      let bonus = def.cozyBonus;
+      if (def.seasonTag === this.state.season) bonus = Math.round(bonus * 1.25);
+      if (this.state.personality === 'curator' && def.category === 'living') {
+        bonus = Math.round(bonus * 1.25);
+      }
+      cozy += bonus;
+    }
+    this.state.cozyRating = cozy;
+    this.state.maxStamina = 100 + cozy;
+    if (this.state.stamina > this.state.maxStamina) {
+      this.state.stamina = this.state.maxStamina;
+    }
+
+    // Recompute regional seasonal vitalities
+    for (const r of REGIONS) {
+      const prog = this.state.regions[r.id];
+      if (!prog.unlocked) {
+        prog.vitalityWinter = 0;
+        prog.vitalityGreen = 0;
+        continue;
+      }
+      prog.vitalityWinter = prog.stewardHelped ? Math.min(100, r.winterTrafficBase + 20) : 35;
+      if (!prog.stewardHelped) {
+        prog.vitalityGreen = 15;
+      } else if (prog.greenPivotBuilt) {
+        prog.vitalityGreen = r.greenTrafficPivoted;
+      } else {
+        prog.vitalityGreen = r.greenTrafficBase;
+      }
+    }
+  }
+
+  public travelToRegion(regionId: RegionId): { ok: boolean; reason?: string } {
+    const def = REGION_MAP[regionId];
+    const prog = this.state.regions[regionId];
+    if (!def.unlockedInPhase1) {
+      return { ok: false, reason: `${def.name} unlocks in Phase 2/3 expansion! Wake up the first 3 hubs first.` };
+    }
+    if (!prog.unlocked) {
+      return { ok: false, reason: `Help the Steward in the previous region to wake up the road to ${def.name}!` };
+    }
+    this.state.currentRegion = regionId;
+    this.state.vanParkedAndOpen = false;
+    this.addLog(`Drove your camper van to ${def.name} (${def.japaneseName}).`);
+    this.emit();
+    return { ok: true };
+  }
+
+  public collectForageItem(regionId: RegionId, itemName: string): number {
+    const prog = this.state.regions[regionId];
+    const def = REGION_MAP[regionId];
+    const amount = this.state.personality === 'photographer' ? 2 : 1;
+    this.state.inventory[itemName] = (this.state.inventory[itemName] || 0) + amount;
+    if (itemName === def.fetchItemName) {
+      prog.fetchCollected = Math.min(def.fetchItemRequired, prog.fetchCollected + amount);
+    }
+    this.addLog(`Foraged +${amount} ${itemName} in ${def.name} (${prog.fetchCollected}/${def.fetchItemRequired}).`);
+    this.emit();
+    return amount;
+  }
+
+  public completeRegionPuzzle(regionId: RegionId): void {
+    const prog = this.state.regions[regionId];
+    const def = REGION_MAP[regionId];
+    prog.puzzleSolved = true;
+    this.state.yen += 150;
+    this.addLog(`Solved ${def.puzzleTitle}! Earned ¥150 restoration bonus.`);
+    this.checkStewardWakeUp(regionId);
+    this.emit();
+  }
+
+  public checkStewardWakeUp(regionId: RegionId): boolean {
+    const prog = this.state.regions[regionId];
+    const def = REGION_MAP[regionId];
+    if (!prog.stewardHelped && prog.fetchCollected >= def.fetchItemRequired && prog.puzzleSolved) {
+      prog.stewardHelped = true;
+      this.state.reputation += 25;
+      this.state.yen += 300;
+      this.addLog(`✨ ${def.name} WOKE UP IN FULL COLOR! ${def.stewardName} lit the Regional Hearth (+¥300)!`);
+
+      // Unlock next connected region
+      if (regionId === 'station') {
+        this.state.regions.snowpeak.unlocked = true;
+        this.addLog(`🛣️ New Sub-Region Unlocked: Snow Peak Land Station!`);
+      } else if (regionId === 'snowpeak') {
+        this.state.regions.happo.unlocked = true;
+        this.addLog(`🛣️ New Sub-Region Unlocked: Happo-One Bus Terminal!`);
+      } else if (regionId === 'happo') {
+        this.state.regions.echoland.unlocked = true;
+        this.addLog(`🎉 Phase 1 Tri-Hub Restoration Complete! Echoland avenue beckons.`);
+      }
+      this.emit();
+      return true;
+    }
+    return false;
+  }
+
+  public buildGreenPivot(regionId: RegionId): { ok: boolean; message: string } {
+    const prog = this.state.regions[regionId];
+    const def = REGION_MAP[regionId];
+    if (!prog.stewardHelped) {
+      return { ok: false, message: `Wake up ${def.name} with ${def.stewardName} first before building the Green Season Pivot!` };
+    }
+    if (prog.greenPivotBuilt) {
+      return { ok: false, message: `${def.greenPivotTitle} is already active and thriving!` };
+    }
+    const cost = this.state.personality === 'tinkerer' ? Math.round(def.greenPivotCost * 0.85) : def.greenPivotCost;
+    if (this.state.yen < cost) {
+      return { ok: false, message: `Need ¥${cost} to build ${def.greenPivotTitle} (You have ¥${this.state.yen}). Open your Van Shop to earn more!` };
+    }
+    this.state.yen -= cost;
+    prog.greenPivotBuilt = true;
+    this.state.reputation += 30;
+    this.addLog(`🌱 Built Green Season Pivot: ${def.greenPivotTitle} in ${def.name}! Summer tourist vitality surged to ${def.greenTrafficPivoted}%!`);
+    this.emit();
+    return { ok: true, message: `Built ${def.greenPivotTitle}!` };
+  }
+
+  public buyOrPlaceVanModule(moduleId: string, gridX: number, gridY: number): { ok: boolean; message: string } {
+    const def = VAN_MODULES.find((m) => m.id === moduleId);
+    if (!def) return { ok: false, message: 'Unknown module' };
+
+    const isOwned = this.state.ownedModules.includes(moduleId);
+    const cost = isOwned
+      ? 0
+      : this.state.personality === 'tinkerer'
+      ? Math.round(def.cost * 0.85)
+      : def.cost;
+
+    if (!isOwned && this.state.yen < cost) {
+      return { ok: false, message: `Need ¥${cost} to purchase ${def.name}.` };
+    }
+
+    // Check bounds
+    if (gridX < 0 || gridY < 0 || gridX + def.width > this.state.gridCols || gridY + def.height > this.state.gridRows) {
+      return { ok: false, message: `${def.name} (${def.width}x${def.height}) doesn't fit at slot (${gridX + 1}, ${gridY + 1}).` };
+    }
+
+    // Remove any overlapping modules so swapping is effortless and cozy!
+    this.state.placedModules = this.state.placedModules.filter((placed) => {
+      const pDef = VAN_MODULES.find((m) => m.id === placed.moduleId)!;
+      const overlapX = gridX < placed.gridX + pDef.width && gridX + def.width > placed.gridX;
+      const overlapY = gridY < placed.gridY + pDef.height && gridY + def.height > placed.gridY;
+      return !(overlapX && overlapY);
+    });
+
+    if (!isOwned) {
+      this.state.yen -= cost;
+      this.state.ownedModules.push(moduleId);
+    }
+
+    this.state.placedModules.push({
+      instanceId: `mod_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      moduleId,
+      gridX,
+      gridY,
+    });
+
+    this.addLog(`Installed ${def.icon} ${def.name} at Van Grid (${gridX + 1}, ${gridY + 1}).`);
+    this.emit();
+    return { ok: true, message: `Installed ${def.name}!` };
+  }
+
+  public removeVanModuleAt(gridX: number, gridY: number): void {
+    this.state.placedModules = this.state.placedModules.filter((placed) => {
+      const pDef = VAN_MODULES.find((m) => m.id === placed.moduleId)!;
+      const hit = gridX >= placed.gridX && gridX < placed.gridX + pDef.width && gridY >= placed.gridY && gridY < placed.gridY + pDef.height;
+      return !hit;
+    });
+    this.emit();
+  }
+
+  public upgradeVanChassis(): { ok: boolean; message: string } {
+    if (this.state.vanTier >= 2) {
+      return { ok: false, message: 'Already driving the Tier 2 Retro 4WD Delica/HiAce Overland Van!' };
+    }
+    const cost = this.state.personality === 'tinkerer' ? 680 : 800;
+    if (this.state.yen < cost) {
+      return { ok: false, message: `Need ¥${cost} to upgrade to Tier 2 4WD Overland Van (6x3 Grid + Roof Tent).` };
+    }
+    this.state.yen -= cost;
+    this.state.vanTier = 2;
+    this.state.gridCols = 6;
+    this.state.gridRows = 3;
+    this.addLog(`🚐 UPGRADED VAN CHASSIS to Tier 2 Retro 4WD Overland! Interior grid expanded to 6x3!`);
+    this.emit();
+    return { ok: true, message: 'Upgraded to Tier 2 Retro 4WD Overland Van!' };
+  }
+
+  public calculatePopUpShiftEstimate(): {
+    expectedCustomers: number;
+    revenuePerCustomer: number;
+    seasonMatchWarning: string | null;
+    regionalVitality: number;
+  } {
+    const regDef = REGION_MAP[this.state.currentRegion];
+    const regProg = this.state.regions[this.state.currentRegion];
+    const vitality = this.state.season === 'winter' ? regProg.vitalityWinter : regProg.vitalityGreen;
+
+    let totalRev = 0;
+    let mismatchedCount = 0;
+    const pDef = PERSONALITIES.find((p) => p.id === this.state.personality)!;
+
+    for (const placed of this.state.placedModules) {
+      const mDef = VAN_MODULES.find((m) => m.id === placed.moduleId);
+      if (!mDef || mDef.category === 'living') continue;
+
+      let rev = mDef.baseRevenue;
+      if (mDef.seasonTag === 'both') {
+        rev *= 1.0;
+      } else if (mDef.seasonTag === this.state.season) {
+        rev *= 1.35; // Peak seasonal demand!
+      } else {
+        rev *= 0.3; // Off-season penalty (e.g., Ski Wax in July!)
+        mismatchedCount++;
+      }
+
+      if (mDef.category === pDef.bonusCategory) {
+        rev *= 1.2;
+      }
+      totalRev += rev;
+    }
+
+    const expectedCustomers = Math.max(2, Math.round((vitality / 100) * 6 + this.state.cozyRating / 25));
+    const revenuePerCustomer = Math.max(60, Math.round(totalRev / Math.max(1, expectedCustomers / 2)));
+
+    let warning: string | null = null;
+    if (this.state.season === 'green' && !regProg.greenPivotBuilt) {
+      warning = `⚠️ Green Season Slump! ${regDef.name} has no Summer Pivot built yet (Vitality ${vitality}%). Build "${regDef.greenPivotTitle}" to bring summer crowds!`;
+    } else if (mismatchedCount > 0) {
+      warning = `💡 Seasonal Tip: ${mismatchedCount} of your installed Van modules are tuned for ${
+        this.state.season === 'winter' ? 'Green Season' : 'Winter'
+      }. Swap in ${this.state.season === 'winter' ? '❄️ Winter' : '🌱 Green'} gear for +135% revenue!`;
+    }
+
+    return {
+      expectedCustomers,
+      revenuePerCustomer,
+      seasonMatchWarning: warning,
+      regionalVitality: vitality,
+    };
+  }
+
+  public recordServiceMiniGameResult(qualityMultiplier: number): {
+    earnedYen: number;
+    customersServed: number;
+  } {
+    const est = this.calculatePopUpShiftEstimate();
+    const earnedYen = Math.round(est.revenuePerCustomer * est.expectedCustomers * qualityMultiplier);
+    this.state.yen += earnedYen;
+    this.state.customersServedToday += est.expectedCustomers;
+    this.state.customersServedTotal += est.expectedCustomers;
+    this.state.stamina = Math.max(0, this.state.stamina - 20);
+    this.state.reputation += Math.round(est.expectedCustomers * (this.state.personality === 'curator' ? 2 : 1));
+
+    this.addLog(
+      `🚐 Served ${est.expectedCustomers} happy visitors in ${REGION_MAP[this.state.currentRegion].name} (+¥${earnedYen} | Quality ${Math.round(
+        qualityMultiplier * 100
+      )}%)!`
+    );
+    this.emit();
+    return { earnedYen, customersServed: est.expectedCustomers };
+  }
+
+  public advanceDay(): { seasonChanged: boolean; newSeason: Season; isPrepDay: boolean } {
+    this.state.day += 1;
+    this.state.dayInCycle += 1;
+    this.state.customersServedToday = 0;
+    this.state.stamina = this.state.maxStamina;
+
+    let seasonChanged = false;
+    if (this.state.dayInCycle === 6) {
+      this.state.isPrepDay = true;
+      const nextSeason = this.state.season === 'winter' ? 'Green Season 🌱' : 'Winter Powder Season ❄️';
+      this.addLog(`🌤️ Day ${this.state.day} (Shoulder Prep Day): Tomorrow the valley transitions to ${nextSeason}! Check your Van Grid & Regional Pivots.`);
+    } else if (this.state.dayInCycle > 6) {
+      this.state.dayInCycle = 1;
+      this.state.isPrepDay = false;
+      this.state.season = this.state.season === 'winter' ? 'green' : 'winter';
+      seasonChanged = true;
+      this.addLog(
+        this.state.season === 'green'
+          ? `🌱 GREEN SEASON HAS ARRIVED! The snow has melted into lush alpine meadows. Regions with Summer Pivots will thrive!`
+          : `❄️ WINTER SEASON HAS ARRIVED! Fresh Hakuba powder blankets the roofs and ski lifts spin to life!`
+      );
+    } else {
+      this.state.isPrepDay = false;
+      this.addLog(`☀️ Good morning! Day ${this.state.day} (${this.state.season === 'winter' ? '❄️ Winter' : '🌱 Green'} Day ${this.state.dayInCycle}/6). Stamina restored to ${this.state.stamina}.`);
+    }
+
+    this.emit();
+    return {
+      seasonChanged,
+      newSeason: this.state.season,
+      isPrepDay: this.state.isPrepDay,
+    };
+  }
+}
+
+export const store = new GameStore();

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="130" viewBox="0 0 320 130">
+  <!-- Van module: pastry case (production: apple pastry) -->
+  <rect x="16" y="40" width="288" height="82" rx="8" fill="#a8754b" stroke="#3b3a4a" stroke-width="3"/>
+  <rect x="28" y="50" width="264" height="56" rx="6" fill="#e6f0f4" stroke="#3b3a4a" stroke-width="2.5"/>
+  <g fill="#e2b04a" stroke="#3b3a4a" stroke-width="2"><path d="M48 98 q20 -26 40 0Z"/><path d="M108 98 q20 -26 40 0Z"/><path d="M168 98 q20 -26 40 0Z"/><path d="M228 98 q20 -26 40 0Z"/></g>
+  <g fill="#c8553d"><circle cx="68" cy="88" r="3"/><circle cx="128" cy="88" r="3"/><circle cx="188" cy="88" r="3"/><circle cx="248" cy="88" r="3"/></g>
+  <rect x="0" y="122" width="320" height="8" fill="#8a96a8"/>
+</svg>

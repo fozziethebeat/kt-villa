@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- Product icon: apple_pastry -->
+  <path d="M8 50 q24 -44 48 0Z" fill="#e2b04a" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M18 46 q14 -18 28 0" fill="none" stroke="#c49038" stroke-width="3"/>
+  <circle cx="32" cy="36" r="6" fill="#c8553d" stroke="#3b3a4a" stroke-width="2"/><path d="M32 30 q2 -5 6 -6" stroke="#6fa678" stroke-width="2.5" fill="none"/>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- Product icon: matcha_latte -->
+  <path d="M14 26 h36 l-4 28 q-1 6 -7 6 h-14 q-6 0 -7 -6Z" fill="#fbfaf6" stroke="#3b3a4a" stroke-width="3"/>
+  <ellipse cx="32" cy="27" rx="17" ry="4" fill="#8cc084"/><path d="M26 27 q6 -4 12 0" stroke="#fbfaf6" stroke-width="2" fill="none"/>
+  <path d="M50 32 q10 0 10 9 q0 9 -12 9" fill="none" stroke="#3b3a4a" stroke-width="3"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="130" viewBox="0 0 320 130">
+  <!-- Van module: futon (living, comfort +2) -->
+  <rect x="8" y="58" width="304" height="62" rx="12" fill="#3b3a4a" opacity="0.2" transform="translate(4 4)"/>
+  <rect x="8" y="58" width="304" height="62" rx="12" fill="#fbfaf6" stroke="#3b3a4a" stroke-width="3"/>
+  <rect x="8" y="80" width="304" height="40" rx="10" fill="#6c7fa3" stroke="#3b3a4a" stroke-width="3"/>
+  <path d="M30 92 h40 M100 104 h50 M190 92 h60" stroke="#8fa3bd" stroke-width="5" stroke-linecap="round"/>
+  <rect x="20" y="40" width="80" height="34" rx="12" fill="#efe3c2" stroke="#3b3a4a" stroke-width="3"/>
+  <rect x="0" y="122" width="320" height="8" fill="#a8754b"/>
+</svg>

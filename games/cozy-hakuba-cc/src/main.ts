@@ -3,6 +3,12 @@ import { BootScene } from './scenes/BootScene';
 import { TitleScene } from './scenes/TitleScene';
 import { StationScene } from './scenes/StationScene';
 import { HudScene } from './scenes/HudScene';
+import { CharacterSelectScene } from './scenes/CharacterSelectScene';
+import { VanInteriorScene } from './scenes/VanInteriorScene';
+import { MapCraftScene } from './scenes/MapCraftScene';
+import { LuggageScene } from './scenes/LuggageScene';
+import { BusinessScene } from './scenes/BusinessScene';
+import { BoardScene } from './scenes/BoardScene';
 import { installDebugApi } from './debug/api';
 import { HEIGHT, WIDTH } from './theme';
 
@@ -23,7 +29,8 @@ async function start() {
     backgroundColor: '#f4ecdc',
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     render: { antialias: true, preserveDrawingBuffer: true },
-    scene: [BootScene, TitleScene, StationScene, HudScene],
+    // Order = draw order: overlays come after the HUD so they cover it.
+    scene: [BootScene, TitleScene, CharacterSelectScene, StationScene, HudScene, VanInteriorScene, MapCraftScene, LuggageScene, BusinessScene, BoardScene],
   });
   installDebugApi(game);
 }

@@ -1,0 +1,9 @@
+
+# Temporary scratch scripts
+scratch/
+
+# OS metadata
+.DS_Store
+*.tmp
+
+node_modules/

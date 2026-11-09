@@ -1,0 +1,8 @@
+[
+  { "id": "futon", "name": "Futon", "category": "living", "shape": [[0, 0], [1, 0]], "comfort": 2, "price": 0, "enables": [], "blurb": "A real bed. Better sleep, more stamina." },
+  { "id": "workbench", "name": "Workbench", "category": "production", "shape": [[0, 0]], "comfort": 0, "price": 0, "enables": ["craft"], "blurb": "Make things for creation quests." },
+  { "id": "pour_bar", "name": "Pour-over Bar", "category": "production", "shape": [[0, 0]], "comfort": 0, "price": 0, "enables": ["pour_over", "matcha_latte"], "blurb": "Brews pour-over and matcha lattes." },
+  { "id": "pastry_case", "name": "Pastry Case", "category": "production", "shape": [[0, 0], [1, 0]], "comfort": 0, "price": 2400, "enables": ["apple_pastry"], "blurb": "Sell Shinshu apple pastries." },
+  { "id": "stove", "name": "Mini Wood Stove", "category": "living", "shape": [[0, 0]], "comfort": 2, "price": 1800, "enables": [], "blurb": "Toasty nights; comfort +2." },
+  { "id": "plant", "name": "Plant Shelf", "category": "living", "shape": [[0, 0]], "comfort": 1, "price": 600, "enables": [], "blurb": "A little green; comfort +1." }
+]

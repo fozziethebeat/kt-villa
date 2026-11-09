@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="110" viewBox="0 0 140 110">
+  <!-- Gooseneck kettle for the pour mini-game; spout tip at (128, 30) -->
+  <path d="M20 40 h60 q10 0 10 12 v40 q0 12 -12 12 h-46 q-12 0 -12 -12 v-40 q0 -12 0 -12Z" fill="#8a96a8" stroke="#3b3a4a" stroke-width="3"/>
+  <path d="M90 74 q20 0 26 -24 l10 -20" fill="none" stroke="#3b3a4a" stroke-width="9" stroke-linecap="round"/>
+  <path d="M90 74 q20 0 26 -24 l10 -20" fill="none" stroke="#8a96a8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M22 50 q-18 0 -18 18 q0 18 18 18" fill="none" stroke="#7a4b3a" stroke-width="7"/>
+  <rect x="38" y="30" width="24" height="10" rx="4" fill="#3b3a4a"/>
+</svg>

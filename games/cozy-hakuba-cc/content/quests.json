@@ -1,0 +1,53 @@
+{
+  "station": {
+    "keyPerson": "Mrs. Kobayashi",
+    "steps": [
+      {
+        "id": "brochures",
+        "type": "fetch",
+        "title": "Scattered Brochures",
+        "needs": { "brochure": 5 },
+        "consumes": true,
+        "rewards": { "kizuna": 3, "blank_map": 1 },
+        "vitality": 1,
+        "unlocks": [],
+        "lines": {
+          "intro": "Oh! A new face. The wind scattered our valley brochures all over the plaza… Could you find them for me? ({have}/{need})",
+          "progress": "You've found {have} of {need} brochures. The rest must be somewhere around the plaza.",
+          "complete": "All {need} brochures! Thank you, {name}. Visitors will finally know where to go. Here, take this blank map; I have one more favor to ask."
+        }
+      },
+      {
+        "id": "valley_map",
+        "type": "create",
+        "title": "A Map for Visitors",
+        "needs": { "valley_map": 1 },
+        "consumes": true,
+        "rewards": { "kizuna": 4, "yen": 1500 },
+        "vitality": 2,
+        "unlocks": ["business:coffee", "module:pour_bar"],
+        "lines": {
+          "intro": "Our old valley map faded years ago. Could you draw a new one on that blank map? Your van's workbench should do nicely.",
+          "progress": "No rush. Use the workbench in your van to draw the valley map, then bring it here.",
+          "complete": "It's lovely! I'll pin it up right away. You know… people here would line up for a good cup of coffee. Take my old pour-over set. Your van could be a café!"
+        }
+      },
+      {
+        "id": "luggage",
+        "type": "puzzle",
+        "title": "The Lost-Luggage Room",
+        "needs": { "luggage_solved": 1 },
+        "consumes": true,
+        "rewards": { "kizuna": 5 },
+        "vitality": 3,
+        "unlocks": ["revival_board"],
+        "lines": {
+          "intro": "One last thing: the lost-luggage room is a mess and travelers can't find their bags. Could you sort it out? The door's by the ticket gate.",
+          "progress": "The luggage room door is just left of the ticket gate. Pack everything neatly onto the shelves.",
+          "complete": "Every bag in its place! The station feels alive again, {name}. Here: the Valley Revival Board is yours to use. Let's wake up the rest of Hakuba together."
+        }
+      }
+    ],
+    "after": "The whole station is buzzing! Check the Valley Revival Board when you're ready to open the roads."
+  }
+}

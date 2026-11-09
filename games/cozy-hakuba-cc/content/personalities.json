@@ -1,7 +1,53 @@
 [
-  { "id": "planner", "name": "The Planner", "blurb": "Ex-project manager. Makes spreadsheets of snow conditions.", "mods": { "freeHints": 1, "rhythmWindow": 0.9 } },
-  { "id": "creative", "name": "The Creative", "blurb": "Ex-designer. Names every dish.", "mods": { "craftQuality": 1.1, "fetchHintCost": 1.25 } },
-  { "id": "outdoorsy", "name": "The Outdoorsy", "blurb": "Ex-ski-bum turned salaryman. Knows every trail.", "mods": { "walkSpeed": 1.15, "pickupRadius": 1.25, "prepSpeed": 0.9 } },
-  { "id": "social", "name": "The Social Butterfly", "blurb": "Ex-sales. Everyone's best friend in five minutes.", "mods": { "regularRep": 1.15, "packingUndos": -1 } },
-  { "id": "tinkerer", "name": "The Tinkerer", "blurb": "Ex-engineer. Talks to the van.", "mods": { "moduleCost": 0.85, "tips": 0.95 } }
+  {
+    "id": "planner",
+    "name": "The Planner",
+    "blurb": "Ex-project manager. Makes spreadsheets of snow conditions.",
+    "mods": {
+      "freeHints": 1,
+      "rhythmWindow": 0.9
+    },
+    "summary": "+1 free puzzle hint \u00b7 rhythm windows a bit tighter"
+  },
+  {
+    "id": "creative",
+    "name": "The Creative",
+    "blurb": "Ex-designer. Names every dish.",
+    "mods": {
+      "craftQuality": 1.1,
+      "fetchHintCost": 1.25
+    },
+    "summary": "Better creation quality \u00b7 fetch hints cost more"
+  },
+  {
+    "id": "outdoorsy",
+    "name": "The Outdoorsy",
+    "blurb": "Ex-ski-bum turned salaryman. Knows every trail.",
+    "mods": {
+      "walkSpeed": 1.15,
+      "pickupRadius": 1.25,
+      "prepSpeed": 0.9
+    },
+    "summary": "Walks 15% faster \u00b7 bigger pickup radius \u00b7 kitchen prep a bit slower"
+  },
+  {
+    "id": "social",
+    "name": "The Social Butterfly",
+    "blurb": "Ex-sales. Everyone's best friend in five minutes.",
+    "mods": {
+      "regularRep": 1.15,
+      "packingUndos": -1
+    },
+    "summary": "More reputation from regulars \u00b7 one fewer free undo"
+  },
+  {
+    "id": "tinkerer",
+    "name": "The Tinkerer",
+    "blurb": "Ex-engineer. Talks to the van.",
+    "mods": {
+      "moduleCost": 0.85,
+      "tips": 0.95
+    },
+    "summary": "Van modules 15% cheaper \u00b7 tips 5% lower"
+  }
 ]
