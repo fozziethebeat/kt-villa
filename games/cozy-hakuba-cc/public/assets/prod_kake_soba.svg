@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- kake_soba -->
+  <path d="M8 30 H56 Q54 56 32 56 Q10 56 8 30Z" fill="#c8553d" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <ellipse cx="32" cy="30" rx="24" ry="6" fill="#8b5a3c" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M16 30 q4 -4 8 0 q4 -4 8 0 q4 -4 8 0 q4 -4 8 0" stroke="#d9c7a3" stroke-width="2.5" fill="none"/>
+  <path d="M40 22 L58 6 M44 24 L62 10" stroke="#a8754b" stroke-width="3" stroke-linecap="round"/>
+  <path d="M22 18 q4 -6 0 -12" stroke="#b7b3ad" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

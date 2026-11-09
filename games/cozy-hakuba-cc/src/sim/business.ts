@@ -1,42 +1,93 @@
-import { CONTENT, productDef, regionDef } from './content';
-import { phase, season, spendAction } from './game';
+import { CONTENT, archetypeDef, productDef, regionDef } from './content';
+import { mod, phase, season, spendAction } from './game';
 import { nextRandom } from './rng';
-import { enabled } from './van';
+import { enabled, vanEffects } from './van';
 import type { Content, GameState, ScoredSeason, ShiftSummary } from './types';
 
+export type PrepLine = 'cup' | 'bowl';
 export interface PlannedCustomer { idx: number; type: string; wants: string; patience: number; arriveAt: number; tipMult: number }
-export interface ShiftPlan { region: string; season: ScoredSeason; menu: string[]; customers: PlannedCustomer[]; durationSec: number; pastryStock: number }
+export interface ShiftPlan {
+  region: string;
+  season: ScoredSeason;
+  archetype: string;
+  menu: string[];
+  customers: PlannedCustomer[];
+  durationSec: number;
+  /** Lines that need a prep mini-game before service (cups: pour timing, bowls: noodle cut). */
+  prep: PrepLine[];
+  /** Ready-made stock for shelf items (pastries, onigiri, oyaki). */
+  shelf: Record<string, number>;
+  /** Extra stock per prepped line from van modules (e.g. solar panel). */
+  stockBonus: number;
+  /** Multipliers baked in at plan time so pricing stays a pure function of the plan. */
+  specialty: string | null;
+  tipMult: number;
+}
 
 /** Seasons that aren't scored (autumn/spring) behave like the nearest scored season, but quieter. */
-function demandSeason(state: GameState, content: Content): { s: ScoredSeason; mult: number } {
+export function demandSeason(state: GameState, content: Content = CONTENT): { s: ScoredSeason; mult: number } {
   const info = season(state, content);
   if (info.season === 'winter' || info.season === 'green') return { s: info.season, mult: 1 };
   return { s: info.season === 'autumn' ? 'winter' : 'green', mult: 0.6 };
 }
 
-export function menu(state: GameState, content: Content = CONTENT): string[] {
-  if (!state.unlocks.includes('business:coffee')) return [];
+export function businessOpen(state: GameState): boolean {
+  return state.unlocks.some((u) => u.startsWith('business:'));
+}
+
+/** The archetype that sets the van's rhythm: the chosen primary, or the station's pop-up coffee tutorial. */
+export function activeArchetype(state: GameState): string {
+  return state.primaryArchetype ?? 'coffee';
+}
+
+/** Every product the van's active modules can make, primary archetype first. */
+export function availableProducts(state: GameState, content: Content = CONTENT): string[] {
   const en = enabled(state, content);
-  return content.business.products.filter((p) => en.has(p.id)).map((p) => p.id);
+  const primary = activeArchetype(state);
+  const all = content.business.products.filter((p) => en.has(p.id));
+  return [...all.filter((p) => p.archetype === primary), ...all.filter((p) => p.archetype !== primary)].map((p) => p.id);
+}
+
+/** Today's menu: the player's chosen items (if still makeable) or the automatic pick, capped by menu slots. */
+export function menu(state: GameState, content: Content = CONTENT): string[] {
+  if (!businessOpen(state)) return [];
+  const avail = availableProducts(state, content);
+  const chosen = (state.business.menu ?? []).filter((id) => avail.includes(id));
+  return (chosen.length ? chosen : avail).slice(0, content.business.menuSlots);
+}
+
+export function setMenu(state: GameState, ids: string[], content: Content = CONTENT): boolean {
+  const avail = availableProducts(state, content);
+  if (ids.length > content.business.menuSlots || ids.some((id) => !avail.includes(id))) return false;
+  state.business.menu = ids.length ? [...ids] : null;
+  return true;
 }
 
 export type StartShift = { ok: true; plan: ShiftPlan } | { ok: false; reason: 'locked' | 'no_menu' | 'tired' };
 
-/** Start a business shift: spends stamina and deterministically plans the customer stream. */
-export function startShift(state: GameState, content: Content = CONTENT): StartShift {
-  if (!state.unlocks.includes('business:coffee')) return { ok: false, reason: 'locked' };
-  const m = menu(state, content);
-  if (!m.length) return { ok: false, reason: 'no_menu' };
-  const ph = phase(state, content);
-  if (!spendAction(state, 'businessShift', content).ok) return { ok: false, reason: 'tired' };
+/** Expected customer count for a shift right now (before rounding/clamping). Exposed for the balance sim + UI. */
+export function demandFor(state: GameState, content: Content = CONTENT): number {
   const b = content.business;
   const { s, mult } = demandSeason(state, content);
   const region = regionDef(content, state.currentRegion);
   const vit = state.regions[region.id].vitality;
+  const arch = archetypeDef(content, activeArchetype(state));
   const repMult = 1 + Math.min(0.5, state.business.reputation / 100);
+  const fx = vanEffects(state, content);
+  return b.shift.baseCustomers * mult * (0.5 + vit * 0.25) * (0.2 + region.draw[s]) * arch.phaseMult[phase(state, content)] * arch.strongIn[s] * fx.customerMult[s] * repMult;
+}
+
+/** Start a business shift: spends stamina and deterministically plans the customer stream. */
+export function startShift(state: GameState, content: Content = CONTENT): StartShift {
+  if (!businessOpen(state)) return { ok: false, reason: 'locked' };
+  const m = menu(state, content);
+  if (!m.length) return { ok: false, reason: 'no_menu' };
+  const raw = demandFor(state, content);
+  if (!spendAction(state, 'businessShift', content).ok) return { ok: false, reason: 'tired' };
+  const b = content.business;
+  const { s } = demandSeason(state, content);
   let st = state.rngState;
   const rand = () => { const [v, n] = nextRandom(st); st = n; return v; };
-  const raw = b.shift.baseCustomers * mult * (0.5 + vit * 0.25) * (0.5 + region.draw[s]) * b.shift.phaseMult[ph] * repMult;
   const n = Math.max(b.shift.minCustomers, Math.min(b.shift.maxCustomers, Math.round(raw)));
   const pick = <T,>(items: T[], w: (t: T) => number): T => {
     const total = items.reduce((a, t) => a + w(t), 0);
@@ -52,40 +103,65 @@ export function startShift(state: GameState, content: Content = CONTENT): StartS
     customers.push({ idx: i, type: type.id, wants, patience: type.patience, arriveAt: 2 + i * spacing + rand() * spacing * 0.5, tipMult: type.tip });
   }
   state.rngState = st;
-  return { ok: true, plan: { region: region.id, season: s, menu: m, customers, durationSec: b.shift.durationSec, pastryStock: m.includes('apple_pastry') ? b.shift.pastryStock : 0 } };
+  const fx = vanEffects(state, content);
+  const lines = new Set(m.map((pid) => productDef(content, pid).line));
+  const prep = (['cup', 'bowl'] as const).filter((l) => lines.has(l));
+  const shelf: Record<string, number> = {};
+  for (const pid of m) if (productDef(content, pid).line === 'shelf') shelf[pid] = b.shift.shelfStock + fx.stockBonus;
+  return {
+    ok: true,
+    plan: {
+      region: state.currentRegion, season: s, archetype: activeArchetype(state), menu: m, customers, durationSec: b.shift.durationSec,
+      prep, shelf, stockBonus: fx.stockBonus, specialty: state.primaryArchetype, tipMult: fx.tipMult * mod(state, 'tips', 1, content),
+    },
+  };
+}
+
+/** Stock produced by a prep mini-game: each hit makes `per` units (+1 on a perfect), a miss still makes 1. */
+export function prepYield(line: PrepLine, hits: number, perfects: number, attempts: number, plan: ShiftPlan, content: Content = CONTENT): number {
+  const per = line === 'cup' ? content.business.shift.cupsPerPour : content.business.shift.bowlsPerCut;
+  return hits * per + perfects + (attempts - hits) + plan.stockBonus;
+}
+
+export function prepQuality(hits: number, attempts: number): number {
+  return hits >= attempts ? 3 : hits >= Math.ceil(attempts / 2) ? 2 : 1;
 }
 
 export interface ServeOutcome { idx: number; item: string | null; stars: number; waitedFrac: number }
 
-/** Price for one served order. Wrong item = served politely at half price, no tip. */
+/** Price for one served order. Wrong item = served politely at half price, no tip. Specialty items earn a bonus. */
 export function priceFor(plan: ShiftPlan, c: PlannedCustomer, o: ServeOutcome, content: Content = CONTENT): { yen: number; tip: number; happy: boolean } {
   if (!o.item) return { yen: 0, tip: 0, happy: false };
   const b = content.business.shift;
   const p = productDef(content, o.item);
   const right = o.item === c.wants;
-  const base = Math.round(p.price * b.qualityMult[Math.max(0, Math.min(3, o.stars))] * (right ? 1 : 0.5));
-  const tip = right && o.waitedFrac < 0.5 && o.stars >= 2 ? Math.round(p.price * b.tipRate * c.tipMult) : 0;
-  void plan;
+  const specialty = plan.specialty && p.archetype === plan.specialty ? 1 + b.specialtyBonus : 1;
+  const base = Math.round(p.price * specialty * b.qualityMult[Math.max(0, Math.min(3, o.stars))] * (right ? 1 : 0.5));
+  const tip = right && o.waitedFrac < 0.5 && o.stars >= 2 ? Math.round(p.price * b.tipRate * c.tipMult * plan.tipMult) : 0;
   return { yen: base, tip, happy: right };
 }
 
 /** Settle the shift into the save state. */
 export function settleShift(state: GameState, plan: ShiftPlan, outcomes: ServeOutcome[], content: Content = CONTENT): ShiftSummary {
   const b = content.business.shift;
-  let yen = 0, tips = 0, served = 0, missed = 0, rep = 0;
+  let yen = 0, tips = 0, served = 0, missed = 0, soldOut = 0, rep = 0;
+  const repMult = mod(state, 'regularRep', 1, content);
   for (const c of plan.customers) {
-    const o = outcomes.find((x) => x.idx === c.idx) ?? { idx: c.idx, item: null, stars: 0, waitedFrac: 1 };
+    const o = outcomes.find((x) => x.idx === c.idx);
+    // No outcome = they never got to the window (sold out / shift over). Gentle: no reputation loss.
+    if (!o) { soldOut++; continue; }
     const r = priceFor(plan, c, o, content);
     yen += r.yen; tips += r.tip;
     if (o.item) served++; else missed++;
-    rep += r.happy ? b.reputationPerHappy : o.item ? 0 : b.reputationPerMissed;
+    rep += r.happy ? b.reputationPerHappy * repMult : o.item ? 0 : b.reputationPerMissed;
   }
+  rep = Math.round(rep * 10) / 10;
   state.yen += yen + tips;
-  state.business.reputation = Math.max(0, state.business.reputation + rep);
+  state.business.reputation = Math.max(0, Math.round((state.business.reputation + rep) * 10) / 10);
   state.business.served += served;
   state.business.shifts += 1;
-  const summary: ShiftSummary = { day: state.day, served, missed, yen, tips, reputation: rep };
+  const summary: ShiftSummary = { day: state.day, region: plan.region, served, missed, soldOut, yen, tips, reputation: rep };
   state.business.last = summary;
-  state.log.push(`Day ${state.day}: café shift, served ${served}, earned ¥${yen + tips}.`);
+  state.log.push(`Day ${state.day}: shift at ${plan.region}, served ${served}, earned ¥${yen + tips}.`);
   return summary;
 }

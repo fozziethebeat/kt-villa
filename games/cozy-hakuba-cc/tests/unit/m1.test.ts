@@ -160,7 +160,9 @@ describe('coffee business', () => {
       { idx: c1.idx, item: c1.wants === 'pour_over' ? 'matcha_latte' : 'pour_over', stars: 2, waitedFrac: 0.3 },
     ]);
     expect(sum.served).toBe(2);
-    expect(sum.missed).toBe(r.plan.customers.length - 2);
+    expect(sum.missed).toBe(0);
+    expect(sum.soldOut).toBe(r.plan.customers.length - 2); // never reached the window: no reputation loss
+    expect(sum.reputation).toBe(1);
     expect(sum.tips).toBeGreaterThan(0);
     expect(s.yen).toBe(yen0 + sum.yen + sum.tips);
     expect(s.business.shifts).toBe(1);

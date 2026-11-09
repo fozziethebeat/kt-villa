@@ -4,6 +4,7 @@ import { PAL, hex } from '../theme';
 import { loadGame } from '../persist';
 import { store } from '../gameStore';
 import { button } from '../ui/widgets';
+import { REGION_SCENES } from './regions';
 
 export class TitleScene extends Phaser.Scene {
   constructor() { super('Title'); }
@@ -24,7 +25,7 @@ export class TitleScene extends Phaser.Scene {
     const panel = paperPanel(this, width / 2 - 330, 90, 660, 200);
     const title = label(this, width / 2, 150, 'Hakuba Wake-Up', 64, PAL.ink, '900').setOrigin(0.5);
     const sub = label(this, width / 2, 215, '白馬 ・ a cozy van-life revival', 24, PAL.cedar, '500').setOrigin(0.5);
-    const ver = label(this, width / 2, 258, 'M1 vertical slice', 16, PAL.twilight, '500').setOrigin(0.5);
+    const ver = label(this, width / 2, 258, 'M2 · garage & build', 16, PAL.twilight, '500').setOrigin(0.5);
     for (const o of [panel, title, sub, ver]) { o.setAlpha(0); this.tweens.add({ targets: o, alpha: 1, duration: 700, delay: 300 }); }
 
     const save = loadGame();
@@ -45,6 +46,6 @@ export class TitleScene extends Phaser.Scene {
 
   private begin(save: ReturnType<typeof loadGame>) {
     if (save) store.replace(save, 'load');
-    this.events.emit('begin', save ? 'Station' : 'CharacterSelect');
+    this.events.emit('begin', save ? REGION_SCENES[save.currentRegion] ?? 'Station' : 'CharacterSelect');
   }
 }

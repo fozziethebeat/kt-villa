@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="80" viewBox="0 0 160 80">
+  <!-- Roof planter module -->
+  <rect x="16" y="44" width="128" height="26" rx="4" fill="#a8754b" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#3f6b4f" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><path d="M30 46 Q26 20 40 14 Q44 30 40 46Z"/><path d="M62 46 Q60 24 74 18 Q78 34 72 46Z"/><path d="M100 46 Q96 22 110 16 Q114 32 108 46Z"/></g>
+  <g stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><circle cx="52" cy="30" r="6" fill="#e89fb0"/><circle cx="88" cy="26" r="6" fill="#f2a541"/><circle cx="126" cy="30" r="6" fill="#e89fb0"/></g>
+</svg>

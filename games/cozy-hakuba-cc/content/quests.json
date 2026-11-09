@@ -6,9 +6,14 @@
         "id": "brochures",
         "type": "fetch",
         "title": "Scattered Brochures",
-        "needs": { "brochure": 5 },
+        "needs": {
+          "brochure": 5
+        },
         "consumes": true,
-        "rewards": { "kizuna": 3, "blank_map": 1 },
+        "rewards": {
+          "kizuna": 3,
+          "blank_map": 1
+        },
         "vitality": 1,
         "unlocks": [],
         "lines": {
@@ -21,11 +26,19 @@
         "id": "valley_map",
         "type": "create",
         "title": "A Map for Visitors",
-        "needs": { "valley_map": 1 },
+        "needs": {
+          "valley_map": 1
+        },
         "consumes": true,
-        "rewards": { "kizuna": 4, "yen": 1500 },
+        "rewards": {
+          "kizuna": 4,
+          "yen": 1500
+        },
         "vitality": 2,
-        "unlocks": ["business:coffee", "module:pour_bar"],
+        "unlocks": [
+          "business:coffee",
+          "module:pour_bar"
+        ],
         "lines": {
           "intro": "Our old valley map faded years ago. Could you draw a new one on that blank map? Your van's workbench should do nicely.",
           "progress": "No rush. Use the workbench in your van to draw the valley map, then bring it here.",
@@ -36,11 +49,17 @@
         "id": "luggage",
         "type": "puzzle",
         "title": "The Lost-Luggage Room",
-        "needs": { "luggage_solved": 1 },
+        "needs": {
+          "luggage_solved": 1
+        },
         "consumes": true,
-        "rewards": { "kizuna": 5 },
+        "rewards": {
+          "kizuna": 5
+        },
         "vitality": 3,
-        "unlocks": ["revival_board"],
+        "unlocks": [
+          "revival_board"
+        ],
         "lines": {
           "intro": "One last thing: the lost-luggage room is a mess and travelers can't find their bags. Could you sort it out? The door's by the ticket gate.",
           "progress": "The luggage room door is just left of the ticket gate. Pack everything neatly onto the shelves.",
@@ -49,5 +68,71 @@
       }
     ],
     "after": "The whole station is buzzing! Check the Valley Revival Board when you're ready to open the roads."
+  },
+  "snowpeak": {
+    "keyPerson": "Takumi",
+    "steps": [
+      {
+        "id": "tent",
+        "type": "puzzle",
+        "title": "Pitch the Demo Tent",
+        "needs": {
+          "tent_pitched": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 4
+        },
+        "vitality": 1,
+        "unlocks": [],
+        "lines": {
+          "intro": "Oh, hey. You're the van person Mrs. Kobayashi told me about? Nobody camps here anymore. The demo tent blew down in the last storm. Could you pitch it? Balance the guy lines, or it'll lean right over.",
+          "progress": "The tent's on the meadow, left of the shop. Peg the four guy lines so the pulls cancel out.",
+          "complete": "Look at that, standing straight! You've got a feel for tension, {name}. Campers will see it from the road."
+        }
+      },
+      {
+        "id": "parts",
+        "type": "fetch",
+        "title": "Salvage Van Parts",
+        "needs": {
+          "van_part": 4
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 4,
+          "yen": 1000
+        },
+        "vitality": 2,
+        "unlocks": [],
+        "lines": {
+          "intro": "My old work van is rusting behind the shop, and its parts are scattered all over the yard. Dig out {need} good ones (1 stamina each) and we'll build something for your van. ({have}/{need})",
+          "progress": "{have} of {need} parts so far. Look for the glinting piles around the yard.",
+          "complete": "Hinges, a lamp, brackets, a good panel. That's enough for a real build. And here's something for your trouble."
+        }
+      },
+      {
+        "id": "first_module",
+        "type": "create",
+        "title": "Your First Module",
+        "needs": {
+          "built_module": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 3,
+        "unlocks": [
+          "garage"
+        ],
+        "lines": {
+          "intro": "Time to decide what your van really is. Choose your trade at my workbench, the one by the garage door, and we'll build its first module together.",
+          "progress": "The workbench is by the garage door. Pick your trade and cut the parts to the blueprint.",
+          "complete": "Clean cuts, solid joints. That's a real business on wheels now, {name}. The garage is yours whenever you need it: snow tires, a roof rack, whatever the road asks for."
+        }
+      }
+    ],
+    "after": "The campsite's busy again! Use the garage when your van needs an upgrade."
   }
 }

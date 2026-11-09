@@ -375,6 +375,182 @@
       "h": 260,
       "role": "business",
       "purpose": "Service hatch + noren seen from inside the van"
+    },
+    {
+      "id": "bldg_snowpeak",
+      "file": "bldg_snowpeak.svg",
+      "w": 440,
+      "h": 300,
+      "role": "landmark",
+      "purpose": "Outdoor gear shop + campfield office; long glass front, tent icon sign = camping"
+    },
+    {
+      "id": "bldg_garage",
+      "file": "bldg_garage.svg",
+      "w": 280,
+      "h": 230,
+      "role": "landmark",
+      "purpose": "Takumi's garage; roll-up door + wrench sign = van upgrades happen here"
+    },
+    {
+      "id": "deco_workbench_out",
+      "file": "deco_workbench_out.svg",
+      "w": 130,
+      "h": 100,
+      "role": "interactable",
+      "purpose": "Outdoor workbench by the garage: where your first module is built"
+    },
+    {
+      "id": "char_takumi",
+      "file": "char_takumi.svg",
+      "w": 56,
+      "h": 88,
+      "role": "key-person",
+      "purpose": "Snow Peak key person; orange cap + teal overalls + wrench = the mechanic"
+    },
+    {
+      "id": "tent_flat",
+      "file": "tent_flat.svg",
+      "w": 180,
+      "h": 70,
+      "role": "interactable",
+      "purpose": "Collapsed demo tent: the puzzle quest is here"
+    },
+    {
+      "id": "tent_pitched",
+      "file": "tent_pitched.svg",
+      "w": 200,
+      "h": 140,
+      "role": "landmark",
+      "purpose": "Pitched demo tent with taut guy lines: Snow Peak is waking up"
+    },
+    {
+      "id": "tent_top",
+      "file": "tent_top.svg",
+      "w": 144,
+      "h": 144,
+      "role": "puzzle",
+      "purpose": "Tent seen from above (3x3 cells); orange = fabric, corner rings = guy-line anchors"
+    },
+    {
+      "id": "peg",
+      "file": "peg.svg",
+      "w": 28,
+      "h": 28,
+      "role": "puzzle",
+      "purpose": "Tent peg: where a guy line is staked"
+    },
+    {
+      "id": "rock",
+      "file": "rock.svg",
+      "w": 44,
+      "h": 44,
+      "role": "puzzle",
+      "purpose": "Rock: can't peg here"
+    },
+    {
+      "id": "item_van_part",
+      "file": "item_van_part.svg",
+      "w": 52,
+      "h": 44,
+      "role": "fetch-item",
+      "purpose": "Salvageable van part (glinting pile): fetch quest item"
+    },
+    {
+      "id": "mod_soba_kitchen",
+      "file": "mod_soba_kitchen.svg",
+      "w": 320,
+      "h": 130,
+      "role": "module",
+      "purpose": "Soba Kitchen module: induction pot + cutting board (production: soba, onigiri)"
+    },
+    {
+      "id": "mod_oyaki_griddle",
+      "file": "mod_oyaki_griddle.svg",
+      "w": 160,
+      "h": 130,
+      "role": "module",
+      "purpose": "Oyaki Griddle module: round dumplings on a hot plate (production: oyaki)"
+    },
+    {
+      "id": "mod_solar_panel",
+      "file": "mod_solar_panel.svg",
+      "w": 160,
+      "h": 80,
+      "role": "roof-module",
+      "purpose": "Solar Panel (roof): +2 stock each shift"
+    },
+    {
+      "id": "mod_ski_box",
+      "file": "mod_ski_box.svg",
+      "w": 160,
+      "h": 80,
+      "role": "roof-module",
+      "purpose": "Ski Box (roof): skiers spot you, +20% winter customers"
+    },
+    {
+      "id": "mod_roof_planter",
+      "file": "mod_roof_planter.svg",
+      "w": 160,
+      "h": 80,
+      "role": "roof-module",
+      "purpose": "Roof Planter (roof): herbs + flowers, +20% green-season customers, comfort +1"
+    },
+    {
+      "id": "prod_kake_soba",
+      "file": "prod_kake_soba.svg",
+      "w": 64,
+      "h": 64,
+      "role": "product",
+      "purpose": "Product icon: kake soba (hot noodle bowl)"
+    },
+    {
+      "id": "prod_onigiri",
+      "file": "prod_onigiri.svg",
+      "w": 64,
+      "h": 64,
+      "role": "product",
+      "purpose": "Product icon: onigiri (rice ball with nori)"
+    },
+    {
+      "id": "prod_nozawana_oyaki",
+      "file": "prod_nozawana_oyaki.svg",
+      "w": 64,
+      "h": 64,
+      "role": "product",
+      "purpose": "Product icon: nozawana oyaki (grilled dumpling)"
+    },
+    {
+      "id": "van_kit_t1",
+      "file": "van_kit_t1.svg",
+      "w": 240,
+      "h": 150,
+      "role": "van",
+      "purpose": "Tier 1 overlay: chunky snow tires + roof rack (drawn over van_kei)"
+    },
+    {
+      "id": "soba_board",
+      "file": "soba_board.svg",
+      "w": 520,
+      "h": 220,
+      "role": "minigame",
+      "purpose": "Noodle-cut board: a folded sheet of soba dough on a wooden board"
+    },
+    {
+      "id": "soba_knife",
+      "file": "soba_knife.svg",
+      "w": 90,
+      "h": 150,
+      "role": "minigame",
+      "purpose": "Soba-kiri knife (tall square blade)"
+    },
+    {
+      "id": "biz_counter_soba",
+      "file": "biz_counter_soba.svg",
+      "w": 1280,
+      "h": 260,
+      "role": "business",
+      "purpose": "Service hatch with indigo soba noren (Soba & Oyaki Kitchen)"
     }
   ]
 }

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="140" viewBox="0 0 200 140">
+  <!-- Pitched tent -->
+  <ellipse cx="100" cy="134" rx="94" ry="6" fill="#3b3a4a" opacity="0.18"/>
+  <g stroke="#3b3a4a" stroke-width="1.8"><line x1="100" y1="14" x2="6" y2="130"/><line x1="100" y1="14" x2="194" y2="130"/></g>
+  <path d="M30 130 L100 14 L170 130Z" fill="#f2a541" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M100 14 L100 130" stroke="#c8553d" stroke-width="3"/>
+  <path d="M78 130 L100 70 L122 130Z" fill="#7a4b3a" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <g fill="#7a4b3a"><rect x="3" y="124" width="6" height="10"/><rect x="191" y="124" width="6" height="10"/></g>
+</svg>

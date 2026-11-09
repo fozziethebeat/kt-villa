@@ -43,10 +43,11 @@ export class HudScene extends Phaser.Scene {
     this.bagText = label(this, WIDTH - 26, 112, '', 15, PAL.ink, '700').setOrigin(1, 0).setStroke(PAL.snow, 5);
 
     // Region card (bottom-left)
-    paperPanel(this, 16, 640, 330, 66);
+    paperPanel(this, 16, 640, 400, 66);
     this.regionText = label(this, 34, 650, '', 20);
-    this.vitalityText = label(this, 34, 678, '', 16, PAL.cedar, '500');
-    for (let i = 0; i < 4; i++) this.vitalityDots.push(this.add.circle(240 + i * 24, 687, 8, hex(PAL.snowShadow)).setStrokeStyle(2, hex(PAL.ink)));
+    this.vitalityText = label(this, 34, 678, '', 15, PAL.cedar, '500');
+    this.vitalityDots = [];
+    for (let i = 0; i < 4; i++) this.vitalityDots.push(this.add.circle(320 + i * 22, 662, 8, hex(PAL.snowShadow)).setStrokeStyle(2, hex(PAL.ink)));
 
     // Day / season banner
     const bp = paperPanel(this, -260, -46, 520, 92, PAL.snow);
@@ -97,8 +98,8 @@ export class HudScene extends Phaser.Scene {
     this.bagText.setText(bagItems.join(' · '));
     const r = regionDef(CONTENT, s.currentRegion);
     const v = s.regions[r.id].vitality;
-    this.regionText.setText(`${r.name}  ${r.nameJa}`);
-    this.vitalityText.setText(VITALITY_NAMES[v]);
+    this.regionText.setText(r.name);
+    this.vitalityText.setText(`${VITALITY_NAMES[v]}  ·  ${r.nameJa}`);
     this.vitalityDots.forEach((d, i) => d.setFillStyle(hex(i <= v && v > 0 ? PAL.lantern : PAL.snowShadow)));
   }
 }

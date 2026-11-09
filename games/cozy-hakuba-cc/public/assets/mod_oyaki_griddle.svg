@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="130" viewBox="0 0 160 130">
+  <!-- Oyaki griddle module -->
+  <rect x="24" y="60" width="112" height="60" rx="8" fill="#5a596a" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <ellipse cx="80" cy="56" rx="56" ry="14" fill="#3b3a4a"/>
+  <g fill="#e2c48a" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><ellipse cx="56" cy="50" rx="16" ry="9"/><ellipse cx="96" cy="50" rx="16" ry="9"/><ellipse cx="76" cy="40" rx="16" ry="9"/></g>
+  <g fill="#7a4b3a"><circle cx="52" cy="48" r="2"/><circle cx="92" cy="48" r="2"/><circle cx="72" cy="38" r="2"/></g>
+  <rect x="0" y="122" width="160" height="8" fill="#8a96a8"/>
+</svg>

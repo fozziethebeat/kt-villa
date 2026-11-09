@@ -97,3 +97,16 @@ export function findKodama(state: GameState, regionId: string, index: number): b
   grant(state, 'kizuna', 1);
   return true;
 }
+
+/** Debug/test helper: complete a region's remaining steps as if each was played at `stars`. */
+export function fastForwardRegion(state: GameState, regionId: string, stars = 3, content: Content = CONTENT): void {
+  for (let step = currentStep(state, regionId, content); step; step = currentStep(state, regionId, content)) {
+    for (const [item, n] of Object.entries(step.needs)) {
+      const have = count(state, item);
+      if (have < n) grant(state, item, n - have);
+    }
+    state.stars[step.id] = Math.max(state.stars[step.id] ?? 0, stars);
+    if (step.id === 'first_module' && !state.primaryArchetype) state.primaryArchetype = 'coffee';
+    completeStep(state, regionId, content);
+  }
+}

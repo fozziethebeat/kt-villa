@@ -48,6 +48,8 @@ export function openOverlay(from: Phaser.Scene, key: string, data: object = {}, 
   from.scene.launch(key, { ...data, returnTo: from.scene.key });
   const overlay = from.scene.get(key);
   overlay.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+    // When switching regions every scene is stopped; never revive a scene that has already shut down.
+    if (from.sys.settings.status !== Phaser.Scenes.PAUSED) return;
     from.scene.resume();
     onClose?.();
   });

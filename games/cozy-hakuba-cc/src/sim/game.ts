@@ -10,7 +10,7 @@ export function createNewGame(opts: { seed?: number; player?: Partial<PlayerProf
   const regions: GameState['regions'] = {};
   for (const r of content.regions) regions[r.id] = { vitality: 0, questStep: 0, kodamaFound: 0 };
   const state: GameState = {
-    version: 2,
+    version: 3,
     seed,
     rngState: seed,
     player: { ...DEFAULT_PLAYER, ...opts.player },
@@ -33,8 +33,9 @@ export function createNewGame(opts: { seed?: number; player?: Partial<PlayerProf
         { moduleId: 'futon', x: 0, y: 1, rot: 0 },
         { moduleId: 'workbench', x: 3, y: 1, rot: 0 },
       ],
+      roof: [],
     },
-    business: { reputation: 0, served: 0, shifts: 0, last: null },
+    business: { reputation: 0, served: 0, shifts: 0, last: null, menu: null },
     log: ['Arrived at JR Hakuba Station in late autumn.'],
   };
   state.staminaMax = content.tuning.baseStamina + comfortStaminaBonus(state, content);
@@ -125,4 +126,10 @@ export function take(state: GameState, item: string, n: number): boolean {
   else if (item === 'kizuna') state.kizuna -= n;
   else { state.inventory[item] -= n; if (state.inventory[item] <= 0) delete state.inventory[item]; }
   return true;
+}
+
+/** Personality modifier (e.g. "walkSpeed"), 1 / 0 when the personality doesn't touch it. */
+export function mod(state: GameState, key: string, fallback = 1, content: Content = CONTENT): number {
+  const p = content.personalities.find((x) => x.id === state.player.personality);
+  return p?.mods[key] ?? fallback;
 }

@@ -1,4 +1,4 @@
 [
-  { "id": "coffee", "name": "Alpine Coffee & Bakery", "icon": "cup", "strongIn": { "winter": 1.1, "green": 1.0 }, "products": ["pour_over", "matcha_latte", "apple_pastry"] },
-  { "id": "soba", "name": "Soba & Oyaki Kitchen", "icon": "bowl", "strongIn": { "winter": 1.2, "green": 0.85 }, "products": ["kake_soba", "nozawana_oyaki", "onigiri"] }
+  { "id": "coffee", "name": "Alpine Coffee & Bakery", "icon": "cup", "strongIn": { "winter": 1.1, "green": 1.0 }, "phaseMult": { "morning": 1.25, "afternoon": 1.0, "evening": 0.8, "night": 0.4 }, "products": ["pour_over", "matcha_latte", "apple_pastry"], "builds": "pastry_case", "pitch": "Mornings belong to you: skiers and hikers queue for pour-over and warm apple pastry.", "signature": "Pour timing" },
+  { "id": "soba", "name": "Soba & Oyaki Kitchen", "icon": "bowl", "strongIn": { "winter": 1.2, "green": 0.85 }, "phaseMult": { "morning": 0.8, "afternoon": 1.0, "evening": 1.35, "night": 0.7 }, "products": ["kake_soba", "onigiri", "nozawana_oyaki"], "builds": "soba_kitchen", "pitch": "Cold evenings belong to you: hot soba after the lifts close, onigiri for the trail.", "signature": "Noodle cut rhythm" }
 ]

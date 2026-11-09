@@ -5,20 +5,58 @@
     "questStep": 2,
     "miniGame": 1,
     "businessShift": 3,
-    "craft": 1
+    "craft": 1,
+    "drive": 1
   },
   "dayPhases": [
-    { "id": "morning", "label": "Morning", "untilSpent": 3 },
-    { "id": "afternoon", "label": "Afternoon", "untilSpent": 7 },
-    { "id": "evening", "label": "Evening", "untilSpent": 11 },
-    { "id": "night", "label": "Night", "untilSpent": 999 }
+    {
+      "id": "morning",
+      "label": "Morning",
+      "untilSpent": 3
+    },
+    {
+      "id": "afternoon",
+      "label": "Afternoon",
+      "untilSpent": 7
+    },
+    {
+      "id": "evening",
+      "label": "Evening",
+      "untilSpent": 11
+    },
+    {
+      "id": "night",
+      "label": "Night",
+      "untilSpent": 999
+    }
   ],
   "calendar": [
-    { "season": "autumn", "label": "Late Autumn", "days": 2, "scored": false },
-    { "season": "winter", "label": "Winter", "days": 7, "scored": true },
-    { "season": "spring", "label": "Spring Melt", "days": 2, "scored": false },
-    { "season": "green", "label": "Green Season", "days": 7, "scored": true }
+    {
+      "season": "autumn",
+      "label": "Late Autumn",
+      "days": 2,
+      "scored": false
+    },
+    {
+      "season": "winter",
+      "label": "Winter",
+      "days": 7,
+      "scored": true
+    },
+    {
+      "season": "spring",
+      "label": "Spring Melt",
+      "days": 2,
+      "scored": false
+    },
+    {
+      "season": "green",
+      "label": "Green Season",
+      "days": 7,
+      "scored": true
+    }
   ],
   "startingYen": 3000,
-  "startingKizuna": 0
+  "startingKizuna": 0,
+  "roadCost": 5
 }

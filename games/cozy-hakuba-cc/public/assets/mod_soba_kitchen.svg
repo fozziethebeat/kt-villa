@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="130" viewBox="0 0 320 130">
+  <!-- Soba kitchen module -->
+  <rect x="16" y="56" width="288" height="66" rx="8" fill="#8a96a8" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="34" y="40" width="100" height="18" rx="4" fill="#3b3a4a"/>
+  <path d="M44 40 V18 Q84 8 124 18 V40Z" fill="#dfe6ee" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M64 12 q4 -8 0 -12 M84 10 q4 -8 0 -12 M104 12 q4 -8 0 -12" stroke="#b7b3ad" stroke-width="3" fill="none"/>
+  <rect x="160" y="34" width="124" height="24" rx="4" fill="#d9b88f" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <g stroke="#7a4b3a" stroke-width="2"><line x1="172" y1="38" x2="172" y2="54"/><line x1="182" y1="38" x2="182" y2="54"/><line x1="192" y1="38" x2="192" y2="54"/><line x1="202" y1="38" x2="202" y2="54"/><line x1="212" y1="38" x2="212" y2="54"/><line x1="222" y1="38" x2="222" y2="54"/><line x1="232" y1="38" x2="232" y2="54"/><line x1="242" y1="38" x2="242" y2="54"/><line x1="252" y1="38" x2="252" y2="54"/><line x1="262" y1="38" x2="262" y2="54"/><line x1="272" y1="38" x2="272" y2="54"/></g>
+  <rect x="0" y="122" width="320" height="8" fill="#8a96a8"/>
+</svg>

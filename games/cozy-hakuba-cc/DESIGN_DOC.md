@@ -8,8 +8,8 @@
 > busy in **both** the snowy winter and the green summer, and your van business is
 > known across the valley.
 
-**Status:** v0.2. The core decisions are locked (see the Decision Log below),
-and milestone M0 is in progress. Where a decision is still open, it's marked
+**Status:** v0.3. The core decisions are locked (see the Decision Log below).
+Milestones M0–M2 are built (§13). Where a decision is still open, it's marked
 **⚖️ Option A / B / C**, and the recommended option comes first and is labeled
 ★.
 
@@ -490,12 +490,13 @@ would need rewriting.
 (`Phaser.Scale.FIT`), controlled with mouse plus WASD/arrow keys, tested at
 1280×720 and 1920×1080.
 
-### 11.3 Architecture (as built in M0)
+### 11.3 Architecture (as built through M2)
 ```
 cozy-hakuba-cc/
   content/                 # JSON: tuning, regions, archetypes, personalities, asset-manifest
-  src/sim/                 # Pure TypeScript game rules (no Phaser): state, day/season clock, travel gating, RNG, store
-  src/scenes/              # Phaser scenes: Boot, Title, Station (M0 sandbox), Hud
+  src/sim/                 # Pure TypeScript game rules (no Phaser): state, clock, quests, van, business, travel, archetype, balance sim
+  src/sim/puzzles/         # Reusable engines: gridPacking (luggage, van layout), tentBalance (tent, later cairns), trace (module build)
+  src/scenes/              # Phaser scenes: RegionScene base → Station, SnowPeak; overlays (Van, Business, Board, Travel, Garage, Tent, Archetype, Build, MapCraft, Luggage); Hud
   src/ui/                  # Papercraft helpers (art placement, panels, grain overlay)
   src/debug/api.ts         # window.__hakuba debug/playtest API
   src/catalog.ts           # Asset catalog page logic (catalog.html)
@@ -602,10 +603,38 @@ Each test asset must **show what it's for** before it looks beautiful:
 |---|---|---|
 | **M0 Skeleton** ✅ | Vite + Phaser 4 + sim core + debug API + asset manifest/catalog + station sandbox (mini fetch loop, restoration filter, season swap, sleep) | Boots; 12 unit tests and the e2e playthrough with 3 golden snapshots pass |
 | **M1 Vertical slice** ✅ | Character select (name, pronouns, 5 personalities), JR Hakuba Station 3-step arc (brochures → valley map sticker craft → lost-luggage grid packing), kodama, seasonal crowds and lanterns, Kei Van interior with drag-and-drop modules + shop + comfort→stamina, Coffee café (pour-timing prep + window service), Valley Revival Board, autosave on sleep + Continue | 25 unit tests; one e2e playthrough of the whole slice by real input in both seasons |
-| **M2 Garage & build** | Snow Peak Land Station, module placement, archetype choice (coffee + soba), chassis Tier 1 | The build changes earnings in the balance sim |
+| **M2 Garage & build** ✅ | Shared `RegionScene` base; driving between regions on a valley map (1 stamina); Revival Board offers roads next to Thriving regions; Snow Peak Land Station 3-step arc (tent pitching on the new balance engine → salvage 4 van parts → choose coffee or soba and build its module with the new trace engine); Takumi's garage (chassis Tier 1 + 3 roof modules); Soba & Oyaki Kitchen (noodle-cut rhythm prep, 3 products, indigo noren); menu slots + specialty bonus; all 5 personality modifiers wired; headless balance sim; save v3 with v2 migration | 36 unit tests; the balance sim shows build choices changing earnings (see §13.1); e2e playthroughs of M1 and M2 by real input |
 | **M3 North arm** | Happo terminal, Echoland, Happo Pond, Iwatake, Tsugaike; seating, flow + balance engines | 6 regions playable; Season Report |
 | **M4 South arm** | Goryu, 47, Aokiko; remaining archetypes; helpers; Ranks 1–5 | Full game reaches the ending in the balance sim |
 | **M5 Polish** | All personalities, appearance options, audio, art Stage 2 replacements, save/load | Full manual playthrough by Claude, then your validation |
+
+### 13.1 M2 balance sim snapshot
+`npm run balance` runs a bot through 7 winter days and 7 green days (one shift a
+day at the archetype's best time of day; 75% of prep hits) at a Thriving station
+with reputation 20. Per-shift earnings:
+
+| Build | Winter ¥/shift | Green ¥/shift | Reading |
+|---|---|---|---|
+| Starter (pour bar only, no trade chosen) | ~4,800 | ~4,800 | Stock-bound: 8 cups sell out in both seasons |
+| Coffee + pastry case | ~7,000 | ~5,800 | Shelf stock and specialty bonus pay off; steadiest across seasons |
+| Soba kitchen + oyaki griddle | ~11,000 | ~4,000 | The winter powerhouse (evenings, hot soba); weak in green |
+| Soba + Tier 1 (ski box + solar) | ~12,100 | ~4,100 | Roof modules add ~10% in winter; nothing for green |
+
+This matches the design intent: winter-strong trades are easy early, green
+season is the test, and green demand has to come from restored attractions
+(M3/M4) or the roof planter. Numbers live in `content/business.json`,
+`archetypes.json` and `modules.json`.
+
+**M2 rules worth knowing**
+- Customers who arrive after you've sold out don't cost reputation; only
+  customers who walk away from a long wait do.
+- Unscored seasons (autumn, spring) behave like the next scored season at 60%
+  demand.
+- Choosing a trade is permanent for now; the secondary archetype arrives with
+  Ranks in M4. If you already bought the module your trade would build, Takumi
+  refunds its price.
+- Autosave now also happens on arriving in a region after a drive, as well as on
+  sleep.
 
 ---
 

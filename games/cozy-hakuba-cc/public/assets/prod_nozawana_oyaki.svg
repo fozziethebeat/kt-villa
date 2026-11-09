@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- nozawana_oyaki -->
+  <ellipse cx="32" cy="38" rx="26" ry="18" fill="#e2c48a" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M14 40 Q32 30 50 40" stroke="#a8754b" stroke-width="2.5" fill="none"/>
+  <g fill="#7a4b3a"><circle cx="24" cy="32" r="2.5"/><circle cx="40" cy="30" r="2.5"/><circle cx="34" cy="44" r="2.5"/></g>
+  <path d="M30 22 Q34 12 44 12" stroke="#3f6b4f" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>

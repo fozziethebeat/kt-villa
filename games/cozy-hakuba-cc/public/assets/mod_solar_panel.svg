@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="80" viewBox="0 0 160 80">
+  <!-- Solar panel roof module -->
+  <path d="M20 60 L40 14 H140 L120 60Z" fill="#3e5f8a" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <g stroke="#9fd3e6" stroke-width="2"><line x1="73" y1="14" x2="53" y2="60"/><line x1="106" y1="14" x2="86" y2="60"/><line x1="30" y1="37" x2="130" y2="37"/></g>
+  <rect x="50" y="60" width="8" height="14" fill="#3b3a4a"/><rect x="102" y="60" width="8" height="14" fill="#3b3a4a"/>
+  <circle cx="146" cy="12" r="8" fill="#f2a541" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>

@@ -9,6 +9,12 @@ import { MapCraftScene } from './scenes/MapCraftScene';
 import { LuggageScene } from './scenes/LuggageScene';
 import { BusinessScene } from './scenes/BusinessScene';
 import { BoardScene } from './scenes/BoardScene';
+import { SnowPeakScene } from './scenes/SnowPeakScene';
+import { TentScene } from './scenes/TentScene';
+import { ArchetypeScene } from './scenes/ArchetypeScene';
+import { BuildScene } from './scenes/BuildScene';
+import { GarageScene } from './scenes/GarageScene';
+import { TravelScene } from './scenes/TravelScene';
 import { installDebugApi } from './debug/api';
 import { HEIGHT, WIDTH } from './theme';
 
@@ -30,7 +36,7 @@ async function start() {
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     render: { antialias: true, preserveDrawingBuffer: true },
     // Order = draw order: overlays come after the HUD so they cover it.
-    scene: [BootScene, TitleScene, CharacterSelectScene, StationScene, HudScene, VanInteriorScene, MapCraftScene, LuggageScene, BusinessScene, BoardScene],
+    scene: [BootScene, TitleScene, CharacterSelectScene, StationScene, SnowPeakScene, HudScene, VanInteriorScene, MapCraftScene, LuggageScene, BusinessScene, BoardScene, TentScene, ArchetypeScene, BuildScene, GarageScene, TravelScene],
   });
   installDebugApi(game);
 }

@@ -3,6 +3,11 @@
   { "id": "workbench", "name": "Workbench", "category": "production", "shape": [[0, 0]], "comfort": 0, "price": 0, "enables": ["craft"], "blurb": "Make things for creation quests." },
   { "id": "pour_bar", "name": "Pour-over Bar", "category": "production", "shape": [[0, 0]], "comfort": 0, "price": 0, "enables": ["pour_over", "matcha_latte"], "blurb": "Brews pour-over and matcha lattes." },
   { "id": "pastry_case", "name": "Pastry Case", "category": "production", "shape": [[0, 0], [1, 0]], "comfort": 0, "price": 2400, "enables": ["apple_pastry"], "blurb": "Sell Shinshu apple pastries." },
+  { "id": "soba_kitchen", "name": "Soba Kitchen", "category": "production", "shape": [[0, 0], [1, 0]], "comfort": 0, "price": 0, "enables": ["kake_soba", "onigiri"], "blurb": "Induction burner + cutting board: hot soba and onigiri." },
+  { "id": "oyaki_griddle", "name": "Oyaki Griddle", "category": "production", "shape": [[0, 0]], "comfort": 0, "price": 2200, "enables": ["nozawana_oyaki"], "blurb": "Grill nozawana oyaki dumplings." },
   { "id": "stove", "name": "Mini Wood Stove", "category": "living", "shape": [[0, 0]], "comfort": 2, "price": 1800, "enables": [], "blurb": "Toasty nights; comfort +2." },
-  { "id": "plant", "name": "Plant Shelf", "category": "living", "shape": [[0, 0]], "comfort": 1, "price": 600, "enables": [], "blurb": "A little green; comfort +1." }
+  { "id": "plant", "name": "Plant Shelf", "category": "living", "shape": [[0, 0]], "comfort": 1, "price": 600, "enables": [], "blurb": "A little green; comfort +1." },
+  { "id": "solar_panel", "name": "Solar Panel", "category": "roof", "shape": [[0, 0]], "comfort": 0, "price": 3000, "enables": [], "effects": { "stockBonus": 2 }, "blurb": "Power for a longer service: +2 stock of everything each shift." },
+  { "id": "ski_box", "name": "Ski Box", "category": "roof", "shape": [[0, 0]], "comfort": 0, "price": 2500, "enables": [], "effects": { "customerMult": { "winter": 1.2 } }, "blurb": "Skiers spot a fellow rider: +20% customers in winter." },
+  { "id": "roof_planter", "name": "Roof Planter", "category": "roof", "shape": [[0, 0]], "comfort": 1, "price": 2000, "enables": [], "effects": { "customerMult": { "green": 1.2 } }, "blurb": "Herbs and flowers on top: +20% customers in green season, comfort +1." }
 ]

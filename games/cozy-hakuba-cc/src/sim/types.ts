@@ -4,7 +4,7 @@ export type SeasonId = 'autumn' | 'winter' | 'spring' | 'green';
 export type ScoredSeason = 'winter' | 'green';
 export type PhaseId = 'morning' | 'afternoon' | 'evening' | 'night';
 export type Vitality = 0 | 1 | 2 | 3;
-export type ActionKind = 'forage' | 'questStep' | 'miniGame' | 'businessShift' | 'craft';
+export type ActionKind = 'forage' | 'questStep' | 'miniGame' | 'businessShift' | 'craft' | 'drive';
 
 export interface CalendarEntry { season: SeasonId; label: string; days: number; scored: boolean }
 export interface DayPhase { id: PhaseId; label: string; untilSpent: number }
@@ -16,6 +16,7 @@ export interface Tuning {
   calendar: CalendarEntry[];
   startingYen: number;
   startingKizuna: number;
+  roadCost: number;
 }
 
 export interface RegionDef {
@@ -27,6 +28,10 @@ export interface RegionDef {
   connects: string[];
   requires: { chassisTier: number; regions: string[] };
   draw: Record<ScoredSeason, number>;
+  /** Position on the valley travel map (1280×720 screen space). */
+  map: [number, number];
+  /** Has a playable scene in this build. */
+  playable: boolean;
 }
 
 export interface ArchetypeDef {
@@ -34,7 +39,12 @@ export interface ArchetypeDef {
   name: string;
   icon: string;
   strongIn: Record<ScoredSeason, number>;
+  phaseMult: Record<PhaseId, number>;
   products: string[];
+  /** Module built for free when this archetype is chosen at Snow Peak. */
+  builds: string;
+  pitch: string;
+  signature: string;
 }
 
 export interface PersonalityDef {
@@ -68,19 +78,26 @@ export interface ModuleDef {
   comfort: number;
   price: number;
   enables: string[];
+  effects?: ModuleEffects;
   blurb: string;
 }
 
-export interface ProductDef { id: string; name: string; price: number; archetype: string; seasonAppeal: Record<ScoredSeason, number> }
+export interface ModuleEffects { stockBonus?: number; customerMult?: Partial<Record<ScoredSeason, number>>; tipMult?: number }
+
+export interface ChassisDef { tier: number; name: string; grid: { w: number; h: number }; roofSlots: number; price: number; available: boolean; blurb: string }
+
+export type ProductLine = 'cup' | 'bowl' | 'shelf';
+export interface ProductDef { id: string; name: string; price: number; archetype: string; line: ProductLine; seasonAppeal: Record<ScoredSeason, number> }
 export interface CustomerTypeDef { id: string; name: string; weight: Record<ScoredSeason, number>; prefs: Record<string, number>; patience: number; tip: number }
 export interface BusinessDef {
   products: ProductDef[];
   customers: CustomerTypeDef[];
   shift: {
     baseCustomers: number; minCustomers: number; maxCustomers: number; durationSec: number;
-    phaseMult: Record<PhaseId, number>; cupsPerPour: number; pours: number; pastryStock: number;
-    qualityMult: number[]; tipRate: number; reputationPerHappy: number; reputationPerMissed: number;
+    phaseMult: Record<PhaseId, number>; cupsPerPour: number; pours: number; bowlsPerCut: number; cuts: number; shelfStock: number;
+    qualityMult: number[]; tipRate: number; reputationPerHappy: number; reputationPerMissed: number; specialtyBonus: number;
   };
+  menuSlots: number;
   comfortStaminaDivisor: number;
   comfortStaminaCap: number;
 }
@@ -93,6 +110,7 @@ export interface Content {
   quests: Record<string, RegionQuestDef>;
   modules: ModuleDef[];
   business: BusinessDef;
+  chassis: ChassisDef[];
 }
 
 export interface PlayerProfile {
@@ -105,10 +123,10 @@ export interface RegionState { vitality: Vitality; questStep: number; kodamaFoun
 
 export interface Placement { moduleId: string; x: number; y: number; rot: number }
 
-export interface ShiftSummary { day: number; served: number; missed: number; yen: number; tips: number; reputation: number }
+export interface ShiftSummary { day: number; region: string; served: number; missed: number; soldOut: number; yen: number; tips: number; reputation: number }
 
 export interface GameState {
-  version: 2;
+  version: 3;
   seed: number;
   rngState: number;
   player: PlayerProfile;
@@ -126,8 +144,9 @@ export interface GameState {
   unlocks: string[];
   /** Best star rating per quest step / mini-game id. */
   stars: Record<string, number>;
-  van: { grid: { w: number; h: number }; owned: string[]; placed: Placement[] };
-  business: { reputation: number; served: number; shifts: number; last: ShiftSummary | null };
+  van: { grid: { w: number; h: number }; owned: string[]; placed: Placement[]; roof: string[] };
+  /** `menu` null = automatic (primary archetype first, then whatever the van can make). */
+  business: { reputation: number; served: number; shifts: number; last: ShiftSummary | null; menu: string[] | null };
   log: string[];
 }
 

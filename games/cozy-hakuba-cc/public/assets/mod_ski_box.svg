@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="80" viewBox="0 0 160 80">
+  <!-- Ski box roof module -->
+  <path d="M12 62 Q12 22 50 20 H120 Q150 22 150 54 Q150 64 140 64 H20 Q12 64 12 62Z" fill="#c8553d" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M30 40 H130" stroke="#fbfaf6" stroke-width="3" stroke-linecap="round"/>
+  <g stroke="#3b3a4a" stroke-width="3" stroke-linecap="round"><line x1="40" y1="64" x2="40" y2="76"/><line x1="120" y1="64" x2="120" y2="76"/></g>
+  <path d="M60 10 l40 0 M66 4 l28 12" stroke="#6c7fa3" stroke-width="3" stroke-linecap="round"/>
+</svg>

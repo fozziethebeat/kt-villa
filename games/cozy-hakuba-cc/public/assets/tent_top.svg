@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="144" viewBox="0 0 144 144">
+  <!-- Tent top-down -->
+  <rect x="10" y="10" width="124" height="124" rx="12" fill="#f2a541" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M10 10 L134 134 M134 10 L10 134" stroke="#c8553d" stroke-width="3"/>
+  <circle cx="72" cy="72" r="10" fill="#7a4b3a" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <g fill="#fbfaf6" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><circle cx="24" cy="24" r="7"/><circle cx="120" cy="24" r="7"/><circle cx="24" cy="120" r="7"/><circle cx="120" cy="120" r="7"/></g>
+</svg>

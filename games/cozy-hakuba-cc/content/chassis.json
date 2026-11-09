@@ -1,0 +1,6 @@
+[
+  { "tier": 0, "name": "Kei Van", "grid": { "w": 4, "h": 2 }, "roofSlots": 0, "price": 0, "available": true, "blurb": "Tiny, 2WD, full of heart. Fine for the valley floor." },
+  { "tier": 1, "name": "Snow Tires & Roof Rack", "grid": { "w": 4, "h": 2 }, "roofSlots": 2, "price": 6000, "available": true, "blurb": "Grips icy roads to Iwatake and Goryu. The rack holds 2 roof modules." },
+  { "tier": 2, "name": "Box Van 4WD", "grid": { "w": 6, "h": 3 }, "roofSlots": 3, "price": 18000, "available": false, "blurb": "Bigger interior and 4WD for Hakuba 47 and Lake Aoki. (Coming in M4.)" },
+  { "tier": 3, "name": "Overland Camper", "grid": { "w": 8, "h": 3 }, "roofSlots": 4, "price": 36000, "available": false, "blurb": "Pop-top and chains for Tsugaike. (Coming in M4.)" }
+]

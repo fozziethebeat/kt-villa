@@ -1,6 +1,8 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
+  // Software-rendered WebGL is CPU-heavy; parallel games starve each other's frame rate.
+  workers: 1,
   testDir: 'tests/e2e',
   timeout: 60_000,
   expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.02, animations: 'disabled' } },

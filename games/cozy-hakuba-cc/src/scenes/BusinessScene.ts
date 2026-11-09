@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import { store } from '../gameStore';
-import { priceFor, settleShift, type PlannedCustomer, type ServeOutcome, type ShiftPlan } from '../sim/business';
-import { CONTENT, productDef } from '../sim/content';
-import { season } from '../sim/game';
+import { prepQuality, prepYield, priceFor, settleShift, type PlannedCustomer, type PrepLine, type ServeOutcome, type ShiftPlan } from '../sim/business';
+import { CONTENT, archetypeDef, productDef } from '../sim/content';
+import { mod, season } from '../sim/game';
 import { isSnowy } from '../sim/seasons';
 import { art, label, paperGrain, paperPanel } from '../ui/art';
 import { button, closeOverlay, starsText } from '../ui/widgets';
@@ -13,6 +13,8 @@ const CUSTOMER_Y = 430;
 const DRIPPER = { x: 640, y: 300 };
 const ORBIT_R = 120;
 const WINDOW_DEG = 26;
+const BOARD = { x: 420, y: 166, w: 440 };
+const CUT_WINDOW_PX = 22;
 
 interface Live { plan: PlannedCustomer; slot: number; sprite: Phaser.GameObjects.Container; bar: Phaser.GameObjects.Rectangle; arrivedAt: number; state: 'waiting' | 'leaving' }
 
@@ -20,15 +22,25 @@ interface Live { plan: PlannedCustomer; slot: number; sprite: Phaser.GameObjects
 export class BusinessScene extends Phaser.Scene {
   private plan!: ShiftPlan;
   private phase: 'prep' | 'service' | 'summary' = 'prep';
+  private prepQueue: PrepLine[] = [];
+  private line: PrepLine = 'cup';
   private elapsed = 0;
   // prep
   private kettleAngle = 0;
   private targetAngle = 0;
   private pours = 0;
   private hits = 0;
+  private perfects = 0;
   private cups = 0;
-  private quality = 1;
-  private pastries = 0;
+  private bowls = 0;
+  private quality: Record<PrepLine, number> = { cup: 1, bowl: 1 };
+  private shelf: Record<string, number> = {};
+  // noodle cut
+  private knifeX = 0;
+  private knifeDir = 1;
+  private cutTarget = 0;
+  private knife!: Phaser.GameObjects.Image;
+  private cutMarks!: Phaser.GameObjects.Graphics;
   private prepLayer!: Phaser.GameObjects.Container;
   private kettle!: Phaser.GameObjects.Image;
   private ring!: Phaser.GameObjects.Graphics;
@@ -52,20 +64,22 @@ export class BusinessScene extends Phaser.Scene {
   }
 
   create() {
-    this.phase = 'prep'; this.elapsed = 0; this.pours = 0; this.hits = 0; this.cups = 0; this.quality = 1;
+    this.phase = 'prep'; this.elapsed = 0; this.pours = 0; this.hits = 0; this.perfects = 0; this.cups = 0; this.bowls = 0;
+    this.quality = { cup: 1, bowl: 1 };
     this.live = []; this.nextIdx = 0; this.outcomes = []; this.selected = null; this.earned = 0; this.stockText = {};
-    this.pastries = this.plan.pastryStock;
+    this.shelf = { ...this.plan.shelf };
+    this.prepQueue = [...this.plan.prep];
     this.kettleAngle = 0; this.targetAngle = 180;
     const snowy = isSnowy(season(store.state).season);
     art(this, 0, 0, snowy ? 'bg_mountains_winter' : 'bg_mountains_green', 0, 0).setDisplaySize(WIDTH, 470);
     art(this, 0, 400, snowy ? 'ground_winter' : 'ground_green', 0, 0).setDisplaySize(WIDTH, 300);
-    art(this, 0, 460, 'biz_counter', 0, 0);
+    art(this, 0, 460, this.plan.archetype === 'soba' ? 'biz_counter_soba' : 'biz_counter', 0, 0);
     this.add.rectangle(0, 0, WIDTH, 60, hex(PAL.cedarDark)).setOrigin(0);
-    label(this, 24, 12, 'Alpine Coffee · open for business', 26, PAL.snow, '900');
+    label(this, 24, 12, `${archetypeDef(CONTENT, this.plan.archetype).name} · open for business`, 26, PAL.snow, '900');
     this.earnedText = label(this, WIDTH - 24, 16, '', 22, PAL.lantern, '900').setOrigin(1, 0);
 
-    this.buildPrep();
-    this.input.keyboard!.on('keydown-SPACE', () => this.pour());
+    this.nextPrep();
+    this.input.keyboard!.on('keydown-SPACE', () => this.prepHit());
     this.input.keyboard!.on('keydown', (e: KeyboardEvent) => {
       const n = Number(e.key);
       if (this.phase === 'service' && n >= 1 && n <= this.plan.menu.length) this.serve(this.plan.menu[n - 1]);
@@ -75,8 +89,65 @@ export class BusinessScene extends Phaser.Scene {
 
   // ---- prep: pour timing ------------------------------------------------------
 
+  /** Timing window for the current prep line (degrees for pours, pixels for noodle cuts). */
   private window(): number {
-    return WINDOW_DEG * (store.state.player.personality === 'planner' ? 0.9 : 1);
+    const m = mod(store.state, 'rhythmWindow') * mod(store.state, 'prepSpeed');
+    return (this.line === 'cup' ? WINDOW_DEG : CUT_WINDOW_PX) * m;
+  }
+
+  /** Run the next prep mini-game, or open the hatch when all lines are stocked. */
+  private nextPrep() {
+    this.prepLayer?.destroy();
+    const next = this.prepQueue.shift();
+    if (!next) { this.startService(); return; }
+    this.line = next; this.pours = 0; this.hits = 0; this.perfects = 0;
+    if (next === 'cup') this.buildPrep(); else this.buildCut();
+  }
+
+  private prepHit() {
+    if (this.phase !== 'prep') return;
+    if (this.line === 'cup') this.pour(); else this.cut();
+  }
+
+  private buildCut() {
+    this.prepLayer = this.add.container(0, 0);
+    const panel = paperPanel(this, 340, 90, 600, 360, PAL.snow);
+    const board = art(this, BOARD.x - 20, BOARD.y, 'soba_board', 0, 0).setScale(0.5 * (BOARD.w + 40) / 520);
+    this.cutMarks = this.add.graphics();
+    this.knife = art(this, BOARD.x, BOARD.y + 108, 'soba_knife', 0.5, 0.5).setScale(0.45);
+    this.prepText = label(this, 640, 108, '', 20, PAL.ink).setOrigin(0.5, 0).setAlign('center');
+    const cutBtn = button(this, 640, 410, 240, 56, 'Cut  (Space)', () => this.cut(), PAL.lantern, 22);
+    this.prepLayer.add([panel, board, this.cutMarks, this.knife, this.prepText, cutBtn.container]);
+    this.knifeX = 0; this.knifeDir = 1;
+    this.cutTarget = 140 + Math.random() * 240;
+    this.updateCutText();
+  }
+
+  private updateCutText() {
+    const b = CONTENT.business.shift;
+    this.prepText.setText(`Cut when the knife is over the green line · cut ${Math.min(this.pours + 1, b.cuts)}/${b.cuts}
+Bowls ready: ${this.bowls}`);
+  }
+
+  private cut() {
+    if (this.phase !== 'prep' || this.line !== 'bowl' || this.pours >= CONTENT.business.shift.cuts) return;
+    const off = this.pourOffset();
+    const b = CONTENT.business.shift;
+    const hit = off <= this.window();
+    const perfect = off <= this.window() / 3;
+    this.pours++;
+    if (hit) this.hits++;
+    if (perfect) this.perfects++;
+    this.bowls = 0; // recomputed from the running tally so the solar bonus is applied once
+    this.bowls = prepYield('bowl', this.hits, this.perfects, this.pours, this.plan) - (this.pours < b.cuts ? this.plan.stockBonus : 0);
+    const t = label(this, BOARD.x + this.knifeX, BOARD.y + 30, perfect ? 'Perfect strands!' : hit ? 'Clean cut' : 'A bit thick…', 24, hit ? PAL.cedar : PAL.noren, '900').setOrigin(0.5).setDepth(20);
+    this.tweens.add({ targets: t, y: t.y - 30, alpha: 0, duration: 800, onComplete: () => t.destroy() });
+    this.cutTarget = 60 + ((this.cutTarget + 130 + Math.random() * 160) % (BOARD.w - 120));
+    this.updateCutText();
+    if (this.pours >= b.cuts) {
+      this.quality.bowl = prepQuality(this.hits, b.cuts);
+      this.time.delayedCall(700, () => this.nextPrep());
+    }
   }
 
   private buildPrep() {
@@ -95,28 +166,30 @@ export class BusinessScene extends Phaser.Scene {
     this.prepText.setText(`Pour when the kettle is over the green arc · pour ${Math.min(this.pours + 1, CONTENT.business.shift.pours)}/${CONTENT.business.shift.pours}\nCups ready: ${this.cups}`);
   }
 
-  /** Angular distance (deg) between the kettle and the sweet spot. */
+  /** Distance to the sweet spot: degrees (kettle) or pixels (knife). */
   pourOffset(): number {
+    if (this.line === 'bowl') return Math.abs(this.knifeX - this.cutTarget);
     const d = Math.abs(((this.kettleAngle - this.targetAngle) % 360 + 540) % 360 - 180);
     return d;
   }
 
   private pour() {
-    if (this.phase !== 'prep') return;
+    if (this.phase !== 'prep' || this.line !== 'cup' || this.pours >= CONTENT.business.shift.pours) return;
     const off = this.pourOffset();
     const b = CONTENT.business.shift;
     const hit = off <= this.window();
     const perfect = off <= this.window() / 3;
     this.pours++;
     if (hit) this.hits++;
-    this.cups += hit ? b.cupsPerPour + (perfect ? 1 : 0) : 1;
+    if (perfect) this.perfects++;
+    this.cups = prepYield('cup', this.hits, this.perfects, this.pours, this.plan) - (this.pours < b.pours ? this.plan.stockBonus : 0);
     const t = label(this, DRIPPER.x, DRIPPER.y - 150, perfect ? 'Perfect bloom!' : hit ? 'Nice pour' : 'A bit splashy…', 24, hit ? PAL.cedar : PAL.noren, '900').setOrigin(0.5).setDepth(20);
     this.tweens.add({ targets: t, y: t.y - 30, alpha: 0, duration: 800, onComplete: () => t.destroy() });
     this.targetAngle = (this.targetAngle + 110 + Math.random() * 100) % 360;
     this.updatePrepText();
     if (this.pours >= b.pours) {
-      this.quality = this.hits >= b.pours ? 3 : this.hits >= 2 ? 2 : 1;
-      this.time.delayedCall(700, () => this.startService());
+      this.quality.cup = prepQuality(this.hits, b.pours);
+      this.time.delayedCall(700, () => this.nextPrep());
     }
   }
 
@@ -125,7 +198,7 @@ export class BusinessScene extends Phaser.Scene {
   private startService() {
     this.phase = 'service';
     this.elapsed = 0;
-    this.prepLayer.destroy();
+    this.prepLayer?.destroy();
     this.serviceLayer = this.add.container(0, 0);
     this.selRing = this.add.ellipse(0, CUSTOMER_Y + 4, 120, 26, hex(PAL.lantern), 0.6).setVisible(false);
     this.serviceLayer.add(this.selRing);
@@ -133,7 +206,7 @@ export class BusinessScene extends Phaser.Scene {
     this.clockBar = this.add.rectangle(340, 76, 600, 12, hex(PAL.teal)).setOrigin(0, 0.5);
     const clockLbl = label(this, 330, 66, 'Shift', 16, PAL.ink).setOrigin(1, 0);
     this.serviceLayer.add([clockBg, this.clockBar, clockLbl]);
-    const q = label(this, 960, 66, `Brew quality ${starsText(this.quality)}`, 16, PAL.ink);
+    const q = label(this, 960, 66, this.plan.prep.map((l) => `${l === 'cup' ? 'Brew' : 'Noodles'} ${starsText(this.quality[l])}`).join('  '), 16, PAL.ink);
     this.serviceLayer.add(q);
     this.plan.menu.forEach((pid, i) => {
       const x = 380 + i * 260;
@@ -149,7 +222,8 @@ export class BusinessScene extends Phaser.Scene {
   }
 
   private stockFor(pid: string): number {
-    return pid === 'apple_pastry' ? this.pastries : this.cups;
+    const line = productDef(CONTENT, pid).line;
+    return line === 'shelf' ? this.shelf[pid] ?? 0 : line === 'cup' ? this.cups : this.bowls;
   }
 
   private refreshStock() {
@@ -192,9 +266,10 @@ export class BusinessScene extends Phaser.Scene {
     if (this.phase !== 'service') return;
     const target = this.selected?.state === 'waiting' ? this.selected : this.oldestWaiting();
     if (!target || this.stockFor(pid) <= 0) return;
-    if (pid === 'apple_pastry') this.pastries--; else this.cups--;
+    const line = productDef(CONTENT, pid).line;
+    if (line === 'shelf') this.shelf[pid]--; else if (line === 'cup') this.cups--; else this.bowls--;
     const waitedFrac = (this.elapsed - target.arrivedAt) / target.plan.patience;
-    const stars = pid === 'apple_pastry' ? 2 : this.quality;
+    const stars = line === 'shelf' ? 2 : this.quality[line];
     const o: ServeOutcome = { idx: target.plan.idx, item: pid, stars, waitedFrac };
     this.outcomes.push(o);
     const r = priceFor(this.plan, target.plan, o);
@@ -214,7 +289,19 @@ export class BusinessScene extends Phaser.Scene {
 
   update(_t: number, dtMs: number) {
     const dt = Math.min(dtMs, 50) / 1000;
+    if (this.phase === 'prep' && this.line === 'bowl') {
+      if (!this.knife) return;
+      this.knifeX += this.knifeDir * 300 * dt;
+      if (this.knifeX > BOARD.w) { this.knifeX = BOARD.w; this.knifeDir = -1; }
+      if (this.knifeX < 0) { this.knifeX = 0; this.knifeDir = 1; }
+      this.knife.setX(BOARD.x + this.knifeX);
+      const w = this.window();
+      this.cutMarks.clear().fillStyle(hex(PAL.fresh), 0.55).fillRect(BOARD.x + this.cutTarget - w, BOARD.y + 52, w * 2, 110);
+      this.cutMarks.lineStyle(4, hex(PAL.cedar), 1).lineBetween(BOARD.x + this.cutTarget, BOARD.y + 48, BOARD.x + this.cutTarget, BOARD.y + 166);
+      return;
+    }
     if (this.phase === 'prep') {
+      if (!this.kettle?.active) return;
       this.kettleAngle = (this.kettleAngle + 150 * dt) % 360;
       const a = Phaser.Math.DegToRad(this.kettleAngle - 90);
       this.kettle.setPosition(DRIPPER.x + Math.cos(a) * ORBIT_R, DRIPPER.y + Math.sin(a) * ORBIT_R * 0.45);
@@ -265,6 +352,7 @@ export class BusinessScene extends Phaser.Scene {
     const rows = [
       `Customers served   ${sum.served}`,
       `Walked away        ${sum.missed}`,
+      ...(sum.soldOut ? [`Sold out, missed   ${sum.soldOut}`] : []),
       `Sales              ¥${sum.yen.toLocaleString('en-US')}`,
       `Tips               ¥${sum.tips.toLocaleString('en-US')}`,
       `Reputation         ${sum.reputation >= 0 ? '+' : ''}${sum.reputation}`,
@@ -277,7 +365,7 @@ export class BusinessScene extends Phaser.Scene {
   /** Debug/e2e helpers. */
   debugState() {
     return {
-      phase: this.phase, offset: this.pourOffset(), window: this.window(), cups: this.cups, pastries: this.pastries,
+      phase: this.phase, line: this.line, offset: this.pourOffset(), window: this.window(), cups: this.cups, bowls: this.bowls, shelf: { ...this.shelf },
       waiting: this.live.filter((l) => l.state === 'waiting').map((l) => ({ idx: l.plan.idx, wants: l.plan.wants })),
       remaining: this.plan.customers.length - this.nextIdx,
     };

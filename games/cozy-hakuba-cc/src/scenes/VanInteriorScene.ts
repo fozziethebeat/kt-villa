@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
 import { store } from '../gameStore';
-import { startShift } from '../sim/business';
-import { CONTENT, moduleDef } from '../sim/content';
+import { availableProducts, businessOpen, menu, setMenu, startShift } from '../sim/business';
+import { CONTENT, archetypeDef, chassisDef, moduleDef, productDef } from '../sim/content';
 import { spendAction, staminaLeft } from '../sim/game';
 import { rotate } from '../sim/puzzles/gridPacking';
 import { currentStep } from '../sim/quests';
-import { buyModule, canPlaceModule, comfort, comfortStaminaBonus, isPlaced, placeModule, removeModule } from '../sim/van';
+import { buyModule, canPlaceModule, comfort, comfortStaminaBonus, isPlaced, placeModule, priceWithMods, removeModule } from '../sim/van';
 import type { ModuleDef } from '../sim/types';
 import { art, label, paperGrain, paperPanel } from '../ui/art';
 import { button, closeOverlay, openOverlay, overlayBackdrop, type Button } from '../ui/widgets';
@@ -27,13 +27,14 @@ export class VanInteriorScene extends Phaser.Scene {
   private msg!: Phaser.GameObjects.Text;
   private actions: Record<string, Button> = {};
   private shopOpen = false;
+  private menuOpen = false;
   private shopLayer!: Phaser.GameObjects.Container;
 
   constructor() { super('VanInterior'); }
 
   create() {
-    this.drag = null; this.shopOpen = false; this.actions = {};
-    overlayBackdrop(this, 'Your Kei Van', 'Drag modules · R / right-click rotates');
+    this.drag = null; this.shopOpen = false; this.menuOpen = false; this.actions = {};
+    overlayBackdrop(this, `Your ${chassisDef(CONTENT, store.state.chassisTier).name}`, 'Drag modules · R / right-click rotates');
     art(this, VAN.x, VAN.y, 'van_interior', 0, 0);
     // Grid guide
     const g = this.add.graphics();
@@ -54,8 +55,10 @@ export class VanInteriorScene extends Phaser.Scene {
     this.actions.shop = button(this, 1040, 348, 370, 52, 'Module shop', () => this.toggleShop(), PAL.paper, 18);
     this.actions.sleep = button(this, 1040, 412, 370, 52, 'Sleep (end the day)', () => this.sleep(), '#c9d3e6', 18);
     this.actions.out = button(this, 1040, 476, 370, 52, 'Step outside', () => closeOverlay(this), PAL.paper, 18);
-    this.msg = label(this, 852, 516, '', 16, PAL.noren, '700').setWordWrapWidth(380);
-    this.info = label(this, 852, 600, 'Hover a module to see what it does.', 15, PAL.twilight, '500').setWordWrapWidth(380).setLineSpacing(3);
+    this.actions.drive = button(this, 945, 540, 180, 52, 'Drive…', () => openOverlay(this, 'Travel'), '#cfe3bf', 18);
+    this.actions.menu = button(this, 1135, 540, 180, 52, 'Menu', () => this.toggleMenu(), PAL.paper, 18);
+    this.msg = label(this, 852, 576, '', 15, PAL.noren, '700').setWordWrapWidth(380);
+    this.info = label(this, 852, 630, 'Hover a module to see what it does.', 14, PAL.twilight, '500').setWordWrapWidth(380).setLineSpacing(3);
     this.shopLayer = this.add.container(0, 0).setDepth(80);
 
     this.input.on('pointermove', (p: Phaser.Input.Pointer) => this.onMove(p));
@@ -116,10 +119,14 @@ export class VanInteriorScene extends Phaser.Scene {
     const mapNeeded = step?.id === 'valley_map';
     this.actions.craft.setLabel(mapNeeded ? 'Workbench: draw the valley map (1 stamina)' : 'Workbench: nothing to make yet');
     this.actions.craft.setEnabled(mapNeeded && (s.inventory.blank_map ?? 0) > 0 && (s.inventory.valley_map ?? 0) === 0);
-    const coffee = s.unlocks.includes('business:coffee');
-    this.actions.cafe.setLabel(coffee ? 'Open the café  (3 stamina)' : 'Café: locked (help Mrs. Kobayashi)');
-    this.actions.cafe.setEnabled(coffee);
+    const open = businessOpen(s);
+    const kind = s.primaryArchetype === 'soba' ? 'kitchen' : 'café';
+    this.actions.cafe.setLabel(open ? `Open the ${kind}  (3 stamina)` : 'Café: locked (help Mrs. Kobayashi)');
+    this.actions.cafe.setEnabled(open);
+    this.actions.menu.setEnabled(open);
+    this.actions.drive.setEnabled(s.unlocks.some((u) => u.startsWith('road:')));
     if (this.shopOpen) this.renderShop();
+    if (this.menuOpen) this.renderMenu();
   }
 
   private makeDraggable(c: Phaser.GameObjects.Container, def: ModuleDef, rot: number) {
@@ -209,7 +216,7 @@ export class VanInteriorScene extends Phaser.Scene {
 
   private openCafe() {
     const s = store.state;
-    if (!isPlaced(s, 'pour_bar')) { this.msg.setText('Place the pour-over bar in your van first.'); return; }
+    if (!menu(s).length) { this.msg.setText('Nothing to sell: place a production module (pour-over bar, soba kitchen…) in the van first.'); return; }
     let r!: ReturnType<typeof startShift>;
     store.update('shift', (st) => { r = startShift(st); });
     if (!r.ok) { this.msg.setText(r.reason === 'tired' ? 'Not enough stamina for a café shift (needs 3).' : 'Nothing to sell yet.'); return; }
@@ -219,8 +226,46 @@ export class VanInteriorScene extends Phaser.Scene {
 
   private toggleShop() {
     this.shopOpen = !this.shopOpen;
+    this.menuOpen = false;
     this.shopLayer.removeAll(true);
     if (this.shopOpen) this.renderShop();
+  }
+
+  private toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+    this.shopOpen = false;
+    this.shopLayer.removeAll(true);
+    if (this.menuOpen) this.renderMenu();
+  }
+
+  /** Pick up to `menuSlots` items from what the van can make. Specialty (primary archetype) items earn +15%. */
+  private renderMenu() {
+    this.shopLayer.removeAll(true);
+    const s = store.state;
+    const avail = availableProducts(s);
+    const current = menu(s);
+    const slots = CONTENT.business.menuSlots;
+    const h = 150 + avail.length * 64;
+    const panel = paperPanel(this, 230, 130, 560, h, PAL.paper);
+    const title = label(this, 254, 146, `Today's menu  (${current.length}/${slots} slots)`, 24, PAL.ink, '900');
+    const sub = label(this, 254, 180, s.primaryArchetype ? `★ = ${archetypeDef(CONTENT, s.primaryArchetype).name} specialty (+15%)` : 'Choose your trade at Snow Peak for a specialty bonus.', 14, PAL.twilight, '500');
+    this.shopLayer.add([panel, title, sub]);
+    avail.forEach((pid, i) => {
+      const p = productDef(CONTENT, pid);
+      const y = 212 + i * 64;
+      const on = current.includes(pid);
+      const icon = art(this, 290, y + 24, `prod_${pid}`, 0.5, 0.5).setScale(0.5);
+      const t = label(this, 330, y + 12, `${p.archetype === s.primaryArchetype ? '★ ' : ''}${p.name}  ·  ¥${p.price}`, 18, PAL.ink);
+      const b = button(this, 700, y + 24, 140, 44, on ? 'On menu ✓' : 'Add', () => {
+        const next = on ? current.filter((x) => x !== pid) : [...current, pid];
+        if (next.length > slots) { this.msg.setText(`Only ${slots} menu slots. Take something off first.`); return; }
+        store.update('menu', (st) => setMenu(st, next));
+        this.msg.setText('');
+      }, on ? PAL.fresh : PAL.snow, 15);
+      this.shopLayer.add([icon, t, b.container]);
+    });
+    const close = button(this, 510, 130 + h - 34, 180, 44, 'Done', () => this.toggleMenu(), PAL.snow, 16);
+    this.shopLayer.add(close.container);
   }
 
   private renderShop() {
@@ -229,18 +274,19 @@ export class VanInteriorScene extends Phaser.Scene {
     const title = label(this, 254, 166, 'Module shop', 24, PAL.ink, '900');
     this.shopLayer.add([panel, title]);
     const s = store.state;
-    CONTENT.modules.filter((m) => m.price > 0).forEach((m, i) => {
-      const y = 214 + i * 92;
-      const icon = art(this, 300, y + 40, `mod_${m.id}`, 0.5, 0.5).setScale(0.5 * (m.shape.length > 1 ? 0.32 : 0.5));
-      const t = label(this, 360, y + 6, `${m.name}  ·  ¥${m.price.toLocaleString('en-US')}`, 18, PAL.ink);
-      const d = label(this, 360, y + 34, m.blurb, 15, PAL.twilight, '500').setWordWrapWidth(260);
+    CONTENT.modules.filter((m) => m.price > 0 && m.category !== 'roof').forEach((m, i) => {
+      const y = 214 + i * 66;
+      const price = priceWithMods(s, m.price);
+      const icon = art(this, 300, y + 28, `mod_${m.id}`, 0.5, 0.5).setScale(0.5 * (m.shape.length > 1 ? 0.26 : 0.4));
+      const t = label(this, 360, y + 2, `${m.name}  ·  ¥${price.toLocaleString('en-US')}`, 17, PAL.ink);
+      const d = label(this, 360, y + 26, m.blurb, 13, PAL.twilight, '500').setWordWrapWidth(270);
       const owned = s.van.owned.includes(m.id);
-      const b = button(this, 710, y + 34, 120, 44, owned ? 'Owned' : 'Buy', () => {
+      const b = button(this, 710, y + 26, 120, 40, owned ? 'Owned' : 'Buy', () => {
         let r!: ReturnType<typeof buyModule>;
         store.update('shop', (st) => { r = buyModule(st, m.id); });
         this.msg.setText(r.ok ? `Bought the ${m.name}. Drag it into the van.` : r.reason === 'yen' ? 'Not enough yen yet. Run the café!' : '');
       }, owned ? PAL.snow : PAL.lantern, 18);
-      b.setEnabled(!owned && s.yen >= m.price);
+      b.setEnabled(!owned && s.yen >= price);
       this.shopLayer.add([icon, t, d, b.container]);
     });
     const close = button(this, 510, 500, 180, 44, 'Close shop', () => this.toggleShop(), PAL.snow, 16);

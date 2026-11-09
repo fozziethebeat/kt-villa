@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="300" viewBox="0 0 440 300">
+  <!-- Snow Peak Land Station: gear shop + campfield office -->
+  <g transform="translate(6 7)" opacity="0.28" fill="#3b3a4a"><path d="M10 120 L220 40 L430 120 V292 H10Z"/></g>
+  <rect x="20" y="120" width="400" height="172" rx="4" fill="#d9c7a3" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M6 124 L220 36 L434 124 L408 130 L220 60 L32 130Z" fill="#5a5f6e" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#a8754b"><rect x="20" y="130" width="400" height="10"/></g>
+  <g stroke="#a8754b" stroke-width="5"><line x1="50" y1="140" x2="50" y2="292"/><line x1="90" y1="140" x2="90" y2="292"/><line x1="130" y1="140" x2="130" y2="292"/><line x1="170" y1="140" x2="170" y2="292"/><line x1="210" y1="140" x2="210" y2="292"/><line x1="250" y1="140" x2="250" y2="292"/><line x1="290" y1="140" x2="290" y2="292"/><line x1="330" y1="140" x2="330" y2="292"/><line x1="370" y1="140" x2="370" y2="292"/><line x1="410" y1="140" x2="410" y2="292"/></g>
+  <rect x="60" y="170" width="250" height="100" fill="#cfe0ee" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <g stroke="#3b3a4a" stroke-width="2.5"><line x1="122" y1="170" x2="122" y2="270"/><line x1="185" y1="170" x2="185" y2="270"/><line x1="248" y1="170" x2="248" y2="270"/></g>
+  <g fill="#f2a541" opacity="0.55"><rect x="64" y="236" width="56" height="30"/><rect x="190" y="236" width="56" height="30"/></g>
+  <rect x="330" y="190" width="64" height="102" fill="#7a4b3a" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/><circle cx="382" cy="244" r="4" fill="#f2a541"/>
+  <rect x="130" y="80" width="180" height="40" rx="6" fill="#2d4f3b" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M150 112 L166 90 L182 112Z" fill="#f2a541" stroke="#fbfaf6" stroke-width="2"/>
+  <text x="246" y="107" font-family="sans-serif" font-size="18" font-weight="700" fill="#fbfaf6" text-anchor="middle">CAMP · 道具</text>
+</svg>

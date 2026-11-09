@@ -37,7 +37,7 @@ async function runCafe(page: Page, shotName: string) {
   }
   await page.waitForFunction(() => (window as any).__hakuba.scene('Business').debugState().phase === 'service');
   let shotTaken = false;
-  for (let guard = 0; guard < 400; guard++) {
+  for (const deadline = Date.now() + 150_000; Date.now() < deadline;) {
     const st = await ev<any>(page, H("h.scene('Business').debugState()"));
     if (st.phase === 'summary') break;
     if (st.waiting.length >= 1 && !shotTaken) { await page.waitForTimeout(700); await shot(page, shotName); shotTaken = true; continue; }
@@ -178,7 +178,7 @@ test('M1 vertical slice: full station arc, van, café, luggage, board, sleep/sav
   await waitForScene(page, 'Board');
   await shot(page, '14-board');
   const kz = (await summary(page)).kizuna;
-  await page.mouse.click(340, 410);
+  await page.mouse.click(250, 426); // Open road (first card)
   await page.waitForTimeout(200);
   expect((await summary(page)).kizuna).toBe(kz - 5);
   await page.mouse.click(640, 640); // Back

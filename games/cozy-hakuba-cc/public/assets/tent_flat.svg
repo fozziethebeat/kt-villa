@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="70" viewBox="0 0 180 70">
+  <!-- Collapsed tent -->
+  <ellipse cx="90" cy="64" rx="84" ry="6" fill="#3b3a4a" opacity="0.18"/>
+  <path d="M12 60 Q40 34 70 46 Q96 28 124 44 Q150 36 170 60Z" fill="#f2a541" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M40 52 Q70 44 96 50 M110 50 Q130 46 150 54" stroke="#c8553d" stroke-width="2.5" fill="none"/>
+  <path d="M120 22 l30 -10 M128 30 l26 -2" stroke="#7a4b3a" stroke-width="4" stroke-linecap="round"/>
+</svg>
