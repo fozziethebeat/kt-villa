@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="110" height="90" viewBox="0 0 110 90">
+  <!-- Yakitori grill -->
+  <ellipse cx="55" cy="86" rx="48" ry="4" fill="#3b3a4a" opacity="0.2"/>
+  <rect x="10" y="34" width="90" height="26" rx="4" fill="#3b3a4a"/>
+  <rect x="14" y="30" width="82" height="8" fill="#c8553d"/>
+  <g stroke="#a8754b" stroke-width="3" stroke-linecap="round"><line x1="22" y1="22" x2="30" y2="40"/><line x1="40" y1="22" x2="48" y2="40"/><line x1="58" y1="22" x2="66" y2="40"/><line x1="76" y1="22" x2="84" y2="40"/></g>
+  <g fill="#8b5a3c"><circle cx="26" cy="30" r="4"/><circle cx="44" cy="30" r="4"/><circle cx="62" cy="30" r="4"/><circle cx="80" cy="30" r="4"/></g>
+  <rect x="20" y="60" width="8" height="26" fill="#5a596a"/><rect x="82" y="60" width="8" height="26" fill="#5a596a"/>
+  <path d="M40 18 q4 -8 0 -14 M70 18 q4 -8 0 -14" stroke="#b7b3ad" stroke-width="3" fill="none"/>
+</svg>

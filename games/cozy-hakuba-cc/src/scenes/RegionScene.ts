@@ -19,6 +19,9 @@ export interface RegionLayout {
   region: string;
   keyPerson: { name: string; texture: string; at: readonly [number, number] };
   van: readonly [number, number];
+  /** Replace the parked van with another prop (e.g. the gondola stop at Happo Pond). */
+  vanTexture?: string;
+  vanPrompt?: string;
   playerStart: [number, number];
   kodama: [number, number][];
   /** [x, y, scale]; trees below y=600 go in the front scenery layer. */
@@ -83,7 +86,7 @@ export abstract class RegionScene extends Phaser.Scene {
 
     // Van (+ Tier 1 kit and roof modules once the garage has worked on it).
     const [vx, vy] = L.van;
-    art(this, vx, vy - 40, 'van_kei').setDepth(vy - 40);
+    art(this, vx, vy - 40, L.vanTexture ?? 'van_kei').setDepth(vy - 40);
     this.vanKit = art(this, vx, vy - 40, 'van_kit_t1').setDepth(vy - 39.9).setVisible(false);
 
     // Key person + quest badge.
@@ -101,7 +104,7 @@ export abstract class RegionScene extends Phaser.Scene {
     this.player = art(this, L.playerStart[0], L.playerStart[1], 'char_aoi');
 
     this.interactables.push({ id: 'keyperson', x: kx, y: ky, visible: () => true, prompt: () => `E  Talk to ${L.keyPerson.name}`, act: () => this.talkKeyPerson(), promptLift: 150 });
-    this.interactables.push({ id: 'van', x: vx, y: vy, visible: () => true, prompt: () => 'E  Enter your van', act: () => openOverlay(this, 'VanInterior'), promptLift: 215 });
+    this.interactables.push({ id: 'van', x: vx, y: vy, visible: () => true, prompt: () => `E  ${L.vanPrompt ?? 'Enter your van'}`, act: () => openOverlay(this, 'VanInterior'), promptLift: 215 });
     L.kodama.forEach(([x, y], i) => this.interactables.push({
       id: `kodama_${i}`, x, y, visible: () => this.kodamaVisible(i), prompt: () => 'E  Say hello to the kodama', act: () => this.greetKodama(i),
     }));
@@ -220,8 +223,9 @@ export abstract class RegionScene extends Phaser.Scene {
   }
 
   private syncVan(s: GameState) {
-    this.vanKit.setVisible(s.chassisTier >= 1);
+    this.vanKit.setVisible(s.chassisTier >= 1 && !this.layout.vanTexture);
     this.vanRoof.forEach((r) => r.destroy());
+    if (this.layout.vanTexture) { this.vanRoof = []; return; }
     this.vanRoof = s.van.roof.map((id, i) => art(this, this.layout.van[0] - 36 + i * 70, this.layout.van[1] - 40 - 128, `mod_${id}`).setScale(0.22).setDepth(this.layout.van[1] - 39));
   }
 

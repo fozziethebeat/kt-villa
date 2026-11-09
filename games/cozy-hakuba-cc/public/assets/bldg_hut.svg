@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <!-- Mountain hut -->
+  <g transform="translate(6 7)" opacity="0.28" fill="#3b3a4a"><path d="M20 124 L200 26 L380 124 H360 V292 H40 V124Z"/></g>
+  <rect x="40" y="200" width="320" height="92" fill="#9aa1ab" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#7f8794"><ellipse cx="70" cy="230" rx="16" ry="9"/><ellipse cx="120" cy="262" rx="16" ry="9"/><ellipse cx="180" cy="226" rx="16" ry="9"/><ellipse cx="240" cy="258" rx="16" ry="9"/><ellipse cx="300" cy="230" rx="16" ry="9"/><ellipse cx="330" cy="270" rx="16" ry="9"/></g>
+  <rect x="60" y="120" width="280" height="84" fill="#a8754b" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M20 124 L200 26 L380 124 L350 128 L200 50 L50 128Z" fill="#c8553d" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="170" y="150" width="60" height="142" fill="#7a4b3a" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="84" y="140" width="56" height="40" fill="#f2d49b" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/><rect x="260" y="140" width="56" height="40" fill="#f2d49b" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="280" y="50" width="22" height="50" fill="#5a596a" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M292 44 q10 -16 0 -28 q-10 -12 4 -24" stroke="#dfe6ee" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>

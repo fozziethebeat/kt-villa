@@ -551,6 +551,166 @@
       "h": 260,
       "role": "business",
       "purpose": "Service hatch with indigo soba noren (Soba & Oyaki Kitchen)"
+    },
+    {
+      "id": "char_hana",
+      "file": "char_hana.svg",
+      "w": 56,
+      "h": 88,
+      "role": "key-person",
+      "purpose": "Bus Terminal key person; navy dispatcher uniform + cap + clipboard"
+    },
+    {
+      "id": "char_kenji_mai",
+      "file": "char_kenji_mai.svg",
+      "w": 100,
+      "h": 88,
+      "role": "key-person",
+      "purpose": "Echoland key people; izakaya couple: headband + indigo happi, red apron"
+    },
+    {
+      "id": "char_daichi",
+      "file": "char_daichi.svg",
+      "w": 56,
+      "h": 88,
+      "role": "key-person",
+      "purpose": "Happo Pond key person; hut keeper with beard, green fleece, big pack"
+    },
+    {
+      "id": "char_sora",
+      "file": "char_sora.svg",
+      "w": 56,
+      "h": 88,
+      "role": "key-person",
+      "purpose": "Iwatake key person; gondola operator in a bright red jacket + radio"
+    },
+    {
+      "id": "bldg_bus_terminal",
+      "file": "bldg_bus_terminal.svg",
+      "w": 440,
+      "h": 300,
+      "role": "landmark",
+      "purpose": "Happo-One Bus Terminal; long glass waiting hall + bus-stop sign"
+    },
+    {
+      "id": "deco_bus",
+      "file": "deco_bus.svg",
+      "w": 240,
+      "h": 120,
+      "role": "landmark",
+      "purpose": "Valley shuttle bus (scenery)"
+    },
+    {
+      "id": "deco_route_board",
+      "file": "deco_route_board.svg",
+      "w": 120,
+      "h": 130,
+      "role": "interactable",
+      "purpose": "Route board: shuttle routes puzzle + timetable happen here"
+    },
+    {
+      "id": "bldg_izakaya",
+      "file": "bldg_izakaya.svg",
+      "w": 420,
+      "h": 300,
+      "role": "landmark",
+      "purpose": "Echoland izakaya; noren over the door + red lanterns = food and evenings"
+    },
+    {
+      "id": "deco_grill",
+      "file": "deco_grill.svg",
+      "w": 110,
+      "h": 90,
+      "role": "interactable",
+      "purpose": "Charcoal yakitori grill: the cooking quest happens here"
+    },
+    {
+      "id": "bldg_hut",
+      "file": "bldg_hut.svg",
+      "w": 400,
+      "h": 300,
+      "role": "landmark",
+      "purpose": "Happo Pond mountain hut; stone base, steep roof, smoke = shelter + supplies"
+    },
+    {
+      "id": "deco_pond",
+      "file": "deco_pond.svg",
+      "w": 420,
+      "h": 110,
+      "role": "landmark",
+      "purpose": "Happo Pond with the peaks mirrored in it (the green-season draw)"
+    },
+    {
+      "id": "deco_cairn_fallen",
+      "file": "deco_cairn_fallen.svg",
+      "w": 120,
+      "h": 70,
+      "role": "interactable",
+      "purpose": "Collapsed trail cairn + trail sign: the balance puzzle is here"
+    },
+    {
+      "id": "deco_gondola_stop",
+      "file": "deco_gondola_stop.svg",
+      "w": 160,
+      "h": 180,
+      "role": "landmark",
+      "purpose": "Gondola top station: ride down to your van (the van cannot drive up here)"
+    },
+    {
+      "id": "bldg_gondola_station",
+      "file": "bldg_gondola_station.svg",
+      "w": 420,
+      "h": 300,
+      "role": "landmark",
+      "purpose": "Iwatake gondola station: cable + red cabins = the lift to the summit terrace"
+    },
+    {
+      "id": "deco_terrace",
+      "file": "deco_terrace.svg",
+      "w": 300,
+      "h": 150,
+      "role": "landmark",
+      "purpose": "Summit terrace deck + railing facing the peaks"
+    },
+    {
+      "id": "deco_cabin",
+      "file": "deco_cabin.svg",
+      "w": 110,
+      "h": 130,
+      "role": "interactable",
+      "purpose": "Gondola cabin waiting at the platform: the seating-balance puzzle"
+    },
+    {
+      "id": "item_ic_card",
+      "file": "item_ic_card.svg",
+      "w": 44,
+      "h": 34,
+      "role": "fetch-item",
+      "purpose": "Lost IC transit card (fetch item)"
+    },
+    {
+      "id": "item_lantern",
+      "file": "item_lantern.svg",
+      "w": 36,
+      "h": 54,
+      "role": "fetch-item",
+      "purpose": "Paper lantern (fetch item for Echoland)"
+    },
+    {
+      "id": "item_supplies",
+      "file": "item_supplies.svg",
+      "w": 54,
+      "h": 46,
+      "role": "fetch-item",
+      "purpose": "Canvas supply bundle for the hut (fetch item, 1 stamina to carry)"
+    },
+    {
+      "id": "item_seeds",
+      "file": "item_seeds.svg",
+      "w": 40,
+      "h": 48,
+      "role": "fetch-item",
+      "purpose": "Wildflower seed packet (fetch item for Iwatake)"
     }
   ]
 }

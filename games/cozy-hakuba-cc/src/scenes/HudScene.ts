@@ -6,6 +6,8 @@ import type { GameState } from '../sim/types';
 import { art, label, paperGrain, paperPanel } from '../ui/art';
 import { PAL, WIDTH, hex } from '../theme';
 import { saveGame } from '../persist';
+import { openOverlay } from '../ui/widgets';
+import { REGION_SCENES } from './regions';
 
 const VITALITY_NAMES = ['Dormant', 'Stirring', 'Awake', 'Thriving'];
 const PHASE_GLYPH: Record<string, string> = { morning: '☀', afternoon: '◐', evening: '☾', night: '★' };
@@ -65,12 +67,19 @@ export class HudScene extends Phaser.Scene {
   }
 
   private onEndDay() {
-    let newSeason: ReturnType<typeof endDay>['newSeason'] = null;
-    store.update('endDay', (s) => { newSeason = endDay(s).newSeason; });
+    let r!: ReturnType<typeof endDay>;
+    store.update('endDay', (s) => { r = endDay(s); });
     const s = store.state;
-    const ns = newSeason as ReturnType<typeof endDay>['newSeason'];
     const saved = saveGame(s);
-    this.showBanner(ns ? `${ns.label} begins\nDay ${s.day}` : `Good morning · Day ${s.day}${saved ? '  ·  saved' : ''}`);
+    this.showBanner(r.newSeason ? `${r.newSeason.label} begins\nDay ${s.day}` : `Good morning · Day ${s.day}${saved ? '  ·  saved' : ''}`);
+    if (r.report) {
+      const report = r.report;
+      // Open the report over the region once the van overlay has closed.
+      this.time.delayedCall(900, () => {
+        const region = this.scene.get(REGION_SCENES[s.currentRegion]);
+        if (region?.sys.isActive()) openOverlay(region, 'SeasonReport', { report });
+      });
+    }
   }
 
   showBanner(text: string) {

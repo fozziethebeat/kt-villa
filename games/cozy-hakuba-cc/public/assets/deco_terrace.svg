@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="150" viewBox="0 0 300 150">
+  <!-- Terrace deck -->
+  <path d="M10 110 L40 80 H290 L290 110Z" fill="#a8754b" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <g stroke="#7a4b3a" stroke-width="2"><line x1="70" y1="84" x2="56" y2="110"/><line x1="100" y1="84" x2="86" y2="110"/><line x1="130" y1="84" x2="116" y2="110"/><line x1="160" y1="84" x2="146" y2="110"/><line x1="190" y1="84" x2="176" y2="110"/><line x1="220" y1="84" x2="206" y2="110"/><line x1="250" y1="84" x2="236" y2="110"/><line x1="280" y1="84" x2="266" y2="110"/></g>
+  <path d="M40 80 V44 H290 V80" fill="none" stroke="#3b3a4a" stroke-width="4"/>
+  <g stroke="#3b3a4a" stroke-width="3"><line x1="70" y1="44" x2="70" y2="80"/><line x1="110" y1="44" x2="110" y2="80"/><line x1="150" y1="44" x2="150" y2="80"/><line x1="190" y1="44" x2="190" y2="80"/><line x1="230" y1="44" x2="230" y2="80"/><line x1="270" y1="44" x2="270" y2="80"/></g>
+  <rect x="20" y="110" width="12" height="36" fill="#7a4b3a"/><rect x="270" y="110" width="12" height="36" fill="#7a4b3a"/>
+</svg>

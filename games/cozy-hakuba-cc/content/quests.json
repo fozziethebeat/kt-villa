@@ -134,5 +134,266 @@
       }
     ],
     "after": "The campsite's busy again! Use the garage when your van needs an upgrade."
+  },
+  "happo_terminal": {
+    "keyPerson": "Hana",
+    "steps": [
+      {
+        "id": "routes",
+        "type": "puzzle",
+        "title": "Untangle the Shuttle Routes",
+        "needs": {
+          "routes_fixed": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 4
+        },
+        "vitality": 1,
+        "unlocks": [],
+        "lines": {
+          "intro": "The shuttle map is chaos! Every route crosses another, and visitors miss their connections. Could you redraw the routes at the board by the bus bays?",
+          "progress": "The route board is next to the bus bays. Connect each pair of matching stops, and no crossings!",
+          "complete": "Every bus has a clean line! Nobody will miss the gondola now. Thank you, {name}."
+        }
+      },
+      {
+        "id": "ic_cards",
+        "type": "fetch",
+        "title": "Lost IC Cards",
+        "needs": {
+          "ic_card": 4
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 4,
+          "yen": 800
+        },
+        "vitality": 2,
+        "unlocks": [],
+        "lines": {
+          "intro": "Travelers keep dropping their IC cards around the terminal. Could you find {need} and bring them to the lost and found? ({have}/{need})",
+          "progress": "{have} of {need} cards found. Check under the benches and by the bus bays.",
+          "complete": "All {need}! Their owners will be so relieved. Here's a little thank-you from the bus company."
+        }
+      },
+      {
+        "id": "timetable",
+        "type": "create",
+        "title": "A Cheerful Timetable",
+        "needs": {
+          "timetable_board": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 3,
+        "unlocks": [
+          "attraction:happo_terminal"
+        ],
+        "lines": {
+          "intro": "Last thing: our timetable is impossible to read. Could you make a new one at the board? Match each departure time to its route.",
+          "progress": "The timetable board is by the bus bays. Put each departure time next to the right route.",
+          "complete": "Now *that's* a timetable people will read! The Valley Shuttle runs again, {name}. Every restored region will get more visitors."
+        }
+      }
+    ],
+    "after": "Buses every twenty minutes! Use the Revival Board here to open roads north and west."
+  },
+  "echoland": {
+    "keyPerson": "Kenji & Mai",
+    "steps": [
+      {
+        "id": "signature_dish",
+        "type": "create",
+        "title": "A Signature Dish",
+        "needs": {
+          "yakitori_set": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 4
+        },
+        "vitality": 1,
+        "unlocks": [],
+        "lines": {
+          "intro": "Half the street is dark, and our izakaya feels lonely. We need a signature dish to bring people in. Could you help grill a yakitori set at our grill?",
+          "progress": "The grill's out front. Turn the skewers when they're perfectly browned!",
+          "complete": "Smoky, glossy, perfect. That smell alone will bring people down the street!"
+        }
+      },
+      {
+        "id": "izakaya_seating",
+        "type": "puzzle",
+        "title": "A Full House",
+        "needs": {
+          "seating_solved": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 2,
+        "unlocks": [],
+        "lines": {
+          "intro": "It worked: we're full tonight! But every regular has an opinion about where they sit. Could you seat everyone at the counter?",
+          "progress": "Everyone's waiting by the door. Seat them so every wish is kept.",
+          "complete": "Everyone's happy and the counter is buzzing. You've got a knack for people, {name}."
+        }
+      },
+      {
+        "id": "lanterns",
+        "type": "fetch",
+        "title": "Light the Street",
+        "needs": {
+          "lantern": 5
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 3,
+        "unlocks": [
+          "attraction:echoland"
+        ],
+        "lines": {
+          "intro": "Let's light up the whole street! Our old paper lanterns blew all over Echoland. Find {need} and we'll string them up. ({have}/{need})",
+          "progress": "{have} of {need} lanterns. They're tumbling around the street!",
+          "complete": "Look at the street glow! The Evening Market is back, {name}. People will stay out late again."
+        }
+      }
+    ],
+    "after": "Echoland glows every night now. Come by for a skewer after your shift!"
+  },
+  "happo_pond": {
+    "keyPerson": "Daichi",
+    "steps": [
+      {
+        "id": "hut_supplies",
+        "type": "fetch",
+        "title": "Stock the Hut",
+        "needs": {
+          "hut_supplies": 5
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 4
+        },
+        "vitality": 1,
+        "unlocks": [],
+        "lines": {
+          "intro": "Hikers turn back before the pond because the hut's half-empty. Supply bundles came up on the gondola, but they're scattered along the trail. Could you carry {need} to the hut? Each one is 1 stamina. ({have}/{need})",
+          "progress": "{have} of {need} bundles. They're the canvas sacks along the ridge trail.",
+          "complete": "Full shelves! Hikers can rest and refuel here again. Thank you, {name}."
+        }
+      },
+      {
+        "id": "cairn",
+        "type": "puzzle",
+        "title": "Point the Way",
+        "needs": {
+          "cairn_built": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 2,
+        "unlocks": [],
+        "lines": {
+          "intro": "The trail cairns collapsed in the storm, and people get lost in the fog. Rebuild the big one so its top stone points down the trail toward the pond.",
+          "progress": "The fallen cairn is by the trail sign. Stack the stones so they stand, and so the top one leans over the marker.",
+          "complete": "It stands and it points! Hikers will find the pond even in the fog."
+        }
+      },
+      {
+        "id": "sunrise_breakfast",
+        "type": "create",
+        "title": "Sunrise Breakfast",
+        "needs": {
+          "sunrise_set": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 3,
+        "unlocks": [
+          "attraction:happo_pond"
+        ],
+        "lines": {
+          "intro": "One last idea: a dawn breakfast at the pond, with the Sanzan peaks mirrored in the water. Could you cook a sunrise set on the hut stove?",
+          "progress": "The hut stove is ready. Time each step right for a perfect breakfast.",
+          "complete": "The peaks in the pond, a warm breakfast, the sun coming up. People will hike up for this, {name}."
+        }
+      }
+    ],
+    "after": "The pond trail is busy every morning now. Green season hikers love it here."
+  },
+  "iwatake": {
+    "keyPerson": "Sora",
+    "steps": [
+      {
+        "id": "gondola",
+        "type": "puzzle",
+        "title": "Balance the Gondola",
+        "needs": {
+          "gondola_balanced": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 4
+        },
+        "vitality": 1,
+        "unlocks": [],
+        "lines": {
+          "intro": "The gondola's running again, but a cabin has to be balanced or it sways! Can you seat this group so both benches weigh the same and everyone's happy?",
+          "progress": "The cabin's waiting at the platform. Balance the benches!",
+          "complete": "Smooth as anything. Up they go! Thanks, {name}."
+        }
+      },
+      {
+        "id": "terrace",
+        "type": "create",
+        "title": "Terrace Benches",
+        "needs": {
+          "terrace_bench": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 2,
+        "unlocks": [],
+        "lines": {
+          "intro": "The summit terrace has no seats. People ride up, look around and ride straight back down. Could you build a bench at the workbench up here?",
+          "progress": "The workbench is by the terrace rail. Cut the bench parts to the blueprint.",
+          "complete": "A bench with *that* view! People will stay up here for hours."
+        }
+      },
+      {
+        "id": "seeds",
+        "type": "fetch",
+        "title": "Wildflower Seeds",
+        "needs": {
+          "wildflower_seeds": 4
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 3,
+        "unlocks": [
+          "attraction:iwatake"
+        ],
+        "lines": {
+          "intro": "Last thing: the terrace slopes used to be full of wildflowers. Seed packets from the old planting days are scattered around. Find {need}? ({have}/{need})",
+          "progress": "{have} of {need} packets. Look around the terrace edge.",
+          "complete": "Come green season this slope will be a sea of flowers. The Sky Terrace is open, {name}!"
+        }
+      }
+    ],
+    "after": "In green season the terrace is the best seat in Hakuba."
   }
 }

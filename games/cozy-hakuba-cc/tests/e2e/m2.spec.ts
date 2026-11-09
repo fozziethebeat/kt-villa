@@ -69,10 +69,10 @@ test('M2 garage & build: drive to Snow Peak, tent, parts, soba build, garage Tie
   await walkTo(page, 250, 560); await pressE(page, 400);
   await waitForScene(page, 'Board');
   await shot(page, '01-board');
-  await page.mouse.click(250, 426); // Open road to Snow Peak (first card)
+  await page.mouse.click(250, 320); // Open road to Snow Peak (first card)
   await page.waitForTimeout(200);
   expect((await summary(page)).unlocks).toContain('road:snowpeak');
-  await page.mouse.click(640, 640); // Back
+  await page.mouse.click(1100, 650); // Back
 
   // ---- drive
   await walkTo(page, 1010, 640); await pressE(page, 500);

@@ -17,4 +17,7 @@ npm run test:e2e:update            # re-baseline screenshots after intentional v
 Controls: WASD / arrows to walk, E to interact. Screenshots from the latest e2e run land in `test-results/shots/`.
 
 Debug API (dev console): `__hakuba.summary()`, `setSeason('green')`, `setVitality('station', 3)`, `grant('yen', 500)`, `endDay()`, `warp(x, y)`, `startScene('Station')`,
-`fastForward('station')` (finish a region's quests), `openRoad('snowpeak')`, `goto('snowpeak')` / `drive('snowpeak')`, `balance('winter')`.
+`fastForward('station')` (finish a region's quests), `openRoad('snowpeak')`, `goto('snowpeak')` / `drive('snowpeak')`, `balance('winter')`,
+`rest()` (refill today's stamina), `setChassis(1)`.
+
+Regions from M3 on are data: `content/layouts.json` (landmarks, stations → mini-game overlays, fetch spots) + `content/minigames.json`.

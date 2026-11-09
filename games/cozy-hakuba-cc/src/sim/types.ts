@@ -32,6 +32,8 @@ export interface RegionDef {
   map: [number, number];
   /** Has a playable scene in this build. */
   playable: boolean;
+  /** Seasonal attraction that opens at Thriving and raises demand across the valley. */
+  attraction?: { name: string; blurb: string; demand: Record<ScoredSeason, number> };
 }
 
 export interface ArchetypeDef {
@@ -111,7 +113,30 @@ export interface Content {
   modules: ModuleDef[];
   business: BusinessDef;
   chassis: ChassisDef[];
+  layouts: Record<string, RegionLayoutDef>;
+  minigames: Record<string, MiniGameDef>;
 }
+
+/** Data-driven layout for a walkable region (M3+). Coordinates are 1280×720 screen space. */
+export interface RegionLayoutDef {
+  sceneKey: string;
+  keyPerson: { name: string; texture: string; at: [number, number] };
+  van: [number, number];
+  vanTexture?: string;
+  vanPrompt?: string;
+  playerStart: [number, number];
+  kodama: [number, number][];
+  trees: [number, number, number][];
+  crowdLanes: [number, number, number][];
+  crowd: { snowy: string[]; green: string[] };
+  landmarks: { texture: string; at: [number, number]; flip?: boolean; tint?: string; depth?: number }[];
+  festive?: { at: [number, number] };
+  board?: [number, number];
+  stations: { steps: string[]; at: [number, number]; texture: string | null; prompt: string; overlay: string; config: string; cost: ActionKind }[];
+  fetch: { step: string; item: string; texture: string; label: string; cost: ActionKind | null; spots: [number, number][] };
+}
+
+export type MiniGameDef = { engine: string; title: string; subtitle?: string } & Record<string, unknown>;
 
 export interface PlayerProfile {
   name: string;
@@ -126,7 +151,7 @@ export interface Placement { moduleId: string; x: number; y: number; rot: number
 export interface ShiftSummary { day: number; region: string; served: number; missed: number; soldOut: number; yen: number; tips: number; reputation: number }
 
 export interface GameState {
-  version: 3;
+  version: 4;
   seed: number;
   rngState: number;
   player: PlayerProfile;
@@ -147,7 +172,20 @@ export interface GameState {
   van: { grid: { w: number; h: number }; owned: string[]; placed: Placement[]; roof: string[] };
   /** `menu` null = automatic (primary archetype first, then whatever the van can make). */
   business: { reputation: number; served: number; shifts: number; last: ShiftSummary | null; menu: string[] | null };
+  /** Running totals for the current season (reset when a season ends). */
+  seasonStats: SeasonStats;
+  /** Season Reports written at the end of each scored season. */
+  reports: SeasonReport[];
   log: string[];
+}
+
+export interface SeasonStats { yen: number; served: number; soldOut: number; missed: number; shifts: number; byProduct: Record<string, number>; byRegion: Record<string, number> }
+export interface RegionBuzz { region: string; name: string; vitality: number; buzz: number; attraction: string | null; shifts: number }
+export interface SeasonReport {
+  season: ScoredSeason; year: number; label: string; endedDay: number;
+  regions: RegionBuzz[]; valleyBuzz: number; rating: 'Quiet' | 'Busy' | 'Thriving';
+  business: { yen: number; served: number; soldOut: number; shifts: number; reputation: number; bestSeller: string | null };
+  tips: string[];
 }
 
 export interface SeasonInfo {

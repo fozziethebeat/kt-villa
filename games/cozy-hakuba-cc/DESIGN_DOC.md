@@ -9,7 +9,7 @@
 > known across the valley.
 
 **Status:** v0.3. The core decisions are locked (see the Decision Log below).
-Milestones M0–M2 are built (§13). Where a decision is still open, it's marked
+Milestones M0–M3 are built (§13). Where a decision is still open, it's marked
 **⚖️ Option A / B / C**, and the recommended option comes first and is labeled
 ★.
 
@@ -23,6 +23,7 @@ Milestones M0–M2 are built (§13). Where a decision is still open, it's marked
 | D5 | Art style | **Washi papercraft flat vector** for test assets |
 | D6 | Platform | **Desktop browser first** (mouse + keyboard; 1280×720 baseline, scales up). Touch and mobile aren't goals for now. |
 | D7 | Vertical slice archetypes | **Coffee & Bakery + Soba & Oyaki Kitchen** |
+| D8 | Tsugaike timing (M3 build) | Moved to **M4** with chassis Tiers 2–3, since its road needs the Tier 3 van. M3 ships 6 playable regions. |
 
 ---
 
@@ -495,8 +496,9 @@ would need rewriting.
 cozy-hakuba-cc/
   content/                 # JSON: tuning, regions, archetypes, personalities, asset-manifest
   src/sim/                 # Pure TypeScript game rules (no Phaser): state, clock, quests, van, business, travel, archetype, balance sim
-  src/sim/puzzles/         # Reusable engines: gridPacking (luggage, van layout), tentBalance (tent, later cairns), trace (module build)
-  src/scenes/              # Phaser scenes: RegionScene base → Station, SnowPeak; overlays (Van, Business, Board, Travel, Garage, Tent, Archetype, Build, MapCraft, Luggage); Hud
+  src/sim/puzzles/         # Reusable engines: gridPacking, tentBalance, cairn, trace, seating, flow
+  content/layouts.json     # M3+: region layouts (landmarks, stations → mini-game overlays, fetch spots); minigames.json configs
+  src/scenes/              # Phaser scenes: RegionScene base → Station, SnowPeak, DataRegionScene (all M3+ regions); overlays (Van, Business, Board, Travel, Garage, Tent, Archetype, Build, MapCraft, Luggage); Hud
   src/ui/                  # Papercraft helpers (art placement, panels, grain overlay)
   src/debug/api.ts         # window.__hakuba debug/playtest API
   src/catalog.ts           # Asset catalog page logic (catalog.html)
@@ -604,9 +606,30 @@ Each test asset must **show what it's for** before it looks beautiful:
 | **M0 Skeleton** ✅ | Vite + Phaser 4 + sim core + debug API + asset manifest/catalog + station sandbox (mini fetch loop, restoration filter, season swap, sleep) | Boots; 12 unit tests and the e2e playthrough with 3 golden snapshots pass |
 | **M1 Vertical slice** ✅ | Character select (name, pronouns, 5 personalities), JR Hakuba Station 3-step arc (brochures → valley map sticker craft → lost-luggage grid packing), kodama, seasonal crowds and lanterns, Kei Van interior with drag-and-drop modules + shop + comfort→stamina, Coffee café (pour-timing prep + window service), Valley Revival Board, autosave on sleep + Continue | 25 unit tests; one e2e playthrough of the whole slice by real input in both seasons |
 | **M2 Garage & build** ✅ | Shared `RegionScene` base; driving between regions on a valley map (1 stamina); Revival Board offers roads next to Thriving regions; Snow Peak Land Station 3-step arc (tent pitching on the new balance engine → salvage 4 van parts → choose coffee or soba and build its module with the new trace engine); Takumi's garage (chassis Tier 1 + 3 roof modules); Soba & Oyaki Kitchen (noodle-cut rhythm prep, 3 products, indigo noren); menu slots + specialty bonus; all 5 personality modifiers wired; headless balance sim; save v3 with v2 migration | 36 unit tests; the balance sim shows build choices changing earnings (see §13.1); e2e playthroughs of M1 and M2 by real input |
-| **M3 North arm** | Happo terminal, Echoland, Happo Pond, Iwatake, Tsugaike; seating, flow + balance engines | 6 regions playable; Season Report |
-| **M4 South arm** | Goryu, 47, Aokiko; remaining archetypes; helpers; Ranks 1–5 | Full game reaches the ending in the balance sim |
+| **M3 North arm** ✅ | Data-driven regions (`content/layouts.json` + one `DataRegionScene`); Happo-One Bus Terminal (flow routes → IC cards → timetable arrange), Echoland (yakitori cook → izakaya seating → lanterns), Happo Pond (hut supplies → cairn balance → sunrise breakfast cook; gondola stop instead of the van), Iwatake (gondola-cabin balance seating → terrace bench trace → wildflower seeds); new engines: constraint seating, flow/path connect, cairn balance, generic arrange + cook; seasonal attractions that lift valley-wide demand; Season Report with Valley Buzz + tips; a second Revival Board at the terminal; save v4 | 6 regions playable; Season Report; 55 unit tests; M1–M3 e2e playthroughs by real input |
+| **M4 South arm** | Goryu, 47, Aokiko **and Tsugaike** (moved from M3: it needs the Tier 3 van); chassis Tiers 2–3 (bigger interior grid); remaining archetypes; helpers; Ranks 1–5; making the trade choice matter more | Full game reaches the ending in the balance sim |
 | **M5 Polish** | All personalities, appearance options, audio, art Stage 2 replacements, save/load | Full manual playthrough by Claude, then your validation |
+
+### 13.2 M3 balance sim snapshot
+Coffee van (pour bar + pastry case) at a Thriving station, one shift a day:
+
+| Valley state | Winter ¥/shift | Green ¥/shift | Green sold-out customers / season |
+|---|---|---|---|
+| Station + Snow Peak only | ~7,000 | ~6,100 | 2 |
+| + north arm Thriving (shuttle, evening market, pond hike, sky terrace) | ~7,300 | ~7,700 | 22 |
+
+Green season overtakes winter once the north arm's attractions open, and
+demand now outruns a Kei Van's stock. That pressure is what the M4 chassis
+tiers (bigger interior, more production modules) are for. Attraction boosts
+live in `content/regions.json`.
+
+**M3 rules worth knowing**
+- A Thriving region with an attraction adds its boost to demand **everywhere**
+  (it's the valley's draw, not the region's). Green-season boosts are larger.
+- Valley Buzz per region = vitality + seasonal draw + its attraction + up to 15
+  for running shifts there. The valley is "Thriving" at an average of 70+.
+- Season Reports appear when winter or green season ends (never for the short
+  shoulder seasons) and are stored in the save.
 
 ### 13.1 M2 balance sim snapshot
 `npm run balance` runs a bot through 7 winter days and 7 green days (one shift a
@@ -645,6 +668,11 @@ Still open:
 2. **Personality onboarding** (§7): a single pick (proposed), a prologue quiz,
    or traits that drift?
 3. **Save model:** autosave on sleep only (proposed), or manual save slots too?
+   (As built: autosave on sleep and on arriving in a region.)
+4. **Trade choice impact** (from M2 playtest): the coffee/soba choice is
+   "good enough" but doesn't feel like a hard decision yet. Candidates for M4:
+   per-region customer mixes that favour one trade, a secondary archetype at
+   Rank 3, or trade-specific quests.
 
 ---
 

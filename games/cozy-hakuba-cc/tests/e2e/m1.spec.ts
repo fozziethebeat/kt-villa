@@ -178,10 +178,10 @@ test('M1 vertical slice: full station arc, van, café, luggage, board, sleep/sav
   await waitForScene(page, 'Board');
   await shot(page, '14-board');
   const kz = (await summary(page)).kizuna;
-  await page.mouse.click(250, 426); // Open road (first card)
+  await page.mouse.click(250, 320); // Open road (first card)
   await page.waitForTimeout(200);
   expect((await summary(page)).kizuna).toBe(kz - 5);
-  await page.mouse.click(640, 640); // Back
+  await page.mouse.click(1100, 650); // Back
   await waitForScene(page, 'Station');
 
   // ---- sleep → day 2, autosave, reload, continue

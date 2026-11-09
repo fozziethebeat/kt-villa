@@ -1,0 +1,197 @@
+{
+  "shuttle": {
+    "engine": "flow",
+    "title": "Shuttle Route Board",
+    "w": 6,
+    "h": 5,
+    "pairs": [
+      {
+        "id": "gondola",
+        "label": "Gondola",
+        "color": "#c8553d"
+      },
+      {
+        "id": "echo",
+        "label": "Echoland",
+        "color": "#7a5ea8"
+      },
+      {
+        "id": "station",
+        "label": "Station",
+        "color": "#4f8f8a"
+      },
+      {
+        "id": "pond",
+        "label": "Pond trail",
+        "color": "#f2a541"
+      }
+    ]
+  },
+  "izakaya": {
+    "engine": "seating",
+    "title": "Izakaya Counter",
+    "layout": "counter",
+    "guests": [
+      {
+        "id": "ken",
+        "name": "Ken (ski patrol)",
+        "weight": 2
+      },
+      {
+        "id": "yumi",
+        "name": "Yumi (potter)",
+        "weight": 1
+      },
+      {
+        "id": "oba",
+        "name": "Grandma Toki",
+        "weight": 1
+      },
+      {
+        "id": "liam",
+        "name": "Liam (tourist)",
+        "weight": 2
+      },
+      {
+        "id": "sato",
+        "name": "Mr. Sato (karaoke)",
+        "weight": 2
+      },
+      {
+        "id": "nao",
+        "name": "Nao (student)",
+        "weight": 1
+      }
+    ]
+  },
+  "gondola": {
+    "engine": "seating",
+    "title": "Gondola Cabin",
+    "layout": "cabin",
+    "guests": [
+      {
+        "id": "dad",
+        "name": "Dad (with skis)",
+        "weight": 3
+      },
+      {
+        "id": "mom",
+        "name": "Mom",
+        "weight": 2
+      },
+      {
+        "id": "kid",
+        "name": "Little Rin",
+        "weight": 1
+      },
+      {
+        "id": "guide",
+        "name": "Mountain guide",
+        "weight": 3
+      },
+      {
+        "id": "pho",
+        "name": "Photographer",
+        "weight": 2
+      },
+      {
+        "id": "gran",
+        "name": "Grandpa Ishi",
+        "weight": 2
+      }
+    ]
+  },
+  "cairn": {
+    "engine": "cairn",
+    "title": "Trail Cairn",
+    "stones": 5
+  },
+  "timetable": {
+    "engine": "arrange",
+    "title": "Valley Shuttle Timetable",
+    "subtitle": "Drag each departure time next to its route",
+    "board": {
+      "w": 760,
+      "h": 460,
+      "rows": [
+        "Gondola",
+        "Echoland",
+        "Station",
+        "Pond trail"
+      ]
+    },
+    "slots": {
+      "t0740": [
+        520,
+        90
+      ],
+      "t0900": [
+        520,
+        190
+      ],
+      "t0815": [
+        520,
+        290
+      ],
+      "t0930": [
+        520,
+        390
+      ]
+    },
+    "stickers": [
+      {
+        "id": "t0740",
+        "text": "7:40"
+      },
+      {
+        "id": "t0815",
+        "text": "8:15"
+      },
+      {
+        "id": "t0900",
+        "text": "9:00"
+      },
+      {
+        "id": "t0930",
+        "text": "9:30"
+      }
+    ],
+    "notes": [
+      "Hana's notes:",
+      "· The first bus of the day goes up to the gondola.",
+      "· The Echoland bus leaves at 9:00.",
+      "· The last morning bus is for the pond trail.",
+      "· The station loop leaves between the gondola and Echoland buses."
+    ]
+  },
+  "yakitori": {
+    "engine": "cook",
+    "title": "Yakitori Set",
+    "subtitle": "Press Space (or click) when the marker is in the green",
+    "steps": [
+      "Turn the negima",
+      "Baste with tare",
+      "Turn the tsukune",
+      "Sprinkle shichimi"
+    ],
+    "speed": 260,
+    "window": 26
+  },
+  "breakfast": {
+    "engine": "cook",
+    "title": "Sunrise Breakfast",
+    "subtitle": "Press Space (or click) when the marker is in the green",
+    "steps": [
+      "Light the stove",
+      "Flip the tamagoyaki",
+      "Pour the miso",
+      "Steam the rice"
+    ],
+    "speed": 240,
+    "window": 28
+  },
+  "bench": {
+    "engine": "trace",
+    "title": "Terrace Bench"
+  }
+}

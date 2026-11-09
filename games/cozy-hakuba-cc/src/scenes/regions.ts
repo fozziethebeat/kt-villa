@@ -1,9 +1,14 @@
 import Phaser from 'phaser';
 import { store } from '../gameStore';
 import { saveGame } from '../persist';
+import { CONTENT } from '../sim/content';
 
 /** Region id → walkable scene key (regions without a scene aren't playable yet). */
-export const REGION_SCENES: Record<string, string> = { station: 'Station', snowpeak: 'SnowPeak' };
+export const REGION_SCENES: Record<string, string> = {
+  station: 'Station',
+  snowpeak: 'SnowPeak',
+  ...Object.fromEntries(Object.entries(CONTENT.layouts).map(([id, l]) => [id, l.sceneKey])),
+};
 
 const LIVE = new Set<number>([
   Phaser.Scenes.INIT, Phaser.Scenes.START, Phaser.Scenes.LOADING, Phaser.Scenes.CREATING,

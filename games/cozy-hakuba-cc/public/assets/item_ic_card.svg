@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="44" height="34" viewBox="0 0 44 34">
+  <!-- IC card -->
+  <ellipse cx="22" cy="31" rx="18" ry="3" fill="#3b3a4a" opacity="0.2"/>
+  <rect x="4" y="4" width="36" height="24" rx="4" fill="#8cc084" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="9" y="10" width="10" height="8" rx="1.5" fill="#f2a541"/><path d="M24 12 h10 M24 18 h8" stroke="#fbfaf6" stroke-width="2.5"/>
+</svg>

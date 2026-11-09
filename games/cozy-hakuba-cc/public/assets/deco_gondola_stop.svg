@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="180" viewBox="0 0 160 180">
+  <!-- Gondola stop -->
+  <ellipse cx="80" cy="174" rx="70" ry="6" fill="#3b3a4a" opacity="0.18"/>
+  <rect x="20" y="60" width="120" height="114" fill="#dfe6ee" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M10 62 L80 26 L150 62Z" fill="#3e4f7a" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M0 10 L160 40" stroke="#3b3a4a" stroke-width="3"/>
+  <rect x="58" y="100" width="44" height="50" rx="8" fill="#c8553d" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/><rect x="64" y="108" width="32" height="20" fill="#cfe0ee"/>
+  <path d="M80 100 V30" stroke="#3b3a4a" stroke-width="3"/>
+</svg>

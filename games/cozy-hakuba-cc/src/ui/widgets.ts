@@ -59,3 +59,16 @@ export function openOverlay(from: Phaser.Scene, key: string, data: object = {}, 
 export function closeOverlay(scene: Phaser.Scene): void {
   scene.scene.stop();
 }
+
+/** The "you did it" card shown when a mini-game finishes, with a Done button that closes the overlay. */
+export function resultPanel(scene: Phaser.Scene, title: string, stars: number, text: string): void {
+  const p = paperPanel(scene, 320, 210, 640, 260, PAL.snow).setDepth(100);
+  label(scene, 640, 246, `${title}\n${starsText(stars)}`, 32, PAL.ink, '900').setOrigin(0.5, 0).setAlign('center').setDepth(101);
+  label(scene, 640, 350, text, 18, PAL.twilight, '500').setOrigin(0.5, 0).setAlign('center').setWordWrapWidth(580).setDepth(101);
+  const b = button(scene, 640, 430, 220, 50, 'Done', () => closeOverlay(scene), PAL.lantern);
+  b.container.setDepth(102);
+  void p;
+}
+
+/** Data passed to quest mini-game overlays opened from a region station. */
+export interface QuestGameData { stepId: string; item: string; config: string; title?: string }

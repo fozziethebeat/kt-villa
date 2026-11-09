@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="300" viewBox="0 0 420 300">
+  <!-- Gondola station -->
+  <g transform="translate(6 7)" opacity="0.28" fill="#3b3a4a"><path d="M20 120 H400 V292 H20Z"/></g>
+  <path d="M0 40 L420 110" stroke="#3b3a4a" stroke-width="3"/>
+  <g stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><rect x="70" y="56" width="40" height="34" rx="8" fill="#c8553d"/><rect x="290" y="92" width="40" height="34" rx="8" fill="#c8553d"/></g>
+  <g stroke="#3b3a4a" stroke-width="2.5"><line x1="90" y1="46" x2="90" y2="56"/><line x1="310" y1="84" x2="310" y2="92"/></g>
+  <rect x="30" y="140" width="360" height="152" fill="#efe3c2" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M14 144 H406 L380 116 H40Z" fill="#5a5f6e" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="140" y="170" width="140" height="122" fill="#6c7fa3" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="150" y="180" width="120" height="70" fill="#cfe0ee"/>
+  <rect x="140" y="124" width="140" height="22" rx="4" fill="#fbfaf6" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <text x="210" y="141" font-family="sans-serif" font-size="14" font-weight="700" fill="#c8553d" text-anchor="middle">岩岳 GONDOLA</text>
+</svg>

@@ -74,7 +74,9 @@ describe('Snow Peak arc, archetype choice and garage', () => {
     expect(s.currentRegion).toBe('snowpeak');
     expect(s.staminaSpent).toBe(before + 1);
     expect(openRoad(s, 'happo_terminal').ok).toBe(true);
-    expect(canDriveTo(s, 'happo_terminal')).toMatchObject({ ok: false, reason: 'not_built' });
+    expect(canDriveTo(s, 'happo_terminal').ok).toBe(true); // playable since M3
+    s.unlocks.push('road:tsugaike');
+    expect(canDriveTo(s, 'tsugaike')).toMatchObject({ ok: false, reason: 'chassis' });
   });
 
   it('runs tent → parts → choose soba → build → Thriving + garage', () => {
@@ -168,11 +170,12 @@ describe('menus and specialties', () => {
     expect(comfort(s)).toBeGreaterThan(0);
   });
 
-  it('migrates a v2 save (M1) to v3', () => {
+  it('migrates a v2 save (M1) to the current version', () => {
     const s = createNewGame({ seed: 5 }) as any;
     s.version = 2; delete s.van.roof; delete s.business.menu;
     const t = deserialize(JSON.stringify(s))!;
-    expect(t.version).toBe(3);
+    expect(t.version).toBe(4);
+    expect(t.reports).toEqual([]);
     expect(t.van.roof).toEqual([]);
     expect(t.business.menu).toBeNull();
   });

@@ -74,7 +74,14 @@ export function demandFor(state: GameState, content: Content = CONTENT): number 
   const arch = archetypeDef(content, activeArchetype(state));
   const repMult = 1 + Math.min(0.5, state.business.reputation / 100);
   const fx = vanEffects(state, content);
-  return b.shift.baseCustomers * mult * (0.5 + vit * 0.25) * (0.2 + region.draw[s]) * arch.phaseMult[phase(state, content)] * arch.strongIn[s] * fx.customerMult[s] * repMult;
+  return attractionMult(state, s, content) * b.shift.baseCustomers * mult * (0.5 + vit * 0.25) * (0.2 + region.draw[s]) * arch.phaseMult[phase(state, content)] * arch.strongIn[s] * fx.customerMult[s] * repMult;
+}
+
+/** Thriving regions' attractions bring more visitors to the whole valley (the green-season lever). */
+export function attractionMult(state: GameState, s: ScoredSeason, content: Content = CONTENT): number {
+  let m = 1;
+  for (const r of content.regions) if (r.attraction && state.regions[r.id].vitality >= 3) m += r.attraction.demand[s];
+  return m;
 }
 
 /** Start a business shift: spends stamina and deterministically plans the customer stream. */
@@ -162,6 +169,10 @@ export function settleShift(state: GameState, plan: ShiftPlan, outcomes: ServeOu
   state.business.shifts += 1;
   const summary: ShiftSummary = { day: state.day, region: plan.region, served, missed, soldOut, yen, tips, reputation: rep };
   state.business.last = summary;
+  const ss = state.seasonStats;
+  ss.yen += yen + tips; ss.served += served; ss.soldOut += soldOut; ss.missed += missed; ss.shifts += 1;
+  ss.byRegion[plan.region] = (ss.byRegion[plan.region] ?? 0) + 1;
+  for (const o of outcomes) if (o.item) ss.byProduct[o.item] = (ss.byProduct[o.item] ?? 0) + 1;
   state.log.push(`Day ${state.day}: shift at ${plan.region}, served ${served}, earned ¥${yen + tips}.`);
   return summary;
 }

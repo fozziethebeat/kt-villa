@@ -5,7 +5,8 @@ import { CONTENT, archetypeDef, moduleDef } from '../sim/content';
 import { mod } from '../sim/game';
 import { resample, scoreTrace, type Pt } from '../sim/puzzles/trace';
 import { art, label, paperGrain, paperPanel } from '../ui/art';
-import { button, closeOverlay, overlayBackdrop, starsText, type Button } from '../ui/widgets';
+import { button, closeOverlay, overlayBackdrop, resultPanel, starsText, type Button, type QuestGameData } from '../ui/widgets';
+import { recordResult } from '../sim/quests';
 import { PAL, hex } from '../theme';
 
 const BASE_TOL = 14;
@@ -26,13 +27,19 @@ export class BuildScene extends Phaser.Scene {
   private status!: Phaser.GameObjects.Text;
   private next!: Button;
   private finished = false;
+  /** Quest mode (e.g. Iwatake terrace bench): records the step's item instead of building the archetype module. */
+  private quest: QuestGameData | null = null;
 
   constructor() { super('Build'); }
+
+  init(data: Partial<QuestGameData>) { this.quest = data?.stepId ? (data as QuestGameData) : null; }
 
   create() {
     this.cut = 0; this.strokes = []; this.drawing = false; this.results = []; this.finished = false;
     const arch = archetypeDef(CONTENT, store.state.primaryArchetype ?? 'coffee');
-    const m = moduleDef(CONTENT, arch.builds);
+    const m = this.quest
+      ? { id: '', name: (CONTENT.minigames[this.quest.config]?.title as string) ?? 'Build', blurb: 'Simple, sturdy and made from local cedar.' }
+      : moduleDef(CONTENT, arch.builds);
     overlayBackdrop(this, `Building: ${m.name}`, 'Hold the mouse button and saw along the dashed line');
     paperPanel(this, 100, 120, 620, 440, '#dbe7f0');
     const grid = this.add.graphics().lineStyle(1, hex('#b9cfe0'), 1);
@@ -42,9 +49,9 @@ export class BuildScene extends Phaser.Scene {
     this.stroke = this.add.graphics();
 
     paperPanel(this, 760, 120, 480, 440, PAL.snow);
-    art(this, 1000, 230, `mod_${m.id}`, 0.5, 0.5).setScale(0.45);
+    art(this, 1000, 230, this.quest ? 'deco_terrace' : `mod_${m.id}`, 0.5, 0.5).setScale(this.quest ? 0.5 : 0.45);
     label(this, 784, 300, `${m.name}\n${m.blurb}`, 17, PAL.ink, '500').setWordWrapWidth(430).setLineSpacing(4);
-    label(this, 784, 370, 'Uses: 4 salvaged van parts', 15, PAL.twilight, '500');
+    label(this, 784, 370, this.quest ? 'Uses: cedar planks from the gondola shed' : 'Uses: 4 salvaged van parts', 15, PAL.twilight, '500');
     this.status = label(this, 784, 404, '', 20, PAL.ink, '900').setLineSpacing(6);
     this.next = button(this, 1000, 640, 320, 60, 'Next cut', () => this.advance(), PAL.lantern, 22);
     button(this, 470, 640, 200, 50, 'Start over', () => { this.strokes = []; this.redraw(); }, PAL.paper, 16);
@@ -93,6 +100,12 @@ export class BuildScene extends Phaser.Scene {
     if (this.cut < CUTS.length - 1) { this.cut++; this.strokes = []; this.redraw(); return; }
     this.finished = true;
     const stars = Math.max(1, Math.round(this.results.reduce((a, b) => a + b, 0) / this.results.length));
+    if (this.quest) {
+      const q = this.quest;
+      store.update('craft', (s) => recordResult(s, q.stepId, stars, q.item));
+      resultPanel(this, 'Built!', stars, 'Sturdy and handsome. Show it off!');
+      return;
+    }
     let res!: ReturnType<typeof finishBuild>;
     store.update('craft', (s) => { res = finishBuild(s, stars); });
     const m = moduleDef(CONTENT, res.moduleId);

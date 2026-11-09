@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="110" height="130" viewBox="0 0 110 130">
+  <!-- Gondola cabin -->
+  <path d="M55 0 V24" stroke="#3b3a4a" stroke-width="3"/>
+  <rect x="10" y="24" width="90" height="96" rx="18" fill="#c8553d" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="22" y="38" width="66" height="40" rx="8" fill="#cfe0ee" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M55 38 V78" stroke="#3b3a4a" stroke-width="2"/>
+  <rect x="20" y="88" width="70" height="8" fill="#fbfaf6"/>
+</svg>

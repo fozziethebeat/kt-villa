@@ -15,6 +15,14 @@ import { ArchetypeScene } from './scenes/ArchetypeScene';
 import { BuildScene } from './scenes/BuildScene';
 import { GarageScene } from './scenes/GarageScene';
 import { TravelScene } from './scenes/TravelScene';
+import { DataRegionScene } from './scenes/DataRegionScene';
+import { FlowScene } from './scenes/FlowScene';
+import { SeatingScene } from './scenes/SeatingScene';
+import { CairnScene } from './scenes/CairnScene';
+import { CookScene } from './scenes/CookScene';
+import { ArrangeScene } from './scenes/ArrangeScene';
+import { SeasonReportScene } from './scenes/SeasonReportScene';
+import { CONTENT } from './sim/content';
 import { installDebugApi } from './debug/api';
 import { HEIGHT, WIDTH } from './theme';
 
@@ -36,7 +44,7 @@ async function start() {
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     render: { antialias: true, preserveDrawingBuffer: true },
     // Order = draw order: overlays come after the HUD so they cover it.
-    scene: [BootScene, TitleScene, CharacterSelectScene, StationScene, SnowPeakScene, HudScene, VanInteriorScene, MapCraftScene, LuggageScene, BusinessScene, BoardScene, TentScene, ArchetypeScene, BuildScene, GarageScene, TravelScene],
+    scene: [BootScene, TitleScene, CharacterSelectScene, StationScene, SnowPeakScene, ...Object.keys(CONTENT.layouts).map((id) => new DataRegionScene(id)), HudScene, VanInteriorScene, MapCraftScene, LuggageScene, BusinessScene, BoardScene, TentScene, ArchetypeScene, BuildScene, GarageScene, TravelScene, FlowScene, SeatingScene, CairnScene, CookScene, ArrangeScene, SeasonReportScene],
   });
   installDebugApi(game);
 }

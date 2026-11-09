@@ -38,6 +38,9 @@ export function installDebugApi(game: Phaser.Game) {
     fastForward: (region: string) => store.update('debug', (st) => fastForwardRegion(st, region)),
     balance: (season: ScoredSeason, days = 7) => simulateSeason(store.state, season, days),
     regionScene: () => REGION_SCENES[store.state.currentRegion],
+    /** Restore today's stamina (testing only). */
+    rest: () => store.update('debug', (st) => { st.staminaSpent = 0; }),
+    setChassis: (tier: number) => store.update('debug', (st) => { st.chassisTier = tier; st.van.grid = { ...CONTENT.chassis[tier].grid }; }),
     newGame: (seed?: number) => store.replace(createNewGame({ seed }), 'debug'),
     setSeason: (s: SeasonId) => store.update('debug', (st) => jumpToSeason(st, s)),
     setVitality: (region: string, v: Vitality) => store.update('debug', (st) => setVitality(st, region, v)),

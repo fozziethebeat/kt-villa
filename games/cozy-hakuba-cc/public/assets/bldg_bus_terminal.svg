@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="300" viewBox="0 0 440 300">
+  <!-- Bus terminal -->
+  <g transform="translate(6 7)" opacity="0.28" fill="#3b3a4a"><path d="M10 130 H430 V292 H10Z"/></g>
+  <rect x="20" y="130" width="400" height="162" rx="4" fill="#dfe6ee" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M6 134 L40 96 H400 L434 134Z" fill="#3e4f7a" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="40" y="160" width="300" height="110" fill="#cfe0ee" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <g stroke="#3b3a4a" stroke-width="2.5"><line x1="100" y1="160" x2="100" y2="270"/><line x1="160" y1="160" x2="160" y2="270"/><line x1="220" y1="160" x2="220" y2="270"/><line x1="280" y1="160" x2="280" y2="270"/></g>
+  <rect x="356" y="190" width="48" height="102" fill="#6c7fa3" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="120" y="104" width="200" height="26" rx="5" fill="#fbfaf6" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <text x="220" y="123" font-family="sans-serif" font-size="16" font-weight="700" fill="#3e4f7a" text-anchor="middle">八方 BUS TERMINAL</text>
+  <g fill="#f2a541" opacity="0.5"><rect x="44" y="240" width="52" height="26"/><rect x="224" y="240" width="52" height="26"/></g>
+</svg>

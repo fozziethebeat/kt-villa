@@ -1,0 +1,713 @@
+{
+  "happo_terminal": {
+    "sceneKey": "HappoTerminal",
+    "keyPerson": {
+      "name": "Hana",
+      "texture": "char_hana",
+      "at": [
+        630,
+        590
+      ]
+    },
+    "van": [
+      1130,
+      670
+    ],
+    "playerStart": [
+      990,
+      660
+    ],
+    "kodama": [
+      [
+        60,
+        520
+      ],
+      [
+        690,
+        494
+      ],
+      [
+        1244,
+        540
+      ]
+    ],
+    "trees": [
+      [
+        36,
+        498,
+        1.1
+      ],
+      [
+        640,
+        482,
+        0.75
+      ],
+      [
+        1190,
+        492,
+        1.0
+      ],
+      [
+        1262,
+        512,
+        1.2
+      ],
+      [
+        20,
+        704,
+        1.0
+      ]
+    ],
+    "crowdLanes": [
+      [
+        420,
+        640,
+        700
+      ],
+      [
+        660,
+        900,
+        520
+      ],
+      [
+        300,
+        700,
+        590
+      ],
+      [
+        700,
+        960,
+        660
+      ],
+      [
+        480,
+        820,
+        610
+      ]
+    ],
+    "crowd": {
+      "snowy": [
+        "char_skier",
+        "char_tourist",
+        "char_skier",
+        "char_local",
+        "char_tourist"
+      ],
+      "green": [
+        "char_hiker",
+        "char_tourist",
+        "char_hiker",
+        "char_local",
+        "char_hiker"
+      ]
+    },
+    "landmarks": [
+      {
+        "texture": "bldg_bus_terminal",
+        "at": [
+          420,
+          506
+        ]
+      },
+      {
+        "texture": "deco_bus",
+        "at": [
+          930,
+          560
+        ]
+      }
+    ],
+    "festive": {
+      "at": [
+        420,
+        330
+      ]
+    },
+    "board": [
+      180,
+      566
+    ],
+    "stations": [
+      {
+        "steps": [
+          "routes"
+        ],
+        "at": [
+          790,
+          560
+        ],
+        "texture": "deco_route_board",
+        "prompt": "Redraw the shuttle routes",
+        "overlay": "Flow",
+        "config": "shuttle",
+        "cost": "miniGame"
+      },
+      {
+        "steps": [
+          "timetable"
+        ],
+        "at": [
+          790,
+          560
+        ],
+        "texture": null,
+        "prompt": "Make the timetable",
+        "overlay": "Arrange",
+        "config": "timetable",
+        "cost": "craft"
+      }
+    ],
+    "fetch": {
+      "step": "ic_cards",
+      "item": "ic_card",
+      "texture": "item_ic_card",
+      "label": "IC card",
+      "cost": null,
+      "spots": [
+        [
+          300,
+          580
+        ],
+        [
+          470,
+          690
+        ],
+        [
+          790,
+          690
+        ],
+        [
+          1000,
+          610
+        ]
+      ]
+    }
+  },
+  "echoland": {
+    "sceneKey": "Echoland",
+    "keyPerson": {
+      "name": "Kenji & Mai",
+      "texture": "char_kenji_mai",
+      "at": [
+        630,
+        590
+      ]
+    },
+    "van": [
+      1130,
+      670
+    ],
+    "playerStart": [
+      990,
+      660
+    ],
+    "kodama": [
+      [
+        60,
+        520
+      ],
+      [
+        690,
+        494
+      ],
+      [
+        1244,
+        540
+      ]
+    ],
+    "trees": [
+      [
+        36,
+        498,
+        1.1
+      ],
+      [
+        1262,
+        512,
+        1.2
+      ],
+      [
+        20,
+        704,
+        1.0
+      ]
+    ],
+    "crowdLanes": [
+      [
+        420,
+        640,
+        700
+      ],
+      [
+        660,
+        900,
+        520
+      ],
+      [
+        300,
+        700,
+        590
+      ],
+      [
+        700,
+        960,
+        660
+      ],
+      [
+        480,
+        820,
+        610
+      ]
+    ],
+    "crowd": {
+      "snowy": [
+        "char_skier",
+        "char_tourist",
+        "char_local",
+        "char_skier",
+        "char_tourist"
+      ],
+      "green": [
+        "char_tourist",
+        "char_hiker",
+        "char_local",
+        "char_tourist",
+        "char_local"
+      ]
+    },
+    "landmarks": [
+      {
+        "texture": "bldg_izakaya",
+        "at": [
+          400,
+          506
+        ]
+      },
+      {
+        "texture": "bldg_izakaya",
+        "at": [
+          880,
+          506
+        ],
+        "tint": "#d8cfc0"
+      }
+    ],
+    "festive": {
+      "at": [
+        640,
+        320
+      ]
+    },
+    "stations": [
+      {
+        "steps": [
+          "signature_dish"
+        ],
+        "at": [
+          800,
+          580
+        ],
+        "texture": "deco_grill",
+        "prompt": "Grill the yakitori set",
+        "overlay": "Cook",
+        "config": "yakitori",
+        "cost": "craft"
+      },
+      {
+        "steps": [
+          "izakaya_seating"
+        ],
+        "at": [
+          470,
+          540
+        ],
+        "texture": null,
+        "prompt": "Seat the regulars",
+        "overlay": "Seating",
+        "config": "izakaya",
+        "cost": "miniGame"
+      }
+    ],
+    "fetch": {
+      "step": "lanterns",
+      "item": "lantern",
+      "texture": "item_lantern",
+      "label": "Lantern",
+      "cost": null,
+      "spots": [
+        [
+          300,
+          580
+        ],
+        [
+          470,
+          690
+        ],
+        [
+          790,
+          690
+        ],
+        [
+          1000,
+          610
+        ],
+        [
+          880,
+          660
+        ]
+      ]
+    }
+  },
+  "happo_pond": {
+    "sceneKey": "HappoPond",
+    "keyPerson": {
+      "name": "Daichi",
+      "texture": "char_daichi",
+      "at": [
+        630,
+        590
+      ]
+    },
+    "van": [
+      1130,
+      670
+    ],
+    "vanTexture": "deco_gondola_stop",
+    "vanPrompt": "Ride the gondola down to your van",
+    "playerStart": [
+      990,
+      660
+    ],
+    "kodama": [
+      [
+        60,
+        520
+      ],
+      [
+        690,
+        494
+      ],
+      [
+        1244,
+        540
+      ]
+    ],
+    "trees": [
+      [
+        36,
+        498,
+        1.1
+      ],
+      [
+        1190,
+        492,
+        1.0
+      ],
+      [
+        20,
+        704,
+        1.0
+      ]
+    ],
+    "crowdLanes": [
+      [
+        420,
+        640,
+        700
+      ],
+      [
+        660,
+        900,
+        520
+      ],
+      [
+        300,
+        700,
+        590
+      ],
+      [
+        700,
+        960,
+        660
+      ],
+      [
+        480,
+        820,
+        610
+      ]
+    ],
+    "crowd": {
+      "snowy": [
+        "char_skier",
+        "char_local",
+        "char_skier",
+        "char_hiker",
+        "char_skier"
+      ],
+      "green": [
+        "char_hiker",
+        "char_hiker",
+        "char_tourist",
+        "char_hiker",
+        "char_local"
+      ]
+    },
+    "landmarks": [
+      {
+        "texture": "bldg_hut",
+        "at": [
+          400,
+          506
+        ]
+      },
+      {
+        "texture": "deco_pond",
+        "at": [
+          850,
+          560
+        ],
+        "depth": 480
+      }
+    ],
+    "festive": {
+      "at": [
+        400,
+        330
+      ]
+    },
+    "stations": [
+      {
+        "steps": [
+          "cairn"
+        ],
+        "at": [
+          790,
+          600
+        ],
+        "texture": "deco_cairn_fallen",
+        "prompt": "Rebuild the trail cairn",
+        "overlay": "Cairn",
+        "config": "cairn",
+        "cost": "miniGame"
+      },
+      {
+        "steps": [
+          "sunrise_breakfast"
+        ],
+        "at": [
+          470,
+          540
+        ],
+        "texture": null,
+        "prompt": "Cook the sunrise breakfast",
+        "overlay": "Cook",
+        "config": "breakfast",
+        "cost": "craft"
+      }
+    ],
+    "fetch": {
+      "step": "hut_supplies",
+      "item": "hut_supplies",
+      "texture": "item_supplies",
+      "label": "Supply bundle",
+      "cost": "forage",
+      "spots": [
+        [
+          300,
+          580
+        ],
+        [
+          470,
+          690
+        ],
+        [
+          760,
+          690
+        ],
+        [
+          1000,
+          620
+        ],
+        [
+          620,
+          680
+        ]
+      ]
+    }
+  },
+  "iwatake": {
+    "sceneKey": "Iwatake",
+    "keyPerson": {
+      "name": "Sora",
+      "texture": "char_sora",
+      "at": [
+        630,
+        590
+      ]
+    },
+    "van": [
+      1130,
+      670
+    ],
+    "playerStart": [
+      990,
+      660
+    ],
+    "kodama": [
+      [
+        60,
+        520
+      ],
+      [
+        690,
+        494
+      ],
+      [
+        1244,
+        540
+      ]
+    ],
+    "trees": [
+      [
+        36,
+        498,
+        1.1
+      ],
+      [
+        640,
+        482,
+        0.75
+      ],
+      [
+        1262,
+        512,
+        1.2
+      ],
+      [
+        20,
+        704,
+        1.0
+      ]
+    ],
+    "crowdLanes": [
+      [
+        420,
+        640,
+        700
+      ],
+      [
+        660,
+        900,
+        520
+      ],
+      [
+        300,
+        700,
+        590
+      ],
+      [
+        700,
+        960,
+        660
+      ],
+      [
+        480,
+        820,
+        610
+      ]
+    ],
+    "crowd": {
+      "snowy": [
+        "char_skier",
+        "char_tourist",
+        "char_skier",
+        "char_local",
+        "char_tourist"
+      ],
+      "green": [
+        "char_tourist",
+        "char_hiker",
+        "char_local",
+        "char_tourist",
+        "char_hiker"
+      ]
+    },
+    "landmarks": [
+      {
+        "texture": "bldg_gondola_station",
+        "at": [
+          400,
+          506
+        ]
+      },
+      {
+        "texture": "deco_terrace",
+        "at": [
+          930,
+          500
+        ]
+      }
+    ],
+    "festive": {
+      "at": [
+        400,
+        330
+      ]
+    },
+    "stations": [
+      {
+        "steps": [
+          "gondola"
+        ],
+        "at": [
+          250,
+          580
+        ],
+        "texture": "deco_cabin",
+        "prompt": "Seat the gondola group",
+        "overlay": "Seating",
+        "config": "gondola",
+        "cost": "miniGame"
+      },
+      {
+        "steps": [
+          "terrace"
+        ],
+        "at": [
+          780,
+          580
+        ],
+        "texture": "deco_workbench_out",
+        "prompt": "Build a terrace bench",
+        "overlay": "Build",
+        "config": "bench",
+        "cost": "craft"
+      }
+    ],
+    "fetch": {
+      "step": "seeds",
+      "item": "wildflower_seeds",
+      "texture": "item_seeds",
+      "label": "Seed packet",
+      "cost": null,
+      "spots": [
+        [
+          470,
+          690
+        ],
+        [
+          790,
+          690
+        ],
+        [
+          1000,
+          610
+        ],
+        [
+          560,
+          640
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="110" viewBox="0 0 420 110">
+  <!-- Pond -->
+  <ellipse cx="210" cy="60" rx="204" ry="46" fill="#4fa3a5" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M80 50 L130 80 L170 56 L220 90 L270 58 L320 80 L350 52" fill="none" stroke="#dfe6ee" stroke-width="4" opacity="0.8"/>
+  <path d="M110 46 L150 66 L190 48" fill="none" stroke="#fbfaf6" stroke-width="3" opacity="0.6"/>
+  <ellipse cx="300" cy="40" rx="40" ry="6" fill="#fbfaf6" opacity="0.4"/>
+</svg>

@@ -1,7 +1,8 @@
 import { CONTENT, regionDef } from './content';
 import { comfortStaminaBonus } from './van';
+import { buildReport } from './report';
 import { firstDayOfSeason, seasonForDay } from './seasons';
-import type { ActionKind, Content, GameState, PhaseId, PlayerProfile, SeasonId, SeasonInfo, Vitality } from './types';
+import type { ActionKind, Content, GameState, PhaseId, PlayerProfile, SeasonId, SeasonInfo, SeasonReport, Vitality } from './types';
 
 export const DEFAULT_PLAYER: PlayerProfile = { name: 'Aoi', pronouns: 'she', personality: 'outdoorsy' };
 
@@ -10,7 +11,7 @@ export function createNewGame(opts: { seed?: number; player?: Partial<PlayerProf
   const regions: GameState['regions'] = {};
   for (const r of content.regions) regions[r.id] = { vitality: 0, questStep: 0, kodamaFound: 0 };
   const state: GameState = {
-    version: 3,
+    version: 4,
     seed,
     rngState: seed,
     player: { ...DEFAULT_PLAYER, ...opts.player },
@@ -36,6 +37,8 @@ export function createNewGame(opts: { seed?: number; player?: Partial<PlayerProf
       roof: [],
     },
     business: { reputation: 0, served: 0, shifts: 0, last: null, menu: null },
+    seasonStats: emptySeasonStats(),
+    reports: [],
     log: ['Arrived at JR Hakuba Station in late autumn.'],
   };
   state.staminaMax = content.tuning.baseStamina + comfortStaminaBonus(state, content);
@@ -65,16 +68,28 @@ export function spendAction(state: GameState, kind: ActionKind, content: Content
   return { ok: true, cost };
 }
 
-/** Sleep in the van: advance to the next morning. Returns the season info if a season boundary was crossed. */
-export function endDay(state: GameState, content: Content = CONTENT): { newSeason: SeasonInfo | null } {
+export function emptySeasonStats(): GameState['seasonStats'] {
+  return { yen: 0, served: 0, soldOut: 0, missed: 0, shifts: 0, byProduct: {}, byRegion: {} };
+}
+
+/**
+ * Sleep in the van: advance to the next morning. Returns the new season if a boundary was crossed, and the
+ * Season Report when a scored season (winter / green) just ended.
+ */
+export function endDay(state: GameState, content: Content = CONTENT): { newSeason: SeasonInfo | null; report: SeasonReport | null } {
   const before = season(state, content);
   state.day += 1;
   state.staminaSpent = 0;
   state.staminaMax = content.tuning.baseStamina + comfortStaminaBonus(state, content);
   const after = season(state, content);
   const changed = before.season !== after.season;
-  if (changed) state.log.push(`Day ${state.day}: ${after.label} begins.`);
-  return { newSeason: changed ? after : null };
+  let report: SeasonReport | null = null;
+  if (changed) {
+    state.log.push(`Day ${state.day}: ${after.label} begins.`);
+    if (before.scored) { report = buildReport(state, before, content); state.reports.push(report); }
+    state.seasonStats = emptySeasonStats();
+  }
+  return { newSeason: changed ? after : null, report };
 }
 
 export function jumpToSeason(state: GameState, target: SeasonId, content: Content = CONTENT): void {
