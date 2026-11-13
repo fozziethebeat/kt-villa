@@ -13,10 +13,10 @@ export function deserialize(raw: string | null | undefined): GameState | null {
   try {
     const parsed = JSON.parse(raw) as Partial<GameState>;
     const v = parsed.version as number | undefined;
-    if (v !== 2 && v !== 3 && v !== 4) return null;
-    // Fill any fields added after the save was written (v3 adds roof slots, menu choice, shift region; v4 adds season stats + reports).
+    if (v === undefined || v < 2 || v > 5) return null;
+    // Fill any fields added after the save was written (v3 adds roof slots, menu choice, shift region; v4 adds season stats + reports; v5 adds ranks' second trade, helpers, ending).
     const base = createNewGame({ seed: parsed.seed });
-    return { ...base, ...parsed, version: 4, van: { ...base.van, ...parsed.van }, business: { ...base.business, ...parsed.business } } as GameState;
+    return { ...base, ...parsed, version: 5, van: { ...base.van, ...parsed.van }, business: { ...base.business, ...parsed.business } } as GameState;
   } catch {
     return null;
   }

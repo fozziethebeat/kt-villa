@@ -7,6 +7,7 @@ import modules from '../../content/modules.json';
 import business from '../../content/business.json';
 import chassis from '../../content/chassis.json';
 import layouts from '../../content/layouts.json';
+import helpers from '../../content/helpers.json';
 import minigames from '../../content/minigames.json';
 import type { Content } from './types';
 
@@ -20,6 +21,7 @@ export const CONTENT: Content = {
   modules: modules as unknown as Content['modules'],
   business: business as unknown as Content['business'],
   chassis: chassis as unknown as Content['chassis'],
+  helpers: helpers as unknown as Content['helpers'],
   layouts: layouts as unknown as Content['layouts'],
   minigames: minigames as unknown as Content['minigames'],
 };

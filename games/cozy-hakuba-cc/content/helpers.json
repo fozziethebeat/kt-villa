@@ -1,0 +1,92 @@
+[
+  {
+    "region": "station",
+    "name": "Mrs. Kobayashi",
+    "blurb": "Sends visitors your way: +10% customers.",
+    "effects": {
+      "customerMult": {
+        "winter": 1.1,
+        "green": 1.1
+      }
+    }
+  },
+  {
+    "region": "snowpeak",
+    "name": "Takumi",
+    "blurb": "Keeps your gear humming: +1 stock of everything.",
+    "effects": {
+      "stockBonus": 1
+    }
+  },
+  {
+    "region": "happo_terminal",
+    "name": "Hana",
+    "blurb": "Times the shuttle to your van: +10% customers.",
+    "effects": {
+      "customerMult": {
+        "winter": 1.1,
+        "green": 1.1
+      }
+    }
+  },
+  {
+    "region": "echoland",
+    "name": "Kenji & Mai",
+    "blurb": "Preps a batch every morning: +2 stock.",
+    "effects": {
+      "stockBonus": 2
+    }
+  },
+  {
+    "region": "happo_pond",
+    "name": "Daichi",
+    "blurb": "Packs your lunch: +1 stamina a day.",
+    "effects": {
+      "staminaBonus": 1
+    }
+  },
+  {
+    "region": "iwatake",
+    "name": "Sora",
+    "blurb": "Chats up the queue: tips +10%.",
+    "effects": {
+      "tipMult": 1.1
+    }
+  },
+  {
+    "region": "goryu",
+    "name": "Momo",
+    "blurb": "Farm-fresh ingredients: +2 stock.",
+    "effects": {
+      "stockBonus": 2
+    }
+  },
+  {
+    "region": "hakuba47",
+    "name": "Yuki & Kenta",
+    "blurb": "Brings the bike crowd: +15% green customers.",
+    "effects": {
+      "customerMult": {
+        "green": 1.15
+      }
+    }
+  },
+  {
+    "region": "tsugaike",
+    "name": "Grandma Chiyo",
+    "blurb": "Tells every tour group about you: +15% green customers.",
+    "effects": {
+      "customerMult": {
+        "green": 1.15
+      }
+    }
+  },
+  {
+    "region": "aokiko",
+    "name": "Ren",
+    "blurb": "Lakeside regulars: tips +10%.",
+    "effects": {
+      "tipMult": 1.1
+    }
+  }
+]

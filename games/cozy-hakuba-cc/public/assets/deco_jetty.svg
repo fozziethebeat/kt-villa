@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="90" viewBox="0 0 140 90">
+  <!-- Jetty camera -->
+  <rect x="0" y="60" width="140" height="16" fill="#a8754b" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <g fill="#7a4b3a"><rect x="12" y="76" width="8" height="14"/><rect x="120" y="76" width="8" height="14"/></g>
+  <g stroke="#3b3a4a" stroke-width="3"><line x1="70" y1="60" x2="56" y2="30"/><line x1="70" y1="60" x2="84" y2="30"/><line x1="70" y1="60" x2="70" y2="30"/></g>
+  <rect x="50" y="10" width="40" height="24" rx="4" fill="#3b3a4a"/><circle cx="70" cy="22" r="7" fill="#9fd3e6"/>
+</svg>

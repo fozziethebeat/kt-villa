@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="100" viewBox="0 0 120 100">
+  <!-- Bike stand -->
+  <ellipse cx="60" cy="96" rx="54" ry="4" fill="#3b3a4a" opacity="0.18"/>
+  <path d="M60 94 V30" stroke="#3b3a4a" stroke-width="5"/><path d="M40 94 H80" stroke="#3b3a4a" stroke-width="5"/>
+  <g fill="none" stroke="#3b3a4a" stroke-width="3"><circle cx="26" cy="54" r="20"/><circle cx="94" cy="54" r="20"/><path d="M26 54 L52 30 H78 L94 54 M52 30 L60 54 H26"/></g>
+</svg>

@@ -12,6 +12,8 @@ import { button, closeOverlay, openOverlay, overlayBackdrop, type Button } from 
 import { PAL, hex } from '../theme';
 
 export const VAN = { x: 40, y: 120, gridX: 100, gridY: 190, cellW: 160, cellH: 130 };
+/** Interior area the grid must fit (the Kei Van's 4×2 at 160×130 cells); bigger chassis get smaller cells. */
+const AREA = { w: 640, h: 260 };
 const TRAY = { x: 40, y: 540, w: 760, h: 160 };
 const CATEGORY_COLOR: Record<ModuleDef['category'], string> = { living: PAL.wood, production: '#8a96a8', service: PAL.noren, roof: '#9fd3e6', utility: PAL.teal };
 
@@ -28,19 +30,24 @@ export class VanInteriorScene extends Phaser.Scene {
   private actions: Record<string, Button> = {};
   private shopOpen = false;
   private menuOpen = false;
+  /** Grid geometry for the current chassis. */
+  private G = { gridX: VAN.gridX, gridY: VAN.gridY, cellW: VAN.cellW, cellH: VAN.cellH };
   private shopLayer!: Phaser.GameObjects.Container;
 
   constructor() { super('VanInterior'); }
 
   create() {
     this.drag = null; this.shopOpen = false; this.menuOpen = false; this.actions = {};
+    const grid = store.state.van.grid;
+    const cw = Math.min(VAN.cellW, Math.floor(AREA.w / grid.w)), ch = Math.min(VAN.cellH, Math.floor(AREA.h / grid.h));
+    this.G = { gridX: VAN.gridX + (AREA.w - cw * grid.w) / 2, gridY: VAN.gridY + (AREA.h - ch * grid.h) / 2, cellW: cw, cellH: ch };
     overlayBackdrop(this, `Your ${chassisDef(CONTENT, store.state.chassisTier).name}`, 'Drag modules · R / right-click rotates');
     art(this, VAN.x, VAN.y, 'van_interior', 0, 0);
     // Grid guide
     const g = this.add.graphics();
     const { w, h } = store.state.van.grid;
     g.lineStyle(2, hex(PAL.ink), 0.18);
-    for (let cx = 0; cx < w; cx++) for (let cy = 0; cy < h; cy++) g.strokeRoundedRect(VAN.gridX + cx * VAN.cellW + 4, VAN.gridY + cy * VAN.cellH + 4, VAN.cellW - 8, VAN.cellH - 8, 10);
+    for (let cx = 0; cx < w; cx++) for (let cy = 0; cy < h; cy++) g.strokeRoundedRect(this.G.gridX + cx * this.G.cellW + 4, this.G.gridY + cy * this.G.cellH + 4, this.G.cellW - 8, this.G.cellH - 8, 10);
     paperPanel(this, TRAY.x, TRAY.y, TRAY.w, TRAY.h, PAL.snow);
     label(this, TRAY.x + 18, TRAY.y + 10, 'Stored modules (drag into the van)', 16, PAL.twilight, '500');
 
@@ -52,7 +59,8 @@ export class VanInteriorScene extends Phaser.Scene {
     this.comfortText = label(this, 852, 112, '', 20, PAL.ink).setLineSpacing(4);
     this.actions.craft = button(this, 1040, 220, 370, 52, '', () => this.craftMap(), PAL.lantern, 18);
     this.actions.cafe = button(this, 1040, 284, 370, 52, 'Open the café  (3 stamina)', () => this.openCafe(), PAL.lantern, 18);
-    this.actions.shop = button(this, 1040, 348, 370, 52, 'Module shop', () => this.toggleShop(), PAL.paper, 18);
+    this.actions.shop = button(this, 945, 348, 180, 52, 'Module shop', () => this.toggleShop(), PAL.paper, 17);
+    this.actions.crew = button(this, 1135, 348, 180, 52, 'Rank & crew', () => openOverlay(this, 'Crew'), PAL.paper, 17);
     this.actions.sleep = button(this, 1040, 412, 370, 52, 'Sleep (end the day)', () => this.sleep(), '#c9d3e6', 18);
     this.actions.out = button(this, 1040, 476, 370, 52, 'Step outside', () => closeOverlay(this), PAL.paper, 18);
     this.actions.drive = button(this, 945, 540, 180, 52, 'Drive…', () => openOverlay(this, 'Travel'), '#cfe3bf', 18);
@@ -79,8 +87,8 @@ export class VanInteriorScene extends Phaser.Scene {
 
   private moduleSprite(def: ModuleDef, rot: number, scale = 1): Phaser.GameObjects.Container {
     const cells = rotate(def.shape, rot);
-    const fw = (Math.max(...cells.map((c) => c[0])) + 1) * VAN.cellW;
-    const fh = (Math.max(...cells.map((c) => c[1])) + 1) * VAN.cellH;
+    const fw = (Math.max(...cells.map((c) => c[0])) + 1) * this.G.cellW;
+    const fh = (Math.max(...cells.map((c) => c[1])) + 1) * this.G.cellH;
     const img = art(this, 0, 0, `mod_${def.id}`, 0.5, 0.5);
     img.setRotation((rot % 2) * (Math.PI / 2));
     const iw = rot % 2 ? img.displayHeight : img.displayWidth;
@@ -98,15 +106,17 @@ export class VanInteriorScene extends Phaser.Scene {
     for (const p of s.van.placed) {
       const def = moduleDef(CONTENT, p.moduleId);
       const c = this.moduleSprite(def, p.rot);
-      c.setPosition(VAN.gridX + p.x * VAN.cellW + c.getData('fw') / 2, VAN.gridY + p.y * VAN.cellH + c.getData('fh') / 2);
+      c.setPosition(this.G.gridX + p.x * this.G.cellW + c.getData('fw') / 2, this.G.gridY + p.y * this.G.cellH + c.getData('fh') / 2);
       this.makeDraggable(c, def, p.rot);
       this.world.add(c);
     }
-    const stored = s.van.owned.filter((id) => !isPlaced(s, id));
+    const stored = this.stored();
     stored.forEach((id, i) => {
       const def = moduleDef(CONTENT, id);
-      const c = this.moduleSprite(def, 0, 0.55);
-      c.setPosition(TRAY.x + 110 + i * 190, TRAY.y + 92);
+      const [x, y, sc] = this.trayPos(id)!;
+      const c = this.moduleSprite(def, 0, sc);
+      c.setPosition(x, y);
+      void i;
       this.makeDraggable(c, def, 0);
       this.world.add(c);
     });
@@ -161,8 +171,8 @@ export class VanInteriorScene extends Phaser.Scene {
   private cellFor(p: Phaser.Input.Pointer): { x: number; y: number } | null {
     if (!this.drag) return null;
     const fw = this.drag.sprite.getData('fw'), fh = this.drag.sprite.getData('fh');
-    const x = Math.round((p.x - fw / 2 - VAN.gridX) / VAN.cellW);
-    const y = Math.round((p.y - fh / 2 - VAN.gridY) / VAN.cellH);
+    const x = Math.round((p.x - fw / 2 - this.G.gridX) / this.G.cellW);
+    const y = Math.round((p.y - fh / 2 - this.G.gridY) / this.G.cellH);
     const { w, h } = store.state.van.grid;
     if (x < -1 || y < -1 || x > w || y > h) return null;
     return { x, y };
@@ -178,7 +188,7 @@ export class VanInteriorScene extends Phaser.Scene {
     const def = moduleDef(CONTENT, this.drag.moduleId);
     this.ghost.fillStyle(ok ? 0x8cc084 : 0xc8553d, 0.35);
     for (const [cx, cy] of rotate(def.shape, this.drag.rot)) {
-      this.ghost.fillRoundedRect(VAN.gridX + (cell.x + cx) * VAN.cellW + 4, VAN.gridY + (cell.y + cy) * VAN.cellH + 4, VAN.cellW - 8, VAN.cellH - 8, 10);
+      this.ghost.fillRoundedRect(this.G.gridX + (cell.x + cx) * this.G.cellW + 4, this.G.gridY + (cell.y + cy) * this.G.cellH + 4, this.G.cellW - 8, this.G.cellH - 8, 10);
     }
   }
 
@@ -193,6 +203,24 @@ export class VanInteriorScene extends Phaser.Scene {
     if (cell) store.update('van', (s) => { placed = placeModule(s, moduleId, cell.x, cell.y, rot); });
     if (!placed) this.refresh(); // dropped outside / blocked → it stays stored
     this.msg.setText(placed ? '' : cell ? "That spot's taken. Try another, or rotate with R." : '');
+  }
+
+  /** Interior modules in storage (roof modules live on the rack, see the garage). */
+  private stored(): string[] {
+    const s = store.state;
+    return s.van.owned.filter((id) => !isPlaced(s, id) && moduleDef(CONTENT, id).category !== 'roof');
+  }
+
+  /** Tray slot for a stored module: one roomy row for up to 4, two tighter rows beyond that. Also used by e2e. */
+  trayPos(id: string): [number, number, number] | null {
+    const list = this.stored();
+    const i = list.indexOf(id);
+    if (i < 0) return null;
+    const def = moduleDef(CONTENT, id);
+    const fw = (Math.max(...def.shape.map((c) => c[0])) + 1) * this.G.cellW;
+    // Scale relative to a Kei Van cell so stored modules stay readable in bigger vans.
+    if (list.length <= 4) return [TRAY.x + 110 + i * 190, TRAY.y + 92, Math.min(88 / this.G.cellW, 170 / fw)];
+    return [TRAY.x + 70 + (i % 7) * 105, TRAY.y + 62 + Math.floor(i / 7) * 66, Math.min(60 / this.G.cellW, 96 / fw)];
   }
 
   /** Debug/e2e: place a module directly (same rules as drag & drop). */
@@ -270,12 +298,12 @@ export class VanInteriorScene extends Phaser.Scene {
 
   private renderShop() {
     this.shopLayer.removeAll(true);
-    const panel = paperPanel(this, 230, 150, 560, 380, PAL.paper);
-    const title = label(this, 254, 166, 'Module shop', 24, PAL.ink, '900');
+    const panel = paperPanel(this, 230, 130, 560, 500, PAL.paper);
+    const title = label(this, 254, 146, 'Module shop', 24, PAL.ink, '900');
     this.shopLayer.add([panel, title]);
     const s = store.state;
-    CONTENT.modules.filter((m) => m.price > 0 && m.category !== 'roof').forEach((m, i) => {
-      const y = 214 + i * 66;
+    CONTENT.modules.filter((m) => m.price > 0 && m.category !== 'roof' && (!m.archetype || s.unlocks.includes(`business:${m.archetype}`))).forEach((m, i) => {
+      const y = 186 + i * 56;
       const price = priceWithMods(s, m.price);
       const icon = art(this, 300, y + 28, `mod_${m.id}`, 0.5, 0.5).setScale(0.5 * (m.shape.length > 1 ? 0.26 : 0.4));
       const t = label(this, 360, y + 2, `${m.name}  ·  ¥${price.toLocaleString('en-US')}`, 17, PAL.ink);
@@ -289,7 +317,7 @@ export class VanInteriorScene extends Phaser.Scene {
       b.setEnabled(!owned && s.yen >= price);
       this.shopLayer.add([icon, t, d, b.container]);
     });
-    const close = button(this, 510, 500, 180, 44, 'Close shop', () => this.toggleShop(), PAL.snow, 16);
+    const close = button(this, 510, 596, 180, 44, 'Close shop', () => this.toggleShop(), PAL.snow, 16);
     this.shopLayer.add(close.container);
   }
 

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="300" viewBox="0 0 420 300">
+  <!-- Greenhouse -->
+  <g transform="translate(6 7)" opacity="0.28" fill="#3b3a4a"><path d="M20 120 Q210 20 400 120 V292 H20Z"/></g>
+  <path d="M20 292 V120 Q210 20 400 120 V292Z" fill="#dfeee4" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <g stroke="#3b3a4a" stroke-width="2.5" fill="none"><line x1="70" y1="100" x2="70" y2="292"/><line x1="120" y1="100" x2="120" y2="292"/><line x1="170" y1="60" x2="170" y2="292"/><line x1="220" y1="60" x2="220" y2="292"/><line x1="270" y1="60" x2="270" y2="292"/><line x1="320" y1="100" x2="320" y2="292"/><line x1="370" y1="100" x2="370" y2="292"/><path d="M20 200 H400"/></g>
+  <rect x="180" y="200" width="60" height="92" fill="#cfe0ee" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <g stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><rect x="30" y="250" width="120" height="30" fill="#a8754b"/><rect x="270" y="250" width="120" height="30" fill="#a8754b"/></g>
+  <g stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><circle cx="50" cy="246" r="8" fill="#e89fb0"/><circle cx="80" cy="246" r="8" fill="#f2a541"/><circle cx="110" cy="246" r="8" fill="#e89fb0"/><circle cx="140" cy="246" r="8" fill="#fbfaf6"/><circle cx="290" cy="246" r="8" fill="#f2a541"/><circle cx="320" cy="246" r="8" fill="#e89fb0"/><circle cx="350" cy="246" r="8" fill="#7a5ea8"/><circle cx="380" cy="246" r="8" fill="#f2a541"/></g>
+</svg>

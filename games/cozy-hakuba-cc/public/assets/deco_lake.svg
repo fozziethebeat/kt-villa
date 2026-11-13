@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="140" viewBox="0 0 760 140">
+  <!-- Lake -->
+  <path d="M0 40 Q380 -10 760 40 V140 H0Z" fill="#4fa3a5" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M60 70 H220 M300 90 H520 M560 64 H720" stroke="#bfe3ea" stroke-width="5" stroke-linecap="round"/>
+  <path d="M0 40 Q380 -10 760 40" stroke="#dfe6ee" stroke-width="6" fill="none"/>
+</svg>

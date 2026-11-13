@@ -39,6 +39,9 @@ export function installDebugApi(game: Phaser.Game) {
     balance: (season: ScoredSeason, days = 7) => simulateSeason(store.state, season, days),
     regionScene: () => REGION_SCENES[store.state.currentRegion],
     /** Restore today's stamina (testing only). */
+    /** Turn the one-step-per-day pacing on/off (tests play whole arcs in one sitting). */
+    setPacing: (on: boolean) => { (CONTENT.tuning as { stepCooldownDays: number }).stepCooldownDays = on ? 1 : 0; },
+    setReputation: (n: number) => store.update('debug', (st) => { st.business.reputation = n; }),
     rest: () => store.update('debug', (st) => { st.staminaSpent = 0; }),
     setChassis: (tier: number) => store.update('debug', (st) => { st.chassisTier = tier; st.van.grid = { ...CONTENT.chassis[tier].grid }; }),
     newGame: (seed?: number) => store.replace(createNewGame({ seed }), 'debug'),

@@ -9,7 +9,7 @@
 > known across the valley.
 
 **Status:** v0.3. The core decisions are locked (see the Decision Log below).
-Milestones M0–M3 are built (§13). Where a decision is still open, it's marked
+Milestones M0–M4 are built (§13); M5 (polish) is next. Where a decision is still open, it's marked
 **⚖️ Option A / B / C**, and the recommended option comes first and is labeled
 ★.
 
@@ -607,8 +607,39 @@ Each test asset must **show what it's for** before it looks beautiful:
 | **M1 Vertical slice** ✅ | Character select (name, pronouns, 5 personalities), JR Hakuba Station 3-step arc (brochures → valley map sticker craft → lost-luggage grid packing), kodama, seasonal crowds and lanterns, Kei Van interior with drag-and-drop modules + shop + comfort→stamina, Coffee café (pour-timing prep + window service), Valley Revival Board, autosave on sleep + Continue | 25 unit tests; one e2e playthrough of the whole slice by real input in both seasons |
 | **M2 Garage & build** ✅ | Shared `RegionScene` base; driving between regions on a valley map (1 stamina); Revival Board offers roads next to Thriving regions; Snow Peak Land Station 3-step arc (tent pitching on the new balance engine → salvage 4 van parts → choose coffee or soba and build its module with the new trace engine); Takumi's garage (chassis Tier 1 + 3 roof modules); Soba & Oyaki Kitchen (noodle-cut rhythm prep, 3 products, indigo noren); menu slots + specialty bonus; all 5 personality modifiers wired; headless balance sim; save v3 with v2 migration | 36 unit tests; the balance sim shows build choices changing earnings (see §13.1); e2e playthroughs of M1 and M2 by real input |
 | **M3 North arm** ✅ | Data-driven regions (`content/layouts.json` + one `DataRegionScene`); Happo-One Bus Terminal (flow routes → IC cards → timetable arrange), Echoland (yakitori cook → izakaya seating → lanterns), Happo Pond (hut supplies → cairn balance → sunrise breakfast cook; gondola stop instead of the van), Iwatake (gondola-cabin balance seating → terrace bench trace → wildflower seeds); new engines: constraint seating, flow/path connect, cairn balance, generic arrange + cook; seasonal attractions that lift valley-wide demand; Season Report with Valley Buzz + tips; a second Revival Board at the terminal; save v4 | 6 regions playable; Season Report; 55 unit tests; M1–M3 e2e playthroughs by real input |
-| **M4 South arm** | Goryu, 47, Aokiko **and Tsugaike** (moved from M3: it needs the Tier 3 van); chassis Tiers 2–3 (bigger interior grid); remaining archetypes; helpers; Ranks 1–5; making the trade choice matter more | Full game reaches the ending in the balance sim |
+| **M4 South arm** ✅ | Goryu (alpine plants → garden-bed packing → farm crate), Hakuba 47 (MTB trail flow → markers → bike-tune timing), Lake Aoki (photo **composition** engine → postcard lettering → beach clean-up), Tsugaike (field-guide plants → boardwalk flow → tour-pack arrange); chassis Tiers 2–3 (6×3 / 8×3 interiors, box van + camper art); Business Ranks 1–5 (menu slots 3→6, helper slots, second trade at Rank 3); two green-strong second trades (Mobile Sauna, Guide & Tours) with bookable "session" products; trade-gated modules; 10 helpers (one per key person); one-request-per-day pacing; Hakuba Valley Festival ending; whole-game bot | 57 unit tests; the bot reaches the ending on day 37 for both trades; M1–M4 e2e playthroughs |
 | **M5 Polish** | All personalities, appearance options, audio, art Stage 2 replacements, save/load | Full manual playthrough by Claude, then your validation |
+
+### 13.3 M4 whole-game bot
+`simulateGame()` (`src/sim/bot.ts`) plays a new game day by day with the real
+rules: quests (mini-games abstracted as a stamina cost and 2★), driving, roads,
+one shift a day, shopping (trade modules → roof → comfort), chassis upgrades
+when a region needs them, a second trade at Rank 3 and helpers.
+
+| | Coffee first | Soba first | Design target (§9) |
+|---|---|---|---|
+| Tier 1 / 2 / 3 | day 6 / 11 / 20 | day 6 / 8 / 17 | ~6 / ~14 / ~22 |
+| Rank 3 / Rank 5 | day 10 / 23 | day 10 / 20 | — |
+| All 10 regions Thriving | day 23 | day 20 | — |
+| **Festival ending** | **day 37** | **day 37** | 35–45 |
+
+The ending lands at the end of year 2's green season: the valley is fully
+restored by ~day 20–23, and then a full Thriving winter + green season is
+needed.
+
+**M4 rules worth knowing**
+- **Pacing:** a key person takes one request per day. You can do the work
+  early, but the turn-in waits until the next morning ("Come back tomorrow").
+  This is what stretches the game from ~19 days to ~37. `tuning.json →
+  stepCooldownDays` (tests set it to 0).
+- **Trade choice now gates purchases:** the pastry case is coffee-only, the oyaki
+  griddle soba-only, the tent sauna and tour desk need that second trade.
+- **Ranks:** reputation + Thriving regions. Rank 3 unlocks a second trade and a
+  helper slot; Rank 5 is part of the ending.
+- **Helpers:** each Thriving region's key person can join the van crew (絆 5),
+  giving one effect: more customers, more stock, tips, or +1 stamina.
+- **Known gap:** money piles up late (~¥200k at the ending). M5 needs late-game
+  yen sinks (decor, livery, festival sponsorship).
 
 ### 13.2 M3 balance sim snapshot
 Coffee van (pour bar + pastry case) at a Thriving station, one shift a day:
@@ -669,10 +700,12 @@ Still open:
    or traits that drift?
 3. **Save model:** autosave on sleep only (proposed), or manual save slots too?
    (As built: autosave on sleep and on arriving in a region.)
-4. **Trade choice impact** (from M2 playtest): the coffee/soba choice is
-   "good enough" but doesn't feel like a hard decision yet. Candidates for M4:
-   per-region customer mixes that favour one trade, a secondary archetype at
-   Rank 3, or trade-specific quests.
+4. **Trade choice impact** (from M2 playtest): M4 adds trade-gated modules and
+   a second trade at Rank 3. Still open: per-region customer mixes or
+   trade-specific quests to make the first choice feel bigger.
+5. **Gear Tune and Crafts archetypes** (§6.4) aren't built; M4 shipped the two
+   green-strong ones (Sauna, Tours) because they serve the seasonal lesson.
+6. **Late-game yen sink** (see §13.3).
 
 ---
 

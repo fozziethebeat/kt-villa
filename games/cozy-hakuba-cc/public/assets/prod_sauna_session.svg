@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- sauna_session -->
+  <ellipse cx="32" cy="50" rx="24" ry="10" fill="#5a596a" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#9aa1ab" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><circle cx="22" cy="44" r="7"/><circle cx="36" cy="42" r="8"/><circle cx="44" cy="48" r="6"/></g>
+  <path d="M20 30 q6 -8 0 -16 M32 28 q6 -8 0 -16 M44 30 q6 -8 0 -16" stroke="#b7b3ad" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

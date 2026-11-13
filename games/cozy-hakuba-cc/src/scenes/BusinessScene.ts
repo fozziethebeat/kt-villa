@@ -223,7 +223,7 @@ Bowls ready: ${this.bowls}`);
 
   private stockFor(pid: string): number {
     const line = productDef(CONTENT, pid).line;
-    return line === 'shelf' ? this.shelf[pid] ?? 0 : line === 'cup' ? this.cups : this.bowls;
+    return line === 'shelf' || line === 'session' ? this.shelf[pid] ?? 0 : line === 'cup' ? this.cups : this.bowls;
   }
 
   private refreshStock() {
@@ -267,9 +267,9 @@ Bowls ready: ${this.bowls}`);
     const target = this.selected?.state === 'waiting' ? this.selected : this.oldestWaiting();
     if (!target || this.stockFor(pid) <= 0) return;
     const line = productDef(CONTENT, pid).line;
-    if (line === 'shelf') this.shelf[pid]--; else if (line === 'cup') this.cups--; else this.bowls--;
+    if (line === 'shelf' || line === 'session') this.shelf[pid]--; else if (line === 'cup') this.cups--; else this.bowls--;
     const waitedFrac = (this.elapsed - target.arrivedAt) / target.plan.patience;
-    const stars = line === 'shelf' ? 2 : this.quality[line];
+    const stars = line === 'shelf' || line === 'session' ? 2 : this.quality[line];
     const o: ServeOutcome = { idx: target.plan.idx, item: pid, stars, waitedFrac };
     this.outcomes.push(o);
     const r = priceFor(this.plan, target.plan, o);

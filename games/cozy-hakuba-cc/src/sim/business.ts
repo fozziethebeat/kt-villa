@@ -2,6 +2,7 @@ import { CONTENT, archetypeDef, productDef, regionDef } from './content';
 import { mod, phase, season, spendAction } from './game';
 import { nextRandom } from './rng';
 import { enabled, vanEffects } from './van';
+import { rankDef } from './progression';
 import type { Content, GameState, ScoredSeason, ShiftSummary } from './types';
 
 export type PrepLine = 'cup' | 'bowl';
@@ -15,7 +16,7 @@ export interface ShiftPlan {
   durationSec: number;
   /** Lines that need a prep mini-game before service (cups: pour timing, bowls: noodle cut). */
   prep: PrepLine[];
-  /** Ready-made stock for shelf items (pastries, onigiri, oyaki). */
+  /** Ready-made stock for shelf items (pastries, onigiri, oyaki) and bookable sessions (sauna, tours). */
   shelf: Record<string, number>;
   /** Extra stock per prepped line from van modules (e.g. solar panel). */
   stockBonus: number;
@@ -44,8 +45,10 @@ export function activeArchetype(state: GameState): string {
 export function availableProducts(state: GameState, content: Content = CONTENT): string[] {
   const en = enabled(state, content);
   const primary = activeArchetype(state);
+  const second = state.secondaryArchetype;
   const all = content.business.products.filter((p) => en.has(p.id));
-  return [...all.filter((p) => p.archetype === primary), ...all.filter((p) => p.archetype !== primary)].map((p) => p.id);
+  const rank = (a: string) => (a === primary ? 0 : a === second ? 1 : 2);
+  return [...all].sort((a, b) => rank(a.archetype) - rank(b.archetype)).map((p) => p.id);
 }
 
 /** Today's menu: the player's chosen items (if still makeable) or the automatic pick, capped by menu slots. */
@@ -53,12 +56,17 @@ export function menu(state: GameState, content: Content = CONTENT): string[] {
   if (!businessOpen(state)) return [];
   const avail = availableProducts(state, content);
   const chosen = (state.business.menu ?? []).filter((id) => avail.includes(id));
-  return (chosen.length ? chosen : avail).slice(0, content.business.menuSlots);
+  return (chosen.length ? chosen : avail).slice(0, menuSlots(state, content));
+}
+
+/** Menu slots grow with Business Rank (3 → 6). */
+export function menuSlots(state: GameState, content: Content = CONTENT): number {
+  return rankDef(state, content).menuSlots;
 }
 
 export function setMenu(state: GameState, ids: string[], content: Content = CONTENT): boolean {
   const avail = availableProducts(state, content);
-  if (ids.length > content.business.menuSlots || ids.some((id) => !avail.includes(id))) return false;
+  if (ids.length > menuSlots(state, content) || ids.some((id) => !avail.includes(id))) return false;
   state.business.menu = ids.length ? [...ids] : null;
   return true;
 }
@@ -114,7 +122,11 @@ export function startShift(state: GameState, content: Content = CONTENT): StartS
   const lines = new Set(m.map((pid) => productDef(content, pid).line));
   const prep = (['cup', 'bowl'] as const).filter((l) => lines.has(l));
   const shelf: Record<string, number> = {};
-  for (const pid of m) if (productDef(content, pid).line === 'shelf') shelf[pid] = b.shift.shelfStock + fx.stockBonus;
+  for (const pid of m) {
+    const line = productDef(content, pid).line;
+    if (line === 'shelf') shelf[pid] = b.shift.shelfStock + fx.stockBonus;
+    if (line === 'session') shelf[pid] = b.shift.sessionStock + Math.ceil(fx.stockBonus / 2);
+  }
   return {
     ok: true,
     plan: {

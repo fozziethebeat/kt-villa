@@ -17,6 +17,8 @@ export interface Tuning {
   startingYen: number;
   startingKizuna: number;
   roadCost: number;
+  /** Days a key person needs before their next request can be turned in (cozy daily rhythm). 0 disables. */
+  stepCooldownDays: number;
 }
 
 export interface RegionDef {
@@ -47,6 +49,8 @@ export interface ArchetypeDef {
   builds: string;
   pitch: string;
   signature: string;
+  /** Offered as a first trade at Snow Peak (others unlock as a second trade at Rank 3). */
+  primaryChoice: boolean;
 }
 
 export interface PersonalityDef {
@@ -80,15 +84,20 @@ export interface ModuleDef {
   comfort: number;
   price: number;
   enables: string[];
+  /** Only sold once this trade is yours (primary or secondary). */
+  archetype?: string;
   effects?: ModuleEffects;
   blurb: string;
 }
 
-export interface ModuleEffects { stockBonus?: number; customerMult?: Partial<Record<ScoredSeason, number>>; tipMult?: number }
+export interface ModuleEffects { stockBonus?: number; customerMult?: Partial<Record<ScoredSeason, number>>; tipMult?: number; staminaBonus?: number }
+
+export interface RankDef { rank: number; title: string; reputation: number; regions: number; menuSlots: number; helpers: number; secondary: boolean }
+export interface HelperDef { region: string; name: string; blurb: string; effects: ModuleEffects }
 
 export interface ChassisDef { tier: number; name: string; grid: { w: number; h: number }; roofSlots: number; price: number; available: boolean; blurb: string }
 
-export type ProductLine = 'cup' | 'bowl' | 'shelf';
+export type ProductLine = 'cup' | 'bowl' | 'shelf' | 'session';
 export interface ProductDef { id: string; name: string; price: number; archetype: string; line: ProductLine; seasonAppeal: Record<ScoredSeason, number> }
 export interface CustomerTypeDef { id: string; name: string; weight: Record<ScoredSeason, number>; prefs: Record<string, number>; patience: number; tip: number }
 export interface BusinessDef {
@@ -96,10 +105,12 @@ export interface BusinessDef {
   customers: CustomerTypeDef[];
   shift: {
     baseCustomers: number; minCustomers: number; maxCustomers: number; durationSec: number;
-    phaseMult: Record<PhaseId, number>; cupsPerPour: number; pours: number; bowlsPerCut: number; cuts: number; shelfStock: number;
+    phaseMult: Record<PhaseId, number>; cupsPerPour: number; pours: number; bowlsPerCut: number; cuts: number; shelfStock: number; sessionStock: number;
     qualityMult: number[]; tipRate: number; reputationPerHappy: number; reputationPerMissed: number; specialtyBonus: number;
   };
   menuSlots: number;
+  ranks: RankDef[];
+  helperCost: number;
   comfortStaminaDivisor: number;
   comfortStaminaCap: number;
 }
@@ -113,6 +124,7 @@ export interface Content {
   modules: ModuleDef[];
   business: BusinessDef;
   chassis: ChassisDef[];
+  helpers: HelperDef[];
   layouts: Record<string, RegionLayoutDef>;
   minigames: Record<string, MiniGameDef>;
 }
@@ -129,7 +141,7 @@ export interface RegionLayoutDef {
   trees: [number, number, number][];
   crowdLanes: [number, number, number][];
   crowd: { snowy: string[]; green: string[] };
-  landmarks: { texture: string; at: [number, number]; flip?: boolean; tint?: string; depth?: number }[];
+  landmarks: { texture: string; at: [number, number]; flip?: boolean; tint?: string; depth?: number; scale?: [number, number] }[];
   festive?: { at: [number, number] };
   board?: [number, number];
   stations: { steps: string[]; at: [number, number]; texture: string | null; prompt: string; overlay: string; config: string; cost: ActionKind }[];
@@ -144,14 +156,14 @@ export interface PlayerProfile {
   personality: string;
 }
 
-export interface RegionState { vitality: Vitality; questStep: number; kodamaFound: number }
+export interface RegionState { vitality: Vitality; questStep: number; kodamaFound: number; /** Day from which the next step can be turned in. */ readyDay?: number }
 
 export interface Placement { moduleId: string; x: number; y: number; rot: number }
 
 export interface ShiftSummary { day: number; region: string; served: number; missed: number; soldOut: number; yen: number; tips: number; reputation: number }
 
 export interface GameState {
-  version: 4;
+  version: 5;
   seed: number;
   rngState: number;
   player: PlayerProfile;
@@ -162,6 +174,12 @@ export interface GameState {
   kizuna: number;
   chassisTier: number;
   primaryArchetype: string | null;
+  /** Second trade, chosen at Rank 3. */
+  secondaryArchetype: string | null;
+  /** Regions whose key person helps at the van (one effect each). */
+  helpers: string[];
+  /** Set when the Hakuba Valley Festival ending is reached. */
+  ending: { day: number } | null;
   currentRegion: string;
   regions: Record<string, RegionState>;
   inventory: Record<string, number>;

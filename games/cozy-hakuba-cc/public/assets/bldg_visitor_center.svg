@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="300" viewBox="0 0 420 300">
+  <!-- Visitor center -->
+  <g transform="translate(6 7)" opacity="0.28" fill="#3b3a4a"><path d="M20 130 L210 60 L400 130 V292 H20Z"/></g>
+  <rect x="30" y="130" width="360" height="162" fill="#d9c7a3" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M14 134 L210 56 L406 134 L380 140 L210 76 L40 140Z" fill="#3f6b4f" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="80" y="170" width="120" height="70" fill="#cfe0ee" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/><rect x="250" y="190" width="70" height="102" fill="#7a4b3a" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="120" y="100" width="180" height="26" rx="5" fill="#fbfaf6" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <text x="210" y="119" font-family="sans-serif" font-size="15" font-weight="700" fill="#3f6b4f" text-anchor="middle">栂池 NATURE PARK</text>
+  <g stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><ellipse cx="350" cy="250" rx="18" ry="10" fill="#fbfaf6"/><path d="M350 240 V222" stroke="#3f6b4f" stroke-width="3"/></g>
+</svg>

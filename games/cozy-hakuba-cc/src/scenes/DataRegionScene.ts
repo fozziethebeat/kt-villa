@@ -36,6 +36,7 @@ export class DataRegionScene extends RegionScene {
     for (const lm of d.landmarks) {
       const img = art(this, lm.at[0], lm.at[1], lm.texture).setDepth(lm.depth ?? lm.at[1]).setFlipX(!!lm.flip);
       if (lm.tint) img.setTint(parseInt(lm.tint.slice(1), 16));
+      if (lm.scale) img.setScale(0.5 * lm.scale[0], 0.5 * lm.scale[1]);
       this.scenery(img);
     }
     this.festive = d.festive ? art(this, d.festive.at[0], d.festive.at[1], 'deco_lanterns', 0.5, 0).setScale(0.62).setDepth(530).setVisible(false) : null;

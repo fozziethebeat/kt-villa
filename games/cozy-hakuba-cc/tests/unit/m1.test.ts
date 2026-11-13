@@ -6,6 +6,10 @@ import { canPlace, generate, isSolved, normalize, place, rotate } from '../../sr
 import { currentStep, findKodama, recordResult, talk } from '../../src/sim/quests';
 import { deserialize, serialize } from '../../src/sim/save';
 import { buyModule, comfort, comfortStaminaBonus, enabled, placeModule } from '../../src/sim/van';
+import { CONTENT as _C } from '../../src/sim/content';
+
+// These arcs are played in one sitting; the one-request-per-day pacing (M4) is covered in m4.test.ts.
+_C.tuning.stepCooldownDays = 0;
 
 describe('grid packing engine', () => {
   it('rotates and normalizes shapes', () => {
@@ -109,6 +113,8 @@ describe('van modules', () => {
     s.yen = 100;
     expect(buyModule(s, 'stove')).toEqual({ ok: false, reason: 'yen' });
     s.yen = 10_000;
+    expect(buyModule(s, 'pastry_case')).toEqual({ ok: false, reason: 'locked' }); // coffee-only module (M4)
+    s.unlocks.push('business:coffee');
     expect(buyModule(s, 'pastry_case')).toEqual({ ok: true });
     expect(placeModule(s, 'pastry_case', 0, 1, 0)).toBe(false); // futon is there
     expect(placeModule(s, 'pastry_case', 0, 0, 0)).toBe(true);

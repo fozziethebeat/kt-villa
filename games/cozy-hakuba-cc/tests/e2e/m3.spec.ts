@@ -58,6 +58,8 @@ test('M3 north arm: terminal, Echoland, Happo Pond, Iwatake by real input, attra
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await page.waitForFunction(() => (window as any).__hakuba?.activeScenes().includes('Title'));
+  // Arcs are played in one sitting here; the one-request-per-day pacing (M4) is tested in m4.test.ts.
+  await page.evaluate(() => (window as any).__hakuba.setPacing(false));
   await page.waitForTimeout(1000);
   // Start from "M2 complete".
   await ev(page, H("h.newGame(7)"));

@@ -711,6 +711,230 @@
       "h": 48,
       "role": "fetch-item",
       "purpose": "Wildflower seed packet (fetch item for Iwatake)"
+    },
+    {
+      "id": "char_momo",
+      "file": "char_momo.svg",
+      "w": 56,
+      "h": 88,
+      "role": "key-person",
+      "purpose": "Goryu key person; farmer in a straw hat + green apron with a trowel"
+    },
+    {
+      "id": "char_yuki_kenta",
+      "file": "char_yuki_kenta.svg",
+      "w": 100,
+      "h": 88,
+      "role": "key-person",
+      "purpose": "Hakuba 47 key people; ski-tuning couple: helmet + bike jersey, beanie + wax apron"
+    },
+    {
+      "id": "char_chiyo",
+      "file": "char_chiyo.svg",
+      "w": 56,
+      "h": 88,
+      "role": "key-person",
+      "purpose": "Tsugaike key person; elderly guide with a walking stick, sun hat and field notebook"
+    },
+    {
+      "id": "char_ren",
+      "file": "char_ren.svg",
+      "w": 56,
+      "h": 88,
+      "role": "key-person",
+      "purpose": "Aokiko key person; SUP renter in a wetsuit top + life vest, paddle"
+    },
+    {
+      "id": "bldg_greenhouse",
+      "file": "bldg_greenhouse.svg",
+      "w": 420,
+      "h": 300,
+      "role": "landmark",
+      "purpose": "Goryu alpine-garden greenhouse; glass panes + flower boxes = gardening"
+    },
+    {
+      "id": "deco_garden",
+      "file": "deco_garden.svg",
+      "w": 300,
+      "h": 110,
+      "role": "landmark",
+      "purpose": "Alpine garden beds (overgrown until restored)"
+    },
+    {
+      "id": "deco_potting_table",
+      "file": "deco_potting_table.svg",
+      "w": 120,
+      "h": 90,
+      "role": "interactable",
+      "purpose": "Potting table: garden-bed puzzle and farm crate are made here"
+    },
+    {
+      "id": "bldg_base_lodge",
+      "file": "bldg_base_lodge.svg",
+      "w": 420,
+      "h": 300,
+      "role": "landmark",
+      "purpose": "Hakuba 47 base lodge; big A-frame + bike rack = MTB park / ski base"
+    },
+    {
+      "id": "deco_trail_map",
+      "file": "deco_trail_map.svg",
+      "w": 140,
+      "h": 140,
+      "role": "interactable",
+      "purpose": "Trail map board: the MTB trail puzzle is here"
+    },
+    {
+      "id": "deco_bike_stand",
+      "file": "deco_bike_stand.svg",
+      "w": 120,
+      "h": 100,
+      "role": "interactable",
+      "purpose": "Bike workstand: the bike-tune timing game is here"
+    },
+    {
+      "id": "bldg_visitor_center",
+      "file": "bldg_visitor_center.svg",
+      "w": 420,
+      "h": 300,
+      "role": "landmark",
+      "purpose": "Tsugaike nature-park visitor center; wood + big field-guide sign"
+    },
+    {
+      "id": "deco_wetland",
+      "file": "deco_wetland.svg",
+      "w": 420,
+      "h": 110,
+      "role": "landmark",
+      "purpose": "Wetland marsh with a boardwalk (broken until restored)"
+    },
+    {
+      "id": "deco_lake",
+      "file": "deco_lake.svg",
+      "w": 760,
+      "h": 140,
+      "role": "landmark",
+      "purpose": "Lake Aoki: clear blue water reaching across the scene"
+    },
+    {
+      "id": "bldg_boathouse",
+      "file": "bldg_boathouse.svg",
+      "w": 360,
+      "h": 260,
+      "role": "landmark",
+      "purpose": "Aokiko boathouse; SUP boards leaning outside = rentals"
+    },
+    {
+      "id": "deco_jetty",
+      "file": "deco_jetty.svg",
+      "w": 140,
+      "h": 90,
+      "role": "interactable",
+      "purpose": "Jetty with a camera on a tripod: the photo-framing puzzle"
+    },
+    {
+      "id": "item_alpine_plant",
+      "file": "item_alpine_plant.svg",
+      "w": 44,
+      "h": 48,
+      "role": "fetch-item",
+      "purpose": "Alpine plant tangled in weeds (fetch item, 1 stamina to rescue)"
+    },
+    {
+      "id": "item_trail_marker",
+      "file": "item_trail_marker.svg",
+      "w": 34,
+      "h": 56,
+      "role": "fetch-item",
+      "purpose": "Trail marker post (fetch item for Hakuba 47)"
+    },
+    {
+      "id": "item_marsh_plant",
+      "file": "item_marsh_plant.svg",
+      "w": 40,
+      "h": 52,
+      "role": "fetch-item",
+      "purpose": "Marsh plant sample (cotton grass) for the field guide"
+    },
+    {
+      "id": "item_litter",
+      "file": "item_litter.svg",
+      "w": 44,
+      "h": 34,
+      "role": "fetch-item",
+      "purpose": "Beach litter: bottle + wrapper (fetch item for Lake Aoki)"
+    },
+    {
+      "id": "mod_tent_sauna",
+      "file": "mod_tent_sauna.svg",
+      "w": 320,
+      "h": 130,
+      "role": "module",
+      "purpose": "Tent Sauna module: stove + tent + plunge tub (second trade: sauna sessions)"
+    },
+    {
+      "id": "mod_tour_desk",
+      "file": "mod_tour_desk.svg",
+      "w": 160,
+      "h": 130,
+      "role": "module",
+      "purpose": "Tour Desk module: map board + snowshoes (second trade: tours)"
+    },
+    {
+      "id": "mod_loft_bed",
+      "file": "mod_loft_bed.svg",
+      "w": 320,
+      "h": 130,
+      "role": "module",
+      "purpose": "Loft Bed (living): sleep up high, comfort +3"
+    },
+    {
+      "id": "prod_sauna_session",
+      "file": "prod_sauna_session.svg",
+      "w": 64,
+      "h": 64,
+      "role": "product",
+      "purpose": "Product icon: sauna session (steam over hot stones)"
+    },
+    {
+      "id": "prod_herbal_tea",
+      "file": "prod_herbal_tea.svg",
+      "w": 64,
+      "h": 64,
+      "role": "product",
+      "purpose": "Product icon: herbal tea (glass cup with a sprig)"
+    },
+    {
+      "id": "prod_guided_hike",
+      "file": "prod_guided_hike.svg",
+      "w": 64,
+      "h": 64,
+      "role": "product",
+      "purpose": "Product icon: guided hike (boot + flag on a trail)"
+    },
+    {
+      "id": "prod_snowshoe_tour",
+      "file": "prod_snowshoe_tour.svg",
+      "w": 64,
+      "h": 64,
+      "role": "product",
+      "purpose": "Product icon: snowshoe tour (pair of snowshoes)"
+    },
+    {
+      "id": "van_box",
+      "file": "van_box.svg",
+      "w": 240,
+      "h": 150,
+      "role": "van",
+      "purpose": "Tier 2 Box Van 4WD: taller, longer, chunky tires"
+    },
+    {
+      "id": "van_camper",
+      "file": "van_camper.svg",
+      "w": 240,
+      "h": 150,
+      "role": "van",
+      "purpose": "Tier 3 Overland Camper: pop-top roof, chains on the tires"
     }
   ]
 }

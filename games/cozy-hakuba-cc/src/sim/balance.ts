@@ -33,10 +33,11 @@ export function playShift(plan: ShiftPlan, bot: Bot = DEFAULT_BOT, content: Cont
   const outcomes: ServeOutcome[] = [];
   for (const c of plan.customers) {
     const line = productDef(content, c.wants).line;
-    const have = line === 'shelf' ? stock[c.wants] ?? 0 : lineStock[line] ?? 0;
+    const fixed = line === 'shelf' || line === 'session';
+    const have = fixed ? stock[c.wants] ?? 0 : lineStock[line] ?? 0;
     if (have <= 0) continue; // sold out: they see the sign and wander off (no outcome)
-    if (line === 'shelf') stock[c.wants]--; else lineStock[line]--;
-    outcomes.push({ idx: c.idx, item: c.wants, stars: line === 'shelf' ? 2 : quality[line], waitedFrac: bot.serveSpeed });
+    if (fixed) stock[c.wants]--; else lineStock[line]--;
+    outcomes.push({ idx: c.idx, item: c.wants, stars: fixed ? 2 : quality[line], waitedFrac: bot.serveSpeed });
   }
   return outcomes;
 }

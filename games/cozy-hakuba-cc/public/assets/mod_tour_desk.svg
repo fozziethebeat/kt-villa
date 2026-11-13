@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="130" viewBox="0 0 160 130">
+  <!-- Tour desk -->
+  <rect x="22" y="70" width="116" height="52" rx="6" fill="#a8754b" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="34" y="18" width="70" height="50" rx="4" fill="#e8efe0" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/><path d="M42 58 L60 30 L74 48 L96 26" stroke="#c8553d" stroke-width="3" fill="none"/>
+  <g stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><ellipse cx="122" cy="48" rx="9" ry="20" fill="#6c7fa3"/><ellipse cx="136" cy="52" rx="9" ry="20" fill="#6c7fa3"/></g>
+  <rect x="0" y="122" width="160" height="8" fill="#8a96a8"/>
+</svg>

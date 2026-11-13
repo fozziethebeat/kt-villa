@@ -8,6 +8,7 @@ import { PAL, WIDTH, hex } from '../theme';
 import { saveGame } from '../persist';
 import { openOverlay } from '../ui/widgets';
 import { REGION_SCENES } from './regions';
+import { rankDef } from '../sim/progression';
 
 const VITALITY_NAMES = ['Dormant', 'Stirring', 'Awake', 'Thriving'];
 const PHASE_GLYPH: Record<string, string> = { morning: '☀', afternoon: '◐', evening: '☾', night: '★' };
@@ -77,7 +78,8 @@ export class HudScene extends Phaser.Scene {
       // Open the report over the region once the van overlay has closed.
       this.time.delayedCall(900, () => {
         const region = this.scene.get(REGION_SCENES[s.currentRegion]);
-        if (region?.sys.isActive()) openOverlay(region, 'SeasonReport', { report });
+        const ending = r.ending;
+        if (region?.sys.isActive()) openOverlay(region, 'SeasonReport', { report }, () => { if (ending) openOverlay(region, 'Festival'); });
       });
     }
   }
@@ -102,7 +104,7 @@ export class HudScene extends Phaser.Scene {
     const left = staminaLeft(s);
     this.pips.forEach((p, i) => { p.setVisible(i < s.staminaMax).setAlpha(i < left ? 1 : 0.18); });
     this.yenText.setText(`¥ ${s.yen.toLocaleString('en-US')}`);
-    this.kizunaText.setText(`絆 ${s.kizuna}`);
+    this.kizunaText.setText(`絆 ${s.kizuna}  ·  Rank ${rankDef(s).rank}`);
     const bagItems = Object.entries(s.inventory).filter(([, n]) => n > 0).map(([k, n]) => `${k.replace(/_/g, ' ')} ${n}`);
     this.bagText.setText(bagItems.join(' · '));
     const r = regionDef(CONTENT, s.currentRegion);

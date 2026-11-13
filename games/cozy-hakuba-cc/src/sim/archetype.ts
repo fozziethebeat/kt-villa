@@ -8,7 +8,7 @@ export type ChooseResult = { ok: true } | { ok: false; reason: 'chosen' | 'not_y
 
 /** Pick the van's primary trade at Takumi's workbench (Snow Peak step 3). One-time choice. */
 export function chooseArchetype(state: GameState, id: string, content: Content = CONTENT): ChooseResult {
-  archetypeDef(content, id);
+  if (!archetypeDef(content, id).primaryChoice) return { ok: false, reason: 'not_yet' };
   if (state.primaryArchetype) return { ok: false, reason: 'chosen' };
   if (currentStep(state, 'snowpeak', content)?.id !== 'first_module') return { ok: false, reason: 'not_yet' };
   state.primaryArchetype = id;

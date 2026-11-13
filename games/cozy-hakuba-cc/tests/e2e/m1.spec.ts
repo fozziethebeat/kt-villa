@@ -61,6 +61,8 @@ test('M1 vertical slice: full station arc, van, café, luggage, board, sleep/sav
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await page.waitForFunction(() => (window as any).__hakuba?.activeScenes().includes('Title'));
+  // Arcs are played in one sitting here; the one-request-per-day pacing (M4) is tested in m4.test.ts.
+  await page.evaluate(() => (window as any).__hakuba.setPacing(false));
   await settle(page, 2600);
   await shot(page, '01-title');
   await expect(page).toHaveScreenshot('title.png');

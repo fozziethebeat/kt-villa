@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="34" height="56" viewBox="0 0 34 56">
+  <!-- Trail marker -->
+  <ellipse cx="17" cy="53" rx="12" ry="3" fill="#3b3a4a" opacity="0.2"/>
+  <rect x="13" y="16" width="8" height="38" fill="#a8754b" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M4 6 H28 L32 14 L28 22 H4Z" fill="#c8553d" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>

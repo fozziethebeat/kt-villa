@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- snowshoe_tour -->
+  <g stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><ellipse cx="22" cy="34" rx="12" ry="24" fill="#6c7fa3"/><ellipse cx="44" cy="30" rx="12" ry="24" fill="#6c7fa3"/></g>
+  <g stroke="#fbfaf6" stroke-width="2"><line x1="14" y1="26" x2="30" y2="26"/><line x1="14" y1="36" x2="30" y2="36"/><line x1="14" y1="46" x2="30" y2="46"/><line x1="36" y1="22" x2="52" y2="22"/><line x1="36" y1="32" x2="52" y2="32"/><line x1="36" y1="42" x2="52" y2="42"/></g>
+</svg>

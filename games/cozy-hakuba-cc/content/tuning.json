@@ -58,5 +58,6 @@
   ],
   "startingYen": 3000,
   "startingKizuna": 0,
-  "roadCost": 5
+  "roadCost": 5,
+  "stepCooldownDays": 1
 }

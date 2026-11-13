@@ -30,6 +30,7 @@ export type TalkResult =
   | { kind: 'intro' | 'progress'; text: string; step: QuestStepDef }
   | { kind: 'complete'; text: string; step: QuestStepDef; kizuna: number }
   | { kind: 'tired'; text: string; step: QuestStepDef }
+  | { kind: 'resting'; text: string; step: QuestStepDef }
   | { kind: 'done'; text: string };
 
 /**
@@ -45,6 +46,9 @@ export function talk(state: GameState, regionId: string, content: Content = CONT
     const first = !state.unlocks.includes(seenKey);
     addUnlock(state, seenKey);
     return { kind: first ? 'intro' : 'progress', text: fillLine(first ? step.lines.intro : step.lines.progress, state, step), step };
+  }
+  if (!stepReadyToday(state, regionId)) {
+    return { kind: 'resting', text: `This is wonderful, ${state.player.name}! I need a little time to get things ready on my end. Come back tomorrow and I'll take it.`, step };
   }
   const spent = spendAction(state, 'questStep', content);
   if (!spent.ok) return { kind: 'tired', text: `You look exhausted, ${state.player.name}. Get some rest in your van and come back tomorrow.`, step };
@@ -73,8 +77,14 @@ export function completeStep(state: GameState, regionId: string, content: Conten
   const r = state.regions[regionId];
   r.vitality = Math.max(r.vitality, step.vitality) as typeof r.vitality;
   r.questStep += 1;
+  r.readyDay = state.day + content.tuning.stepCooldownDays;
   state.log.push(`Day ${state.day}: completed "${step.title}".`);
   return kizuna;
+}
+
+/** Key people hand over one request per day: the next turn-in waits until `readyDay`. */
+export function stepReadyToday(state: GameState, regionId: string): boolean {
+  return state.day >= (state.regions[regionId].readyDay ?? 0);
 }
 
 /** Record a mini-game / creation result: keeps the best stars and grants the produced item. */

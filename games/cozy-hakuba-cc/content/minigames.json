@@ -193,5 +193,255 @@
   "bench": {
     "engine": "trace",
     "title": "Terrace Bench"
+  },
+  "garden": {
+    "engine": "pack",
+    "title": "Garden Beds",
+    "subtitle": "Drag beds into the plot · R / right-click rotates",
+    "w": 5,
+    "h": 4,
+    "minSize": 2,
+    "maxSize": 5,
+    "theme": "garden",
+    "doneText": "Show Momo the plan."
+  },
+  "farm_crate": {
+    "engine": "arrange",
+    "title": "Farm-Stand Crate",
+    "subtitle": "Drag each item into its row",
+    "board": {
+      "rows": [
+        "Front",
+        "Middle",
+        "Back",
+        "Side"
+      ]
+    },
+    "slots": {
+      "apples": [
+        520,
+        90
+      ],
+      "nozawana": [
+        520,
+        190
+      ],
+      "flour": [
+        520,
+        290
+      ],
+      "rice": [
+        520,
+        390
+      ]
+    },
+    "stickers": [
+      {
+        "id": "flour",
+        "text": "Flour"
+      },
+      {
+        "id": "apples",
+        "text": "Apples"
+      },
+      {
+        "id": "rice",
+        "text": "Rice"
+      },
+      {
+        "id": "nozawana",
+        "text": "Greens"
+      }
+    ],
+    "notes": [
+      "The farmers' notes:",
+      "· Apples up front. They sell themselves.",
+      "· Rice goes on the side, it's heavy.",
+      "· Soba flour sits behind the greens.",
+      "· The nozawana greens go in the middle."
+    ]
+  },
+  "trails": {
+    "engine": "flow",
+    "title": "MTB Trail Map",
+    "w": 7,
+    "h": 5,
+    "pairs": [
+      {
+        "id": "flow",
+        "label": "Flow trail",
+        "color": "#4f8f8a"
+      },
+      {
+        "id": "jump",
+        "label": "Jump line",
+        "color": "#c8553d"
+      },
+      {
+        "id": "xc",
+        "label": "Cross-country",
+        "color": "#f2a541"
+      },
+      {
+        "id": "kids",
+        "label": "Kids loop",
+        "color": "#7a5ea8"
+      }
+    ]
+  },
+  "boardwalk": {
+    "engine": "flow",
+    "title": "Wetland Boardwalk",
+    "w": 7,
+    "h": 5,
+    "pairs": [
+      {
+        "id": "iris",
+        "label": "Iris pond",
+        "color": "#7a5ea8"
+      },
+      {
+        "id": "cotton",
+        "label": "Cotton grass",
+        "color": "#8cc084"
+      },
+      {
+        "id": "heron",
+        "label": "Heron blind",
+        "color": "#6c7fa3"
+      },
+      {
+        "id": "falls",
+        "label": "Falls view",
+        "color": "#4fa3a5"
+      }
+    ]
+  },
+  "bike_tune": {
+    "engine": "cook",
+    "title": "Demo Bike Tune",
+    "subtitle": "Press Space (or click) when the marker is in the green",
+    "steps": [
+      "Lube the chain",
+      "Bleed the brakes",
+      "Set tire pressure",
+      "True the wheel"
+    ],
+    "speed": 270,
+    "window": 24
+  },
+  "tour_pack": {
+    "engine": "arrange",
+    "title": "Guided-Tour Pack",
+    "subtitle": "Drag each item into its pocket",
+    "board": {
+      "rows": [
+        "Top pocket",
+        "Main pocket",
+        "Side pocket",
+        "Hip belt"
+      ]
+    },
+    "slots": {
+      "guide": [
+        520,
+        90
+      ],
+      "cover": [
+        520,
+        190
+      ],
+      "bino": [
+        520,
+        290
+      ],
+      "map": [
+        520,
+        390
+      ]
+    },
+    "stickers": [
+      {
+        "id": "map",
+        "text": "Map"
+      },
+      {
+        "id": "bino",
+        "text": "Bino"
+      },
+      {
+        "id": "guide",
+        "text": "Guide"
+      },
+      {
+        "id": "cover",
+        "text": "Cover"
+      }
+    ],
+    "notes": [
+      "Chiyo's notes:",
+      "· The field guide in the top pocket, always.",
+      "· Binoculars in the side pocket, quick to grab.",
+      "· The map rides on the hip belt.",
+      "· The rain cover fills the main pocket."
+    ]
+  },
+  "lake_photo": {
+    "engine": "compose",
+    "title": "Lake Aoki Photo",
+    "W": 1400,
+    "H": 480,
+    "frame": {
+      "w": 560,
+      "h": 336
+    },
+    "subjects": [
+      {
+        "id": "peaks",
+        "label": "the Sanzan peaks",
+        "x": 420,
+        "y": 120
+      },
+      {
+        "id": "sup",
+        "label": "the paddleboarder",
+        "x": 720,
+        "y": 330
+      },
+      {
+        "id": "sun",
+        "label": "the sun",
+        "x": 1150,
+        "y": 90
+      },
+      {
+        "id": "trash",
+        "label": "the litter pile",
+        "x": 980,
+        "y": 400
+      }
+    ],
+    "rules": [
+      {
+        "kind": "include",
+        "id": "peaks"
+      },
+      {
+        "kind": "thirds",
+        "id": "sup"
+      },
+      {
+        "kind": "exclude",
+        "id": "trash"
+      },
+      {
+        "kind": "exclude",
+        "id": "sun"
+      }
+    ]
+  },
+  "postcards": {
+    "engine": "trace",
+    "title": "Postcard Set"
   }
 }

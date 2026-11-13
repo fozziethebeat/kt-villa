@@ -45,6 +45,7 @@ export abstract class RegionScene extends Phaser.Scene {
   private badge!: Phaser.GameObjects.Image;
   private crowd: Phaser.GameObjects.Image[] = [];
   private vanKit!: Phaser.GameObjects.Image;
+  private vanImg!: Phaser.GameObjects.Image;
   private vanRoof: Phaser.GameObjects.Image[] = [];
   private prompt!: Phaser.GameObjects.Container;
   private promptText!: Phaser.GameObjects.Text;
@@ -86,7 +87,7 @@ export abstract class RegionScene extends Phaser.Scene {
 
     // Van (+ Tier 1 kit and roof modules once the garage has worked on it).
     const [vx, vy] = L.van;
-    art(this, vx, vy - 40, L.vanTexture ?? 'van_kei').setDepth(vy - 40);
+    this.vanImg = art(this, vx, vy - 40, L.vanTexture ?? 'van_kei').setDepth(vy - 40);
     this.vanKit = art(this, vx, vy - 40, 'van_kit_t1').setDepth(vy - 39.9).setVisible(false);
 
     // Key person + quest badge.
@@ -223,7 +224,8 @@ export abstract class RegionScene extends Phaser.Scene {
   }
 
   private syncVan(s: GameState) {
-    this.vanKit.setVisible(s.chassisTier >= 1 && !this.layout.vanTexture);
+    if (!this.layout.vanTexture) this.vanImg.setTexture(vanTexture(s.chassisTier));
+    this.vanKit.setVisible(s.chassisTier === 1 && !this.layout.vanTexture);
     this.vanRoof.forEach((r) => r.destroy());
     if (this.layout.vanTexture) { this.vanRoof = []; return; }
     this.vanRoof = s.van.roof.map((id, i) => art(this, this.layout.van[0] - 36 + i * 70, this.layout.van[1] - 40 - 128, `mod_${id}`).setScale(0.22).setDepth(this.layout.van[1] - 39));
@@ -301,4 +303,9 @@ export abstract class RegionScene extends Phaser.Scene {
 
   /** Debug-only: teleport the player. */
   warp(x: number, y: number) { this.player.setPosition(x, y); }
+}
+
+/** Van exterior per chassis tier (Tier 1 = Kei Van + the snow-tire/rack kit overlay). */
+export function vanTexture(tier: number): string {
+  return tier >= 3 ? 'van_camper' : tier === 2 ? 'van_box' : 'van_kei';
 }

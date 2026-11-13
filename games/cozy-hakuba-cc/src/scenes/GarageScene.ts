@@ -5,6 +5,7 @@ import { buyModule, installRoof, priceWithMods, roofSlots, uninstallRoof, upgrad
 import { art, label, paperGrain, paperPanel } from '../ui/art';
 import { button, closeOverlay, overlayBackdrop } from '../ui/widgets';
 import { PAL, hex } from '../theme';
+import { vanTexture } from './RegionScene';
 
 /** Takumi's garage: chassis tiers (traversal + roof slots) and roof modules. */
 export class GarageScene extends Phaser.Scene {
@@ -47,11 +48,11 @@ export class GarageScene extends Phaser.Scene {
     paperPanel(this, 670, 92, 580, 600, PAL.snow);
     const slots = roofSlots(s);
     label(this, 692, 108, `Roof rack: ${s.van.roof.length}/${slots} slots used`, 20, PAL.ink, '900');
-    art(this, 960, 372, 'van_kei').setScale(0.5 * 1.2);
-    if (s.chassisTier >= 1) art(this, 960, 372, 'van_kit_t1').setScale(0.5 * 1.2);
+    art(this, 960, 372, vanTexture(s.chassisTier)).setScale(0.5 * 1.2);
+    if (s.chassisTier === 1) art(this, 960, 372, 'van_kit_t1').setScale(0.5 * 1.2);
     const g = this.add.graphics();
     for (let i = 0; i < Math.max(slots, 2); i++) {
-      const x = 852 + i * 112, y = 138;
+      const x = 960 - (Math.max(slots, 2) * 112) / 2 + i * 112, y = 138;
       g.lineStyle(3, hex(i < slots ? PAL.ink : '#b7a98e'), 1).strokeRoundedRect(x, y, 100, 56, 8);
       const id = s.van.roof[i];
       if (id) art(this, x + 50, y + 28, `mod_${id}`, 0.5, 0.5).setScale(0.3);

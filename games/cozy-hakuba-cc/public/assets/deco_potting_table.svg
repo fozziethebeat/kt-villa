@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="90" viewBox="0 0 120 90">
+  <!-- Potting table -->
+  <ellipse cx="60" cy="86" rx="54" ry="4" fill="#3b3a4a" opacity="0.18"/>
+  <rect x="8" y="40" width="104" height="12" rx="3" fill="#a8754b" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="16" y="52" width="8" height="34" fill="#7a4b3a"/><rect x="96" y="52" width="8" height="34" fill="#7a4b3a"/>
+  <g stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><path d="M24 40 L28 22 H48 L52 40Z" fill="#c8553d"/><path d="M66 40 L70 26 H88 L92 40Z" fill="#c8553d"/></g>
+  <path d="M36 22 q-6 -14 4 -18 M80 26 q4 -12 -4 -16" stroke="#3f6b4f" stroke-width="4" fill="none"/>
+</svg>

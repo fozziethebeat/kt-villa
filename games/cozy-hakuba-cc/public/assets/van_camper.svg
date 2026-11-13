@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="150" viewBox="0 0 240 150">
+  <!-- Camper -->
+  <ellipse cx="120" cy="140" rx="112" ry="8" fill="#3b3a4a" opacity="0.18"/>
+  <path d="M30 34 L60 4 H170 L190 34Z" fill="#f2a541" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M8 126 V44 Q8 32 22 32 H182 Q198 32 208 48 L228 84 Q234 94 234 106 V126Z" fill="#efe3c2" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="8" y="94" width="226" height="12" fill="#3f6b4f"/>
+  <path d="M184 44 H190 Q200 44 206 58 L220 86 H184Z" fill="#cfe0ee" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <g fill="#cfe0ee" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"><rect x="20" y="46" width="70" height="36" rx="6"/><rect x="100" y="46" width="72" height="36" rx="6"/></g>
+  <g stroke="#3b3a4a" stroke-width="3"><circle cx="54" cy="126" r="21" fill="#3b3a4a"/><circle cx="190" cy="126" r="21" fill="#3b3a4a"/></g>
+  <g stroke="#cfc8bd" stroke-width="3" fill="none"><circle cx="54" cy="126" r="16" stroke-dasharray="3 3"/><circle cx="190" cy="126" r="16" stroke-dasharray="3 3"/></g>
+</svg>

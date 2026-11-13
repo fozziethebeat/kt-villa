@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="110" viewBox="0 0 300 110">
+  <!-- Garden beds -->
+  <g stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><rect x="10" y="40" width="130" height="60" rx="6" fill="#7a4b3a"/><rect x="160" y="40" width="130" height="60" rx="6" fill="#7a4b3a"/></g>
+  <g fill="#3f6b4f"><path d="M20 44 q6 -26 12 0Z"/><path d="M42 44 q6 -26 12 0Z"/><path d="M64 44 q6 -26 12 0Z"/><path d="M86 44 q6 -26 12 0Z"/><path d="M108 44 q6 -26 12 0Z"/><path d="M130 44 q6 -26 12 0Z"/><path d="M152 44 q6 -26 12 0Z"/><path d="M174 44 q6 -26 12 0Z"/><path d="M196 44 q6 -26 12 0Z"/><path d="M218 44 q6 -26 12 0Z"/><path d="M240 44 q6 -26 12 0Z"/><path d="M262 44 q6 -26 12 0Z"/></g>
+  <g stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"><circle cx="40" cy="38" r="6" fill="#e89fb0"/><circle cx="100" cy="38" r="6" fill="#f2a541"/><circle cx="190" cy="38" r="6" fill="#7a5ea8"/><circle cx="250" cy="38" r="6" fill="#e89fb0"/></g>
+</svg>

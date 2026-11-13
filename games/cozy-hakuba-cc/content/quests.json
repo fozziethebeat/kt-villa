@@ -395,5 +395,265 @@
       }
     ],
     "after": "In green season the terrace is the best seat in Hakuba."
+  },
+  "goryu": {
+    "keyPerson": "Momo",
+    "steps": [
+      {
+        "id": "alpine_plants",
+        "type": "fetch",
+        "title": "Weed the Alpine Garden",
+        "needs": {
+          "alpine_plant": 5
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 4
+        },
+        "vitality": 1,
+        "unlocks": [],
+        "lines": {
+          "intro": "The alpine garden is so overgrown you can't see the flowers! Could you weed it and rescue {need} plants for replanting? It's hard work: 1 stamina each. ({have}/{need})",
+          "progress": "{have} of {need} plants rescued. They're in the weedy patches around the garden.",
+          "complete": "Look at them, safe and sound! The garden can breathe again."
+        }
+      },
+      {
+        "id": "garden_beds",
+        "type": "puzzle",
+        "title": "Plan the Garden Beds",
+        "needs": {
+          "beds_planned": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 2,
+        "unlocks": [],
+        "lines": {
+          "intro": "Now we replant. Every bed has to fit the plot exactly, with no bare soil. Could you lay them out at the potting table?",
+          "progress": "The potting table is by the greenhouse. Fit every bed into the plot with no gaps.",
+          "complete": "Perfect rows! It'll bloom like a painting this summer."
+        }
+      },
+      {
+        "id": "farm_crate",
+        "type": "create",
+        "title": "A Farm-Stand Crate",
+        "needs": {
+          "farm_crate": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 3,
+        "unlocks": [
+          "attraction:goryu"
+        ],
+        "lines": {
+          "intro": "Last thing: the farms nearby have no buyers. Could you arrange a farm-stand crate? Here's how the farmers like it laid out.",
+          "progress": "Arrange the crate at the potting table. Follow the farmers' notes.",
+          "complete": "The farm stand is open! Soba flour, apples, nozawana, rice. Everything local. Thank you, {name}!"
+        }
+      }
+    ],
+    "after": "The alpine garden is in full bloom. Green-season visitors love it."
+  },
+  "hakuba47": {
+    "keyPerson": "Yuki & Kenta",
+    "steps": [
+      {
+        "id": "trail_builder",
+        "type": "puzzle",
+        "title": "Build the MTB Trails",
+        "needs": {
+          "trails_built": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 1,
+        "unlocks": [],
+        "lines": {
+          "intro": "We want an MTB park here, but the trails washed out! Could you lay out new lines on the trail map? Each trail needs its own track.",
+          "progress": "The trail map is by the lift. Connect each trailhead to its finish, with no crossings.",
+          "complete": "Those lines flow! Riders are going to love this."
+        }
+      },
+      {
+        "id": "trail_markers",
+        "type": "fetch",
+        "title": "Trail Markers",
+        "needs": {
+          "trail_marker": 4
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 4
+        },
+        "vitality": 2,
+        "unlocks": [],
+        "lines": {
+          "intro": "The trail markers blew all over the base area. Find {need} so riders know where to go. ({have}/{need})",
+          "progress": "{have} of {need} markers. Check around the base area.",
+          "complete": "Every trail's marked. Safe and easy to follow!"
+        }
+      },
+      {
+        "id": "bike_tune",
+        "type": "create",
+        "title": "Tune the Demo Bikes",
+        "needs": {
+          "bike_tuned": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 3,
+        "unlocks": [
+          "attraction:hakuba47"
+        ],
+        "lines": {
+          "intro": "Last job: the demo bikes need a tune before opening day. Time each step at the workstand: lube, brakes, tires.",
+          "progress": "The workstand is out front. Time each step right!",
+          "complete": "Smooth shifting, sharp brakes. The MTB park is open, {name}!"
+        }
+      }
+    ],
+    "after": "Bikes in green season, powder in winter. Hakuba 47 never sleeps."
+  },
+  "tsugaike": {
+    "keyPerson": "Grandma Chiyo",
+    "steps": [
+      {
+        "id": "marsh_plants",
+        "type": "fetch",
+        "title": "The Field Guide",
+        "needs": {
+          "marsh_plant": 6
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 4
+        },
+        "vitality": 1,
+        "unlocks": [],
+        "lines": {
+          "intro": "I'm writing a new field guide for the wetlands, but my knees won't let me gather samples. Could you find {need} marsh plants? ({have}/{need})",
+          "progress": "{have} of {need} plants. They grow along the wetland edge.",
+          "complete": "Skunk cabbage, cotton grass, iris… every one! The guide is nearly done."
+        }
+      },
+      {
+        "id": "boardwalk",
+        "type": "puzzle",
+        "title": "Repair the Boardwalk",
+        "needs": {
+          "boardwalk_fixed": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 2,
+        "unlocks": [],
+        "lines": {
+          "intro": "The boardwalk is broken in places, and visitors stomp straight through the marsh. Could you plan new paths between the viewpoints?",
+          "progress": "The boardwalk plan is by the visitor center. Join each viewpoint pair without crossing.",
+          "complete": "Now people can walk the whole wetland without hurting a single plant."
+        }
+      },
+      {
+        "id": "tour_pack",
+        "type": "create",
+        "title": "A Guided-Tour Pack",
+        "needs": {
+          "tour_pack": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 3,
+        "unlocks": [
+          "attraction:tsugaike"
+        ],
+        "lines": {
+          "intro": "One last thing: a tour pack for visitors. Could you pack it the way I like? My notes are here.",
+          "progress": "Pack it at the visitor center table, following my notes.",
+          "complete": "Just the way I'd pack it. The nature park is open again, dear. Thank you, {name}."
+        }
+      }
+    ],
+    "after": "The wetlands are full of quiet walkers. Chiyo's guide sells out every week."
+  },
+  "aokiko": {
+    "keyPerson": "Ren",
+    "steps": [
+      {
+        "id": "lake_photo",
+        "type": "puzzle",
+        "title": "Frame the Lake",
+        "needs": {
+          "lake_photo": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 1,
+        "unlocks": [],
+        "lines": {
+          "intro": "The water here is the clearest in Japan, and nobody knows! Could you take the photo that changes that? Frame it right: peaks, a paddleboard, no trash.",
+          "progress": "Use the camera on the jetty. Follow the framing notes.",
+          "complete": "That's the one. People are going to see this and come."
+        }
+      },
+      {
+        "id": "postcards",
+        "type": "create",
+        "title": "A Postcard Set",
+        "needs": {
+          "postcard_set": 1
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 5
+        },
+        "vitality": 2,
+        "unlocks": [],
+        "lines": {
+          "intro": "Let's make postcards from it! Could you letter the set at the workbench? Steady hands.",
+          "progress": "The workbench is by the boathouse. Trace the lettering.",
+          "complete": "Beautiful. They're going on every counter in the valley."
+        }
+      },
+      {
+        "id": "beach_cleanup",
+        "type": "fetch",
+        "title": "Clean the Beach",
+        "needs": {
+          "beach_litter": 5
+        },
+        "consumes": true,
+        "rewards": {
+          "kizuna": 6
+        },
+        "vitality": 3,
+        "unlocks": [
+          "attraction:aokiko"
+        ],
+        "lines": {
+          "intro": "Before visitors come, let's make the beach spotless. Could you pick up {need} bits of litter? ({have}/{need})",
+          "progress": "{have} of {need}. Look along the shore.",
+          "complete": "Spotless! SUP, kayaks, swimming: Lake Aoki is open, {name}. The whole valley is awake."
+        }
+      }
+    ],
+    "after": "Lake Aoki is the green-season jewel of the valley."
   }
 }

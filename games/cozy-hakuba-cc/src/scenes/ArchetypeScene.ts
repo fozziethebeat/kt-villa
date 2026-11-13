@@ -19,7 +19,7 @@ export class ArchetypeScene extends Phaser.Scene {
   create() {
     this.selected = null; this.rings = {};
     overlayBackdrop(this, "Takumi's Workbench · What's your trade?", 'This is your van’s main business');
-    CONTENT.archetypes.forEach((a, i) => {
+    CONTENT.archetypes.filter((a) => a.primaryChoice).forEach((a, i) => {
       const x = ARCH_CARDS.xs[i], y = ARCH_CARDS.y;
       paperPanel(this, x, y, ARCH_CARDS.w, ARCH_CARDS.h, PAL.snow);
       this.rings[a.id] = this.add.graphics();
@@ -47,7 +47,7 @@ export class ArchetypeScene extends Phaser.Scene {
 
   select(id: string) {
     this.selected = id;
-    CONTENT.archetypes.forEach((a, i) => {
+    CONTENT.archetypes.filter((a) => a.primaryChoice).forEach((a, i) => {
       const g = this.rings[a.id].clear();
       if (a.id === id) g.lineStyle(6, hex(PAL.lantern), 1).strokeRoundedRect(ARCH_CARDS.xs[i] - 6, ARCH_CARDS.y - 6, ARCH_CARDS.w + 12, ARCH_CARDS.h + 12, 18);
     });

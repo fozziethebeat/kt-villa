@@ -709,5 +709,717 @@
         ]
       ]
     }
+  },
+  "goryu": {
+    "sceneKey": "Goryu",
+    "keyPerson": {
+      "name": "Momo",
+      "texture": "char_momo",
+      "at": [
+        630,
+        590
+      ]
+    },
+    "van": [
+      1130,
+      670
+    ],
+    "playerStart": [
+      990,
+      660
+    ],
+    "kodama": [
+      [
+        60,
+        520
+      ],
+      [
+        690,
+        494
+      ],
+      [
+        1244,
+        540
+      ]
+    ],
+    "trees": [
+      [
+        36,
+        498,
+        1.1
+      ],
+      [
+        1262,
+        512,
+        1.2
+      ],
+      [
+        20,
+        704,
+        1.0
+      ]
+    ],
+    "crowdLanes": [
+      [
+        420,
+        640,
+        700
+      ],
+      [
+        660,
+        900,
+        520
+      ],
+      [
+        300,
+        700,
+        590
+      ],
+      [
+        700,
+        960,
+        660
+      ],
+      [
+        480,
+        820,
+        610
+      ]
+    ],
+    "crowd": {
+      "snowy": [
+        "char_skier",
+        "char_local",
+        "char_skier",
+        "char_tourist",
+        "char_skier"
+      ],
+      "green": [
+        "char_hiker",
+        "char_local",
+        "char_tourist",
+        "char_hiker",
+        "char_local"
+      ]
+    },
+    "landmarks": [
+      {
+        "texture": "bldg_greenhouse",
+        "at": [
+          400,
+          506
+        ]
+      },
+      {
+        "texture": "deco_garden",
+        "at": [
+          900,
+          540
+        ]
+      }
+    ],
+    "festive": {
+      "at": [
+        400,
+        330
+      ]
+    },
+    "stations": [
+      {
+        "steps": [
+          "garden_beds"
+        ],
+        "at": [
+          790,
+          590
+        ],
+        "texture": "deco_potting_table",
+        "prompt": "Plan the garden beds",
+        "overlay": "Pack",
+        "config": "garden",
+        "cost": "miniGame"
+      },
+      {
+        "steps": [
+          "farm_crate"
+        ],
+        "at": [
+          790,
+          590
+        ],
+        "texture": null,
+        "prompt": "Arrange the farm crate",
+        "overlay": "Arrange",
+        "config": "farm_crate",
+        "cost": "craft"
+      }
+    ],
+    "fetch": {
+      "step": "alpine_plants",
+      "item": "alpine_plant",
+      "texture": "item_alpine_plant",
+      "label": "Alpine plant",
+      "cost": "forage",
+      "spots": [
+        [
+          300,
+          580
+        ],
+        [
+          470,
+          690
+        ],
+        [
+          760,
+          690
+        ],
+        [
+          1000,
+          620
+        ],
+        [
+          880,
+          520
+        ]
+      ]
+    }
+  },
+  "hakuba47": {
+    "sceneKey": "Hakuba47",
+    "keyPerson": {
+      "name": "Yuki & Kenta",
+      "texture": "char_yuki_kenta",
+      "at": [
+        630,
+        590
+      ]
+    },
+    "van": [
+      1130,
+      670
+    ],
+    "playerStart": [
+      990,
+      660
+    ],
+    "kodama": [
+      [
+        60,
+        520
+      ],
+      [
+        690,
+        494
+      ],
+      [
+        1244,
+        540
+      ]
+    ],
+    "trees": [
+      [
+        36,
+        498,
+        1.1
+      ],
+      [
+        640,
+        482,
+        0.75
+      ],
+      [
+        1262,
+        512,
+        1.2
+      ],
+      [
+        20,
+        704,
+        1.0
+      ]
+    ],
+    "crowdLanes": [
+      [
+        420,
+        640,
+        700
+      ],
+      [
+        660,
+        900,
+        520
+      ],
+      [
+        300,
+        700,
+        590
+      ],
+      [
+        700,
+        960,
+        660
+      ],
+      [
+        480,
+        820,
+        610
+      ]
+    ],
+    "crowd": {
+      "snowy": [
+        "char_skier",
+        "char_skier",
+        "char_tourist",
+        "char_skier",
+        "char_local"
+      ],
+      "green": [
+        "char_hiker",
+        "char_tourist",
+        "char_hiker",
+        "char_local",
+        "char_hiker"
+      ]
+    },
+    "landmarks": [
+      {
+        "texture": "bldg_base_lodge",
+        "at": [
+          400,
+          506
+        ]
+      },
+      {
+        "texture": "deco_trail_map",
+        "at": [
+          880,
+          560
+        ]
+      }
+    ],
+    "festive": {
+      "at": [
+        400,
+        330
+      ]
+    },
+    "stations": [
+      {
+        "steps": [
+          "trail_builder"
+        ],
+        "at": [
+          880,
+          570
+        ],
+        "texture": null,
+        "prompt": "Lay out the MTB trails",
+        "overlay": "Flow",
+        "config": "trails",
+        "cost": "miniGame"
+      },
+      {
+        "steps": [
+          "bike_tune"
+        ],
+        "at": [
+          260,
+          590
+        ],
+        "texture": "deco_bike_stand",
+        "prompt": "Tune the demo bikes",
+        "overlay": "Cook",
+        "config": "bike_tune",
+        "cost": "craft"
+      }
+    ],
+    "fetch": {
+      "step": "trail_markers",
+      "item": "trail_marker",
+      "texture": "item_trail_marker",
+      "label": "Trail marker",
+      "cost": null,
+      "spots": [
+        [
+          470,
+          690
+        ],
+        [
+          760,
+          690
+        ],
+        [
+          1000,
+          620
+        ],
+        [
+          540,
+          630
+        ]
+      ]
+    }
+  },
+  "tsugaike": {
+    "sceneKey": "Tsugaike",
+    "keyPerson": {
+      "name": "Grandma Chiyo",
+      "texture": "char_chiyo",
+      "at": [
+        630,
+        590
+      ]
+    },
+    "van": [
+      1130,
+      670
+    ],
+    "playerStart": [
+      990,
+      660
+    ],
+    "kodama": [
+      [
+        60,
+        520
+      ],
+      [
+        690,
+        494
+      ],
+      [
+        1244,
+        540
+      ]
+    ],
+    "trees": [
+      [
+        36,
+        498,
+        1.1
+      ],
+      [
+        1190,
+        492,
+        1.0
+      ],
+      [
+        1262,
+        512,
+        1.2
+      ],
+      [
+        20,
+        704,
+        1.0
+      ]
+    ],
+    "crowdLanes": [
+      [
+        420,
+        640,
+        700
+      ],
+      [
+        660,
+        900,
+        520
+      ],
+      [
+        300,
+        700,
+        590
+      ],
+      [
+        700,
+        960,
+        660
+      ],
+      [
+        480,
+        820,
+        610
+      ]
+    ],
+    "crowd": {
+      "snowy": [
+        "char_skier",
+        "char_tourist",
+        "char_skier",
+        "char_local",
+        "char_skier"
+      ],
+      "green": [
+        "char_hiker",
+        "char_hiker",
+        "char_tourist",
+        "char_local",
+        "char_hiker"
+      ]
+    },
+    "landmarks": [
+      {
+        "texture": "bldg_visitor_center",
+        "at": [
+          400,
+          506
+        ]
+      },
+      {
+        "texture": "deco_wetland",
+        "at": [
+          880,
+          560
+        ],
+        "depth": 480
+      }
+    ],
+    "festive": {
+      "at": [
+        400,
+        330
+      ]
+    },
+    "stations": [
+      {
+        "steps": [
+          "boardwalk"
+        ],
+        "at": [
+          470,
+          545
+        ],
+        "texture": null,
+        "prompt": "Plan the boardwalk",
+        "overlay": "Flow",
+        "config": "boardwalk",
+        "cost": "miniGame"
+      },
+      {
+        "steps": [
+          "tour_pack"
+        ],
+        "at": [
+          470,
+          545
+        ],
+        "texture": null,
+        "prompt": "Pack the tour kit",
+        "overlay": "Arrange",
+        "config": "tour_pack",
+        "cost": "craft"
+      }
+    ],
+    "fetch": {
+      "step": "marsh_plants",
+      "item": "marsh_plant",
+      "texture": "item_marsh_plant",
+      "label": "Marsh plant",
+      "cost": null,
+      "spots": [
+        [
+          300,
+          580
+        ],
+        [
+          470,
+          690
+        ],
+        [
+          760,
+          690
+        ],
+        [
+          1000,
+          620
+        ],
+        [
+          880,
+          660
+        ],
+        [
+          560,
+          640
+        ]
+      ]
+    }
+  },
+  "aokiko": {
+    "sceneKey": "Aokiko",
+    "keyPerson": {
+      "name": "Ren",
+      "texture": "char_ren",
+      "at": [
+        630,
+        590
+      ]
+    },
+    "van": [
+      1130,
+      670
+    ],
+    "playerStart": [
+      990,
+      660
+    ],
+    "kodama": [
+      [
+        60,
+        520
+      ],
+      [
+        690,
+        494
+      ],
+      [
+        1244,
+        540
+      ]
+    ],
+    "trees": [
+      [
+        36,
+        498,
+        1.1
+      ],
+      [
+        1190,
+        492,
+        1.0
+      ],
+      [
+        20,
+        704,
+        1.0
+      ]
+    ],
+    "crowdLanes": [
+      [
+        420,
+        640,
+        700
+      ],
+      [
+        660,
+        900,
+        520
+      ],
+      [
+        300,
+        700,
+        590
+      ],
+      [
+        700,
+        960,
+        660
+      ],
+      [
+        480,
+        820,
+        610
+      ]
+    ],
+    "crowd": {
+      "snowy": [
+        "char_local",
+        "char_tourist",
+        "char_local",
+        "char_skier",
+        "char_tourist"
+      ],
+      "green": [
+        "char_tourist",
+        "char_hiker",
+        "char_tourist",
+        "char_local",
+        "char_hiker"
+      ]
+    },
+    "landmarks": [
+      {
+        "texture": "deco_lake",
+        "at": [
+          640,
+          524
+        ],
+        "depth": 470,
+        "scale": [
+          1.75,
+          0.9
+        ]
+      },
+      {
+        "texture": "bldg_boathouse",
+        "at": [
+          260,
+          506
+        ]
+      }
+    ],
+    "festive": {
+      "at": [
+        300,
+        330
+      ]
+    },
+    "stations": [
+      {
+        "steps": [
+          "lake_photo"
+        ],
+        "at": [
+          820,
+          560
+        ],
+        "texture": "deco_jetty",
+        "prompt": "Frame the lake photo",
+        "overlay": "Compose",
+        "config": "lake_photo",
+        "cost": "miniGame"
+      },
+      {
+        "steps": [
+          "postcards"
+        ],
+        "at": [
+          470,
+          575
+        ],
+        "texture": "deco_workbench_out",
+        "prompt": "Letter the postcards",
+        "overlay": "Build",
+        "config": "postcards",
+        "cost": "craft"
+      }
+    ],
+    "fetch": {
+      "step": "beach_cleanup",
+      "item": "beach_litter",
+      "texture": "item_litter",
+      "label": "Litter",
+      "cost": null,
+      "spots": [
+        [
+          300,
+          600
+        ],
+        [
+          470,
+          690
+        ],
+        [
+          760,
+          690
+        ],
+        [
+          1000,
+          620
+        ],
+        [
+          560,
+          640
+        ]
+      ]
+    }
   }
 }

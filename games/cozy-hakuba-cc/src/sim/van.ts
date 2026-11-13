@@ -54,6 +54,7 @@ export function buyModule(state: GameState, moduleId: string, content: Content =
   const def = moduleDef(content, moduleId);
   if (state.van.owned.includes(moduleId)) return { ok: false, reason: 'owned' };
   if (def.price === 0) return { ok: false, reason: 'locked' }; // free modules come from quests
+  if (def.archetype && !state.unlocks.includes(`business:${def.archetype}`)) return { ok: false, reason: 'locked' };
   const price = priceWithMods(state, def.price, content);
   if (state.yen < price) return { ok: false, reason: 'yen' };
   state.yen -= price;
@@ -92,13 +93,18 @@ export function activeModules(state: GameState): string[] {
   return [...state.van.placed.map((p) => p.moduleId), ...state.van.roof];
 }
 
-export interface VanEffects { stockBonus: number; customerMult: Record<ScoredSeason, number>; tipMult: number }
+export interface VanEffects { stockBonus: number; customerMult: Record<ScoredSeason, number>; tipMult: number; staminaBonus: number }
 
+/** Combined effects of active modules and hired helpers. */
 export function vanEffects(state: GameState, content: Content = CONTENT): VanEffects {
-  const out: VanEffects = { stockBonus: 0, customerMult: { winter: 1, green: 1 }, tipMult: 1 };
-  for (const id of activeModules(state)) {
-    const e = moduleDef(content, id).effects;
+  const out: VanEffects = { stockBonus: 0, customerMult: { winter: 1, green: 1 }, tipMult: 1, staminaBonus: 0 };
+  const sources = [
+    ...activeModules(state).map((id) => moduleDef(content, id).effects),
+    ...(state.helpers ?? []).map((r) => content.helpers.find((h) => h.region === r)?.effects),
+  ];
+  for (const e of sources) {
     if (!e) continue;
+    out.staminaBonus += e.staminaBonus ?? 0;
     out.stockBonus += e.stockBonus ?? 0;
     out.tipMult *= e.tipMult ?? 1;
     for (const s of ['winter', 'green'] as const) out.customerMult[s] *= e.customerMult?.[s] ?? 1;
@@ -127,4 +133,9 @@ export function upgradeChassis(state: GameState, content: Content = CONTENT): Ch
   state.van.grid = { ...next.grid };
   state.log.push(`Day ${state.day}: van upgraded to ${next.name}.`);
   return { ok: true };
+}
+
+/** Tomorrow's stamina: base + comfort bonus + helpers (e.g. Daichi packs lunch). */
+export function dailyStamina(state: GameState, content: Content = CONTENT): number {
+  return content.tuning.baseStamina + comfortStaminaBonus(state, content) + vanEffects(state, content).staminaBonus;
 }

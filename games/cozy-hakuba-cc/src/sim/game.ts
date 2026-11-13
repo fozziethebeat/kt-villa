@@ -1,5 +1,6 @@
 import { CONTENT, regionDef } from './content';
-import { comfortStaminaBonus } from './van';
+import { dailyStamina } from './van';
+import { checkEnding } from './progression';
 import { buildReport } from './report';
 import { firstDayOfSeason, seasonForDay } from './seasons';
 import type { ActionKind, Content, GameState, PhaseId, PlayerProfile, SeasonId, SeasonInfo, SeasonReport, Vitality } from './types';
@@ -11,7 +12,7 @@ export function createNewGame(opts: { seed?: number; player?: Partial<PlayerProf
   const regions: GameState['regions'] = {};
   for (const r of content.regions) regions[r.id] = { vitality: 0, questStep: 0, kodamaFound: 0 };
   const state: GameState = {
-    version: 4,
+    version: 5,
     seed,
     rngState: seed,
     player: { ...DEFAULT_PLAYER, ...opts.player },
@@ -22,6 +23,9 @@ export function createNewGame(opts: { seed?: number; player?: Partial<PlayerProf
     kizuna: content.tuning.startingKizuna,
     chassisTier: 0,
     primaryArchetype: null,
+    secondaryArchetype: null,
+    helpers: [],
+    ending: null,
     currentRegion: 'station',
     regions,
     inventory: {},
@@ -41,7 +45,7 @@ export function createNewGame(opts: { seed?: number; player?: Partial<PlayerProf
     reports: [],
     log: ['Arrived at JR Hakuba Station in late autumn.'],
   };
-  state.staminaMax = content.tuning.baseStamina + comfortStaminaBonus(state, content);
+  state.staminaMax = dailyStamina(state, content);
   return state;
 }
 
@@ -76,11 +80,11 @@ export function emptySeasonStats(): GameState['seasonStats'] {
  * Sleep in the van: advance to the next morning. Returns the new season if a boundary was crossed, and the
  * Season Report when a scored season (winter / green) just ended.
  */
-export function endDay(state: GameState, content: Content = CONTENT): { newSeason: SeasonInfo | null; report: SeasonReport | null } {
+export function endDay(state: GameState, content: Content = CONTENT): { newSeason: SeasonInfo | null; report: SeasonReport | null; ending: boolean } {
   const before = season(state, content);
   state.day += 1;
   state.staminaSpent = 0;
-  state.staminaMax = content.tuning.baseStamina + comfortStaminaBonus(state, content);
+  state.staminaMax = dailyStamina(state, content);
   const after = season(state, content);
   const changed = before.season !== after.season;
   let report: SeasonReport | null = null;
@@ -89,7 +93,13 @@ export function endDay(state: GameState, content: Content = CONTENT): { newSeaso
     if (before.scored) { report = buildReport(state, before, content); state.reports.push(report); }
     state.seasonStats = emptySeasonStats();
   }
-  return { newSeason: changed ? after : null, report };
+  let ending = false;
+  if (report && !state.ending && checkEnding(state, content)) {
+    state.ending = { day: state.day };
+    state.log.push(`Day ${state.day}: the Hakuba Valley Festival!`);
+    ending = true;
+  }
+  return { newSeason: changed ? after : null, report, ending };
 }
 
 export function jumpToSeason(state: GameState, target: SeasonId, content: Content = CONTENT): void {

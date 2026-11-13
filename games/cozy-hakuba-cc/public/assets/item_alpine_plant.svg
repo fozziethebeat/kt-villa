@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="44" height="48" viewBox="0 0 44 48">
+  <!-- Alpine plant -->
+  <ellipse cx="22" cy="45" rx="16" ry="3" fill="#3b3a4a" opacity="0.2"/>
+  <g fill="#6f8f5a"><path d="M4 44 q4 -22 8 0Z"/><path d="M12 44 q4 -22 8 0Z"/><path d="M26 44 q4 -22 8 0Z"/><path d="M34 44 q4 -22 8 0Z"/></g>
+  <path d="M22 44 V18" stroke="#3f6b4f" stroke-width="3"/><circle cx="22" cy="14" r="8" fill="#e89fb0" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>

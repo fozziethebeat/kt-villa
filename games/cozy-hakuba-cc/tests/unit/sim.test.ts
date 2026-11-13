@@ -17,9 +17,9 @@ describe('content', () => {
     }
   });
 
-  it('includes Happo Pond as region 5 and the two slice archetypes', () => {
+  it('includes Happo Pond as region 5; coffee and soba are the first-trade choices', () => {
     expect(CONTENT.regions.find((r) => r.order === 5)!.id).toBe('happo_pond');
-    expect(CONTENT.archetypes.map((a) => a.id)).toEqual(['coffee', 'soba']);
+    expect(CONTENT.archetypes.filter((a) => a.primaryChoice).map((a) => a.id)).toEqual(['coffee', 'soba']);
   });
 
   it('every region is reachable from the station', () => {

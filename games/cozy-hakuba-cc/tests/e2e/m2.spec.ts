@@ -58,6 +58,8 @@ test('M2 garage & build: drive to Snow Peak, tent, parts, soba build, garage Tie
   await page.evaluate(() => localStorage.clear());
   await page.reload();
   await page.waitForFunction(() => (window as any).__hakuba?.activeScenes().includes('Title'));
+  // Arcs are played in one sitting here; the one-request-per-day pacing (M4) is tested in m4.test.ts.
+  await page.evaluate(() => (window as any).__hakuba.setPacing(false));
   await page.waitForTimeout(1200);
 
   // Start from "M1 complete": station Thriving, pour bar placed, Snow Peak road opened on the board.
@@ -170,9 +172,8 @@ test('M2 garage & build: drive to Snow Peak, tent, parts, soba build, garage Tie
   await page.mouse.move(100 + 160 * 1.5, 190 + 65); // pour bar at (1,0)
   await page.mouse.down(); await page.mouse.move(400, 620, { steps: 5 }); await page.mouse.up(); // back to storage
   await page.waitForTimeout(150);
-  const stored = await ev<string[]>(page, H("h.getState().van.owned.filter((id) => !h.getState().van.placed.some((p) => p.moduleId === id))"));
-  const kIdx = stored.indexOf('soba_kitchen');
-  await page.mouse.move(40 + 110 + kIdx * 190, 540 + 92);
+  const kPos = await ev<[number, number]>(page, H("h.scene('VanInterior').trayPos('soba_kitchen')"));
+  await page.mouse.move(kPos[0], kPos[1]);
   await page.mouse.down(); await page.mouse.move(100 + 160 * 2, 190 + 65, { steps: 6 }); await page.mouse.up();
   await page.waitForTimeout(150);
   expect((await ev<any[]>(page, H('h.getState().van.placed'))).some((p) => p.moduleId === 'soba_kitchen')).toBe(true);

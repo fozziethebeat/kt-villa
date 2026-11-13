@@ -10,6 +10,10 @@ import { deserialize } from '../../src/sim/save';
 import { canDriveTo, drive, openRoad, roadOffers } from '../../src/sim/travel';
 import { buyModule, comfort, enabled, installRoof, placeModule, roofSlots, upgradeChassis, vanEffects } from '../../src/sim/van';
 import type { GameState } from '../../src/sim/types';
+import { CONTENT as _C } from '../../src/sim/content';
+
+// These arcs are played in one sitting; the one-request-per-day pacing (M4) is covered in m4.test.ts.
+_C.tuning.stepCooldownDays = 0;
 
 /** A game where the station arc is done and the Snow Peak road is open. */
 function afterStation(seed = 7): GameState {
@@ -123,13 +127,13 @@ describe('Snow Peak arc, archetype choice and garage', () => {
     expect(upgradeChassis(s).ok).toBe(true);
     expect(s.chassisTier).toBe(1);
     expect(roofSlots(s)).toBe(2);
-    expect(upgradeChassis(s)).toMatchObject({ ok: false, reason: 'unavailable' });
+    expect(upgradeChassis(s)).toMatchObject({ ok: false, reason: 'yen' }); // Tier 2 exists since M4 but costs ¥18,000
     for (const m of ['solar_panel', 'ski_box', 'roof_planter']) expect(buyModule(s, m).ok).toBe(true);
     expect(placeModule(s, 'solar_panel', 0, 0, 0)).toBe(false); // roof modules don't go inside
     expect(installRoof(s, 'solar_panel').ok).toBe(true);
     expect(installRoof(s, 'ski_box').ok).toBe(true);
     expect(installRoof(s, 'roof_planter')).toMatchObject({ ok: false, reason: 'full' });
-    expect(vanEffects(s)).toEqual({ stockBonus: 2, customerMult: { winter: 1.2, green: 1 }, tipMult: 1 });
+    expect(vanEffects(s)).toEqual({ stockBonus: 2, customerMult: { winter: 1.2, green: 1 }, tipMult: 1, staminaBonus: 0 });
     expect(canDriveTo(s, 'goryu')).toMatchObject({ ok: false, reason: 'road' });
   });
 
@@ -174,7 +178,8 @@ describe('menus and specialties', () => {
     const s = createNewGame({ seed: 5 }) as any;
     s.version = 2; delete s.van.roof; delete s.business.menu;
     const t = deserialize(JSON.stringify(s))!;
-    expect(t.version).toBe(4);
+    expect(t.version).toBe(5);
+    expect(t.helpers).toEqual([]);
     expect(t.reports).toEqual([]);
     expect(t.van.roof).toEqual([]);
     expect(t.business.menu).toBeNull();
