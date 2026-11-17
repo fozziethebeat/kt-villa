@@ -11,7 +11,7 @@ const config: Phaser.Types.Core.GameConfig = {
   parent: 'phaser-container',
   width: 1080,
   height: 560,
-  backgroundColor: '#1e293b',
+  backgroundColor: '#FAF5EB',
   scene: [overworldScene],
   render: {
     antialias: true,

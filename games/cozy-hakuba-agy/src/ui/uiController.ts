@@ -2,6 +2,7 @@ import { store } from '../state/store';
 import { PERSONALITIES, REGIONS, REGION_MAP, VAN_MODULES } from '../state/content';
 import { Gender, InteractiveZone, PersonalityId, RegionId } from '../state/types';
 import { OverworldScene } from '../scenes/OverworldScene';
+import { getModuleIllustrationSvg, getProtagonistPortraitSvg, getRegionStampSubtitle } from '../art/hakubaArt';
 
 export class UIController {
   private scene: OverworldScene;
@@ -9,7 +10,6 @@ export class UIController {
   private selectedGender: Gender = 'female';
   private selectedPersonality: PersonalityId = 'barista';
 
-  // Puzzle state
   private pipeAngles: number[] = [90, 180, 90, 270];
   private stoveStep: number = 0;
   private routeAssignments: Record<string, string> = {
@@ -18,8 +18,6 @@ export class UIController {
     shuttleC: 'unassigned',
   };
 
-  // Tactile Service Mini-game state
-  private serviceProgress = 0;
   private serviceMarkerPos = 50;
   private serviceMarkerDir = 1;
   private serviceHits = 0;
@@ -36,7 +34,6 @@ export class UIController {
       this.renderAll();
     });
 
-    // Open Character Selection modal on startup
     const charDialog = document.getElementById('dialog-char-select') as HTMLDialogElement | null;
     if (charDialog && !store.getState().started) {
       this.renderCharacterSelectModal();
@@ -60,7 +57,6 @@ export class UIController {
   }
 
   private bindGlobalEvents(): void {
-    // Reset returnValue on all dialogs when closed (per modern-web-guidance dialog rule)
     document.querySelectorAll('dialog').forEach((dlg) => {
       dlg.addEventListener('close', () => {
         dlg.returnValue = '';
@@ -92,12 +88,12 @@ export class UIController {
         this.showToast(
           res.seasonChanged
             ? res.newSeason === 'green'
-              ? '🌱 Green Season has begun! Check Regional Summer Pivots & Van Gear!'
-              : '❄️ Winter Powder Season has arrived!'
-            : '🌤️ Day 6 Shoulder Prep Day! Season shifts tomorrow—adapt your Van Grid!'
+              ? '🌱 Green Season arrived! Check Summer Pivots & Van Gear'
+              : '❄️ Powder Winter arrived across Hakuba!'
+            : '🌤️ Prep Day! Tomorrow the season shifts'
         );
       } else {
-        this.showToast(`☀️ Rested in your cozy van! Welcome to Day ${store.getState().day}.`);
+        this.showToast(`☀️ Good morning! Day ${store.getState().day}`);
       }
     });
   }
@@ -112,8 +108,8 @@ export class UIController {
       const woke = store.checkStewardWakeUp(st.currentRegion);
       this.showToast(
         woke
-          ? `✨ Collected +${amt} ${item} & WOKE UP ${REGION_MAP[st.currentRegion].name}!`
-          : `🌿 Foraged +${amt} ${item}!`
+          ? `✨ ${REGION_MAP[st.currentRegion].name} awakened in full color!`
+          : `🌿 +${amt} ${item}`
       );
       return;
     }
@@ -147,7 +143,7 @@ export class UIController {
       if (!res.ok && res.reason) {
         this.showToast(`🔒 ${res.reason}`);
       } else {
-        this.showToast(`🚐 Drove to ${REGION_MAP[zone.targetRegion].name}!`);
+        this.showToast(`🚐 Arrived at ${REGION_MAP[zone.targetRegion].name}`);
       }
     }
   }
@@ -160,7 +156,7 @@ export class UIController {
     window.clearTimeout((toast as unknown as { _timer?: number })._timer);
     (toast as unknown as { _timer?: number })._timer = window.setTimeout(() => {
       toast.classList.remove('visible');
-    }, 3600);
+    }, 3400);
   }
 
   public renderAll(): void {
@@ -169,66 +165,68 @@ export class UIController {
     const regProg = st.regions[st.currentRegion];
     const pDef = PERSONALITIES.find((p) => p.id === st.personality)!;
 
-    // Update CSS Custom Property for seasonal theme
-    document.documentElement.style.setProperty('--season-accent', st.season === 'winter' ? '#38bdf8' : '#10b981');
+    document.documentElement.style.setProperty('--season-accent', st.season === 'winter' ? '#5a8fb8' : '#4d7c5b');
 
-    // Top HUD
+    const dots = Array.from({ length: 6 }, (_, i) => (i < st.dayInCycle ? '●' : '○')).join('');
     const seasonBadge = document.getElementById('hud-season-badge');
     if (seasonBadge) {
-      seasonBadge.textContent =
-        st.season === 'winter'
-          ? `❄️ WINTER SEASON • Day ${st.dayInCycle}/6${st.isPrepDay ? ' (PREP DAY!)' : ''}`
-          : `🌱 GREEN SEASON • Day ${st.dayInCycle}/6${st.isPrepDay ? ' (PREP DAY!)' : ''}`;
+      seasonBadge.textContent = `${st.season === 'winter' ? '❄️ Winter' : '🌱 Green'} · ${dots}`;
       seasonBadge.className = `season-pill ${st.season} ${st.isPrepDay ? 'prep-pulse' : ''}`;
     }
 
     const regionTitle = document.getElementById('hud-region-title');
     if (regionTitle) {
-      regionTitle.textContent = `${regDef.number}. ${regDef.name} (${regDef.japaneseName})`;
-    }
-
-    const wakeStatus = document.getElementById('hud-wake-status');
-    if (wakeStatus) {
-      wakeStatus.textContent = regProg.stewardHelped ? '✨ Awakened & Vibrant' : '🌫️ Sleepy / Unrestored';
-      wakeStatus.className = `wake-pill ${regProg.stewardHelped ? 'awake' : 'sleepy'}`;
+      regionTitle.textContent = `${regDef.number}. ${regDef.name}${regProg.stewardHelped ? ' ✨' : ''}`;
     }
 
     const vitalityEl = document.getElementById('hud-vitality');
     if (vitalityEl) {
-      const currentVit = st.season === 'winter' ? regProg.vitalityWinter : regProg.vitalityGreen;
-      vitalityEl.textContent = `❄️ Winter ${regProg.vitalityWinter}% | 🌱 Green ${regProg.vitalityGreen}% (Active: ${currentVit}%)`;
+      vitalityEl.textContent = `❄️ ${regProg.vitalityWinter}%  ·  🌱 ${regProg.vitalityGreen}%`;
     }
 
     const yenEl = document.getElementById('hud-yen');
     if (yenEl) yenEl.textContent = `¥${st.yen.toLocaleString()}`;
 
     const cozyEl = document.getElementById('hud-cozy');
-    if (cozyEl) cozyEl.textContent = `🏠 Cozy +${st.cozyRating} • ⚡ ${st.stamina}/${st.maxStamina}`;
+    if (cozyEl) cozyEl.textContent = `☕ ${st.stamina}/${st.maxStamina}`;
 
     const playerEl = document.getElementById('hud-player');
-    if (playerEl) playerEl.textContent = `${pDef.icon} ${st.playerName} (${pDef.subtitle})`;
+    if (playerEl) playerEl.textContent = `${pDef.icon} ${st.playerName}`;
 
-    // Quest & Log Sidebar
+    // Visual Stamp Strip (3 compact interactive chips — zero text walls!)
     const questBox = document.getElementById('hud-quest-summary');
     if (questBox) {
       const fetchDone = regProg.fetchCollected >= regDef.fetchItemRequired;
       const puzzleDone = regProg.puzzleSolved;
-      questBox.innerHTML = `
-        <div class="quest-header">
-          <span><strong>${regDef.stewardName}:</strong> ${regDef.questTitle}</span>
-          <span class="tag">${regProg.stewardHelped ? '✓ Complete' : 'In Progress'}</span>
-        </div>
-        <div class="quest-steps">
-          <span class="${fetchDone ? 'step-done' : ''}">${fetchDone ? '✅' : '⬜'} Forage ${regDef.fetchItemName}: <strong>${regProg.fetchCollected}/${regDef.fetchItemRequired}</strong></span>
-          <span class="${puzzleDone ? 'step-done' : ''}">${puzzleDone ? '✅' : '⬜'} Puzzle: <strong>${regDef.puzzleTitle}</strong></span>
-          <span class="${regProg.greenPivotBuilt ? 'step-done' : ''}">${regProg.greenPivotBuilt ? '✅' : '🌱'} Green Pivot: <strong>${regDef.greenPivotTitle}</strong> ${regProg.greenPivotBuilt ? '(Built!)' : `(¥${regDef.greenPivotCost})`}</span>
-        </div>
-      `;
-    }
+      const forageIcon = regDef.zones.find((z) => z.type === 'forage')?.icon || '🪵';
 
-    const logEl = document.getElementById('hud-log-feed');
-    if (logEl) {
-      logEl.innerHTML = st.log.slice(0, 3).map((item) => `<div class="log-line">• ${item}</div>`).join('');
+      questBox.innerHTML = `
+        <button type="button" class="stamp-chip ${fetchDone ? 'done' : ''}" id="chip-fetch">
+          <span>${fetchDone ? '✓' : forageIcon}</span>
+          <span>${regDef.fetchItemName} ${regProg.fetchCollected}/${regDef.fetchItemRequired}</span>
+        </button>
+        <button type="button" class="stamp-chip ${puzzleDone ? 'done' : ''}" id="chip-puzzle">
+          <span>${puzzleDone ? '✓' : '⚙️'}</span>
+          <span>${regDef.puzzleTitle}</span>
+        </button>
+        <button type="button" class="stamp-chip ${regProg.greenPivotBuilt ? 'done' : ''}" id="chip-pivot">
+          <span>${regProg.greenPivotBuilt ? '✓' : '🌱'}</span>
+          <span>${regProg.greenPivotBuilt ? 'Summer Pivot Active' : `Pivot (¥${regDef.greenPivotCost})`}</span>
+        </button>
+      `;
+
+      document.getElementById('chip-fetch')?.addEventListener('click', () => {
+        this.renderStewardModal();
+        this.openModalSafely('dialog-steward');
+      });
+      document.getElementById('chip-puzzle')?.addEventListener('click', () => {
+        this.renderPuzzleModal();
+        this.openModalSafely('dialog-puzzle');
+      });
+      document.getElementById('chip-pivot')?.addEventListener('click', () => {
+        this.renderStewardModal();
+        this.openModalSafely('dialog-steward');
+      });
     }
   }
 
@@ -236,17 +234,25 @@ export class UIController {
     const container = document.getElementById('char-select-body');
     if (!container) return;
 
+    const portraitSvg = getProtagonistPortraitSvg(this.selectedGender, this.selectedPersonality, 'winter');
+
     container.innerHTML = `
-      <div class="char-form-row">
-        <label for="input-player-name"><strong>Protagonist Name:</strong></label>
-        <input id="input-player-name" type="text" value="${store.getState().playerName}" maxlength="18" autocomplete="given-name" />
-        <div class="gender-group" role="group" aria-label="Select Gender">
-          <button type="button" class="chip-btn ${this.selectedGender === 'female' ? 'active' : ''}" data-gender="female">👩 Female (Default)</button>
-          <button type="button" class="chip-btn ${this.selectedGender === 'male' ? 'active' : ''}" data-gender="male">👨 Male</button>
-          <button type="button" class="chip-btn ${this.selectedGender === 'nonbinary' ? 'active' : ''}" data-gender="nonbinary">🧑 Non-Binary</button>
+      <div class="ticket-top-row">
+        <div class="ticket-avatar-box">${portraitSvg}</div>
+        <div class="ticket-inputs">
+          <div class="name-row">
+            <label for="input-player-name"><strong>Traveler Name</strong></label>
+            <input id="input-player-name" type="text" value="${store.getState().playerName}" maxlength="18" autocomplete="given-name" />
+          </div>
+          <div class="gender-group" role="group" aria-label="Select Gender">
+            <button type="button" class="chip-btn ${this.selectedGender === 'female' ? 'active' : ''}" data-gender="female">Female</button>
+            <button type="button" class="chip-btn ${this.selectedGender === 'male' ? 'active' : ''}" data-gender="male">Male</button>
+            <button type="button" class="chip-btn ${this.selectedGender === 'nonbinary' ? 'active' : ''}" data-gender="nonbinary">Non-Binary</button>
+          </div>
         </div>
       </div>
-      <p class="section-hint">Choose your <strong>Tokyo Past Personality</strong> — subtly shapes your Van Business bonuses and village restoration perks:</p>
+
+      <p class="sub-note">Pick your Tokyo vibe — each gives a gentle, cozy perk in Hakuba:</p>
       <div class="personality-grid">
         ${PERSONALITIES.map(
           (p) => `
@@ -258,14 +264,14 @@ export class UIController {
                 <span class="p-sub">${p.subtitle}</span>
               </div>
             </div>
-            <p class="p-story">${p.backstory}</p>
-            <div class="p-perk">✨ <strong>${p.perkTitle}</strong><br/>${p.perkDesc}</div>
+            <div class="p-perk-pill">✨ ${p.perkTitle}</div>
           </button>
         `
         ).join('')}
       </div>
+
       <div class="modal-footer-actions">
-        <button type="button" id="btn-confirm-start" class="primary-cta-btn" autofocus>🚐 Arrive at Hakuba Station & Start Van Life</button>
+        <button type="button" id="btn-confirm-start" class="primary-cta-btn" autofocus>🚐 Board Train to Hakuba</button>
       </div>
     `;
 
@@ -292,7 +298,7 @@ export class UIController {
       const name = nameInput?.value || 'Yuki';
       store.startNewJourney(name, this.selectedGender, this.selectedPersonality);
       this.closeModalSafely('dialog-char-select');
-      this.showToast(`Welcome to Hakuba, ${name}! Walk with WASD/Click or press [Space] by your Van.`);
+      this.showToast(`Welcome to Hakuba, ${name}!`);
     });
   }
 
@@ -302,7 +308,6 @@ export class UIController {
     const st = store.getState();
     const est = store.calculatePopUpShiftEstimate();
 
-    // Build grid occupancy lookup
     const cellMap: Record<string, { placedId: string; moduleId: string; isOrigin: boolean; width: number }> = {};
     for (const placed of st.placedModules) {
       const def = VAN_MODULES.find((m) => m.id === placed.moduleId)!;
@@ -323,29 +328,24 @@ export class UIController {
       for (let x = 0; x < st.gridCols; x++) {
         const occ = cellMap[`${x},${y}`];
         if (occ) {
-          if (!occ.isOrigin) continue; // Covered by grid-column: span 2!
+          if (!occ.isOrigin) continue;
           const def = VAN_MODULES.find((m) => m.id === occ.moduleId)!;
-          const seasonBadge = def.seasonTag === 'winter' ? '❄️ Winter' : def.seasonTag === 'green' ? '🌱 Green' : '🔄 All-Season';
+          const seasonBadge = def.seasonTag === 'winter' ? '❄️' : def.seasonTag === 'green' ? '🌱' : '✦';
+          const shortTitle = def.name.split('&')[0].trim();
           gridCellsHtml += `
             <div class="van-grid-cell occupied" style="--mod-color: ${def.color}; grid-column: span ${def.width};" data-gx="${x}" data-gy="${y}">
-              <div class="cell-top">
-                <span class="cell-icon">${def.icon} <strong>${def.name}</strong></span>
-                <span class="cell-season">${seasonBadge}</span>
-              </div>
-              <div class="cell-purpose">${def.purposeLabel} • Base ¥${def.baseRevenue}</div>
-              <div class="cell-bottom-row">
-                <span class="cell-coords">Grid Slot (${x + 1}..${x + def.width}, ${y + 1})</span>
-                <button type="button" class="cell-remove-btn" data-remove-x="${x}" data-remove-y="${y}" aria-label="Remove ${def.name}">✕ Unplug</button>
-              </div>
+              <button type="button" class="cell-remove-btn" data-remove-x="${x}" data-remove-y="${y}" aria-label="Remove ${def.name}">✕</button>
+              <span class="cell-badge">${seasonBadge}</span>
+              <div class="cell-art">${getModuleIllustrationSvg(def.id)}</div>
+              <div class="cell-title">${shortTitle}</div>
             </div>
           `;
         } else {
-          const slotZoneLabel = y === 0 ? 'Service Window Counter' : y === 1 ? 'Mid Utility Floor' : 'Cozy Living Floor';
+          const zoneLabel = y === 0 ? 'Counter' : y === 1 ? 'Work' : 'Cozy';
           gridCellsHtml += `
-            <button type="button" class="van-grid-cell empty" data-place-x="${x}" data-place-y="${y}">
-              <span class="slot-coord">Slot (${x + 1}, ${y + 1})</span>
-              <span class="slot-zone-type">${slotZoneLabel}</span>
-              <span class="slot-cta">+ Install Selected</span>
+            <button type="button" class="van-grid-cell empty" data-place-x="${x}" data-place-y="${y}" aria-label="Install module at slot ${x + 1}, ${y + 1}">
+              <span class="slot-plus">+</span>
+              <span class="slot-zone-type">${zoneLabel}</span>
             </button>
           `;
         }
@@ -357,50 +357,56 @@ export class UIController {
         <div class="van-left-column">
           <div class="van-chassis-banner">
             <div>
-              <strong>${st.vanTier === 1 ? '🚐 Tier 1 Kei Micro-Camper (4x3 Grid)' : '🚐 Tier 2 Retro 4WD Overland (6x3 Grid + Roof Tent)'}</strong>
-              <div class="sub-note">Parked at: ${REGION_MAP[st.currentRegion].name} • Season: ${st.season === 'winter' ? '❄️ Winter' : '🌱 Green Season'}</div>
+              <strong>${st.vanTier === 1 ? 'Kei Micro-Camper (4×3)' : 'Retro 4WD Overland (6×3)'}</strong>
+              <div class="sub-note">${REGION_MAP[st.currentRegion].name} · ${st.season === 'winter' ? '❄️ Winter' : '🌱 Green'}</div>
             </div>
             ${
               st.vanTier === 1
-                ? `<button type="button" id="btn-upgrade-chassis" class="secondary-btn">⬆️ Upgrade to Tier 2 4WD Van (¥${
+                ? `<button type="button" id="btn-upgrade-chassis" class="secondary-btn">⬆️ Upgrade Van (¥${
                     st.personality === 'tinkerer' ? 680 : 800
                   })</button>`
-                : `<span class="badge-max">✓ Max Tier 2 Chassis</span>`
+                : `<span class="chip-btn active">✓ Tier 2 4WD</span>`
             }
           </div>
 
-          <div class="van-interior-grid" style="--grid-cols: ${st.gridCols}">
-            ${gridCellsHtml}
+          <div class="van-cabin-shell">
+            <div class="van-fairy-lights" aria-hidden="true">✦ ✦ ✦ ✦ ✦ ✦</div>
+            <div class="van-interior-grid" style="--grid-cols: ${st.gridCols}">
+              ${gridCellsHtml}
+            </div>
           </div>
 
           ${est.seasonMatchWarning ? `<div class="season-warning-banner">${est.seasonMatchWarning}</div>` : ''}
 
           <div class="van-service-launch-bar">
             <div>
-              <strong>Pop-Up Shop Forecast:</strong> ~${est.expectedCustomers} Customers • Est. <strong>¥${
+              <strong>~${est.expectedCustomers} visitors</strong> · Est. <strong>¥${
       est.expectedCustomers * est.revenuePerCustomer
-    }</strong> per shift (Region Vitality: ${est.regionalVitality}%)
+    }</strong>
             </div>
-            <button type="button" id="btn-start-popup-shift" class="primary-cta-btn">🛎️ Open Service Window & Run Pop-Up Shift!</button>
+            <button type="button" id="btn-start-popup-shift" class="primary-cta-btn">☕ Open Service Window</button>
           </div>
         </div>
 
         <div class="van-catalog-column">
-          <h3>📦 Mix & Match Module Catalog</h3>
-          <p class="sub-note">1. Select a module below → 2. Click any Van Grid slot on the left to install or swap:</p>
+          <h3>Gear &amp; Cozy Shelf</h3>
+          <p class="sub-note">Pick an item, then tap a + slot inside your van:</p>
           <div class="module-catalog-list">
             ${VAN_MODULES.map((m) => {
               const owned = st.ownedModules.includes(m.id);
               const cost = owned ? 0 : st.personality === 'tinkerer' ? Math.round(m.cost * 0.85) : m.cost;
               const isSelected = this.selectedModuleToPlace === m.id;
+              const sIcon = m.seasonTag === 'winter' ? '❄️ Winter' : m.seasonTag === 'green' ? '🌱 Green' : '✦ All-Season';
               return `
                 <button type="button" class="catalog-item ${isSelected ? 'selected' : ''}" data-select-mod="${m.id}">
-                  <div class="cat-row-top">
-                    <span><strong>${m.icon} ${m.name}</strong></span>
-                    <span class="cat-cost ${owned ? 'owned' : ''}">${owned ? '✓ Owned (Free Swap)' : `¥${cost}`}</span>
+                  <div class="cat-art">${getModuleIllustrationSvg(m.id)}</div>
+                  <div class="cat-info">
+                    <div class="cat-row-top">
+                      <span>${m.name}</span>
+                      <span class="cat-cost ${owned ? 'owned' : ''}">${owned ? 'Owned' : `¥${cost}`}</span>
+                    </div>
+                    <div class="cat-meta">${m.width}×1 · ${sIcon} · ¥${m.baseRevenue}</div>
                   </div>
-                  <div class="cat-purpose">${m.purposeLabel} • Base ¥${m.baseRevenue}</div>
-                  <div class="cat-desc">${m.description}</div>
                 </button>
               `;
             }).join('')}
@@ -449,7 +455,6 @@ export class UIController {
   }
 
   private startTactileServiceMiniGame(): void {
-    this.serviceProgress = 0;
     this.serviceHits = 0;
     this.serviceAttempts = 0;
     this.serviceMarkerPos = 15;
@@ -457,7 +462,6 @@ export class UIController {
 
     const st = store.getState();
     const pDef = PERSONALITIES.find((p) => p.id === st.personality)!;
-    // Barista gets a wider sweet spot (30% vs 22%)
     const sweetSpotStart = 38;
     const sweetSpotWidth = st.personality === 'barista' ? 28 : 22;
 
@@ -465,28 +469,27 @@ export class UIController {
     if (!body) return;
 
     body.innerHTML = `
-      <div class="minigame-stage">
+      <div class="service-counter-stage">
         <p class="sub-note">
-          Customers are lining up outside your van in <strong>${REGION_MAP[st.currentRegion].name}</strong>!
-          Click <strong>"Serve Order!"</strong> (or press Space) when the indicator is inside the Golden Sweet Spot (3 orders total).
+          Tap <strong>Serve Order</strong> when the marker glides into the warm golden zone!
         </p>
         <div class="order-tickets">
           <span class="ticket">☕ Nagano Pour-Over</span>
-          <span class="ticket">${st.season === 'winter' ? '🎿 Hot Powder Wax' : '🚵 Trail Bike Tune'}</span>
-          <span class="ticket">${st.season === 'winter' ? '🥟 Steamed Oyaki' : '🍨 Highland Gelato'}</span>
+          <span class="ticket">${st.season === 'winter' ? '🎿 Powder Wax' : '🚵 Trail Tune'}</span>
+          <span class="ticket">${st.season === 'winter' ? '🥟 Hot Oyaki' : '🍨 Milk Gelato'}</span>
         </div>
         <div class="timing-bar-track">
           <div class="timing-sweet-spot" style="left: ${sweetSpotStart}%; width: ${sweetSpotWidth}%">
-            <span>★ GOLDEN CREMA / WAX ZONE ★</span>
+            <span>★ SWEET SPOT ★</span>
           </div>
           <div id="timing-marker" class="timing-marker" style="left: 15%">▼</div>
         </div>
-        <div id="service-score-readout" class="service-readout">
-          Orders Completed: <strong>0 / 3</strong> (${pDef.name} Bonus Active)
+        <div id="service-score-readout" class="sub-note">
+          Served: <strong>0 / 3</strong> (${pDef.icon} ${pDef.subtitle})
         </div>
         <div class="modal-footer-actions">
-          <button type="button" id="btn-hit-serve" class="primary-cta-btn" autofocus>🛎️ Serve Order Now!</button>
-          <button type="button" id="btn-quick-auto-serve" class="secondary-btn">⚡ Quick Auto-Complete Shift</button>
+          <button type="button" id="btn-hit-serve" class="primary-cta-btn" autofocus>☕ Serve Order</button>
+          <button type="button" id="btn-quick-auto-serve" class="secondary-btn">⚡ Quick Serve</button>
         </div>
       </div>
     `;
@@ -514,7 +517,7 @@ export class UIController {
       }
       const res = store.recordServiceMiniGameResult(multiplier);
       this.closeModalSafely('dialog-service-minigame');
-      this.showToast(`🎉 Served ${res.customersServed} visitors and earned ¥${res.earnedYen}!`);
+      this.showToast(`☕ Served ${res.customersServed} visitors · +¥${res.earnedYen}!`);
     };
 
     document.getElementById('btn-hit-serve')?.addEventListener('click', () => {
@@ -525,8 +528,8 @@ export class UIController {
         this.serviceHits++;
       }
       if (readoutEl) {
-        readoutEl.innerHTML = `Orders Completed: <strong>${this.serviceAttempts} / 3</strong> — ${
-          inSweetSpot ? '✨ PERFECT GOLDEN CRAFT!' : '👍 Good Service!'
+        readoutEl.innerHTML = `Served: <strong>${this.serviceAttempts} / 3</strong> · ${
+          inSweetSpot ? '✨ Perfect Craft!' : '👍 Cozy Service!'
         }`;
       }
       if (this.serviceAttempts >= 3) {
@@ -551,55 +554,55 @@ export class UIController {
 
     body.innerHTML = `
       <div class="steward-card">
-        <div class="steward-header" style="--steward-color: ${regDef.stewardPortraitColor}">
-          <div class="steward-avatar">${regDef.zones[0]?.icon || '🧑‍🌾'}</div>
+        <div class="steward-header">
+          <div class="steward-avatar">${regDef.zones[0]?.icon || '🏮'}</div>
           <div>
-            <h3>${regDef.stewardName} — <small>${regDef.stewardTitle}</small></h3>
-            <div class="sub-note">${regDef.name} (${regDef.japaneseName})</div>
+            <h3>${regDef.stewardName}</h3>
+            <div class="sub-note">${regDef.stewardTitle} · ${regDef.japaneseName}</div>
           </div>
         </div>
 
         <blockquote class="steward-dialogue">
           ${
             regProg.stewardHelped
-              ? `"Thank you, ${st.playerName}! Look how warm and colorful ${regDef.name} has become! ${
+              ? `"Look how warm ${regDef.name} feels now, ${st.playerName}! ${
                   regProg.greenPivotBuilt
-                    ? 'Our Green Season Pivot is thriving too—visitors come in both snow and summer now!'
-                    : `When Green Season arrives, ski tourists drop off sharply—let's build the ${regDef.greenPivotTitle} so we thrive year-round!`
+                    ? 'Summer and winter travelers both gather here!'
+                    : `Let's build "${regDef.greenPivotTitle}" so summer travelers still visit when the snow melts."`
                 }"`
-              : `"Welcome to ${regDef.name}, ${st.playerName}. Ever since the old days, this area has fallen quiet and grey. ${regDef.questDescription}"`
+              : `"Welcome, ${st.playerName}. ${regDef.questDescription}"`
           }
         </blockquote>
 
         <div class="steward-checklist">
           <div class="check-row ${regProg.fetchCollected >= regDef.fetchItemRequired ? 'done' : ''}">
-            <span>1. Forage <strong>${regDef.fetchItemName}</strong> around ${regDef.name}</span>
+            <span>Forage ${regDef.fetchItemName}</span>
             <strong>${regProg.fetchCollected} / ${regDef.fetchItemRequired}</strong>
           </div>
           <div class="check-row ${regProg.puzzleSolved ? 'done' : ''}">
-            <span>2. Complete Restoration Puzzle: <strong>${regDef.puzzleTitle}</strong></span>
-            <strong>${regProg.puzzleSolved ? '✓ Solved' : 'Incomplete'}</strong>
+            <span>${regDef.puzzleTitle}</span>
+            <strong>${regProg.puzzleSolved ? '✓ Restored' : 'Pending'}</strong>
           </div>
           <div class="check-row ${regProg.greenPivotBuilt ? 'done' : ''}">
-            <span>3. 🌱 Green Season Pivot: <strong>${regDef.greenPivotTitle}</strong></span>
-            <strong>${regProg.greenPivotBuilt ? '✓ Active (+Summer Vitality!)' : `¥${regDef.greenPivotCost}`}</strong>
+            <span>🌱 ${regDef.greenPivotTitle}</span>
+            <strong>${regProg.greenPivotBuilt ? '✓ Active' : `¥${regDef.greenPivotCost}`}</strong>
           </div>
         </div>
 
         <div class="modal-footer-actions">
           ${
             !regProg.puzzleSolved
-              ? `<button type="button" id="btn-steward-open-puzzle" class="primary-cta-btn">⚙️ Open ${regDef.puzzleTitle}</button>`
+              ? `<button type="button" id="btn-steward-open-puzzle" class="primary-cta-btn">⚙️ Open Puzzle</button>`
               : ''
           }
           ${
             canWake
-              ? `<button type="button" id="btn-steward-wake-now" class="primary-cta-btn">✨ Ignite Hearth & Wake Up ${regDef.name}!</button>`
+              ? `<button type="button" id="btn-steward-wake-now" class="primary-cta-btn">✨ Light Hearth &amp; Wake Region</button>`
               : ''
           }
           ${
             regProg.stewardHelped && !regProg.greenPivotBuilt
-              ? `<button type="button" id="btn-steward-build-pivot" class="primary-cta-btn">🌱 Build ${regDef.greenPivotTitle} (¥${
+              ? `<button type="button" id="btn-steward-build-pivot" class="primary-cta-btn">🌱 Build Summer Pivot (¥${
                   st.personality === 'tinkerer' ? Math.round(regDef.greenPivotCost * 0.85) : regDef.greenPivotCost
                 })</button>`
               : ''
@@ -635,34 +638,31 @@ export class UIController {
 
     if (regProg.puzzleSolved) {
       body.innerHTML = `
-        <div class="puzzle-solved-card">
-          <h3>✅ ${regDef.puzzleTitle} — Restored!</h3>
-          <p>The mechanism is humming warmly. Make sure you also collect ${regDef.fetchItemRequired} ${regDef.fetchItemName} to complete ${regDef.stewardName}'s regional restoration!</p>
+        <div class="steward-dialogue">
+          <strong>✅ ${regDef.puzzleTitle}</strong> is humming smoothly!
         </div>
       `;
       return;
     }
 
     if (regDef.puzzleType === 'pipes') {
-      const allAligned = this.pipeAngles.every((a) => a % 180 === 0);
       body.innerHTML = `
         <div class="puzzle-container">
-          <h3>♨️ ${regDef.puzzleTitle}</h3>
-          <p class="sub-note">Rotate each thermal spring valve until all 4 conduits align horizontally (<code>━</code>) to feed hot mineral water into the Hakuba Station Footbath!</p>
+          <p class="sub-note">Tap each hot-spring valve until all 4 align horizontally (<code>━</code>) to warm the Hakuba Station footbath:</p>
           <div class="pipe-grid">
             ${this.pipeAngles
               .map(
                 (angle, idx) => `
               <button type="button" class="pipe-tile ${angle % 180 === 0 ? 'aligned' : ''}" data-pipe-idx="${idx}">
                 <span class="pipe-symbol" style="transform: rotate(${angle}deg)">━</span>
-                <span class="pipe-label">Valve #${idx + 1} (${angle % 180 === 0 ? 'Aligned ✓' : 'Blocked'})</span>
+                <span>Valve #${idx + 1}</span>
               </button>
             `
               )
               .join('')}
           </div>
           <div class="modal-footer-actions">
-            <button type="button" id="btn-instant-solve-puzzle" class="secondary-btn">✨ Cozy Hint: Align All Valves</button>
+            <button type="button" id="btn-instant-solve-puzzle" class="secondary-btn">✨ Quick Align</button>
           </div>
         </div>
       `;
@@ -674,7 +674,7 @@ export class UIController {
           if (this.pipeAngles.every((a) => a % 180 === 0)) {
             store.completeRegionPuzzle(st.currentRegion);
             this.closeModalSafely('dialog-puzzle');
-            this.showToast(`♨️ Thermal pipes aligned! The station footbath is steaming!`);
+            this.showToast(`♨️ Thermal footbath is steaming!`);
           } else {
             this.renderPuzzleModal();
           }
@@ -682,15 +682,14 @@ export class UIController {
       });
     } else if (regDef.puzzleType === 'stove') {
       const steps = [
-        '1. Place Heavy Stainless Base Plate',
-        '2. Unfold Hexagonal Titanium Firebox Cone',
-        '3. Stack Seasoned Hakuba White Birch Logs',
-        '4. Strike Flint & Ignite the Community Takibi Hearth!',
+        '1. Set Stainless Base Plate',
+        '2. Unfold Titanium Firebox',
+        '3. Stack Hakuba White Birch',
+        '4. Light the Community Takibi!',
       ];
       body.innerHTML = `
         <div class="puzzle-container">
-          <h3>🔥 ${regDef.puzzleTitle}</h3>
-          <p class="sub-note">Assemble Aoi's modular Takibi firepit in sequence (${this.stoveStep} / 4 steps complete):</p>
+          <p class="sub-note">Assemble Aoi's Takibi firepit (${this.stoveStep} / 4):</p>
           <div class="stove-steps-list">
             ${steps
               .map(
@@ -698,14 +697,14 @@ export class UIController {
               <button type="button" class="stove-step-btn ${idx < this.stoveStep ? 'done' : idx === this.stoveStep ? 'next' : ''}" data-stove-idx="${idx}" ${
                   idx !== this.stoveStep ? 'disabled' : ''
                 }>
-                ${idx < this.stoveStep ? '✅' : idx === this.stoveStep ? '👉' : '🔒'} ${label}
+                ${idx < this.stoveStep ? '✓' : idx === this.stoveStep ? '→' : '·'} ${label}
               </button>
             `
               )
               .join('')}
           </div>
           <div class="modal-footer-actions">
-            <button type="button" id="btn-instant-solve-puzzle" class="secondary-btn">✨ Complete Takibi Assembly</button>
+            <button type="button" id="btn-instant-solve-puzzle" class="secondary-btn">✨ Quick Assemble</button>
           </div>
         </div>
       `;
@@ -716,40 +715,38 @@ export class UIController {
           if (this.stoveStep >= 4) {
             store.completeRegionPuzzle(st.currentRegion);
             this.closeModalSafely('dialog-puzzle');
-            this.showToast(`🔥 Takibi Hearth assembled! Golden warmth radiates across Snow Peak lawn.`);
+            this.showToast(`🔥 Takibi Hearth lit!`);
           } else {
             this.renderPuzzleModal();
           }
         });
       });
     } else {
-      // Routes puzzle for Happo-One Bus Terminal
       body.innerHTML = `
         <div class="puzzle-container">
-          <h3>🗺️ ${regDef.puzzleTitle}</h3>
-          <p class="sub-note">Connect the 3 Alpine Shuttle bays so skiers and summer hikers can reach every corner of the valley:</p>
+          <p class="sub-note">Link the 3 Valley Shuttle Bays:</p>
           <div class="route-puzzle-rows">
             <div class="route-row">
-              <span>🚌 <strong>Bay 1 (Express Gondola Line):</strong></span>
+              <span>🚌 Bay 1 · Express</span>
               <button type="button" class="chip-btn ${this.routeAssignments.shuttleA === 'matched' ? 'active' : ''}" data-route="shuttleA">
-                ${this.routeAssignments.shuttleA === 'matched' ? '✓ Routed to Happo Usagidaira Gondola' : 'Click to Connect → Happo Gondola'}
+                ${this.routeAssignments.shuttleA === 'matched' ? '✓ Happo Gondola' : 'Connect → Gondola'}
               </button>
             </div>
             <div class="route-row">
-              <span>🚌 <strong>Bay 2 (Night & Cafe Loop):</strong></span>
+              <span>🚌 Bay 2 · Cafe Loop</span>
               <button type="button" class="chip-btn ${this.routeAssignments.shuttleB === 'matched' ? 'active' : ''}" data-route="shuttleB">
-                ${this.routeAssignments.shuttleB === 'matched' ? '✓ Routed to Echoland & Iwatake' : 'Click to Connect → Echoland & Iwatake'}
+                ${this.routeAssignments.shuttleB === 'matched' ? '✓ Echoland & Iwatake' : 'Connect → Echoland'}
               </button>
             </div>
             <div class="route-row">
-              <span>🚌 <strong>Bay 3 (South Valley & Lake Line):</strong></span>
+              <span>🚌 Bay 3 · South Lake</span>
               <button type="button" class="chip-btn ${this.routeAssignments.shuttleC === 'matched' ? 'active' : ''}" data-route="shuttleC">
-                ${this.routeAssignments.shuttleC === 'matched' ? '✓ Routed to Goryu, Hakuba 47 & Aokiko' : 'Click to Connect → Goryu, 47 & Lake Aokiko'}
+                ${this.routeAssignments.shuttleC === 'matched' ? '✓ Goryu & Aokiko' : 'Connect → Lake Aokiko'}
               </button>
             </div>
           </div>
           <div class="modal-footer-actions">
-            <button type="button" id="btn-instant-solve-puzzle" class="secondary-btn">✨ Dispatch All Shuttles</button>
+            <button type="button" id="btn-instant-solve-puzzle" class="secondary-btn">✨ Quick Connect</button>
           </div>
         </div>
       `;
@@ -761,7 +758,7 @@ export class UIController {
           if (Object.values(this.routeAssignments).every((v) => v === 'matched')) {
             store.completeRegionPuzzle(st.currentRegion);
             this.closeModalSafely('dialog-puzzle');
-            this.showToast(`🚌 All Valley Shuttle Lines connected! Happo Terminal is bustling!`);
+            this.showToast(`🚌 Valley Shuttles connected!`);
           } else {
             this.renderPuzzleModal();
           }
@@ -772,7 +769,7 @@ export class UIController {
     document.getElementById('btn-instant-solve-puzzle')?.addEventListener('click', () => {
       store.completeRegionPuzzle(st.currentRegion);
       this.closeModalSafely('dialog-puzzle');
-      this.showToast(`✨ Solved ${regDef.puzzleTitle}!`);
+      this.showToast(`✨ ${regDef.puzzleTitle} restored!`);
     });
   }
 
@@ -782,9 +779,7 @@ export class UIController {
     const st = store.getState();
 
     body.innerHTML = `
-      <p class="sub-note">
-        <strong>Hakuba Valley 10-Region Restoration Roadmap:</strong> Help the Steward in each sub-region to unlock connected hubs and build Green Season Pivots for year-round vitality.
-      </p>
+      <p class="sub-note">Wake up each sub-region and build its Summer Pivot to bring year-round life to Hakuba.</p>
       <div class="atlas-grid">
         ${REGIONS.map((r) => {
           const prog = st.regions[r.id];
@@ -792,32 +787,31 @@ export class UIController {
           return `
             <div class="atlas-card ${prog.unlocked ? 'unlocked' : 'locked'} ${isCurrent ? 'current' : ''}">
               <div class="atlas-card-top">
-                <span class="atlas-num">#${r.number} ${r.name}</span>
+                <span>#${r.number} ${r.name}</span>
                 <span class="atlas-status">
                   ${
                     !r.unlockedInPhase1
-                      ? '🔒 Phase 2/3'
+                      ? 'Phase 2/3'
                       : prog.stewardHelped
-                      ? '✨ Awakened'
+                      ? '✨ Awake'
                       : prog.unlocked
-                      ? '🟢 Open'
+                      ? 'Open'
                       : '🔒 Locked'
                   }
                 </span>
               </div>
-              <div class="atlas-jp">${r.japaneseName} • Steward: ${r.stewardName}</div>
-              <p class="atlas-desc">${r.tagline}</p>
+              <div class="atlas-jp">${r.japaneseName} · ${getRegionStampSubtitle(r.id)}</div>
               <div class="atlas-vitality-bars">
-                <span>❄️ Winter: <strong>${prog.vitalityWinter}%</strong></span>
-                <span>🌱 Green: <strong>${prog.vitalityGreen}%</strong> ${prog.greenPivotBuilt ? '(Pivot ✓)' : ''}</span>
+                <span>❄️ Winter ${prog.vitalityWinter}%</span>
+                <span>🌱 Green ${prog.vitalityGreen}% ${prog.greenPivotBuilt ? '✓' : ''}</span>
               </div>
               ${
                 r.unlockedInPhase1 && prog.unlocked
-                  ? `<button type="button" class="primary-cta-btn atlas-drive-btn" data-drive-to="${r.id}" ${
+                  ? `<button type="button" class="primary-cta-btn" data-drive-to="${r.id}" ${
                       isCurrent ? 'disabled' : ''
-                    }>${isCurrent ? '🚐 Currently Parked Here' : `🚐 Drive Van to ${r.name}`}</button>`
+                    }>${isCurrent ? '🚐 Parked Here' : `🚐 Drive Here`}</button>`
                   : `<div class="atlas-lock-note">${
-                      r.unlockedInPhase1 ? 'Wake up previous region to unlock road' : `Planned Expansion: ${r.greenPivotTitle}`
+                      r.unlockedInPhase1 ? 'Wake previous region to unlock' : `Summer Pivot: ${r.greenPivotTitle}`
                     }</div>`
               }
             </div>
@@ -832,7 +826,7 @@ export class UIController {
         const res = store.travelToRegion(target);
         if (res.ok) {
           this.closeModalSafely('dialog-valley-atlas');
-          this.showToast(`🚐 Drove your camper van to ${REGION_MAP[target].name}!`);
+          this.showToast(`🚐 Drove to ${REGION_MAP[target].name}`);
         }
       });
     });

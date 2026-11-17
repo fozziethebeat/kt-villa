@@ -4,111 +4,122 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cozy Hakuba — Van Life &amp; Village Restoration</title>
-    <script type="module" crossorigin src="/assets/index-QUvblhR3.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-1UdelmtT.css">
+    <script type="module" crossorigin src="/assets/index-p21YKTTa.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DENZg88D.css">
   </head>
   <body>
     <header class="top-hud">
-      <div class="hud-brand-group">
-        <h1>🚐 Cozy Hakuba</h1>
-        <span id="hud-season-badge" class="season-pill winter">❄️ WINTER SEASON • Day 1/6</span>
-        <span id="hud-wake-status" class="wake-pill sleepy">🌫️ Sleepy / Unrestored</span>
+      <div class="hud-left">
+        <div class="brand-stamp">
+          <span class="brand-jp">白馬</span>
+          <h1>Cozy Hakuba</h1>
+        </div>
+        <span id="hud-season-badge" class="season-pill winter">❄️ Winter · ●○○○○○</span>
       </div>
-      <div class="hud-stats-group">
-        <div class="stat-chip" id="hud-region-title">1. Hakuba Train Station</div>
-        <div class="stat-chip" id="hud-vitality">❄️ Winter 35% | 🌱 Green 15%</div>
-        <div class="stat-chip gold" id="hud-yen">¥520</div>
-        <div class="stat-chip" id="hud-cozy">🏠 Cozy +34 • ⚡ 100/125</div>
-        <div class="stat-chip" id="hud-player">☕ Yuki</div>
+
+      <div class="hud-center">
+        <span id="hud-region-title" class="region-pill">1. Hakuba Train Station</span>
+        <span id="hud-vitality" class="vitality-pill">❄️ 35% · 🌱 15%</span>
+      </div>
+
+      <div class="hud-right">
+        <span class="stat-pill yen" id="hud-yen">¥520</span>
+        <span class="stat-pill" id="hud-cozy">☕ 100/125</span>
+        <span class="stat-pill player" id="hud-player">Yuki</span>
       </div>
     </header>
 
     <main class="workspace-shell">
-      <section class="canvas-stage" aria-label="Hakuba Overworld Viewport">
+      <section class="canvas-stage" aria-label="Hakuba Overworld Diorama">
         <div id="phaser-container"></div>
         <div id="cozy-toast" class="cozy-toast" role="status" aria-live="polite"></div>
       </section>
 
-      <aside class="bottom-bar" aria-label="Village Progress &amp; Quick Controls">
-        <div id="hud-quest-summary" class="quest-panel"></div>
+      <aside class="bottom-dock" aria-label="Quest Stamps &amp; Travel Actions">
+        <div id="hud-quest-summary" class="stamp-strip"></div>
 
-        <nav class="action-buttons" aria-label="Van &amp; Valley Actions">
-          <button type="button" id="btn-open-van" class="action-btn primary">
-            🚐 Van Cutaway &amp; Pop-Up Shop
+        <nav class="dock-actions" aria-label="Van &amp; Valley Actions">
+          <button type="button" id="btn-open-van" class="dock-btn primary">
+            <span aria-hidden="true">🚐</span>
+            <span>Van Studio</span>
           </button>
-          <button type="button" id="btn-open-steward" class="action-btn">
-            🧑‍🌾 Talk to Regional Steward
+          <button type="button" id="btn-open-steward" class="dock-btn">
+            <span aria-hidden="true">🏮</span>
+            <span>Steward</span>
           </button>
-          <button type="button" id="btn-open-atlas" class="action-btn">
-            🗺️ Hakuba 10-Region Atlas
+          <button type="button" id="btn-open-atlas" class="dock-btn">
+            <span aria-hidden="true">🗺️</span>
+            <span>Valley Map</span>
           </button>
-          <button type="button" id="btn-advance-day" class="action-btn">
-            🌙 Sleep in Van (Next Day)
+          <button type="button" id="btn-advance-day" class="dock-btn">
+            <span aria-hidden="true">🌙</span>
+            <span>Next Day</span>
           </button>
         </nav>
-
-        <div id="hud-log-feed" class="log-panel" aria-label="Recent Cozy Journal Entries"></div>
       </aside>
     </main>
 
-    <!-- 1. Character & Personality Selection Modal -->
+    <!-- 1. Character & Personality Selection ("Tokyo -> Hakuba Express Ticket") -->
     <dialog id="dialog-char-select" aria-labelledby="title-char-select">
-      <div class="dialog-header">
-        <h2 id="title-char-select">🏔️ Move from Tokyo to Hakuba — Create Your Van-Lifer</h2>
+      <div class="dialog-header ticket-header">
+        <div class="ticket-title-group">
+          <span class="ticket-badge">東京 → 白馬 • OITO LINE PASS</span>
+          <h2 id="title-char-select">Start Your Hakuba Van Life</h2>
+        </div>
       </div>
       <div id="char-select-body" class="dialog-content"></div>
     </dialog>
 
-    <!-- 2. Modular Van Interior Cutaway & Business Shop Modal -->
+    <!-- 2. Modular Van Interior Cutaway & Business Shop -->
     <dialog id="dialog-van-interior" aria-labelledby="title-van-interior">
       <div class="dialog-header">
-        <h2 id="title-van-interior">🚐 Camper Van Interior Grid &amp; Mobile Business</h2>
+        <h2 id="title-van-interior">🚐 Camper Van Studio</h2>
         <form method="dialog">
-          <button type="submit" value="close" class="close-btn" aria-label="Close Van Interior">✕ Close</button>
+          <button type="submit" value="close" class="close-btn" aria-label="Close Van Studio">✕</button>
         </form>
       </div>
       <div id="van-interior-body" class="dialog-content"></div>
     </dialog>
 
-    <!-- 3. Tactile Pop-Up Service Mini-Game Modal -->
+    <!-- 3. Tactile Pop-Up Service Mini-Game -->
     <dialog id="dialog-service-minigame" aria-labelledby="title-service-minigame">
       <div class="dialog-header">
-        <h2 id="title-service-minigame">🛎️ Van Pop-Up Window — Tactile Craft &amp; Service</h2>
+        <h2 id="title-service-minigame">☕ Pop-Up Window Service</h2>
         <form method="dialog">
-          <button type="submit" value="close" class="close-btn" aria-label="Close Service Window">✕ Close</button>
+          <button type="submit" value="close" class="close-btn" aria-label="Close Service Window">✕</button>
         </form>
       </div>
       <div id="service-minigame-body" class="dialog-content"></div>
     </dialog>
 
-    <!-- 4. Regional Steward Dialogue & Green Pivot Modal -->
+    <!-- 4. Regional Steward Dialogue & Green Pivot -->
     <dialog id="dialog-steward" aria-labelledby="title-steward">
       <div class="dialog-header">
-        <h2 id="title-steward">🏮 Regional Steward &amp; Restoration Progress</h2>
+        <h2 id="title-steward">🏮 Regional Steward</h2>
         <form method="dialog">
-          <button type="submit" value="close" class="close-btn" aria-label="Close Steward Dialogue">✕ Close</button>
+          <button type="submit" value="close" class="close-btn" aria-label="Close Steward">✕</button>
         </form>
       </div>
       <div id="steward-modal-body" class="dialog-content"></div>
     </dialog>
 
-    <!-- 5. Regional Restoration Puzzle Modal -->
+    <!-- 5. Regional Restoration Puzzle -->
     <dialog id="dialog-puzzle" aria-labelledby="title-puzzle">
       <div class="dialog-header">
-        <h2 id="title-puzzle">⚙️ Village Restoration Challenge</h2>
+        <h2 id="title-puzzle">⚙️ Village Restoration</h2>
         <form method="dialog">
-          <button type="submit" value="close" class="close-btn" aria-label="Close Puzzle">✕ Close</button>
+          <button type="submit" value="close" class="close-btn" aria-label="Close Puzzle">✕</button>
         </form>
       </div>
       <div id="puzzle-modal-body" class="dialog-content"></div>
     </dialog>
 
-    <!-- 6. Hakuba Valley 10-Region Atlas Modal -->
+    <!-- 6. Hakuba Valley 10-Region Atlas -->
     <dialog id="dialog-valley-atlas" aria-labelledby="title-valley-atlas">
       <div class="dialog-header">
-        <h2 id="title-valley-atlas">🗺️ Hakuba Valley 10-Subregion Restoration Atlas</h2>
+        <h2 id="title-valley-atlas">🗺️ Hakuba Valley Guidebook (10 Regions)</h2>
         <form method="dialog">
-          <button type="submit" value="close" class="close-btn" aria-label="Close Valley Atlas">✕ Close</button>
+          <button type="submit" value="close" class="close-btn" aria-label="Close Atlas">✕</button>
         </form>
       </div>
       <div id="valley-atlas-body" class="dialog-content"></div>
