@@ -935,8 +935,13 @@ export const resolvers = {
         });
       }
 
-      // Admin update path
-      if (!booking.userItemId && input.status === "approved") {
+      // Admin update path: only generate an image once when a booking is newly
+      // confirmed/approved and doesn't already have one. Changing dates or other
+      // fields on an already-approved booking never generates or replaces artwork.
+      const isNewlyApproved =
+        input.status === "approved" && booking.status !== "approved";
+
+      if (!booking.userItemId && isNewlyApproved) {
         try {
           const userItemId = await itemGenerator.generateItem(
             input.userId || booking.userId,
@@ -953,7 +958,7 @@ export const resolvers = {
         }
       }
 
-      if (input.status === "approved" && booking.status !== "approved") {
+      if (isNewlyApproved) {
         const bookingUser = await prisma.user.findUnique({
           where: { id: input.userId || booking.userId },
         });

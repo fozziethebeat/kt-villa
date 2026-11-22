@@ -146,6 +146,14 @@ export function EditAdminBookingForm({
   };
 
   const handleRegenerateArtwork = () => {
+    if (
+      currentItem?.image &&
+      !window.confirm(
+        `Replace the existing booking image for #${booking.id}? Guests normally keep their original confirmed booking emblem.`
+      )
+    ) {
+      return;
+    }
     regenerateImage({
       variables: {
         bookingId: booking.id,

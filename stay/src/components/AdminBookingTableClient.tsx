@@ -78,7 +78,18 @@ export function AdminBookingTableClient({ bookings }: { bookings: any[] }) {
     });
   };
 
-  const handleQuickRegenerate = (bookingId: number) => {
+  const handleQuickRegenerate = (
+    bookingId: number,
+    hasExistingImage: boolean
+  ) => {
+    if (
+      hasExistingImage &&
+      !window.confirm(
+        `Replace the existing booking image for #${bookingId}? Guests normally keep their original confirmed booking emblem.`
+      )
+    ) {
+      return;
+    }
     setRegeneratingId(bookingId);
     regenerateImage({
       variables: { bookingId },
@@ -323,8 +334,13 @@ export function AdminBookingTableClient({ bookings }: { bookings: any[] }) {
                       <button
                         type="button"
                         disabled={isRegen}
-                        onClick={() => handleQuickRegenerate(booking.id)}
-                        title="Regenerate fresh seasonal AI artwork"
+                        onClick={() =>
+                          handleQuickRegenerate(
+                            booking.id,
+                            Boolean(booking.item?.image)
+                          )
+                        }
+                        title="Intentionally replace booking artwork"
                         className="inline-flex items-center gap-1 rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-semibold text-foreground transition hover:bg-muted disabled:opacity-50"
                       >
                         <RefreshCw
