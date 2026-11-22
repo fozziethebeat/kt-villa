@@ -88,6 +88,8 @@ export function EditAdminBookingForm({
   const [endDate, setEndDate] = useState<Date>(() =>
     jstToCalendarDate(booking.endDate)
   );
+  const [startPickerOpen, setStartPickerOpen] = useState(false);
+  const [endPickerOpen, setEndPickerOpen] = useState(false);
   const [numGuests, setNumGuests] = useState<number>(booking.numGuests ?? 2);
   const [maxGuests, setMaxGuests] = useState<number>(booking.maxGuests ?? 4);
   const [withCat, setWithCat] = useState<boolean>(Boolean(booking.withCat));
@@ -290,7 +292,10 @@ export function EditAdminBookingForm({
                 <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Check-in Date (JST)
                 </label>
-                <Popover>
+                <Popover
+                  open={startPickerOpen}
+                  onOpenChange={setStartPickerOpen}
+                >
                   <PopoverTrigger asChild>
                     <Button
                       type="button"
@@ -301,11 +306,20 @@ export function EditAdminBookingForm({
                       {startDate ? format(startDate, "PPP") : "Pick start date"}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent
+                    className="w-auto rounded-2xl border-border bg-card p-2 shadow-xl"
+                    align="start"
+                  >
                     <Calendar
                       mode="single"
+                      defaultMonth={startDate}
                       selected={startDate}
-                      onSelect={(d) => d && setStartDate(d)}
+                      onSelect={(d) => {
+                        if (d) {
+                          setStartDate(d);
+                          setStartPickerOpen(false);
+                        }
+                      }}
                       initialFocus
                     />
                   </PopoverContent>
@@ -316,7 +330,7 @@ export function EditAdminBookingForm({
                 <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Check-out Date (JST)
                 </label>
-                <Popover>
+                <Popover open={endPickerOpen} onOpenChange={setEndPickerOpen}>
                   <PopoverTrigger asChild>
                     <Button
                       type="button"
@@ -327,11 +341,20 @@ export function EditAdminBookingForm({
                       {endDate ? format(endDate, "PPP") : "Pick end date"}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent
+                    className="w-auto rounded-2xl border-border bg-card p-2 shadow-xl"
+                    align="start"
+                  >
                     <Calendar
                       mode="single"
+                      defaultMonth={endDate || startDate}
                       selected={endDate}
-                      onSelect={(d) => d && setEndDate(d)}
+                      onSelect={(d) => {
+                        if (d) {
+                          setEndDate(d);
+                          setEndPickerOpen(false);
+                        }
+                      }}
                       initialFocus
                     />
                   </PopoverContent>
