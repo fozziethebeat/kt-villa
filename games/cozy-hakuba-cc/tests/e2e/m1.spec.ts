@@ -36,6 +36,7 @@ async function runCafe(page: Page, shotName: string) {
     await page.waitForTimeout(150);
   }
   await page.waitForFunction(() => (window as any).__hakuba.scene('Business').debugState().phase === 'service');
+  expect(await ev(page, H('h.music()'))).toBe('cafe');
   let shotTaken = false;
   for (const deadline = Date.now() + 150_000; Date.now() < deadline;) {
     const st = await ev<any>(page, H("h.scene('Business').debugState()"));
@@ -53,8 +54,26 @@ async function runCafe(page: Page, shotName: string) {
   await page.waitForTimeout(300);
 }
 
+
+/** Rotate a tray piece to `rot` (re-checking the real rotation) and drag it into place, retrying if a frame hitch eats an input. */
+async function packPiece(page: Page, scene: string, sol: { id: string; x: number; y: number; rot: number }) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    let info: any = await ev(page, H(`h.scene('${scene}').trayInfo('${sol.id}')`));
+    for (let i = 0; i < 8 && info.rot !== sol.rot; i++) {
+      await page.mouse.click(info.x + (info.first[0] + 0.5) * info.cell, info.y + (info.first[1] + 0.5) * info.cell, { button: 'right' });
+      await page.waitForTimeout(80);
+      info = await ev(page, H(`h.scene('${scene}').trayInfo('${sol.id}')`));
+    }
+    const [fx, fy] = info.first;
+    await drag(page, [info.x + (fx + 0.5) * info.cell, info.y + (fy + 0.5) * info.cell], [info.shelf.x + (sol.x + fx + 0.5) * info.shelf.cell, info.shelf.y + (sol.y + fy + 0.5) * info.shelf.cell]);
+    await page.waitForTimeout(120);
+    if (await ev(page, H(`h.scene('${scene}').isPlaced('${sol.id}')`))) return true;
+  }
+  return false;
+}
+
 test('M1 vertical slice: full station arc, van, café, luggage, board, sleep/save, seasons', async ({ page }) => {
-  test.setTimeout(240_000);
+  test.setTimeout(360_000); // the sampled band music (decode + streaming) slows this long run in headless Chromium
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/');
@@ -83,7 +102,7 @@ test('M1 vertical slice: full station arc, van, café, luggage, board, sleep/sav
   await page.waitForTimeout(2600);
   let s = await summary(page);
   expect(s.step).toBe('brochures');
-  expect(await ev(page, H('h.getState().player'))).toEqual({ name: 'Mika', pronouns: 'they', personality: 'planner' });
+  expect(await ev(page, H('h.getState().player'))).toEqual({ name: 'Mika', pronouns: 'they', personality: 'planner', look: 0 });
 
   // ---- step 1: fetch brochures
   await walkTo(page, 600, 560); await pressE(page);
@@ -148,19 +167,7 @@ test('M1 vertical slice: full station arc, van, café, luggage, board, sleep/sav
   await page.waitForTimeout(300);
   await shot(page, '11-luggage-start');
   const solution: any[] = await ev(page, H("h.scene('Luggage').solution()"));
-  for (const sol of solution) {
-    let info: any = await ev(page, H(`h.scene('Luggage').trayInfo('${sol.id}')`));
-    for (let r = info.rot; r !== sol.rot; r = (r + 1) % 4) {
-      await page.mouse.click(info.x + 4, info.y + 4, { button: 'right' });
-      await page.waitForTimeout(40);
-      info = await ev(page, H(`h.scene('Luggage').trayInfo('${sol.id}')`));
-    }
-    const [fx, fy] = info.first;
-    const from: [number, number] = [info.x + (fx + 0.5) * info.cell, info.y + (fy + 0.5) * info.cell];
-    const to: [number, number] = [info.shelf.x + (sol.x + fx + 0.5) * info.shelf.cell, info.shelf.y + (sol.y + fy + 0.5) * info.shelf.cell];
-    await drag(page, from, to);
-    expect(await ev(page, H(`h.scene('Luggage').isPlaced('${sol.id}')`)), `piece ${sol.id}`).toBe(true);
-  }
+  for (const sol of solution) expect(await packPiece(page, 'Luggage', sol), `piece ${sol.id}`).toBe(true);
   await page.waitForTimeout(400);
   await shot(page, '12-luggage-solved');
   await page.mouse.click(950, 410); // Done

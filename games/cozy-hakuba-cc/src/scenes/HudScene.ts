@@ -9,6 +9,7 @@ import { saveGame } from '../persist';
 import { openOverlay } from '../ui/widgets';
 import { REGION_SCENES } from './regions';
 import { rankDef } from '../sim/progression';
+import { audio, sfx } from '../audio';
 
 const VITALITY_NAMES = ['Dormant', 'Stirring', 'Awake', 'Thriving'];
 const PHASE_GLYPH: Record<string, string> = { morning: '☀', afternoon: '◐', evening: '☾', night: '★' };
@@ -45,6 +46,16 @@ export class HudScene extends Phaser.Scene {
     this.kizunaText = label(this, WIDTH - 218, 58, '', 20, PAL.noren);
     this.bagText = label(this, WIDTH - 26, 112, '', 15, PAL.ink, '700').setOrigin(1, 0).setStroke(PAL.snow, 5);
 
+    // Sound toggle (also the M key) and the pause menu (Esc).
+    paperPanel(this, WIDTH - 300, 14, 52, 44, PAL.snow);
+    const mute = label(this, WIDTH - 274, 36, audio.settings.muted ? '🔇' : '♪', 22, PAL.ink, '900').setOrigin(0.5);
+    const toggle = () => { mute.setText(audio.toggleMute() ? '🔇' : '♪'); };
+    this.add.zone(WIDTH - 300, 14, 52, 44).setOrigin(0).setInteractive({ useHandCursor: true }).on('pointerdown', toggle);
+    paperPanel(this, WIDTH - 300, 62, 52, 44, PAL.snow);
+    label(this, WIDTH - 274, 84, '☰', 22, PAL.ink, '900').setOrigin(0.5);
+    this.add.zone(WIDTH - 300, 62, 52, 44).setOrigin(0).setInteractive({ useHandCursor: true }).on('pointerdown', () => this.openPause());
+    this.input.keyboard!.on('keydown-M', toggle);
+
     // Region card (bottom-left)
     paperPanel(this, 16, 640, 400, 66);
     this.regionText = label(this, 34, 650, '', 20);
@@ -72,6 +83,7 @@ export class HudScene extends Phaser.Scene {
     store.update('endDay', (s) => { r = endDay(s); });
     const s = store.state;
     const saved = saveGame(s);
+    sfx(r.newSeason ? 'season' : 'sleep');
     this.showBanner(r.newSeason ? `${r.newSeason.label} begins\nDay ${s.day}` : `Good morning · Day ${s.day}${saved ? '  ·  saved' : ''}`);
     if (r.report) {
       const report = r.report;
@@ -82,6 +94,12 @@ export class HudScene extends Phaser.Scene {
         if (region?.sys.isActive()) openOverlay(region, 'SeasonReport', { report }, () => { if (ending) openOverlay(region, 'Festival'); });
       });
     }
+  }
+
+  /** Esc / ☰: pause menu over the current region (save, load, settings, title). */
+  openPause() {
+    const region = this.scene.get(REGION_SCENES[store.state.currentRegion]);
+    if (region?.sys.isActive()) openOverlay(region, 'Pause');
   }
 
   showBanner(text: string) {

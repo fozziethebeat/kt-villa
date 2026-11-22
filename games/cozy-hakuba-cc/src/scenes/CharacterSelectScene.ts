@@ -6,10 +6,12 @@ import type { PlayerProfile } from '../sim/types';
 import { art, label, paperGrain, paperPanel } from '../ui/art';
 import { button, type Button } from '../ui/widgets';
 import { FONT, PAL, WIDTH, hex } from '../theme';
+import { playerTexture } from './RegionScene';
 
-/** Name, pronouns and personality. Appearance variants arrive in M5 (default protagonist for now). */
+/** Name, pronouns, look (4 presets) and personality. */
 export class CharacterSelectScene extends Phaser.Scene {
-  private profile: PlayerProfile = { name: 'Aoi', pronouns: 'she', personality: 'outdoorsy' };
+  private profile: PlayerProfile = { name: 'Aoi', pronouns: 'she', personality: 'outdoorsy', look: 0 };
+  private portrait!: Phaser.GameObjects.Image;
   private nameText!: Phaser.GameObjects.Text;
   private caret!: Phaser.GameObjects.Rectangle;
   private pronounButtons: Record<string, Button> = {};
@@ -19,7 +21,7 @@ export class CharacterSelectScene extends Phaser.Scene {
   constructor() { super('CharacterSelect'); }
 
   create() {
-    this.profile = { name: 'Aoi', pronouns: 'she', personality: 'outdoorsy' };
+    this.profile = { name: 'Aoi', pronouns: 'she', personality: 'outdoorsy', look: 0 };
     this.cards = [];
     const { height } = this.scale;
     art(this, 0, 0, 'bg_mountains_winter', 0, 0).setDisplaySize(WIDTH, 460).setAlpha(0.55);
@@ -30,8 +32,10 @@ export class CharacterSelectScene extends Phaser.Scene {
     // Portrait
     paperPanel(this, 40, 120, 300, 440, PAL.snow);
     this.add.ellipse(190, 512, 130, 18, hex(PAL.ink), 0.12);
-    art(this, 190, 516, 'char_aoi').setScale(1.1);
-    label(this, 190, 528, 'Appearance options arrive later', 14, PAL.twilight, '500').setOrigin(0.5, 0);
+    this.portrait = art(this, 190, 516, 'char_aoi').setScale(1.1);
+    label(this, 190, 528, 'Look', 16, PAL.cedar).setOrigin(0.5, 0);
+    button(this, 110, 538, 56, 36, '◀', () => this.setLook(-1), PAL.paper, 16);
+    button(this, 270, 538, 56, 36, '▶', () => this.setLook(1), PAL.paper, 16);
 
     // Name
     label(this, 60, 136, 'Name', 18, PAL.cedar);
@@ -88,6 +92,11 @@ export class CharacterSelectScene extends Phaser.Scene {
   private refreshName() {
     this.nameText.setText(this.profile.name || ' ');
     this.caret.x = this.nameText.x + (this.profile.name ? this.nameText.width : 0) + 2;
+  }
+
+  private setLook(d: number) {
+    this.profile.look = (((this.profile.look ?? 0) + d) % 4 + 4) % 4;
+    this.portrait.setTexture(playerTexture(this.profile.look));
   }
 
   private setPronouns(p: PlayerProfile['pronouns']) {

@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import { art, label, paperGrain, paperPanel } from '../ui/art';
 import { PAL, hex } from '../theme';
-import { loadGame } from '../persist';
+import { listSlots, loadGame } from '../persist';
 import { store } from '../gameStore';
-import { button } from '../ui/widgets';
+import { button, openOverlay } from '../ui/widgets';
 import { REGION_SCENES } from './regions';
 
 export class TitleScene extends Phaser.Scene {
@@ -25,14 +25,16 @@ export class TitleScene extends Phaser.Scene {
     const panel = paperPanel(this, width / 2 - 330, 90, 660, 200);
     const title = label(this, width / 2, 150, 'Hakuba Wake-Up', 64, PAL.ink, '900').setOrigin(0.5);
     const sub = label(this, width / 2, 215, '白馬 ・ a cozy van-life revival', 24, PAL.cedar, '500').setOrigin(0.5);
-    const ver = label(this, width / 2, 258, 'M2 · garage & build', 16, PAL.twilight, '500').setOrigin(0.5);
+    const ver = label(this, width / 2, 258, 'M5 · prototype complete', 16, PAL.twilight, '500').setOrigin(0.5);
     for (const o of [panel, title, sub, ver]) { o.setAlpha(0); this.tweens.add({ targets: o, alpha: 1, duration: 700, delay: 300 }); }
 
     const save = loadGame();
     if (save) {
       button(this, width / 2, 350, 260, 60, `Continue · Day ${save.day}`, () => this.begin(save), PAL.lantern, 24);
       button(this, width / 2, 424, 260, 52, 'New game', () => this.begin(null), PAL.snow, 20);
-    } else {
+    }
+    if (listSlots().some((sl) => !sl.empty)) button(this, width / 2, save ? 488 : 446, 260, 48, 'Load game', () => openOverlay(this, 'Pause', { tab: 'load', fromTitle: true }), PAL.snow, 18);
+    if (!save) {
       const b = button(this, width / 2, 362, 240, 64, 'Start  ▶', () => this.begin(null), PAL.lantern, 28);
       this.tweens.add({ targets: b.container, scale: { from: 1, to: 1.03 }, duration: 900, yoyo: true, repeat: -1 });
     }

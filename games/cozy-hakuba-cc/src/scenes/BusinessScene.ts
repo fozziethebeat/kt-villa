@@ -7,6 +7,8 @@ import { isSnowy } from '../sim/seasons';
 import { art, label, paperGrain, paperPanel } from '../ui/art';
 import { button, closeOverlay, starsText } from '../ui/widgets';
 import { PAL, WIDTH, hex } from '../theme';
+import { sfx } from '../audio';
+import { music } from '../music/player';
 
 const SLOTS = [250, 490, 730, 970];
 const CUSTOMER_Y = 430;
@@ -78,6 +80,10 @@ export class BusinessScene extends Phaser.Scene {
     label(this, 24, 12, `${archetypeDef(CONTENT, this.plan.archetype).name} · open for business`, 26, PAL.snow, '900');
     this.earnedText = label(this, WIDTH - 24, 16, '', 22, PAL.lantern, '900').setOrigin(1, 0);
 
+    // The café song builds with the shift: keys + guitar during prep, the groove when doors open, then fuller.
+    music.play('cafe', 0, 1.2);
+    this.musicLayer = 0;
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => music.backToRegion());
     this.nextPrep();
     this.input.keyboard!.on('keydown-SPACE', () => this.prepHit());
     this.input.keyboard!.on('keydown', (e: KeyboardEvent) => {
@@ -138,6 +144,7 @@ Bowls ready: ${this.bowls}`);
     this.pours++;
     if (hit) this.hits++;
     if (perfect) this.perfects++;
+    sfx(hit ? 'hit' : 'oops');
     this.bowls = 0; // recomputed from the running tally so the solar bonus is applied once
     this.bowls = prepYield('bowl', this.hits, this.perfects, this.pours, this.plan) - (this.pours < b.cuts ? this.plan.stockBonus : 0);
     const t = label(this, BOARD.x + this.knifeX, BOARD.y + 30, perfect ? 'Perfect strands!' : hit ? 'Clean cut' : 'A bit thick…', 24, hit ? PAL.cedar : PAL.noren, '900').setOrigin(0.5).setDepth(20);
@@ -182,6 +189,7 @@ Bowls ready: ${this.bowls}`);
     this.pours++;
     if (hit) this.hits++;
     if (perfect) this.perfects++;
+    sfx(hit ? 'hit' : 'oops');
     this.cups = prepYield('cup', this.hits, this.perfects, this.pours, this.plan) - (this.pours < b.pours ? this.plan.stockBonus : 0);
     const t = label(this, DRIPPER.x, DRIPPER.y - 150, perfect ? 'Perfect bloom!' : hit ? 'Nice pour' : 'A bit splashy…', 24, hit ? PAL.cedar : PAL.noren, '900').setOrigin(0.5).setDepth(20);
     this.tweens.add({ targets: t, y: t.y - 30, alpha: 0, duration: 800, onComplete: () => t.destroy() });
@@ -198,6 +206,7 @@ Bowls ready: ${this.bowls}`);
   private startService() {
     this.phase = 'service';
     this.elapsed = 0;
+    this.setMusicLayer(1);
     this.prepLayer?.destroy();
     this.serviceLayer = this.add.container(0, 0);
     this.selRing = this.add.ellipse(0, CUSTOMER_Y + 4, 120, 26, hex(PAL.lantern), 0.6).setVisible(false);
@@ -273,6 +282,7 @@ Bowls ready: ${this.bowls}`);
     const o: ServeOutcome = { idx: target.plan.idx, item: pid, stars, waitedFrac };
     this.outcomes.push(o);
     const r = priceFor(this.plan, target.plan, o);
+    sfx(r.happy ? 'coin' : 'oops');
     this.earned += r.yen + r.tip;
     const msg = r.happy ? `♥ ¥${r.yen}${r.tip ? ` +${r.tip} tip` : ''}` : `¥${r.yen} · not quite what I wanted`;
     const t = label(this, SLOTS[target.slot], CUSTOMER_Y - 270, msg, 18, r.happy ? PAL.cedar : PAL.noren, '900').setOrigin(0.5).setStroke(PAL.snow, 5);
@@ -286,6 +296,9 @@ Bowls ready: ${this.bowls}`);
     if (this.selected === l) this.select(null);
     this.tweens.add({ targets: l.sprite, x: -200, alpha: 0.4, duration: 700, ease: 'Sine.easeIn', onComplete: () => l.sprite.destroy() });
   }
+
+  private musicLayer = 0;
+  private setMusicLayer(n: number) { if (n !== this.musicLayer) { this.musicLayer = n; music.play('cafe', n); } }
 
   update(_t: number, dtMs: number) {
     const dt = Math.min(dtMs, 50) / 1000;
@@ -320,6 +333,9 @@ Bowls ready: ${this.bowls}`);
     if (this.phase !== 'service') return;
     this.elapsed += dt;
     this.clockBar.width = 600 * Math.max(0, 1 - this.elapsed / this.plan.durationSec);
+    // Full pocket after a quarter of service, the lead hook from halfway.
+    const frac = this.elapsed / this.plan.durationSec;
+    this.setMusicLayer(frac >= 0.5 ? 3 : frac >= 0.25 ? 2 : 1);
     while (this.nextIdx < this.plan.customers.length && this.plan.customers[this.nextIdx].arriveAt <= this.elapsed) {
       if (!this.spawn(this.plan.customers[this.nextIdx])) break; // window full: they wait off-screen
       this.nextIdx++;

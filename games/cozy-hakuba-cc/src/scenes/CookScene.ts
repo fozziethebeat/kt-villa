@@ -7,6 +7,7 @@ import { recordResult } from '../sim/quests';
 import { label, paperGrain, paperPanel } from '../ui/art';
 import { button, closeOverlay, overlayBackdrop, resultPanel, type QuestGameData } from '../ui/widgets';
 import { PAL, hex } from '../theme';
+import { sfx } from '../audio';
 
 const BAR = { x: 300, y: 330, w: 680 };
 
@@ -59,6 +60,7 @@ export class CookScene extends Phaser.Scene {
     if (this.done || this.k >= this.steps.length) return;
     const hit = this.offset() <= this.window();
     if (hit) this.hits++;
+    sfx(hit ? 'hit' : 'oops');
     const t = label(this, BAR.x + this.pos, BAR.y - 60, hit ? (this.offset() <= this.window() / 3 ? 'Perfect!' : 'Nice!') : 'Oops…', 22, hit ? PAL.cedar : PAL.noren, '900').setOrigin(0.5).setDepth(10);
     this.tweens.add({ targets: t, y: t.y - 30, alpha: 0, duration: 700, onComplete: () => t.destroy() });
     this.k++;

@@ -88,6 +88,9 @@ test('M3 north arm: terminal, Echoland, Happo Pond, Iwatake by real input, attra
   await done(page, 'HappoTerminal');
   await talk(page); await pressE(page); await pressE(page); // turn in, then read + close the next intro
   expect((await summary(page)).vitality.happo_terminal).toBe(1);
+  // Regression: fetch items for a later step must appear as soon as that step starts (not only on scene load).
+  expect(await ev<boolean[]>(page, H("h.scene('HappoTerminal').items.map((i) => i.visible)"))).toEqual([true, true, true, true]);
+  await shot(page, '02b-ic-cards-visible');
   await fetchAll(page, [[300, 580], [470, 690], [790, 690], [1000, 610]]);
   expect((await summary(page)).inventory.ic_card).toBe(4);
   await talk(page); await pressE(page); await pressE(page); // turn in, then read + close the next intro

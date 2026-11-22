@@ -1,0 +1,206 @@
+{
+ "id": "guitar_neck",
+ "source": "FreePats FSBS Electric Guitar, jazz (neck) tone",
+ "license": "CC0-1.0",
+ "url": "https://freepats.zenvoid.org/ElectricGuitar/clean-electric-guitar.html",
+ "zones": [
+  {
+   "url": "samples/guitar_neck/59_v127_r1.wav",
+   "root": 59,
+   "lo": 0,
+   "hi": 60,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/guitar_neck/59_v127_r2.wav",
+   "root": 59,
+   "lo": 0,
+   "hi": 60,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/guitar_neck/61_v127_r1.wav",
+   "root": 61,
+   "lo": 61,
+   "hi": 62,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/guitar_neck/61_v127_r2.wav",
+   "root": 61,
+   "lo": 61,
+   "hi": 62,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/guitar_neck/64_v127_r1.wav",
+   "root": 64,
+   "lo": 63,
+   "hi": 65,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/guitar_neck/64_v127_r2.wav",
+   "root": 64,
+   "lo": 63,
+   "hi": 65,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/guitar_neck/67_v127_r1.wav",
+   "root": 67,
+   "lo": 66,
+   "hi": 69,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/guitar_neck/67_v127_r2.wav",
+   "root": 67,
+   "lo": 66,
+   "hi": 69,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/guitar_neck/71_v127_r1.wav",
+   "root": 71,
+   "lo": 70,
+   "hi": 71,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/guitar_neck/71_v127_r2.wav",
+   "root": 71,
+   "lo": 70,
+   "hi": 71,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/guitar_neck/72_v127_r1.wav",
+   "root": 72,
+   "lo": 72,
+   "hi": 73,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/guitar_neck/72_v127_r2.wav",
+   "root": 72,
+   "lo": 72,
+   "hi": 73,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/guitar_neck/74_v127_r1.wav",
+   "root": 74,
+   "lo": 74,
+   "hi": 75,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/guitar_neck/74_v127_r2.wav",
+   "root": 74,
+   "lo": 74,
+   "hi": 75,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/guitar_neck/77_v127_r1.wav",
+   "root": 77,
+   "lo": 76,
+   "hi": 78,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/guitar_neck/77_v127_r2.wav",
+   "root": 77,
+   "lo": 76,
+   "hi": 78,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/guitar_neck/80_v127_r1.wav",
+   "root": 80,
+   "lo": 79,
+   "hi": 81,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/guitar_neck/80_v127_r2.wav",
+   "root": 80,
+   "lo": 79,
+   "hi": 81,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/guitar_neck/82_v127_r1.wav",
+   "root": 82,
+   "lo": 82,
+   "hi": 83,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/guitar_neck/82_v127_r2.wav",
+   "root": 82,
+   "lo": 82,
+   "hi": 83,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/guitar_neck/85_v127_r1.wav",
+   "root": 85,
+   "lo": 84,
+   "hi": 127,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/guitar_neck/85_v127_r2.wav",
+   "root": 85,
+   "lo": 84,
+   "hi": 127,
+   "velLo": 1,
+   "velHi": 127,
+   "rr": 2
+  }
+ ]
+}

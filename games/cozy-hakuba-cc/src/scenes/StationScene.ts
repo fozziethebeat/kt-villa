@@ -81,11 +81,11 @@ export class StationScene extends RegionScene {
     openOverlay(this, 'Luggage');
   }
 
-  protected onSync(s: GameState, reason: string) {
+  protected onSync(s: GameState) {
     const v = s.regions.station.vitality;
     this.lanterns.setVisible(v >= 3);
     const step = currentStep(s, 'station');
-    this.brochures.forEach((b, i) => { if (!this.brochureAvailable(i)) b.setVisible(false); else if (reason === 'debug' || reason === 'init' || reason === 'load') b.setVisible(true).setAlpha(1); });
+    this.brochures.forEach((b, i) => { if (!this.brochureAvailable(i)) b.setVisible(false); else if (!b.visible) b.setVisible(true).setAlpha(1); });
     this.door.setAlpha(step?.id === 'luggage' ? 1 : 0.0);
     this.board.setVisible(s.unlocks.includes('revival_board'));
   }

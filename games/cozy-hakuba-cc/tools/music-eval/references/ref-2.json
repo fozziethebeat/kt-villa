@@ -1,0 +1,64 @@
+{
+  "uri": "https://www.youtube.com/watch?v=hH7VWQRbyxo",
+  "artist": "tiny yawn",
+  "title": "花筏 (Hanaikada)",
+  "tempo_bpm": 100,
+  "meter": "4/4",
+  "key_or_mode": "A Major (diatonic Ionian with heavy reliance on IVmaj7 and vi7 modal colors)",
+  "song_form": "Drum Intro (2 bars) - Clean Intro (4 bars) - Full Band Intro (8 bars) - Verse 1 (8 bars) - Instrumental Interlude (8 bars) - Verse 2 (8 bars) - Chorus 1 (8 bars) - Post-Chorus (4 bars) - Verse 3 (8 bars) - Guitar Solo / Instrumental Build (8 bars) - Chorus 2 (8 bars) - Climax Bridge (8 bars) - Breakdown (8 bars) - Final Chorus & Outro (20 bars)",
+  "instrumentation": [
+    {
+      "instrument": "Clean Lead Electric Guitar",
+      "role": "Primary harmonic texture, twinkly arpeggiated counterpoint, and intro/interlude melodic hooks",
+      "tone": "Bright single-coil neck/middle pickup (Telecaster or Jazzmaster character) into a crisp clean tube amp (Fender Twin or Roland JC-120 style) with light compression, subtle stereo chorus/modulation, and short plate reverb",
+      "playing_style": "Crisp pick attack mixed with hammer-ons, pull-offs, and open-string math-rock/Midwest-emo-style arpeggios emphasizing maj7, add9, and sus2 upper extensions"
+    },
+    {
+      "instrument": "Rhythm / Overdriven Electric Guitar",
+      "role": "Harmonic foundation, dynamic lift in choruses, and midrange melodic lead in the instrumental bridge",
+      "tone": "Warm, midrange-focused tube overdrive (Tube Screamer or Blues Driver style pushing a clean-to-edge-of-breakup amp) with tight low end and smooth, non-fizzy upper mids",
+      "playing_style": "Sparse syncopated chord stabs and quiet cleans in verses; wide open-voiced strumming and sustained chordal layers in choruses; singing single-note melodic phrasing with gentle vibrato during the 2:20 solo"
+    },
+    {
+      "instrument": "Electric Bass",
+      "role": "Low-end anchor and melodic rhythmic bridge between kick drum and guitars",
+      "tone": "Warm, woody fingerstyle Jazz or Precision Bass with clear low-mid definition, smooth fundamental, and subtle preamp saturation",
+      "playing_style": "Active yet tasteful lines combining root-locking with the kick on chorus downbeats, scalar walk-ups, octave leaps, and syncopated anticipations on the off-beats"
+    },
+    {
+      "instrument": "Acoustic Drum Kit",
+      "role": "Driving rhythmic engine, dynamic arc controller, and intro hook",
+      "tone": "Natural, tight studio room sound; crisp medium-high snare with lively snap and ghost-note sensitivity; punchy, controlled kick; shimmering, non-harsh hi-hats and crash/ride cymbals",
+      "playing_style": "Starts solo with an articulated 16th-note hi-hat and ghost-note snare groove; tight syncopated verse pockets with quick open-hat barks; driving 8th-note ride/crash wash in choruses; drops to sparse kick/rim/cymbal swells in the breakdown"
+    }
+  ],
+  "guitars": "Two complementary electric guitar layers create the entire harmonic and textural width. Guitar 1 uses a bright single-coil guitar with crisp pick articulation, gentle compression, and subtle short delay/plate reverb to weave sparkling arpeggios, dyads, and high-register add9/maj7 voicings. Guitar 2 stays clean and restrained in verses—playing sparse syncopated voicings—before engaging a warm, organic midrange overdrive in choruses and post-chorus swells, playing open-chord voicings (avoiding sterile bar-chord power chugs) and a melodic, lyrical solo line at 2:20.",
+  "bass": "Fingerstyle electric bass with a round, articulate, slightly woody tone that sits cleanly under the guitars without sub-bass mud or fuzz. In the intro and verses, it plays melodic, lyrical basslines with diatonic passing tones, octave pops, and syncopated push-notes anticipating bar lines (especially on the 'and' of beat 4). In choruses, it locks tightly onto driving eighth-note root motion with strategic walk-ups between IV, V, and vi.",
+  "drums": "Tight, organic acoustic kit recorded in a controlled Japanese indie studio room. The song opens with 2 bars of solo drums establishing a crisp, slightly linear-feeling groove built around tight kick-snare interplay, subtle snare ghost notes, and articulated 16th-note hi-hat phrasing. Verses maintain a nimble, forward-leaning pocket with crisp cross-rhythmic kick accents and quick hi-hat barks. Choruses open onto a wash of crash/ride cymbals with firm backbeats on 2 and 4. At 3:18, the drums pull back into a minimal breakdown groove before surging back into the final chorus.",
+  "keys_and_synths": "None. The arrangement is strictly a four-piece guitar, bass, and drums band; all harmonic richness and atmospheric sustain come from ringing guitar chord extensions (maj9, add9, sus4) and room/plate ambience rather than keyboards or synth pads.",
+  "harmony": "Rooted firmly in diatonic A Major with nostalgic, bittersweet Japanese indie/alt-rock voice leading. The core progression revolves around IVmaj7 - V6 - iii7 - vi7 (Dmaj9 - Eadd9 - C#m7 - F#m9) and chorus lifts using IVmaj7 - V - vi7 - I (Dmaj7 - E - F#m7 - A) with frequent slash-chord bass walk-ups (such as V/iii or V6 passing motion). Chords routinely retain ringing open B and E strings to create suspended 2nd, 6th, and major 7th colors without chromaticism or abrupt modulations.",
+  "melody": "Lyrical, stepwise vocal-oriented phrasing paired with bright guitar counter-melodies. To write an original instrumental in this style, lead guitar melodies should stay within A Major / F# natural minor pentatonic with expressive lingering on the major 7th (G#) and 9th (B) over the IVmaj7 chord, using wide interval leaps (4ths, 5ths, and octaves) at phrase peaks followed by gentle descending scalar resolutions.",
+  "rhythm_and_groove": "A steady 100 BPM in 4/4 that feels buoyant and driving rather than heavy or sluggish. The groove relies on crisp 16th-note subdivisions in the hi-hat and clean guitar arpeggios contrasted against an 8th-note harmonic pulse in the bass and rhythm guitar. Syncopated anticipations—pushing chord changes and bass roots an eighth note ahead of beats 1 and 3—give the music its characteristic bittersweet, forward-tumbling momentum.",
+  "mix_and_production": {
+    "reverb_and_space": "Natural, controlled studio room sound on the drums paired with moderate plate reverb and subtle short delay on the clean lead guitar. Mix stays upfront and dry enough for pick attacks and snare ghost notes to cut clearly.",
+    "distortion_and_saturation": "Dynamic contrast between sparkling clean verse tones and warm, mid-focused tube overdrive in choruses, glued together by gentle console/tape saturation without harsh clipping or fuzz.",
+    "stereo_width": "Wide dual-guitar stereo staging with clean arpeggios and overdriven chord layers panned left and right; kick, snare, bass, and solo lines anchored firmly in the center; moderately wide drum overheads.",
+    "brightness_and_eq": "Airy, clear upper-mid and treble presence highlighting single-coil guitar shimmer and crisp cymbal articulation (3–10 kHz), balanced by clean low-mids and a tight, non-boomy bass foundation (60–120 Hz).",
+    "compression_and_loudness": "Moderate bus and parallel drum compression that preserves transient snap and clear volume jumps between sparse verses, full-band choruses, and the 3:18 breakdown; avoids brickwall limiting.",
+    "dynamics_and_arrangement": "Classic Japanese alt-rock tension-and-release arc: solo drums (2 bars) -> clean guitar/bass (4 bars) -> full band bloom -> dynamic verse pullback -> wide overdriven choruses -> melodic guitar solo build -> climactic push -> sudden stripped-back breakdown -> soaring, sustained final chorus."
+  },
+  "signature_traits": [
+    "Twinkly, single-coil clean guitar arpeggios rich in maj7, add9, and sus2 open-string voicings",
+    "Nostalgic diatonic progressions centered on IVmaj7 - V - iii7 - vi7 with smooth bass walk-ups",
+    "Crisp, articulated acoustic drum grooves featuring ghost notes and syncopated 16th-note hi-hat phrasing",
+    "Melodic fingerstyle basslines using octave jumps and off-beat anticipations",
+    "Sharp dynamic contrast between clean, airy verses, wide overdriven choruses, and a sudden quiet breakdown before the final climax"
+  ],
+  "what_it_is_not": [
+    "Washed-out ambient synth pads or shoegaze wall-of-noise fuzz",
+    "Chiptune, synthwave arps, or lo-fi hip-hop textures",
+    "EDM sidechain pumping, four-on-the-floor electronic kicks, or programmed trap hi-hats",
+    "Scooped-mid metalcore palm-muted chugs or high-gain djent distortion",
+    "Over-quantized, brickwall-compressed pop-punk loudness or drenched cathedral reverb"
+  ]
+}

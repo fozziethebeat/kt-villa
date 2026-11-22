@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { FONT, PAL, hex } from '../theme';
 import { label, paperPanel } from './art';
+import { sfx } from '../audio';
 
 export interface Button {
   container: Phaser.GameObjects.Container;
@@ -18,7 +19,7 @@ export function button(scene: Phaser.Scene, x: number, y: number, w: number, h: 
   c.setInteractive({ useHandCursor: true });
   c.on('pointerover', () => { if (enabled) { panel.y = -h / 2 - 3; t.y = -3; } });
   c.on('pointerout', () => { panel.y = -h / 2; t.y = 0; });
-  c.on('pointerdown', () => { if (enabled) onClick(); });
+  c.on('pointerdown', () => { if (enabled) { sfx('click'); onClick(); } });
   return {
     container: c,
     text: t,
@@ -62,6 +63,7 @@ export function closeOverlay(scene: Phaser.Scene): void {
 
 /** The "you did it" card shown when a mini-game finishes, with a Done button that closes the overlay. */
 export function resultPanel(scene: Phaser.Scene, title: string, stars: number, text: string): void {
+  sfx('quest');
   const p = paperPanel(scene, 320, 210, 640, 260, PAL.snow).setDepth(100);
   label(scene, 640, 246, `${title}\n${starsText(stars)}`, 32, PAL.ink, '900').setOrigin(0.5, 0).setAlign('center').setDepth(101);
   label(scene, 640, 350, text, 18, PAL.twilight, '500').setOrigin(0.5, 0).setAlign('center').setWordWrapWidth(580).setDepth(101);

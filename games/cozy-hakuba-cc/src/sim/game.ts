@@ -12,7 +12,7 @@ export function createNewGame(opts: { seed?: number; player?: Partial<PlayerProf
   const regions: GameState['regions'] = {};
   for (const r of content.regions) regions[r.id] = { vitality: 0, questStep: 0, kodamaFound: 0 };
   const state: GameState = {
-    version: 5,
+    version: 6,
     seed,
     rngState: seed,
     player: { ...DEFAULT_PLAYER, ...opts.player },
@@ -26,6 +26,7 @@ export function createNewGame(opts: { seed?: number; player?: Partial<PlayerProf
     secondaryArchetype: null,
     helpers: [],
     ending: null,
+    sponsored: [],
     currentRegion: 'station',
     regions,
     inventory: {},

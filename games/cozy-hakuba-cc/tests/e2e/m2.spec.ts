@@ -190,7 +190,7 @@ test('M2 garage & build: drive to Snow Peak, tent, parts, soba build, garage Tie
   await waitForScene(page, 'Garage');
   await page.mouse.click(540, 122 + 128 + 57); // Upgrade to Tier 1
   await page.waitForTimeout(150);
-  await page.mouse.click(1170, 392 + 92 + 34); // Buy ski box (second roof module)
+  await page.mouse.click(1170, 428 + 84 + 34); // Buy ski box (second roof module)
   await page.waitForTimeout(150);
   s = await summary(page);
   expect(s.chassis).toBe(1);

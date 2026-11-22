@@ -6,6 +6,7 @@ import { recordResult } from '../sim/quests';
 import { label, paperGrain, paperPanel } from '../ui/art';
 import { button, closeOverlay, overlayBackdrop, resultPanel, type Button, type QuestGameData } from '../ui/widgets';
 import { PAL, hex } from '../theme';
+import { sfx } from '../audio';
 
 export const PANO = { x: 60, y: 96, scale: 1160 / 1400 };
 
@@ -119,6 +120,7 @@ export class ComposeScene extends Phaser.Scene {
     if (!evaluate(this.p, this.fx, this.fy).solved || this.done) return;
     this.done = true;
     this.cameras.main.flash(250, 255, 255, 255);
+    sfx('shutter');
     const stars = this.stars();
     store.update('minigame', (s) => recordResult(s, this.data0.stepId, stars, this.data0.item));
     resultPanel(this, 'Click!', stars, 'That photo will bring people to Lake Aoki. Show Ren!');

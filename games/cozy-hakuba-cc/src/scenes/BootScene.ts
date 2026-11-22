@@ -18,6 +18,12 @@ export class BootScene extends Phaser.Scene {
   }
 
   create() {
+    // Tiny generated textures for weather particles (snow, petals, fireflies).
+    const g = this.add.graphics();
+    g.fillStyle(0xffffff, 1).fillCircle(6, 6, 5); g.generateTexture('fx_snow', 12, 12); g.clear();
+    g.fillStyle(0xe89fb0, 1).fillEllipse(7, 4, 12, 7); g.generateTexture('fx_petal', 14, 8); g.clear();
+    g.fillStyle(0xfff3a0, 0.35).fillCircle(10, 10, 10); g.fillStyle(0xfff7c2, 1).fillCircle(10, 10, 3.5); g.generateTexture('fx_glow', 20, 20);
+    g.destroy();
     this.scene.start('Title');
   }
 }

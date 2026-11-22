@@ -5,6 +5,7 @@ import { CONTENT } from '../sim/content';
 import { createNewGame, grant, jumpToSeason, phase, season, setVitality, spendAction, staminaLeft } from '../sim/game';
 import { currentStep, fastForwardRegion } from '../sim/quests';
 import { simulateSeason } from '../sim/balance';
+import { music } from '../music/player';
 import { drive, openRoad } from '../sim/travel';
 import { REGION_SCENES, goToRegion, switchTo } from '../scenes/regions';
 import type { ActionKind, ScoredSeason, SeasonId, Vitality } from '../sim/types';
@@ -38,6 +39,10 @@ export function installDebugApi(game: Phaser.Game) {
     fastForward: (region: string) => store.update('debug', (st) => fastForwardRegion(st, region)),
     balance: (season: ScoredSeason, days = 7) => simulateSeason(store.state, season, days),
     regionScene: () => REGION_SCENES[store.state.currentRegion],
+    /** Which song the music player is on (or waiting to start). */
+    music: () => music.current,
+    /** Sample-bank status and sampled/synth note counts for the playing song. */
+    musicInfo: () => music.debugInfo,
     /** Restore today's stamina (testing only). */
     /** Turn the one-step-per-day pacing on/off (tests play whole arcs in one sitting). */
     setPacing: (on: boolean) => { (CONTENT.tuning as { stepCooldownDays: number }).stepCooldownDays = on ? 1 : 0; },

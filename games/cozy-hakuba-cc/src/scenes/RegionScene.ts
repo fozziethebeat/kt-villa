@@ -1,11 +1,14 @@
 import Phaser from 'phaser';
 import { store } from '../gameStore';
-import { mod, saturationFor, season } from '../sim/game';
+import { mod, phase, saturationFor, season } from '../sim/game';
 import { currentStep, findKodama, kodamaAvailable, talk } from '../sim/quests';
 import { isSnowy } from '../sim/seasons';
 import type { GameState, QuestType, Vitality } from '../sim/types';
 import { art, label, paperPanel } from '../ui/art';
 import { openOverlay } from '../ui/widgets';
+import { audio, sfx } from '../audio';
+import { music } from '../music/player';
+import { liveryTint } from '../sim/extras';
 import { GROUND_BOTTOM, GROUND_TOP, PAL, WIDTH, hex } from '../theme';
 
 export const INTERACT_RANGE = 70;
@@ -60,6 +63,10 @@ export abstract class RegionScene extends Phaser.Scene {
   private sat = { value: 0 };
   private lastSeason = '';
   private lastVitality = -1;
+  private weather: Phaser.GameObjects.Particles.ParticleEmitter | null = null;
+  private weatherKind = '';
+  private light!: Phaser.GameObjects.Rectangle;
+  private lastPhase = '';
 
   /** Add landmarks, items and region-specific interactables. Called during create(), before the first sync. */
   protected abstract build(): void;
@@ -69,7 +76,7 @@ export abstract class RegionScene extends Phaser.Scene {
   create() {
     // Scene objects are recreated on every start; reset per-run arrays.
     this.snowCaps = []; this.kodama = []; this.crowd = []; this.interactables = []; this.sceneryFilters = []; this.vanRoof = [];
-    this.lastSeason = ''; this.lastVitality = -1; this.dialogOpen = false;
+    this.lastSeason = ''; this.lastVitality = -1; this.dialogOpen = false; this.weather = null; this.weatherKind = ''; this.lastPhase = '';
     const L = this.layout;
     const s = store.state;
     s.currentRegion = L.region;
@@ -102,7 +109,7 @@ export abstract class RegionScene extends Phaser.Scene {
       this.kodama.push(k);
     });
 
-    this.player = art(this, L.playerStart[0], L.playerStart[1], 'char_aoi');
+    this.player = art(this, L.playerStart[0], L.playerStart[1], playerTexture(s.player.look));
 
     this.interactables.push({ id: 'keyperson', x: kx, y: ky, visible: () => true, prompt: () => `E  Talk to ${L.keyPerson.name}`, act: () => this.talkKeyPerson(), promptLift: 150 });
     this.interactables.push({ id: 'van', x: vx, y: vy, visible: () => true, prompt: () => `E  ${L.vanPrompt ?? 'Enter your van'}`, act: () => openOverlay(this, 'VanInterior'), promptLift: 215 });
@@ -111,6 +118,8 @@ export abstract class RegionScene extends Phaser.Scene {
     }));
     this.build();
 
+    // Time-of-day light: a translucent wash over the world, under prompts and dialog.
+    this.light = this.add.rectangle(0, 0, WIDTH, 720, 0x000000, 1).setOrigin(0).setDepth(4500).setAlpha(0);
     this.prompt = this.makePrompt();
     this.dialog = this.makeDialog();
 
@@ -118,6 +127,7 @@ export abstract class RegionScene extends Phaser.Scene {
     this.keys = kb.addKeys({ up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT', w: 'W', a: 'A', s: 'S', d: 'D', e: 'E', space: 'SPACE' }) as typeof this.keys;
     this.keys.e.on('down', () => this.interact());
     this.keys.space.on('down', () => this.interact());
+    kb.on('keydown-ESC', () => { if (this.dialogOpen) this.closeDialog(); else openOverlay(this, 'Pause'); });
 
     this.sat.value = saturationFor(s.regions[L.region].vitality);
     this.applySaturation();
@@ -173,9 +183,10 @@ export abstract class RegionScene extends Phaser.Scene {
   private greetKodama(i: number) {
     const k = this.kodama[i];
     store.update('kodama', (s) => findKodama(s, this.layout.region, i));
+    sfx('kodama');
     this.tweens.killTweensOf(k);
     this.tweens.add({ targets: k, scale: 0.7, alpha: 0, y: k.y - 30, duration: 600, ease: 'Back.easeIn', onComplete: () => k.setVisible(false) });
-    this.toast('A kodama giggles and vanishes into the cedars.  +1 絆');
+    this.toast('A kodama giggles and vanishes into the cedars.  +1 絆', null);
   }
 
   protected talkKeyPerson() {
@@ -183,12 +194,15 @@ export abstract class RegionScene extends Phaser.Scene {
     store.update('quest', (s) => { r = talk(s, this.layout.region); });
     this.openDialog(this.layout.keyPerson.name, r.text);
     if (r.kind === 'complete') {
+      sfx('quest');
       const v = store.state.regions[this.layout.region].vitality;
       this.game.events.emit('banner', `${r.step.title} complete!\n${VITALITY_NAMES[v]}  ·  +${r.kizuna} 絆`);
     }
   }
 
-  protected toast(text: string) {
+  /** Floating feedback text over the player (pickups make a chime). */
+  protected toast(text: string, sound: 'pickup' | null = 'pickup') {
+    if (sound) sfx(sound);
     const t = label(this, this.player.x, this.player.y - 110, text, 18, PAL.ink).setOrigin(0.5).setDepth(7000).setStroke(PAL.snow, 6);
     this.tweens.add({ targets: t, y: t.y - 30, alpha: 0, delay: 700, duration: 700, onComplete: () => t.destroy() });
   }
@@ -204,6 +218,8 @@ export abstract class RegionScene extends Phaser.Scene {
       this.bg.setTexture(snowy ? 'bg_mountains_winter' : 'bg_mountains_green');
       this.ground.setTexture(snowy ? 'ground_winter' : 'ground_green');
       this.snowCaps.forEach((c) => c.setVisible(snowy));
+      audio.ambience(s.regions[region].vitality === 0 ? 'quiet' : snowy ? 'winter' : 'green');
+      music.region(snowy, s.regions[region].vitality);
       this.rebuildCrowd(s);
     }
     const v = s.regions[region].vitality as Vitality;
@@ -213,18 +229,42 @@ export abstract class RegionScene extends Phaser.Scene {
       else this.tweens.add({ targets: this.sat, value: target, duration: 1800, ease: 'Sine.easeInOut', onUpdate: () => this.applySaturation() });
       if (v > this.lastVitality && this.lastVitality >= 0 && reason === 'quest') this.cameras.main.flash(500, 255, 240, 200);
     }
-    if (v !== this.lastVitality) { this.lastVitality = v; this.rebuildCrowd(s); }
+    if (v !== this.lastVitality) { this.lastVitality = v; this.rebuildCrowd(s); audio.ambience(v === 0 ? 'quiet' : snowy ? 'winter' : 'green'); music.region(snowy, v); }
 
     const step = currentStep(s, region);
     this.badge.setVisible(!!step);
     if (step) this.badge.setTexture(BADGE_FOR[step.type]);
     this.kodama.forEach((k, i) => { if (this.kodamaVisible(i)) { if (!k.visible) k.setVisible(true).setAlpha(1).setScale(0.5); } else if (reason !== 'kodama') k.setVisible(false); });
     this.syncVan(s);
+    this.syncAtmosphere(s, snowy);
     this.onSync(s, reason);
   }
 
+  /** Weather by season (+ fireflies on green evenings) and a light wash by time of day. */
+  private syncAtmosphere(s: GameState, snowy: boolean) {
+    const ph = phase(s);
+    const late = ph === 'evening' || ph === 'night';
+    const kind = snowy ? 'snow' : late ? 'fireflies' : 'petals';
+    if (kind !== this.weatherKind) {
+      this.weatherKind = kind;
+      this.weather?.destroy();
+      const cfg: Phaser.Types.GameObjects.Particles.ParticleEmitterConfig =
+        kind === 'snow' ? { x: { min: -40, max: WIDTH + 40 }, y: -10, lifespan: 9000, speedY: { min: 28, max: 60 }, speedX: { min: -14, max: 14 }, scale: { min: 0.35, max: 0.9 }, alpha: { start: 0.9, end: 0.6 }, frequency: 90 }
+        : kind === 'petals' ? { x: { min: -40, max: WIDTH }, y: -10, lifespan: 11000, speedY: { min: 18, max: 34 }, speedX: { min: 8, max: 30 }, rotate: { min: 0, max: 360 }, scale: { min: 0.5, max: 1 }, alpha: 0.75, frequency: 700 }
+        : { x: { min: 40, max: WIDTH - 40 }, y: { min: 420, max: 700 }, lifespan: 4000, speedX: { min: -12, max: 12 }, speedY: { min: -10, max: 6 }, scale: { start: 0.6, end: 1.1 }, alpha: { start: 1, end: 0 }, frequency: 350 };
+      this.weather = this.add.particles(0, 0, kind === 'snow' ? 'fx_snow' : kind === 'petals' ? 'fx_petal' : 'fx_glow', cfg).setDepth(4400);
+    }
+    if (ph !== this.lastPhase) {
+      this.lastPhase = ph;
+      music.setDark({ morning: 0, afternoon: 0.1, evening: 0.45, night: 0.8 }[ph]);
+      const [color, alpha] = { morning: [0xfff1d6, 0], afternoon: [0xfff1d6, 0.06], evening: [0xe8823a, 0.2], night: [0x26335c, 0.3] }[ph] as [number, number];
+      this.light.setFillStyle(color, 1);
+      this.tweens.add({ targets: this.light, alpha, duration: 1200 });
+    }
+  }
+
   private syncVan(s: GameState) {
-    if (!this.layout.vanTexture) this.vanImg.setTexture(vanTexture(s.chassisTier));
+    if (!this.layout.vanTexture) this.vanImg.setTexture(vanTexture(s.chassisTier)).setTint(liveryTint(s));
     this.vanKit.setVisible(s.chassisTier === 1 && !this.layout.vanTexture);
     this.vanRoof.forEach((r) => r.destroy());
     if (this.layout.vanTexture) { this.vanRoof = []; return; }
@@ -303,6 +343,11 @@ export abstract class RegionScene extends Phaser.Scene {
 
   /** Debug-only: teleport the player. */
   warp(x: number, y: number) { this.player.setPosition(x, y); }
+}
+
+/** Player sprite for an appearance preset (look 0 is the original Aoi). */
+export function playerTexture(look = 0): string {
+  return look > 0 ? `char_player_${look}` : 'char_aoi';
 }
 
 /** Van exterior per chassis tier (Tier 1 = Kei Van + the snow-tire/rack kit overlay). */

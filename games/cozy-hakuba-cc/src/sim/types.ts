@@ -111,6 +111,8 @@ export interface BusinessDef {
   menuSlots: number;
   ranks: RankDef[];
   helperCost: number;
+  liveries: { id: string; name: string; tint: string; price: number }[];
+  sponsorship: { base: number; step: number; buzz: number };
   comfortStaminaDivisor: number;
   comfortStaminaCap: number;
 }
@@ -154,6 +156,8 @@ export interface PlayerProfile {
   name: string;
   pronouns: 'she' | 'he' | 'they';
   personality: string;
+  /** Appearance preset 0–3 (M5). */
+  look?: number;
 }
 
 export interface RegionState { vitality: Vitality; questStep: number; kodamaFound: number; /** Day from which the next step can be turned in. */ readyDay?: number }
@@ -163,7 +167,7 @@ export interface Placement { moduleId: string; x: number; y: number; rot: number
 export interface ShiftSummary { day: number; region: string; served: number; missed: number; soldOut: number; yen: number; tips: number; reputation: number }
 
 export interface GameState {
-  version: 5;
+  version: 6;
   seed: number;
   rngState: number;
   player: PlayerProfile;
@@ -180,6 +184,8 @@ export interface GameState {
   helpers: string[];
   /** Set when the Hakuba Valley Festival ending is reached. */
   ending: { day: number } | null;
+  /** Regions whose festival the van sponsors (late-game yen sink: +buzz every season). */
+  sponsored: string[];
   currentRegion: string;
   regions: Record<string, RegionState>;
   inventory: Record<string, number>;
@@ -187,7 +193,7 @@ export interface GameState {
   unlocks: string[];
   /** Best star rating per quest step / mini-game id. */
   stars: Record<string, number>;
-  van: { grid: { w: number; h: number }; owned: string[]; placed: Placement[]; roof: string[] };
+  van: { grid: { w: number; h: number }; owned: string[]; placed: Placement[]; roof: string[]; livery?: string; liveries?: string[] };
   /** `menu` null = automatic (primary archetype first, then whatever the van can make). */
   business: { reputation: number; served: number; shifts: number; last: ShiftSummary | null; menu: string[] | null };
   /** Running totals for the current season (reset when a season ends). */

@@ -1,0 +1,388 @@
+{
+ "id": "drums",
+ "source": "Karoryfer Gogodze Phu Vol II (mic blend by us)",
+ "license": "CC0-1.0",
+ "url": "https://shop.karoryfer.com/pages/free-gogodze-phu-vol-ii",
+ "drums": {
+  "k": [
+   {
+    "url": "samples/drums/k_v2_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 60,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/k_v2_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 60,
+    "rr": 2
+   },
+   {
+    "url": "samples/drums/k_v4_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 61,
+    "velHi": 100,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/k_v4_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 61,
+    "velHi": 100,
+    "rr": 2
+   },
+   {
+    "url": "samples/drums/k_v6_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 101,
+    "velHi": 127,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/k_v6_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 101,
+    "velHi": 127,
+    "rr": 2
+   }
+  ],
+  "s": [
+   {
+    "url": "samples/drums/s_v3_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 70,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/s_v3_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 70,
+    "rr": 2
+   },
+   {
+    "url": "samples/drums/s_v5_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 71,
+    "velHi": 105,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/s_v5_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 71,
+    "velHi": 105,
+    "rr": 2
+   },
+   {
+    "url": "samples/drums/s_v6_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 106,
+    "velHi": 127,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/s_v6_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 106,
+    "velHi": 127,
+    "rr": 2
+   }
+  ],
+  "g": [
+   {
+    "url": "samples/drums/g_v1_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 127,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/g_v1_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 127,
+    "rr": 2
+   }
+  ],
+  "h": [
+   {
+    "url": "samples/drums/h_v2_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 75,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/h_v2_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 75,
+    "rr": 2
+   },
+   {
+    "url": "samples/drums/h_v4_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 76,
+    "velHi": 127,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/h_v4_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 76,
+    "velHi": 127,
+    "rr": 2
+   }
+  ],
+  "o": [
+   {
+    "url": "samples/drums/o_v3_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 90,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/o_v3_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 90,
+    "rr": 2
+   },
+   {
+    "url": "samples/drums/o_v5_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 91,
+    "velHi": 127,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/o_v5_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 91,
+    "velHi": 127,
+    "rr": 2
+   }
+  ],
+  "r": [
+   {
+    "url": "samples/drums/r_v2_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 80,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/r_v2_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 80,
+    "rr": 2
+   },
+   {
+    "url": "samples/drums/r_v4_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 81,
+    "velHi": 127,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/r_v4_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 81,
+    "velHi": 127,
+    "rr": 2
+   }
+  ],
+  "c": [
+   {
+    "url": "samples/drums/c_v5_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 127,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/c_v5_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 127,
+    "rr": 2
+   }
+  ],
+  "t": [
+   {
+    "url": "samples/drums/t_v3_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 90,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/t_v3_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 90,
+    "rr": 2
+   },
+   {
+    "url": "samples/drums/t_v5_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 91,
+    "velHi": 127,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/t_v5_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 91,
+    "velHi": 127,
+    "rr": 2
+   }
+  ],
+  "m": [
+   {
+    "url": "samples/drums/m_v3_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 90,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/m_v3_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 90,
+    "rr": 2
+   },
+   {
+    "url": "samples/drums/m_v5_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 91,
+    "velHi": 127,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/m_v5_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 91,
+    "velHi": 127,
+    "rr": 2
+   }
+  ],
+  "f": [
+   {
+    "url": "samples/drums/f_v3_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 90,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/f_v3_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 1,
+    "velHi": 90,
+    "rr": 2
+   },
+   {
+    "url": "samples/drums/f_v5_r1.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 91,
+    "velHi": 127,
+    "rr": 1
+   },
+   {
+    "url": "samples/drums/f_v5_r2.wav",
+    "root": 60,
+    "lo": 0,
+    "hi": 127,
+    "velLo": 91,
+    "velHi": 127,
+    "rr": 2
+   }
+  ]
+ }
+}

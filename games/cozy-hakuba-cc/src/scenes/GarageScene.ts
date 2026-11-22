@@ -6,10 +6,12 @@ import { art, label, paperGrain, paperPanel } from '../ui/art';
 import { button, closeOverlay, overlayBackdrop } from '../ui/widgets';
 import { PAL, hex } from '../theme';
 import { vanTexture } from './RegionScene';
+import { buyLivery, liveryTint } from '../sim/extras';
 
 /** Takumi's garage: chassis tiers (traversal + roof slots) and roof modules. */
 export class GarageScene extends Phaser.Scene {
   private msg = '';
+  private paintInfo?: Phaser.GameObjects.Text;
   constructor() { super('Garage'); }
 
   create() {
@@ -48,8 +50,22 @@ export class GarageScene extends Phaser.Scene {
     paperPanel(this, 670, 92, 580, 600, PAL.snow);
     const slots = roofSlots(s);
     label(this, 692, 108, `Roof rack: ${s.van.roof.length}/${slots} slots used`, 20, PAL.ink, '900');
-    art(this, 960, 372, vanTexture(s.chassisTier)).setScale(0.5 * 1.2);
-    if (s.chassisTier === 1) art(this, 960, 372, 'van_kit_t1').setScale(0.5 * 1.2);
+    art(this, 960, 362, vanTexture(s.chassisTier)).setScale(0.5 * 1.2).setTint(liveryTint(s));
+    if (s.chassisTier === 1) art(this, 960, 362, 'van_kit_t1').setScale(0.5 * 1.2);
+    // Paint job (cosmetic yen sink).
+    label(this, 692, 380, 'Paint', 15, PAL.twilight, '700');
+    CONTENT.business.liveries.forEach((l, i) => {
+      const x = 760 + i * 52, owned = (s.van.liveries ?? ['cream']).includes(l.id), on = (s.van.livery ?? 'cream') === l.id;
+      const c = this.add.circle(x, 390, 17, parseInt(l.tint.slice(1), 16)).setStrokeStyle(on ? 5 : 2.5, hex(on ? PAL.lantern : PAL.ink)).setInteractive({ useHandCursor: true });
+      c.on('pointerover', () => this.paintInfo?.setText(`${l.name}${owned ? '' : `  ·  ¥${l.price.toLocaleString('en-US')}`}`));
+      c.on('pointerdown', () => {
+        let r!: ReturnType<typeof buyLivery>;
+        store.update('garage', (st) => { r = buyLivery(st, l.id); });
+        this.msg = r.ok ? `${l.name} it is. Takumi admires the fresh coat.` : 'Not enough yen for that paint yet.';
+        this.draw();
+      });
+    });
+    this.paintInfo = label(this, 1080, 380, '', 14, PAL.ink, '700');
     const g = this.add.graphics();
     for (let i = 0; i < Math.max(slots, 2); i++) {
       const x = 960 - (Math.max(slots, 2) * 112) / 2 + i * 112, y = 138;
@@ -59,7 +75,7 @@ export class GarageScene extends Phaser.Scene {
       else label(this, x + 50, y + 28, i < slots ? 'empty' : 'needs rack', 13, PAL.twilight, '500').setOrigin(0.5);
     }
     CONTENT.modules.filter((m) => m.category === 'roof').forEach((m, i) => {
-      const y = 392 + i * 92;
+      const y = 428 + i * 84;
       art(this, 730, y + 34, `mod_${m.id}`, 0.5, 0.5).setScale(0.36);
       label(this, 786, y + 4, `${m.name}  ·  ¥${priceWithMods(s, m.price).toLocaleString('en-US')}`, 17, PAL.ink, '900');
       label(this, 786, y + 30, m.blurb, 14, PAL.twilight, '500').setWordWrapWidth(300);

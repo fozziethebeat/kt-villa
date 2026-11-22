@@ -7,6 +7,7 @@ import { isSnowy } from '../sim/seasons';
 import { art, label, paperGrain, paperPanel } from '../ui/art';
 import { button, closeOverlay, overlayBackdrop, starsText, type Button } from '../ui/widgets';
 import { PAL, hex } from '../theme';
+import { sfx } from '../audio';
 
 export const TENT_GRID = { x: 80, y: 104, cell: 52 };
 const CORNER_COLOR: Record<Corner['id'], number> = { nw: 0x4f8f8a, ne: 0xc8553d, sw: 0x6c7fa3, se: 0x7a5ea8 };
@@ -91,6 +92,7 @@ export class TentScene extends Phaser.Scene {
     const r = checkPeg(this.puzzle, c);
     if (!r.ok) { this.msg.setText(REASON[r.reason]); return; }
     this.msg.setText('');
+    sfx('hit');
     this.pegs = { ...this.pegs, [r.corner.id]: c };
     this.redraw();
   }

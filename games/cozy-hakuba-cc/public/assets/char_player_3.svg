@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56" height="88" viewBox="0 0 56 88">
+  <!-- Player look 4: amber beanie + grey parka, deeper skin tone -->
+  <ellipse cx="28" cy="84" rx="16" ry="4" fill="#3b3a4a" opacity="0.2"/>
+  <rect x="17" y="62" width="9" height="20" rx="3" fill="#3b3a4a"/><rect x="30" y="62" width="9" height="20" rx="3" fill="#3b3a4a"/>
+  <path d="M12 66 Q10 40 28 38 Q46 40 44 66Z" fill="#8a96a8" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <line x1="28" y1="42" x2="28" y2="66" stroke="#3b3a4a" stroke-width="2"/>
+  <circle cx="28" cy="26" r="13" fill="#b98563" stroke="#3b3a4a" stroke-width="2.5"/>
+  <path d="M15 24 Q14 18 18 15 L17 27 Q15 26 15 24Z M41 24 Q42 18 38 15 L39 27 Q41 26 41 24Z" fill="#1f1a18"/>
+  <path d="M14 22 Q16 6 28 6 Q40 6 42 22Z" fill="#f2a541" stroke="#3b3a4a" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="28" cy="5" r="4" fill="#fbfaf6" stroke="#3b3a4a" stroke-width="2"/>
+  <circle cx="23" cy="27" r="1.8" fill="#3b3a4a"/><circle cx="33" cy="27" r="1.8" fill="#3b3a4a"/>
+  <path d="M25 32 Q28 34 31 32" stroke="#3b3a4a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <circle cx="20" cy="31" r="2" fill="#e89fb0" opacity="0.7"/><circle cx="36" cy="31" r="2" fill="#e89fb0" opacity="0.7"/>
+</svg>

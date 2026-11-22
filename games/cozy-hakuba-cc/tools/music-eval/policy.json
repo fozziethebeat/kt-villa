@@ -1,0 +1,17 @@
+{
+  "note": "Judging policy layered over style-profile.* (kept separate so rebuilding the profile from the reference videos doesn't wipe it). Set 2026-11-21 by the user: genre FEEL matters most; be generous about realism limits of hand-sequenced, sample + synth production.",
+  "weights": {
+    "genre_authenticity_and_vibe": 25,
+    "harmony_and_chord_colour": 15,
+    "melody_and_lead_hooks": 14,
+    "arrangement_and_dynamics": 12,
+    "drums_and_groove": 11,
+    "guitar_tone_and_parts": 10,
+    "bass_foundation": 7,
+    "mix_clarity_and_space": 6
+  },
+  "constraints": "HOW THIS MUSIC IS MADE (and why you must be generous about realism): every note is hand-written in a score and played by an in-game engine from a small set of one-shot recorded samples (one clean guitar, one neck guitar, one bass, one drum kit) plus a little synthesis, in real time in a web browser. There are no human performances, no multi-tracked takes, no real amps or studio. It WILL sound sequenced to some degree; a studio band recording is not reachable and is not the target. Do NOT mark criteria down just because it is recognisably sequenced or sample-based ('MIDI feel', 'programmed', 'not a live band'): treat that as a given baseline. Instead judge the FEEL of the genre: does it evoke the mood, harmonic language, rhythmic feel, part-writing and arrangement arc of these bands, so a fan would think of them? Reserve low scores for things that break the feel (wrong genre tropes, red flags, muddy or broken mix, stiff writing that a composer could fix in the score). The guitar timbre is FIXED by the sample library: its recorded clean guitar can come across as glassy or electric-piano-like even when completely unprocessed (verified 2026-11-21 with the raw samples). Treat the clean, lead and overdriven parts as the guitars they are written as, judge them on their PARTS (picking patterns, strums, voicings, phrasing), and do not suggest replacing or re-recording the instrument.",
+  "scale": "0–10 where 3 = off-genre, 5 = right ballpark but bland, 7 = clearly evokes the genre's feel within these production limits, 9 = the feel is spot-on and a fan would immediately think of these bands.",
+  "calibration": "2026-11-21: the user judged winter v11 (parts pass) better than v8; under this policy the scores were v8 5.5, v11 5.2 (pre-timbre note). Raw guitar samples alone were identified as 'FM electric piano / synth pluck'.",
+  "layers": "LAYERED GAME LOOP: each song is one loop heard at four restoration layers (L0 sparse … L3 full band); the game fades layers in and out live, so the big quiet-versus-full contrast lives BETWEEN layers, not inside one render. Judge dynamics inside a render by phrasing, drop-outs and section contrast, and only trigger the 'brickwall / zero dynamic breathing room' red flag if the MEASURED levels below show a crushed master (peak-to-loudness under about 9 dB)."
+}

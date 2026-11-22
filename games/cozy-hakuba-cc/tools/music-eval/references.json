@@ -1,0 +1,8 @@
+{
+  "note": "Reference tracks that define the target sound. Edit this list and re-run `npm run music:profile` to rebuild the rubric.",
+  "videos": [
+    "https://www.youtube.com/watch?v=kGY6N9DL4Jw",
+    "https://www.youtube.com/watch?v=hH7VWQRbyxo",
+    "https://www.youtube.com/watch?v=x17_yDVIe3g"
+  ]
+}

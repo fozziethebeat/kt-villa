@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hakuba Music Audition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#f4ecdc; --ink:#3b3a4a; --card:#fbfaf6; --muted:#7a7686; --line:#e2d8c4; --accent:#f2a541; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#23222b; --ink:#ece6d8; --card:#2e2d38; --muted:#a29eae; --line:#3d3b49; } }
+    :root[data-theme="dark"] { --bg:#23222b; --ink:#ece6d8; --card:#2e2d38; --muted:#a29eae; --line:#3d3b49; }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:'Zen Maru Gothic', system-ui, sans-serif; }
+    main { max-width:760px; margin:0 auto; padding:28px 16px 48px; }
+    h1 { margin:0 0 4px; font-size:28px; } p { color:var(--muted); margin:4px 0 16px; line-height:1.5; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px; margin:14px 0; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    button { font:inherit; border:2px solid var(--ink); background:var(--card); color:var(--ink); border-radius:12px; padding:8px 16px; cursor:pointer; }
+    button.on { background:var(--accent); }
+    input[type=range] { width:220px; }
+    label { font-weight:700; }
+    .layers { color:var(--muted); font-size:14px; }
+    #status { font-size:14px; color:var(--muted); min-height:1.4em; }
+    ul { margin:6px 0 0; padding-left:20px; color:var(--muted); font-size:14px; line-height:1.6; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Music audition</h1>
+    <p id="songInfo">Hand-written scores played by the in-game synth rig. The tape sampler (B) is the chosen house sound.</p>
+    <div class="card">
+      <div class="row"><label>Song</label>
+        <button data-song="winter" class="on">Winter region</button>
+        <button data-song="green">Green region</button>
+        <button data-song="cafe">Café shift (7/8)</button>
+      </div>
+      <div class="row" style="margin-top:14px"><label>Sound</label>
+        <button data-variant="band" class="on">Band (dry, live) · current</button>
+        <button data-variant="tape">Tape sampler (first draft)</button>
+        <button data-variant="synth">Synth (first draft)</button>
+      </div>
+      <div class="row" style="margin-top:14px"><label for="layers">Region state</label>
+        <input id="layers" type="range" min="0" max="3" step="1" value="3" />
+        <span id="layerName" class="layers"></span>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button id="play">▶ Play (loops)</button>
+        <button id="stop">■ Stop</button>
+      </div>
+      <div id="status"></div>
+    </div>
+    <div class="card">
+      <label>What to listen for</label>
+      <ul>
+        <li>Green region: brighter and jangly. Does it feel like summer next to the winter loop?</li>
+        <li>Café shift: math rock in 7/8 (2+2+3). Engaging while serving, or too busy?</li>
+        <li>Region layers: Dormant (pad + bell) → Stirring (+ guitar) → Awake (+ bass, drums) → Thriving (+ lead, fuzz wall). The café always plays everything.</li>
+        <li>Anything harsh, too busy, too quiet, or out of place?</li>
+      </ul>
+    </div>
+  </main>
+  <script type="module" src="/src/audition.ts"></script>
+</body>
+</html>

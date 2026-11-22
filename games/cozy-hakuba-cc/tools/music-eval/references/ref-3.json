@@ -1,0 +1,78 @@
+{
+  "uri": "https://www.youtube.com/watch?v=x17_yDVIe3g",
+  "artist": "Gestalt Girl (ゲシュタルト乙女)",
+  "title": "再見",
+  "tempo_bpm": 80,
+  "meter": "4/4",
+  "key_or_mode": "D major (Ionian)",
+  "song_form": "Intro (0:00-0:31, 8 bars acoustic strum with late bass/pad swell) -> Verse 1 (0:31-0:56, 8 bars intimate acoustic + sparse bass) -> Verse 2 (0:57-1:22, 8 bars full rhythm section enters with clean arpeggios and tight drums) -> Chorus 1 (1:22-2:01, 12 bars full-band dynamic lift) -> Instrumental Interlude (2:01-2:25, 8 bars clean guitar & bell-like keys drop-down) -> Chorus 2 (2:25-3:04, 12 bars) -> Bridge (3:04-3:28, 8 bars rising harmonic tension and rhythmic build) -> Final Chorus & Tag (3:28-4:08, 12+ bars peak intensity with repeated refrain) -> Outro (4:08-4:58, stripped-back acoustic, clean arpeggios, and ringing D major decay)",
+  "instrumentation": [
+    {
+      "instrument": "Steel-String Acoustic Guitar",
+      "role": "Primary harmonic bed and rhythmic pulse in intro, verses, and outro; subtly glues the chorus strumming",
+      "tone": "Bright, crisp bronze-string shimmer with clear pick transient and controlled low-mid body; close-miked natural room sheen",
+      "playing_style": "Steady open-position 8th/16th-note strumming using D-shape open voicings with ringing add9 and sus2 extensions"
+    },
+    {
+      "instrument": "Clean Electric Guitar (Single-Coil)",
+      "role": "Melodic arpeggios, shimmering upper-register counter-lines, and the signature interlude motif",
+      "tone": "Glassy, chime-heavy Telecaster/Stratocaster-style clean tone with light optical compression, subtle tape/plate reverb, and zero harshness",
+      "playing_style": "Precision picked arpeggios, diatonic dyads, and delicate upper-neck fills during verses, interlude, and outro"
+    },
+    {
+      "instrument": "Overdriven Electric Guitar",
+      "role": "Chorus and bridge harmonic weight, wall-of-sound warmth, and soaring lead counter-melodies",
+      "tone": "Warm, mid-forward tube overdrive (low-to-medium gain, Vox/Fender-amp breakup character) with smooth high-end roll-off rather than fizzy modern distortion",
+      "playing_style": "Full open/power-chord strums in choruses layered alongside a higher-register lead guitar playing lyrical single-note and octave counter-melodies"
+    },
+    {
+      "instrument": "Electric Bass",
+      "role": "Grounded sub-harmonic anchor that shifts from sparse sustain to driving melodic propulsion",
+      "tone": "Round, woody P-Bass/J-Bass fingerstyle tone with warm low-mids, rolled-back clank, and gentle pick/finger attack",
+      "playing_style": "Whole/half-note roots and fifths in Verse 1, evolving into locked 8th-note root-pushing grooves with scalar passing tones and octave turnarounds in choruses"
+    },
+    {
+      "instrument": "Acoustic Drum Kit",
+      "role": "Dynamic architecture controller—tight pocket keeper in verses/interlude, expansive wash in choruses",
+      "tone": "Natural, slightly damped indie-rock kit: dry, punchy snare with focused 200-500 Hz body and crisp wire snap; tight, controlled kick; warm, shimmering cymbals",
+      "playing_style": "Closed hi-hat 8th-note pocket with ghosted snare accents in Verse 2 and interlude; half-open hi-hat/ride wash, solid 2-and-4 backbeat, and melodic tom fills in choruses"
+    },
+    {
+      "instrument": "Electric Piano / Bell-Chime Keys",
+      "role": "Subtle atmospheric glue and delicate upper-register sparkle in the interlude and outro",
+      "tone": "Warm Rhodes-style electric piano blended with a glassy celesta/glockenspiel-like bell attack",
+      "playing_style": "Sustained warm chord pads in soft transitions and crisp upper-octave arpeggiated doublings over the clean guitar in the interlude and outro"
+    }
+  ],
+  "guitars": "Dual-layered guitar architecture balancing acoustic clarity and indie-rock electric warmth. An acoustic guitar carries open D-major voicings (rich with open B and E strings creating add9/sus2 halos) throughout the quiet sections. A single-coil clean electric guitar weaves intricate, rhythmically crisp arpeggios and upper-register melodic hooks (especially prominent in Verse 2, the 2:01 interlude, and the outro), running through light compression and modest plate reverb/short delay. In the choruses and bridge, warm tube-overdriven electric guitars enter—pushed into smooth, mid-focused breakup rather than scooped fuzz or high-gain metal—while a second electric guitar adds lyrical, delay-kissed single-note lead counter-melodies on top.",
+  "bass": "Warm, rounded fingerstyle electric bass sitting cleanly beneath the guitars without metallic fret buzz. In Verse 1 it breathes with sustained whole and half notes on chord roots and occasional fifths. Once the drums enter in Verse 2 and the chorus, it shifts to steady, grounded 8th-note motion locked tightly to the kick drum, connecting chord changes via diatonic passing notes (C#, E, F#) and gentle octave jumps at 4-bar phrase boundaries.",
+  "drums": "Organic, minimally processed live indie drum kit. Verse 1 is drumless; Verse 2 introduces a tight, dry pocket with steady 8th notes on closed hi-hats, a punchy damped snare on beats 2 and 4, and restrained kick patterns. Choruses expand onto crash-rides and sloshy half-open hi-hats with emphatic snare backbeats and short, musical tom fills leading into downbeats. The interlude pulls back to crisp, dry hi-hat/snare stick control before ramping up again through the bridge.",
+  "keys_and_synths": "Restrained and tasteful—never dominating the rock band core. A soft electric piano/Rhodes pad provides gentle low-mid warmth during early swells, while a bright, bell-like keyboard timbre (Rhodes tine/glockenspiel hybrid) reinforces the clean electric guitar arpeggio during the 2:01 instrumental interlude and the stripped-back 4:08 outro.",
+  "harmony": "Anchored firmly in D major (Ionian) with classic Japanese indie/alt-rock emotional voicings (maj7, add9, sus2, m7) that soften cadence resolutions. Verse progressions cycle smoothly through diatonic pillars such as I - V/vii (A/C#) - vi7 (Bm7) - IVmaj7 (Gmaj7) - V (A). The chorus deploys a soaring Royal Road-derived lift: IVmaj7 (Gmaj7) -> V (A) -> iii7 (F#m7) -> vi7 (Bm7) -> ii7 (Em7) -> V (A) -> I (D), creating bittersweet momentum without leaving the diatonic home key. The bridge leans into minor-tinted pre-dominant tension (Em7 - F#m7 - Gmaj7 - A) before resolving cleanly back into the final chorus.",
+  "melody": "To build an instrumental melody in this style, combine a lyrical, singable upper-register lead line with interlocking clean guitar arpeggios. Melodic phrases tend to enter slightly ahead of or behind the barline (syncopated eighth-note pickups), favor stepwise scalar motion within D major pentatonic and Ionian (highlighting the 3rd F#, 5th A, and 9th E over chords), and leap expressively up a sixth or octave at chorus peaks before stepping gently down toward the tonic or 3rd.",
+  "rhythm_and_groove": "A steady, unhurried 80 BPM 4/4 pulse that feels simultaneously nostalgic and driving because of continuous 8th-note subdivisions in the acoustic strumming, bass, and hi-hats. Subtle 16th-note syncopations in the acoustic strum and clean guitar picking keep the slow tempo buoyant. The groove avoids heavy funk swing or rigid quantization—it breathes naturally like a live four-piece band with subtle push into chorus downbeats.",
+  "mix_and_production": {
+    "reverb_and_space": "Controlled, intimate-to-medium studio space. Verses are noticeably dry and close, using short room ambience on drums and subtle plate reverb on clean guitars. Choruses open up with slightly longer hall/plate tails on lead guitar and cymbals, while still keeping the rhythm section articulate and uncluttered.",
+    "distortion_and_saturation": "Gentle, organic analog-style saturation. Guitars use warm amp-like overdrive with smooth midrange density; bass and drums remain clean with just enough tape/console glue to avoid sterile digital edges. Zero harsh fuzz, bitcrushing, or aggressive clipping.",
+    "stereo_width": "Focused center anchor (kick, snare, bass, main acoustic body) framed by wide-panned clean arpeggio guitars, stereo-spread overdriven chorus guitars, and panned drum overheads/toms. Transitions feel dramatically wider when the overdriven guitars enter on chorus downbeats.",
+    "brightness_and_eq": "Balanced, natural midrange warmth with crisp acoustic string sheen and clear cymbal air around 8-12 kHz, avoiding piercing 3-5 kHz harshness or sub-bass boom below 60 Hz.",
+    "compression_and_loudness": "Moderate, musical dynamic compression preserving transient life on acoustic strums and snare hits. Not brickwalled; clear loudness contrast exists between the quiet acoustic intro/outro, tight verses, and full-bodied choruses.",
+    "dynamics_and_arrangement": "Textbook Japanese indie-rock terraced dynamics: sparse acoustic opening -> full-band tight verse -> expansive overdriven chorus -> delicate clean-guitar/chime interlude drop -> climbing bridge -> soaring final chorus -> gentle acoustic/clean-arpeggio fadeout."
+  },
+  "signature_traits": [
+    "Bright, open-string D-major acoustic strumming layered seamlessly beneath indie electric guitars",
+    "J-rock 'Royal Road' (IV - V - iii - vi) chorus harmony colored with maj7 and add9 voicings",
+    "Clean single-coil electric guitar arpeggios paired with bell-like Rhodes/glockenspiel accents in breakdowns",
+    "Warm, mid-focused tube overdrive in choruses rather than heavy distortion or fuzz",
+    "Tight, dry 80 BPM drum pocket that switches smoothly to a crash-ride wash in choruses",
+    "Sharp dynamic contrast between intimate drumless/sparse passages and wide full-band peaks"
+  ],
+  "what_it_is_not": [
+    "Washed-out shoegaze ambient pads or cavernous infinite reverb",
+    "EDM sidechain pumping, four-on-the-floor kicks, or electronic risers",
+    "Chiptune, 8-bit synths, or glitchy hyperpop vocal/instrument chops",
+    "High-gain scooped metal distortion, djent chugs, or fuzzy stoner-rock riffs",
+    "Heavy trap hi-hat rolls or booming 808 sub-bass",
+    "Complex odd-meter math-rock time signature shifts (stays strictly in accessible 4/4)"
+  ]
+}

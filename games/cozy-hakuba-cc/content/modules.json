@@ -12,5 +12,7 @@
   {"id": "roof_planter", "name": "Roof Planter", "category": "roof", "shape": [[0, 0]], "comfort": 1, "price": 2000, "enables": [], "effects": {"customerMult": {"green": 1.2}}, "blurb": "Herbs and flowers on top: +20% customers in green season, comfort +1."},
   {"id": "tent_sauna", "name": "Tent Sauna", "category": "production", "shape": [[0, 0], [1, 0]], "comfort": 1, "price": 4200, "archetype": "sauna", "enables": ["sauna_session", "herbal_tea"], "blurb": "Wood-fired tent sauna + cold plunge tub. Sells sessions."},
   {"id": "tour_desk", "name": "Tour Desk", "category": "production", "shape": [[0, 0]], "comfort": 0, "price": 3200, "archetype": "tours", "enables": ["guided_hike", "snowshoe_tour"], "blurb": "Maps, snowshoes and a booking board. Sells tours."},
-  {"id": "loft_bed", "name": "Loft Bed", "category": "living", "shape": [[0, 0], [1, 0]], "comfort": 3, "price": 3800, "enables": [], "blurb": "Sleep up high, free the floor. Comfort +3."}
+  {"id": "loft_bed", "name": "Loft Bed", "category": "living", "shape": [[0, 0], [1, 0]], "comfort": 3, "price": 3800, "enables": [], "blurb": "Sleep up high, free the floor. Comfort +3."},
+  {"id": "record_player", "name": "Record Player", "category": "living", "shape": [[0, 0]], "comfort": 2, "price": 5000, "enables": [], "blurb": "Old city-pop records for slow evenings. Comfort +2."},
+  {"id": "lantern_string", "name": "Lantern String", "category": "service", "shape": [[0, 0]], "comfort": 0, "price": 6000, "enables": [], "effects": {"tipMult": 1.05}, "blurb": "Paper lanterns over the hatch: tips +5%."}
 ]

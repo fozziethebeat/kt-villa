@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="130" viewBox="0 0 160 130">
+  <!-- Lantern String (service): tips +5% -->
+  <path d="M8 24 Q80 56 152 24" stroke="#3b3a4a" stroke-width="3" fill="none"/>
+  <g stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"><ellipse cx="30" cy="50" rx="12" ry="16" fill="#c8553d"/><ellipse cx="62" cy="62" rx="12" ry="16" fill="#f2a541"/><ellipse cx="98" cy="62" rx="12" ry="16" fill="#c8553d"/><ellipse cx="130" cy="50" rx="12" ry="16" fill="#f2a541"/></g>
+  <rect x="20" y="100" width="120" height="22" rx="4" fill="#c8553d" stroke="#3b3a4a" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="0" y="122" width="160" height="8" fill="#c8553d"/>
+</svg>

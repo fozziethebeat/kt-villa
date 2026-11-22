@@ -5,6 +5,7 @@ import { recordResult } from '../sim/quests';
 import { label, paperGrain, paperPanel } from '../ui/art';
 import { button, closeOverlay, overlayBackdrop, resultPanel, type Button, type QuestGameData } from '../ui/widgets';
 import { PAL, hex } from '../theme';
+import { sfx } from '../audio';
 
 export const CAIRN = { x0: 420, ground: 600 };
 const STONE_COLORS = [0x9aa1ab, 0x8a8f99, 0xa8a29a, 0x7f8794, 0xb3aea4, 0x949ba6];
@@ -123,6 +124,7 @@ export class CairnScene extends Phaser.Scene {
     const y = this.stackTopY();
     this.stack.push({ id, x });
     const fail = failPoint(this.puzzle, this.stack);
+    sfx(fail === null ? 'hit' : 'oops');
     if (fail !== null) {
       this.topples++;
       const fallen = this.stack.splice(fail + 1);

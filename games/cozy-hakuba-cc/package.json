@@ -11,7 +11,11 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
-    "balance": "vitest run tests/unit/m2.test.ts -t \"balance sim\""
+    "balance": "vitest run tests/unit/m2.test.ts -t \"balance sim\"",
+    "music:render": "node tools/render-music.mjs",
+    "music:profile": "node tools/music-eval/build-profile.mjs",
+    "music:eval": "node tools/music-eval/evaluate.mjs",
+    "samples:build": "node tools/samples/build-samples.mjs"
   },
   "dependencies": {
     "phaser": "^4.2.1"

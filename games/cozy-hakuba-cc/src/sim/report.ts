@@ -10,7 +10,8 @@ export function regionBuzz(state: GameState, regionId: string, s: ScoredSeason, 
   const v = state.regions[regionId].vitality;
   const shifts = state.seasonStats.byRegion[regionId] ?? 0;
   const attraction = v >= 3 && r.attraction ? r.attraction : null;
-  const raw = v === 0 ? 0 : (v / 3) * 55 + r.draw[s] * 20 * (v / 3) + (attraction ? attraction.demand[s] * 100 : 0) + Math.min(15, shifts * 5);
+  const sponsor = (state.sponsored ?? []).includes(regionId) ? content.business.sponsorship.buzz : 0;
+  const raw = v === 0 ? 0 : sponsor + (v / 3) * 55 + r.draw[s] * 20 * (v / 3) + (attraction ? attraction.demand[s] * 100 : 0) + Math.min(15, shifts * 5);
   return { region: regionId, name: r.name, vitality: v, buzz: Math.round(Math.min(100, raw)), attraction: attraction?.name ?? null, shifts };
 }
 

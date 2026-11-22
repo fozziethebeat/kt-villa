@@ -935,6 +935,46 @@
       "h": 150,
       "role": "van",
       "purpose": "Tier 3 Overland Camper: pop-top roof, chains on the tires"
+    },
+    {
+      "id": "char_player_1",
+      "file": "char_player_1.svg",
+      "w": 56,
+      "h": 88,
+      "role": "player",
+      "purpose": "Player look 2: red beanie + navy parka, short hair"
+    },
+    {
+      "id": "char_player_2",
+      "file": "char_player_2.svg",
+      "w": 56,
+      "h": 88,
+      "role": "player",
+      "purpose": "Player look 3: purple beanie + green coat, long auburn hair"
+    },
+    {
+      "id": "char_player_3",
+      "file": "char_player_3.svg",
+      "w": 56,
+      "h": 88,
+      "role": "player",
+      "purpose": "Player look 4: amber beanie + grey parka, deeper skin tone"
+    },
+    {
+      "id": "mod_record_player",
+      "file": "mod_record_player.svg",
+      "w": 160,
+      "h": 130,
+      "role": "module",
+      "purpose": "Record Player (living): comfort +2"
+    },
+    {
+      "id": "mod_lantern_string",
+      "file": "mod_lantern_string.svg",
+      "w": 160,
+      "h": 130,
+      "role": "module",
+      "purpose": "Lantern String (service): tips +5%"
     }
   ]
 }

@@ -105,7 +105,7 @@ export class DataRegionScene extends RegionScene {
     openOverlay(this, st.overlay, { stepId: step.id, item, config: st.config, title: st.prompt });
   }
 
-  protected onSync(s: GameState, reason: string) {
+  protected onSync(s: GameState) {
     const r = s.regions[this.regionId];
     this.festive?.setVisible(r.vitality >= 3);
     this.boardImg?.setVisible(r.vitality >= 3);
@@ -113,7 +113,7 @@ export class DataRegionScene extends RegionScene {
     for (const st of this.stationImgs) st.img?.setAlpha(st.steps.includes(step) ? 1 : 0.55);
     this.items.forEach((it, i) => {
       if (!this.itemAvailable(i)) it.setVisible(false);
-      else if (reason === 'debug' || reason === 'init' || reason === 'load') it.setVisible(true).setAlpha(1).setY(this.def.fetch.spots[i][1]);
+      else if (!it.visible) it.setVisible(true).setAlpha(1).setY(this.def.fetch.spots[i][1]);
     });
   }
 }

@@ -178,7 +178,8 @@ describe('menus and specialties', () => {
     const s = createNewGame({ seed: 5 }) as any;
     s.version = 2; delete s.van.roof; delete s.business.menu;
     const t = deserialize(JSON.stringify(s))!;
-    expect(t.version).toBe(5);
+    expect(t.version).toBe(6);
+    expect(t.sponsored).toEqual([]);
     expect(t.helpers).toEqual([]);
     expect(t.reports).toEqual([]);
     expect(t.van.roof).toEqual([]);

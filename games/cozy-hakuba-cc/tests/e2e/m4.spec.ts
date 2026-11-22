@@ -53,6 +53,24 @@ async function cook(page: Page) {
   await page.waitForTimeout(800);
 }
 
+
+/** Rotate a tray piece to `rot` (re-checking the real rotation) and drag it into place, retrying if a frame hitch eats an input. */
+async function packPiece(page: Page, scene: string, sol: { id: string; x: number; y: number; rot: number }) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    let info: any = await ev(page, H(`h.scene('${scene}').trayInfo('${sol.id}')`));
+    for (let i = 0; i < 8 && info.rot !== sol.rot; i++) {
+      await page.mouse.click(info.x + (info.first[0] + 0.5) * info.cell, info.y + (info.first[1] + 0.5) * info.cell, { button: 'right' });
+      await page.waitForTimeout(80);
+      info = await ev(page, H(`h.scene('${scene}').trayInfo('${sol.id}')`));
+    }
+    const [fx, fy] = info.first;
+    await drag(page, [info.x + (fx + 0.5) * info.cell, info.y + (fy + 0.5) * info.cell], [info.shelf.x + (sol.x + fx + 0.5) * info.shelf.cell, info.shelf.y + (sol.y + fy + 0.5) * info.shelf.cell]);
+    await page.waitForTimeout(120);
+    if (await ev(page, H(`h.scene('${scene}').isPlaced('${sol.id}')`))) return true;
+  }
+  return false;
+}
+
 test('M4: Goryu, Hakuba 47, Lake Aoki, Tsugaike, Tiers 2–3, rank & crew, the festival ending', async ({ page }) => {
   test.setTimeout(600_000);
   const errors: string[] = [];
@@ -75,15 +93,7 @@ test('M4: Goryu, Hakuba 47, Lake Aoki, Tsugaike, Tiers 2–3, rank & crew, the f
   await turnIn(page);
   await station(page, 790, 590, 'Pack');
   const sol: any[] = await ev(page, H("h.scene('Pack').solution()"));
-  for (const sp of sol) {
-    let info: any = await ev(page, H(`h.scene('Pack').trayInfo('${sp.id}')`));
-    for (let r = info.rot; r !== sp.rot; r = (r + 1) % 4) {
-      await page.mouse.click(info.x + (info.first[0] + 0.5) * info.cell, info.y + (info.first[1] + 0.5) * info.cell, { button: 'right' }); await page.waitForTimeout(60);
-      info = await ev(page, H(`h.scene('Pack').trayInfo('${sp.id}')`));
-    }
-    const [fx, fy] = info.first;
-    await drag(page, [info.x + (fx + 0.5) * info.cell, info.y + (fy + 0.5) * info.cell], [info.shelf.x + (sp.x + fx + 0.5) * info.shelf.cell, info.shelf.y + (sp.y + fy + 0.5) * info.shelf.cell]);
-  }
+  for (const sp of sol) expect(await packPiece(page, 'Pack', sp), `bed ${sp.id}`).toBe(true);
   await page.waitForTimeout(300);
   await shot(page, '02-garden-planted');
   expect((await ev<any>(page, H('h.getState().stars'))).garden_beds).toBe(3);

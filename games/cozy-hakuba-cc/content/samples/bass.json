@@ -1,0 +1,188 @@
+{
+ "id": "bass",
+ "source": "Karoryfer Growlybass (Squier Jazz Bass), clean",
+ "license": "CC0-1.0",
+ "url": "https://shop.karoryfer.com/pages/free-growlybass",
+ "zones": [
+  {
+   "url": "samples/bass/37_v120_r1.wav",
+   "root": 37,
+   "lo": 0,
+   "hi": 39,
+   "velLo": 1,
+   "velHi": 120,
+   "rr": 1
+  },
+  {
+   "url": "samples/bass/37_v127_r1.wav",
+   "root": 37,
+   "lo": 0,
+   "hi": 39,
+   "velLo": 121,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/bass/37_v120_r2.wav",
+   "root": 37,
+   "lo": 0,
+   "hi": 39,
+   "velLo": 1,
+   "velHi": 120,
+   "rr": 2
+  },
+  {
+   "url": "samples/bass/37_v127_r2.wav",
+   "root": 37,
+   "lo": 0,
+   "hi": 39,
+   "velLo": 121,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/bass/42_v120_r1.wav",
+   "root": 42,
+   "lo": 40,
+   "hi": 45,
+   "velLo": 1,
+   "velHi": 120,
+   "rr": 1
+  },
+  {
+   "url": "samples/bass/42_v127_r1.wav",
+   "root": 42,
+   "lo": 40,
+   "hi": 45,
+   "velLo": 121,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/bass/42_v120_r2.wav",
+   "root": 42,
+   "lo": 40,
+   "hi": 45,
+   "velLo": 1,
+   "velHi": 120,
+   "rr": 2
+  },
+  {
+   "url": "samples/bass/42_v127_r2.wav",
+   "root": 42,
+   "lo": 40,
+   "hi": 45,
+   "velLo": 121,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/bass/48_v120_r1.wav",
+   "root": 48,
+   "lo": 46,
+   "hi": 51,
+   "velLo": 1,
+   "velHi": 120,
+   "rr": 1
+  },
+  {
+   "url": "samples/bass/48_v127_r1.wav",
+   "root": 48,
+   "lo": 46,
+   "hi": 51,
+   "velLo": 121,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/bass/48_v120_r2.wav",
+   "root": 48,
+   "lo": 46,
+   "hi": 51,
+   "velLo": 1,
+   "velHi": 120,
+   "rr": 2
+  },
+  {
+   "url": "samples/bass/48_v127_r2.wav",
+   "root": 48,
+   "lo": 46,
+   "hi": 51,
+   "velLo": 121,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/bass/54_v120_r1.wav",
+   "root": 54,
+   "lo": 52,
+   "hi": 56,
+   "velLo": 1,
+   "velHi": 120,
+   "rr": 1
+  },
+  {
+   "url": "samples/bass/54_v127_r1.wav",
+   "root": 54,
+   "lo": 52,
+   "hi": 56,
+   "velLo": 121,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/bass/54_v120_r2.wav",
+   "root": 54,
+   "lo": 52,
+   "hi": 56,
+   "velLo": 1,
+   "velHi": 120,
+   "rr": 2
+  },
+  {
+   "url": "samples/bass/54_v127_r2.wav",
+   "root": 54,
+   "lo": 52,
+   "hi": 56,
+   "velLo": 121,
+   "velHi": 127,
+   "rr": 2
+  },
+  {
+   "url": "samples/bass/59_v120_r1.wav",
+   "root": 59,
+   "lo": 57,
+   "hi": 127,
+   "velLo": 1,
+   "velHi": 120,
+   "rr": 1
+  },
+  {
+   "url": "samples/bass/59_v127_r1.wav",
+   "root": 59,
+   "lo": 57,
+   "hi": 127,
+   "velLo": 121,
+   "velHi": 127,
+   "rr": 1
+  },
+  {
+   "url": "samples/bass/59_v120_r2.wav",
+   "root": 59,
+   "lo": 57,
+   "hi": 127,
+   "velLo": 1,
+   "velHi": 120,
+   "rr": 2
+  },
+  {
+   "url": "samples/bass/59_v127_r2.wav",
+   "root": 59,
+   "lo": 57,
+   "hi": 127,
+   "velLo": 121,
+   "velHi": 127,
+   "rr": 2
+  }
+ ]
+}

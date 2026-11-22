@@ -9,7 +9,7 @@
 > known across the valley.
 
 **Status:** v0.3. The core decisions are locked (see the Decision Log below).
-Milestones M0–M4 are built (§13); M5 (polish) is next. Where a decision is still open, it's marked
+All milestones M0–M5 are built (§13). The prototype is ready for your validation; see §13.4 for what's left. Where a decision is still open, it's marked
 **⚖️ Option A / B / C**, and the recommended option comes first and is labeled
 ★.
 
@@ -608,7 +608,32 @@ Each test asset must **show what it's for** before it looks beautiful:
 | **M2 Garage & build** ✅ | Shared `RegionScene` base; driving between regions on a valley map (1 stamina); Revival Board offers roads next to Thriving regions; Snow Peak Land Station 3-step arc (tent pitching on the new balance engine → salvage 4 van parts → choose coffee or soba and build its module with the new trace engine); Takumi's garage (chassis Tier 1 + 3 roof modules); Soba & Oyaki Kitchen (noodle-cut rhythm prep, 3 products, indigo noren); menu slots + specialty bonus; all 5 personality modifiers wired; headless balance sim; save v3 with v2 migration | 36 unit tests; the balance sim shows build choices changing earnings (see §13.1); e2e playthroughs of M1 and M2 by real input |
 | **M3 North arm** ✅ | Data-driven regions (`content/layouts.json` + one `DataRegionScene`); Happo-One Bus Terminal (flow routes → IC cards → timetable arrange), Echoland (yakitori cook → izakaya seating → lanterns), Happo Pond (hut supplies → cairn balance → sunrise breakfast cook; gondola stop instead of the van), Iwatake (gondola-cabin balance seating → terrace bench trace → wildflower seeds); new engines: constraint seating, flow/path connect, cairn balance, generic arrange + cook; seasonal attractions that lift valley-wide demand; Season Report with Valley Buzz + tips; a second Revival Board at the terminal; save v4 | 6 regions playable; Season Report; 55 unit tests; M1–M3 e2e playthroughs by real input |
 | **M4 South arm** ✅ | Goryu (alpine plants → garden-bed packing → farm crate), Hakuba 47 (MTB trail flow → markers → bike-tune timing), Lake Aoki (photo **composition** engine → postcard lettering → beach clean-up), Tsugaike (field-guide plants → boardwalk flow → tour-pack arrange); chassis Tiers 2–3 (6×3 / 8×3 interiors, box van + camper art); Business Ranks 1–5 (menu slots 3→6, helper slots, second trade at Rank 3); two green-strong second trades (Mobile Sauna, Guide & Tours) with bookable "session" products; trade-gated modules; 10 helpers (one per key person); one-request-per-day pacing; Hakuba Valley Festival ending; whole-game bot | 57 unit tests; the bot reaches the ending on day 37 for both trades; M1–M4 e2e playthroughs |
-| **M5 Polish** | All personalities, appearance options, audio, art Stage 2 replacements, save/load | Full manual playthrough by Claude, then your validation |
+| **M5 Polish** ✅ | Synthesized audio (UI, pickups, quest jingle, register, seasonal ambience; mute + volume); weather (snow / petals / fireflies) and a time-of-day light wash; 4 appearance presets; pause menu (Esc/☰) with 3 save slots + autosave, settings and controls; title "Load game"; late-game yen sinks (van paint jobs, festival sponsorships, record player, lantern string); all 5 personality perks wired since M2 | 61 unit tests; M1–M5 e2e playthroughs by real input (M5 runs with daily pacing on); screenshot review of every new screen. **Art Stage 2 not done**, see §13.4 |
+
+### 13.4 M5 handoff: what's verified, what's left
+**Verified by Claude before handoff**
+- `npm test`: 61 unit tests (rules, every puzzle generator, content
+  consistency, balance sims, the whole-game bot, saves).
+- `npm run test:e2e`: five scripted playthroughs with real mouse and keyboard:
+  M1 station slice, M2 Snow Peak and garage, M3 north arm and Season Report, M4
+  south arm, ranks, crew and the festival ending, and M5 polish with daily
+  pacing on.
+- Screenshots of every new screen in both seasons and at all four times of
+  day.
+
+**Not done / your call**
+- **Art Stage 2** (§12.5): every asset is still Claude-authored washi SVG.
+  Replacing art is by asset ID (no code changes), but it needs an artist,
+  AI-assisted art with a style guide, or a CC0 pack choice from you.
+- **Audio is synthesized** (WebAudio). It's charming but simple; recorded
+  foley (pour, sizzle, stamp) would be a big step up.
+- **Gear Tune and Crafts** archetypes, personality onboarding quiz, and
+  per-region customer mixes remain open (§14).
+- Tablet/touch input wasn't a goal (D6) and isn't tested.
+
+**How to play**: `npm run dev` → http://localhost:5173. WASD/arrows walk, E or
+Space interacts, Esc pauses (save/load/settings), M mutes. A full game is about
+37 in-game days.
 
 ### 13.3 M4 whole-game bot
 `simulateGame()` (`src/sim/bot.ts`) plays a new game day by day with the real
@@ -698,14 +723,16 @@ Still open:
 1. **Chassis branching** (§6.2): linear (proposed) or a fork at Tier 2?
 2. **Personality onboarding** (§7): a single pick (proposed), a prologue quiz,
    or traits that drift?
-3. **Save model:** autosave on sleep only (proposed), or manual save slots too?
-   (As built: autosave on sleep and on arriving in a region.)
+3. ~~Save model~~ Resolved in M5: autosave on sleep and on arriving in a
+   region, plus 3 manual slots in the pause menu.
 4. **Trade choice impact** (from M2 playtest): M4 adds trade-gated modules and
    a second trade at Rank 3. Still open: per-region customer mixes or
    trade-specific quests to make the first choice feel bigger.
 5. **Gear Tune and Crafts archetypes** (§6.4) aren't built; M4 shipped the two
    green-strong ones (Sauna, Tours) because they serve the seasonal lesson.
-6. **Late-game yen sink** (see §13.3).
+6. ~~Late-game yen sink~~ M5 adds paint jobs, festival sponsorships (+10 buzz,
+   ¥12k and rising) and decor modules. Worth re-checking in the bot once you've
+   played: the money curve still ends high.
 
 ---
 

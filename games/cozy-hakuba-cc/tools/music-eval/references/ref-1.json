@@ -1,0 +1,86 @@
+{
+  "uri": "https://www.youtube.com/watch?v=kGY6N9DL4Jw",
+  "artist": "Hitsujibungaku",
+  "title": "more than words",
+  "tempo_bpm": 130,
+  "meter": "4/4",
+  "key_or_mode": "D minor (D Aeolian) with frequent shifts toward its relative major (F major), centered around bVI - bVII - i and IV - V - vi harmonic movement",
+  "song_form": "Intro (8 bars, 00:00-00:17) -> Verse 1 (16 bars, 00:17-00:46) -> Pre-Chorus 1 (8 bars, 00:46-01:02) -> Chorus 1 (8 bars, 01:02-01:17) -> Post-Chorus / Groove Turnaround (16 bars, 01:17-01:46) -> Verse 2 (16 bars, 01:46-02:15) -> Extended Pre-Chorus / Build (16 bars, 02:15-02:48; plus 8-bar peak build 02:48-03:03) -> Chorus 2 (8 bars, 03:03-03:19) -> Post-Chorus 2 (10 bars, 03:19-03:38) -> Bridge / Rhythmic Breakdown to Shoegaze Climax (approx. 30 bars, 03:38-04:33) -> Stripped Outro (8 bars, 04:33-04:55)",
+  "instrumentation": [
+    {
+      "instrument": "Clean / Modulated Rhythm Electric Guitar",
+      "role": "Primary rhythmic pulse and harmonic frame in intro, verses, post-chorus turnaround, and outro",
+      "tone": "Bright single-coil (Jazzmaster/Stratocaster style) in middle or bridge-neck blend, crisp pick transient, light analog chorus/vibrato, subtle spring/room ambience, slight edge-of-breakup compression",
+      "playing_style": "Palm-muted and staccato 8th-note arpeggiated pulses in the intro and verses, switching to tight disco-indie chord stabs on off-beats and syncopated turnarounds"
+    },
+    {
+      "instrument": "Overdriven / Fuzz Rhythm Electric Guitars (Double-Tracked)",
+      "role": "Massive stereo wall of sound driving pre-chorus builds, choruses, and the bridge climax",
+      "tone": "Mid-forward tube overdrive stacked with smooth, dense fuzz (Big Muff / Rat hybrid character), warm low-mids, controlled top-end fizz without brittle scoop",
+      "playing_style": "Wide open strumming of ringing minor 7th, add9, and power-chord voicings that let open strings and upper extensions bloom across bar lines"
+    },
+    {
+      "instrument": "Lead / Atmospheric Electric Guitar",
+      "role": "High-register countermelodies, octave hooks, and spatial shimmer over choruses and post-choruses",
+      "tone": "Sparkling single-coil lead with light overdrive, drenched in long stereo plate/hall reverb and dotted-8th/quarter-note delay",
+      "playing_style": "Sustained single-note bends, soaring high-octave hooks doubling or answering the main melody, and volume-swelled harmonic drones"
+    },
+    {
+      "instrument": "Electric Bass",
+      "role": "Melodic glue locking with the four-on-the-floor kick drum while driving harmonic momentum",
+      "tone": "Punchy Precision/Jazz Bass blend with round midrange growl, firm 60-100 Hz fundamental, subtle tape/tube saturation, and moderate pick-or-finger attack",
+      "playing_style": "Tight, bouncy root-and-octave groove with crisp rests in verses and post-chorus breaks, transitioning into relentless driving 8th-note roots and melodic passing runs into choruses"
+    },
+    {
+      "instrument": "Acoustic Drum Kit",
+      "role": "Dual-personality engine alternating between tight indie-dance pulse and explosive alt-rock power",
+      "tone": "Deadened, dry studio kit with a punchy damped kick, crisp low-overtone wood/metal snare, tight dry hi-hats, and lush, wide crashing cymbals",
+      "playing_style": "Steady four-on-the-floor kick with tight snare on 2 and 4 and crisp 8th/16th hi-hats in verses; crashing open hi-hats, energetic tom/snare transition fills, and wide backbeats in choruses"
+    },
+    {
+      "instrument": "Subtle Analog Synth / Organ Pad",
+      "role": "Background harmonic glue filling low-mid sustain gaps in builds, post-choruses, and climax",
+      "tone": "Warm, low-pass-filtered analog polysynth or soft organ pad tucked far behind the guitars",
+      "playing_style": "Long sustained block chords and subtle root-fifth pads with zero rhythmic arpeggiation"
+    },
+    {
+      "instrument": "Lead and Harmony Vocals (Melodic Reference)",
+      "role": "Intimate, breathy center-channel focal melody expanding into soaring octave/third harmonies in choruses",
+      "tone": "Airy, forward-mixed female vocal with close-mic intimacy in verses and wide doubled/harmonized layers in choruses",
+      "playing_style": "Conversational, slightly behind-the-beat phrasing in verses, wide emotional sustains in choruses, and tight rhythmic spoken-cadence delivery in the bridge"
+    }
+  ],
+  "guitars": "The guitar architecture relies on sharp textural contrast between two distinct rigs. Rig 1 is a single-coil Fender-style guitar (Jazzmaster/Telecaster/Stratocaster) played with a bright pick attack through a clean, slightly compressed tube amp (Twin/JC-style clarity with warm mids) and subtle analog chorus; in intros, verses, and turnarounds, it plays tight, palm-muted 8th-note motifs and crisp staccato triads with quick left-hand muting so the groove breathes. Rig 2 consists of double-tracked guitars panned hard left and right using stacked tube overdrive and thick, singing fuzz; in pre-choruses and choruses they play broad, ringing open-voiced chords (sus2, m7, add9) rather than chugging palm mutes. A third high-register lead guitar floats through stereo hall reverb and delay, playing lyrical octave lines and sustained single-note countermelodies.",
+  "bass": "Played with a round, woody midrange presence and controlled sub-weight (like a Fender Precision or Jazz Bass through a warm DI + lightly driven tube amp). In the verses and post-chorus instrumental turnarounds, the bass locks tightly to the four-on-the-floor kick, leaving deliberate air between notes and adding tasteful octave leaps, slides, and step-wise passing tones at the end of every 2- or 4-bar phrase. When the pre-chorus and chorus hit, it shifts to driving, steady 8th-note propulsion that anchors the wide fuzz guitars without getting muddy.",
+  "drums": "A dry, tightly controlled acoustic drum sound inspired by modern Tokyo indie rock and post-punk dance-rock. The kick drum is punchy and focused around 60-80 Hz with minimal sub-boom, driving a persistent four-on-the-floor pulse throughout the intro, verses, and post-choruses. The snare is dry, crisp, and damped (minimal ring) with a sharp crack on beats 2 and 4. Hi-hats stay tight and closed with subtle 16th-note ghost accents in the verses, opening up to sloshy, energetic 8th-note washes on the hi-hat and wide crash cymbals in the choruses. Pre-choruses use rapid snare-and-kick eighth-note builds and short, dry tom fills to launch the chorus.",
+  "keys_and_synths": "Extremely restrained and supportive rather than featured. A warm, low-pass-filtered analog synth pad or soft organ layer sits subtly underneath the guitars during the second half of verses, post-chorus hooks, and the bridge climax to smooth out harmonic transitions and add weight. There are no bright synth leads, arpeggiators, or overt electronic stabs.",
+  "harmony": "Rooted in D minor (Aeolian) while constantly borrowing the warmth of its relative F major. Core progressions rely on bittersweet J-indie cadences such as i7 - bVImaj7 - bVII - v7/III (Dm7 - Bbmaj7 - C - Am7 or Fmaj7) and uplifting pre-chorus climbs like bVI - bVII - i - III (Bbmaj7 - C - Dm7 - F) or IVmaj7 - V - iii7 - vi7 in F major. Guitar and pad voicings avoid sterile bare triads in favor of open 7th, maj7, add9, and sus4 extensions (frequently keeping upper F, A, C, or D tones ringing across chord changes to create wistful suspension).",
+  "melody": "For an original instrumental adaptation, the lead voice should balance conversational, syncopated short motifs in the verses (moving stepwise within D minor pentatonic/Aeolian around the 5th and b7th) against sweeping, long-breathed lyrical phrases in the chorus that leap upward to the octave and 9th before resolving warmly onto the 3rd or 5th. Post-chorus sections benefit from a simple, anthemic 3-to-5-note call-and-response guitar/lead hook, while a bridge section can introduce a tightly rhythmic, percussive single-note or two-note melodic cadence that builds intensity bar by bar.",
+  "rhythm_and_groove": "The defining rhythmic signature is the collision of a tight, danceable 130 BPM four-on-the-floor indie-disco pulse with heavy, swaying shoegaze/alternative-rock choruses. Verses and post-choruses feel springy, light on their feet, and slightly urgent thanks to the four-on-the-floor kick, crisp staccato guitar chords, and syncopated bass gaps. In contrast, the choruses feel broader and more expansive—almost half-time in emotional weight—because the sustained wall of fuzz guitars and open cymbals smear the bar lines while the drums keep driving forward.",
+  "mix_and_production": {
+    "reverb_and_space": "Strong contrast between dry and wet spaces: drums, bass, and verse rhythm guitars live in a tight, controlled studio room with short decay so the four-on-the-floor groove stays punchy, while chorus lead guitars, backing textures, and vocal-range leads bloom into lush, wide stereo plate and hall reverbs.",
+    "distortion_and_saturation": "Carefully tiered saturation: warm tape-like console saturation glues the bass and drum bus cleanly, verse guitars stay clean-to-lightly-broken-up, and chorus guitars unleash rich harmonic fuzz/overdrive with enough upper-mid definition that 7th and 9th chord intervals remain legible.",
+    "stereo_width": "Narrow, focused center image during intros and verses (kick, snare, bass, and primary pulse tightly anchored near center) that explodes outward to full hard-left/hard-right stereo width in the pre-choruses, choruses, and final bridge climax.",
+    "brightness_and_eq": "Modern, polished Japanese alt-rock clarity: clean low-end roll-off below 35-40 Hz so the kick and bass never collide, warm low-mid body around 150-350 Hz, crisp snare and pick articulation around 2.5-4.5 kHz, and smooth air above 10 kHz without harsh digital sizzle.",
+    "compression_and_loudness": "Modern streaming-ready loudness (around -8 to -9 LUFS integrated during choruses) achieved with punchy parallel drum compression and firm bass limiting, yet retaining clear macro-dynamic drops whenever the arrangement strips back to the verse or bridge breakdown.",
+    "dynamics_and_arrangement": "Terraced, cinema-like dynamic sculpting: every chorus hit is earned by thinning the texture beforehand—either dropping down to clean palm-muted guitar and kick/bass or building with an 8-bar rhythmic snare/guitar crescendo—and the final bridge executes a slow-burn ramp from a stripped rhythmic groove into the loudest, densest shoegaze climax of the track."
+  },
+  "signature_traits": [
+    "130 BPM four-on-the-floor indie-dance pulse in verses colliding with massive fuzz-soaked shoegaze/alt-rock choruses",
+    "Sharp contrast between dry, tight, staccato single-coil rhythm guitars and hard-panned, blooming overdrive/fuzz walls",
+    "Bittersweet D minor / F major harmony rich in maj7, m7, add9, and sus4 voicings over bVI - bVII - i cadences",
+    "Dry, damped studio snare and punchy mid-forward bassline that leaves crisp rhythmic pockets in verses",
+    "High-register, reverb-drenched lead guitar octave melodies floating above dense chorus rhythm chords",
+    "Extended breakdown bridge starting with tight rhythmic groove and escalating into a triumphant wall-of-sound climax before a stripped-back outro"
+  ],
+  "what_it_is_not": [
+    "Washed-out ambient synth pads dominating the mix",
+    "EDM sidechain pumping or four-on-the-floor club synth bass",
+    "Chiptune or 8-bit retro game timbres",
+    "808 trap sub-bass or skittering quantized trap hi-hats",
+    "Djent, metalcore, or heavily scooped chugging palm-muted guitars",
+    "Classic blues-rock pentatonic shred guitar solos",
+    "Bright 1980s gated snare reverb or glossy synth-pop brass",
+    "Lo-fi hip-hop vinyl crackle or heavily swung boom-bap grooves"
+  ]
+}

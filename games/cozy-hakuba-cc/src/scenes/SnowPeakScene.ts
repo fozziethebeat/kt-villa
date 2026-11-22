@@ -109,13 +109,13 @@ export class SnowPeakScene extends RegionScene {
     openOverlay(this, 'Build');
   }
 
-  protected onSync(s: GameState, reason: string) {
+  protected onSync(s: GameState) {
     const r = s.regions.snowpeak;
     const pitched = r.questStep >= 1 || (s.inventory.tent_pitched ?? 0) > 0;
     this.tentFlat.setVisible(!pitched);
     this.tentUp.setVisible(pitched);
     this.lanterns.setVisible(r.vitality >= 3);
     this.bench.setAlpha(1);
-    this.parts.forEach((p, i) => { if (!this.partAvailable(i)) p.setVisible(false); else if (reason === 'debug' || reason === 'init' || reason === 'load') p.setVisible(true).setAlpha(1).setY(SP.parts[i][1]); });
+    this.parts.forEach((p, i) => { if (!this.partAvailable(i)) p.setVisible(false); else if (!p.visible) p.setVisible(true).setAlpha(1).setY(SP.parts[i][1]); });
   }
 }

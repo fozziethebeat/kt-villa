@@ -26,8 +26,10 @@ import { ComposeScene } from './scenes/ComposeScene';
 import { CrewScene } from './scenes/CrewScene';
 import { FestivalScene } from './scenes/FestivalScene';
 import { PackScene } from './scenes/LuggageScene';
+import { PauseScene } from './scenes/PauseScene';
 import { CONTENT } from './sim/content';
 import { installDebugApi } from './debug/api';
+import { audio } from './audio';
 import { HEIGHT, WIDTH } from './theme';
 
 async function start() {
@@ -48,9 +50,10 @@ async function start() {
     scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
     render: { antialias: true, preserveDrawingBuffer: true },
     // Order = draw order: overlays come after the HUD so they cover it.
-    scene: [BootScene, TitleScene, CharacterSelectScene, StationScene, SnowPeakScene, ...Object.keys(CONTENT.layouts).map((id) => new DataRegionScene(id)), HudScene, VanInteriorScene, MapCraftScene, LuggageScene, BusinessScene, BoardScene, TentScene, ArchetypeScene, BuildScene, GarageScene, TravelScene, FlowScene, SeatingScene, CairnScene, CookScene, ArrangeScene, PackScene, ComposeScene, CrewScene, SeasonReportScene, FestivalScene],
+    scene: [BootScene, TitleScene, CharacterSelectScene, StationScene, SnowPeakScene, ...Object.keys(CONTENT.layouts).map((id) => new DataRegionScene(id)), HudScene, VanInteriorScene, MapCraftScene, LuggageScene, BusinessScene, BoardScene, TentScene, ArchetypeScene, BuildScene, GarageScene, TravelScene, FlowScene, SeatingScene, CairnScene, CookScene, ArrangeScene, PackScene, ComposeScene, CrewScene, SeasonReportScene, FestivalScene, PauseScene],
   });
   installDebugApi(game);
+  audio.install();
 }
 
 start();

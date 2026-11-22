@@ -279,5 +279,48 @@
       "secondary": true
     }
   ],
-  "helperCost": 5
+  "helperCost": 5,
+  "liveries": [
+    {
+      "id": "cream",
+      "name": "Classic Cream",
+      "tint": "#ffffff",
+      "price": 0
+    },
+    {
+      "id": "sakura",
+      "name": "Sakura Pink",
+      "tint": "#f6c9d3",
+      "price": 4000
+    },
+    {
+      "id": "forest",
+      "name": "Cedar Green",
+      "tint": "#b9d9b8",
+      "price": 4000
+    },
+    {
+      "id": "sky",
+      "name": "Alpine Sky",
+      "tint": "#bcd7ef",
+      "price": 4000
+    },
+    {
+      "id": "festival",
+      "name": "Festival Red",
+      "tint": "#f2a08c",
+      "price": 8000
+    },
+    {
+      "id": "indigo",
+      "name": "Night Indigo",
+      "tint": "#a9b3d9",
+      "price": 8000
+    }
+  ],
+  "sponsorship": {
+    "base": 12000,
+    "step": 6000,
+    "buzz": 10
+  }
 }
