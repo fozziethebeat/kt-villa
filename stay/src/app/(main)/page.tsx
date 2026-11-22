@@ -11,14 +11,14 @@ import {
 } from "lucide-react";
 
 import { auth } from "@/lib/auth";
+import { getStartOfTodayJstUtc } from "@/lib/jst-date";
 import { prisma } from "@/lib/prisma";
 import { BookingForm } from "@/components/BookingForm";
 import { NewUserForm } from "@/components/NewUserForm";
 import { BookingItemGrid } from "@/components/BookingItemGrid";
 
 export default async function Home() {
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
+  const startOfToday = getStartOfTodayJstUtc();
 
   const [session, futureBookings] = await Promise.all([
     auth(),

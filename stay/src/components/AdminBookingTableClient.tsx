@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
-import { format } from "date-fns";
+import { formatJstFullDate } from "@/lib/jst-date";
 import {
   Cat,
   Check,
@@ -194,8 +194,6 @@ export function AdminBookingTableClient({ bookings }: { bookings: any[] }) {
             {filteredBookings.map((booking) => {
               const isBusy = busyBookingId === booking.id;
               const isRegen = regeneratingId === booking.id;
-              const start = new Date(booking.startDate);
-              const end = new Date(booking.endDate);
 
               return (
                 <tr
@@ -237,10 +235,10 @@ export function AdminBookingTableClient({ bookings }: { bookings: any[] }) {
 
                   <td className="whitespace-nowrap px-4 py-3">
                     <p className="font-semibold text-foreground">
-                      {format(start, "MMM d, yyyy")}
+                      {formatJstFullDate(booking.startDate)}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      to {format(end, "MMM d, yyyy")}
+                      to {formatJstFullDate(booking.endDate)}
                     </p>
                   </td>
 

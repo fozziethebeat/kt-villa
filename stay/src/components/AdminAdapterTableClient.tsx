@@ -5,7 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
-import { format } from "date-fns";
+import {
+  formatJstFullDate,
+  parseJstDateToUtc,
+  toJstDateString,
+} from "@/lib/jst-date";
 import {
   Loader2,
   Palette,
@@ -36,8 +40,8 @@ export function AdminAdapterTableClient({ adapters }: { adapters: any[] }) {
   const [variantsText, setVariantsText] = useState(
     "red fox, snow monkey, tanuki, shiba inu, crane, serow"
   );
-  const [startDate, setStartDate] = useState(
-    new Date().toISOString().slice(0, 10)
+  const [startDate, setStartDate] = useState(() =>
+    toJstDateString(new Date())
   );
   const [steps, setSteps] = useState(6);
 
@@ -67,7 +71,7 @@ export function AdminAdapterTableClient({ adapters }: { adapters: any[] }) {
           promptTemplate: promptTemplate.trim(),
           variants,
           steps: Number(steps) || 6,
-          startDate: new Date(startDate),
+          startDate: parseJstDateToUtc(startDate).toISOString(),
         },
       },
     });
@@ -145,7 +149,7 @@ export function AdminAdapterTableClient({ adapters }: { adapters: any[] }) {
 
                 <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">
                   {adapter.startDate
-                    ? format(new Date(adapter.startDate), "MMM d, yyyy")
+                    ? formatJstFullDate(adapter.startDate)
                     : "Anytime"}
                 </td>
 

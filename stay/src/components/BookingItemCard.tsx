@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { differenceInCalendarDays, format } from "date-fns";
 import {
   Calendar,
   Cat,
@@ -10,6 +9,12 @@ import {
   User,
   Users,
 } from "lucide-react";
+
+import {
+  formatJstFullDate,
+  formatJstMonthDay,
+  getJstNights,
+} from "@/lib/jst-date";
 
 export interface PublicBookingCardData {
   id: number;
@@ -38,9 +43,7 @@ export function BookingItemCard({
 }: {
   booking: PublicBookingCardData;
 }) {
-  const start = new Date(booking.startDate);
-  const end = new Date(booking.endDate);
-  const nights = Math.max(1, differenceInCalendarDays(end, start));
+  const nights = Math.max(1, getJstNights(booking.startDate, booking.endDate));
   const openSpots = Math.max(0, (booking.maxGuests ?? 1) - (booking.numGuests ?? 1));
   const isApproved = booking.status === "approved";
   const href = booking.isOwner
@@ -58,7 +61,7 @@ export function BookingItemCard({
           alt={
             booking.StableItem?.subject
               ? `AI Emblem: ${booking.StableItem.subject}`
-              : `Trip Emblem for ${format(start, "MMM d")} stay`
+              : `Trip Emblem for ${formatJstMonthDay(booking.startDate)} stay`
           }
           loading="lazy"
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
@@ -95,7 +98,8 @@ export function BookingItemCard({
             <p className="flex items-center gap-1.5 text-sm font-bold tracking-tight">
               <Calendar className="h-4 w-4 text-amber-300" />
               <span>
-                {format(start, "MMM d")} – {format(end, "MMM d, yyyy")}
+                {formatJstMonthDay(booking.startDate)} –{" "}
+                {formatJstFullDate(booking.endDate)}
               </span>
             </p>
             <span className="rounded-md bg-white/20 px-2 py-0.5 text-xs font-semibold backdrop-blur-sm">

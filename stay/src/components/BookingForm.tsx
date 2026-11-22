@@ -24,6 +24,11 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import {
+  calendarDateToJstIso,
+  getTodayInJstCalendarDate,
+  jstToCalendarDate,
+} from "@/lib/jst-date";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -74,13 +79,13 @@ export function BookingForm({
   });
 
   const futureBookings = initialFutureBookings ?? data?.futureBookings ?? [];
-  const today = useMemo(() => startOfDay(new Date()), []);
+  const today = useMemo(() => getTodayInJstCalendarDate(), []);
 
   const excludedIntervals = useMemo(
     () =>
       futureBookings.map(({ startDate, endDate }) => ({
-        start: startOfDay(new Date(startDate)),
-        end: startOfDay(new Date(endDate)),
+        start: jstToCalendarDate(startDate),
+        end: jstToCalendarDate(endDate),
       })),
     [futureBookings]
   );
@@ -159,8 +164,8 @@ export function BookingForm({
     createBooking({
       variables: {
         input: {
-          startDate: date.from,
-          endDate: date.to,
+          startDate: calendarDateToJstIso(date.from),
+          endDate: calendarDateToJstIso(date.to),
           numGuests,
           maxGuests,
           withCat,
@@ -194,7 +199,7 @@ export function BookingForm({
             htmlFor="booking-date-trigger"
             className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
           >
-            Check-in &amp; Check-out
+            Check-in &amp; Check-out (JST)
           </label>
           {isValidDates && nights > 0 ? (
             <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700">

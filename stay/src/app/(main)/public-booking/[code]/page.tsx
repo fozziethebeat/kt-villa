@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { gql } from "@apollo/client";
-import { differenceInCalendarDays, format } from "date-fns";
+import {
+  formatJstFullDate,
+  formatJstMonthDay,
+  formatJstWeekday,
+  getJstNights,
+} from "@/lib/jst-date";
 import {
   ArrowLeft,
   Calendar,
@@ -95,9 +100,7 @@ export default async function PublicBookingPage({
     );
   }
 
-  const start = new Date(booking.startDate);
-  const end = new Date(booking.endDate);
-  const nights = Math.max(1, differenceInCalendarDays(end, start));
+  const nights = Math.max(1, getJstNights(booking.startDate, booking.endDate));
   const openSpots = Math.max(
     0,
     (booking.maxGuests ?? 1) - (booking.numGuests ?? 1)
@@ -245,16 +248,18 @@ export default async function PublicBookingPage({
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="rounded-xl border border-border bg-background p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Check-In → Check-Out
+                  Check-In → Check-Out (JST)
                 </p>
                 <p className="mt-1.5 flex items-center gap-2 text-base font-bold text-foreground">
                   <Calendar className="h-4 w-4 text-primary" />
                   <span>
-                    {format(start, "MMM d")} – {format(end, "MMM d, yyyy")}
+                    {formatJstMonthDay(booking.startDate)} –{" "}
+                    {formatJstFullDate(booking.endDate)}
                   </span>
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {format(start, "EEEE")} to {format(end, "EEEE")} ({nights}{" "}
+                  {formatJstWeekday(booking.startDate)} to{" "}
+                  {formatJstWeekday(booking.endDate)} ({nights}{" "}
                   {nights === 1 ? "night" : "nights"})
                 </p>
               </div>

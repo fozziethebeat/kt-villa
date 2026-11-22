@@ -5,7 +5,7 @@ import Link from "next/link";
 import { gql } from "@apollo/client";
 import { useMutation } from "@apollo/client/react";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
+import { formatJstFullDate } from "@/lib/jst-date";
 import {
   ArrowLeft,
   Calendar,
@@ -107,8 +107,6 @@ export function EditUserBookingForm({ userBooking }: { userBooking: any }) {
     });
   };
 
-  const start = new Date(userBooking.startDate);
-  const end = new Date(userBooking.endDate);
   const imageSrc = userBooking?.item?.image || "/img/house.png";
 
   return (
@@ -136,11 +134,12 @@ export function EditUserBookingForm({ userBooking }: { userBooking: any }) {
             </div>
             <div className="space-y-2 p-5">
               <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                Reserved Dates
+                Reserved Dates (JST)
               </p>
               <p className="flex items-center gap-2 text-base font-bold text-foreground">
                 <Calendar className="h-4 w-4 text-primary" />
-                {format(start, "MMM d, yyyy")} – {format(end, "MMM d, yyyy")}
+                {formatJstFullDate(userBooking.startDate)} –{" "}
+                {formatJstFullDate(userBooking.endDate)}
               </p>
               <p className="text-xs text-muted-foreground">
                 Need to change your check-in or check-out dates? Reach out to an

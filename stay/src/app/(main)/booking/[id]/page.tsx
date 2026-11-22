@@ -1,7 +1,11 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { gql } from "@apollo/client";
-import { differenceInCalendarDays, format } from "date-fns";
+import {
+  formatJstFullDate,
+  formatJstMonthDay,
+  getJstNights,
+} from "@/lib/jst-date";
 import {
   ArrowLeft,
   BookOpen,
@@ -85,9 +89,10 @@ export default async function BookingPage({
     redirect(`/public-booking/${id}`);
   }
 
-  const start = new Date(userBooking.startDate);
-  const end = new Date(userBooking.endDate);
-  const nights = Math.max(1, differenceInCalendarDays(end, start));
+  const nights = Math.max(
+    1,
+    getJstNights(userBooking.startDate, userBooking.endDate)
+  );
   const openSpots = Math.max(
     0,
     (userBooking.maxGuests ?? 1) - (userBooking.numGuests ?? 1)
@@ -266,12 +271,13 @@ export default async function BookingPage({
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="rounded-xl border border-border bg-background p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Stay Dates
+                  Stay Dates (JST)
                 </p>
                 <p className="mt-1.5 flex items-center gap-1.5 text-sm font-bold text-foreground">
                   <Calendar className="h-4 w-4 text-primary" />
                   <span>
-                    {format(start, "MMM d")} – {format(end, "MMM d, yyyy")}
+                    {formatJstMonthDay(userBooking.startDate)} –{" "}
+                    {formatJstFullDate(userBooking.endDate)}
                   </span>
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">

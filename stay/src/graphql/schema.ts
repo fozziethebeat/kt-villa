@@ -10,6 +10,10 @@ import {
 } from "@/lib/generate";
 import { mailer } from "@/lib/mailer";
 import { prisma } from "@/lib/prisma";
+import {
+  getStartOfTodayJstUtc,
+  parseJstDateToUtc,
+} from "@/lib/jst-date";
 import { CreateBookingMail } from "@/components/mail/CreateBookingMail";
 import { JoinApproved } from "@/components/mail/JoinApproved";
 import { BookingApprovedMail } from "@/components/mail/BookingApprovedMail";
@@ -277,8 +281,7 @@ export const resolvers = {
     },
 
     futureBookings: () => {
-      const startOfToday = new Date();
-      startOfToday.setHours(0, 0, 0, 0);
+      const startOfToday = getStartOfTodayJstUtc();
       return prisma.booking.findMany({
         where: {
           endDate: { gte: startOfToday },
@@ -547,8 +550,8 @@ export const resolvers = {
       if (!user) {
         throw new Error("Requires signed in");
       }
-      const startDate = new Date(input.startDate);
-      const endDate = new Date(input.endDate);
+      const startDate = parseJstDateToUtc(input.startDate);
+      const endDate = parseJstDateToUtc(input.endDate);
       if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || startDate >= endDate) {
         throw new Error("End date must be after start date");
       }
@@ -633,7 +636,7 @@ export const resolvers = {
       }
       return prisma.imageAdapterSetting.create({
         data: {
-          startDate: new Date(input.startDate),
+          startDate: parseJstDateToUtc(input.startDate),
           adapter: input.adapter,
           promptTemplate: input.promptTemplate,
           negativePrompt: input.negativePrompt || "",
@@ -775,8 +778,8 @@ export const resolvers = {
         if (typeof input.maxGuests === "number") safeData.maxGuests = input.maxGuests;
         if (typeof input.withCat === "boolean") safeData.withCat = input.withCat;
         if (typeof input.withDog === "boolean") safeData.withDog = input.withDog;
-        if (input.startDate) safeData.startDate = new Date(input.startDate);
-        if (input.endDate) safeData.endDate = new Date(input.endDate);
+        if (input.startDate) safeData.startDate = parseJstDateToUtc(input.startDate);
+        if (input.endDate) safeData.endDate = parseJstDateToUtc(input.endDate);
         if (input.status === "cancelled") safeData.status = "cancelled";
 
         return prisma.booking.update({
@@ -790,7 +793,7 @@ export const resolvers = {
         try {
           const userItemId = await itemGenerator.generateItem(
             input.userId || booking.userId,
-            input.startDate ? new Date(input.startDate) : booking.startDate
+            input.startDate ? parseJstDateToUtc(input.startDate) : booking.startDate
           );
           if (userItemId) {
             await prisma.booking.update({
@@ -819,10 +822,10 @@ export const resolvers = {
                   userEmail: bookingUser.email,
                   name: bookingUser.name || undefined,
                   startDate: input.startDate
-                    ? new Date(input.startDate)
+                    ? parseJstDateToUtc(input.startDate)
                     : booking.startDate!,
                   endDate: input.endDate
-                    ? new Date(input.endDate)
+                    ? parseJstDateToUtc(input.endDate)
                     : booking.endDate!,
                   link: `${process.env.AUTH_URL}/booking/${booking.bookingCode}`,
                 })
@@ -835,8 +838,8 @@ export const resolvers = {
       }
 
       const updateData: any = { ...input };
-      if (input.startDate) updateData.startDate = new Date(input.startDate);
-      if (input.endDate) updateData.endDate = new Date(input.endDate);
+      if (input.startDate) updateData.startDate = parseJstDateToUtc(input.startDate);
+      if (input.endDate) updateData.endDate = parseJstDateToUtc(input.endDate);
 
       return prisma.booking.update({
         data: updateData,
@@ -851,7 +854,7 @@ export const resolvers = {
       const { id: _unusedId, ...rest } = input;
       const data: any = { ...rest };
       if (input.startDate) {
-        data.startDate = new Date(input.startDate);
+        data.startDate = parseJstDateToUtc(input.startDate);
       }
       return prisma.imageAdapterSetting.update({
         data,

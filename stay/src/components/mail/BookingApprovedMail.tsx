@@ -1,4 +1,5 @@
 import React from 'react';
+import { toJstDateString } from '@/lib/jst-date';
 
 import {
     Body,
@@ -46,10 +47,10 @@ export function BookingApprovedMail({
                             Your booking for the following dates has been approved:
                         </Text>
                         <Text className="text-[12px] leading-[24px] text-[#666666]">
-                            Start Date: {startDate.toLocaleDateString('en-CA')}
+                            Start Date: {toJstDateString(startDate)} (JST)
                         </Text>
                         <Text className="text-[12px] leading-[24px] text-[#666666]">
-                            End Date: {endDate.toLocaleDateString('en-CA')}
+                            End Date: {toJstDateString(endDate)} (JST)
                         </Text>
                         <Link href={link}>View Booking</Link>
                     </Container>

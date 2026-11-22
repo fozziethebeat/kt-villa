@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { differenceInCalendarDays, format } from "date-fns";
 import {
   Calendar,
   CheckCircle2,
@@ -9,10 +8,14 @@ import {
   XCircle,
 } from "lucide-react";
 
+import {
+  formatJstFullDate,
+  formatJstMonthDay,
+  getJstNights,
+} from "@/lib/jst-date";
+
 export function UserBookingCard({ booking }: { booking: any }) {
-  const start = new Date(booking.startDate);
-  const end = new Date(booking.endDate);
-  const nights = Math.max(1, differenceInCalendarDays(end, start));
+  const nights = Math.max(1, getJstNights(booking.startDate, booking.endDate));
   const isApproved = booking.status === "approved";
   const isPending = booking.status === "pending";
   const imageSrc = booking?.item?.image || "/img/house.png";
@@ -22,7 +25,7 @@ export function UserBookingCard({ booking }: { booking: any }) {
       <div className="relative aspect-square w-full overflow-hidden bg-muted">
         <img
           src={imageSrc}
-          alt={`AI Emblem for your ${format(start, "MMM d")} trip`}
+          alt={`AI Emblem for your ${formatJstMonthDay(booking.startDate)} trip`}
           loading="lazy"
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
@@ -61,7 +64,8 @@ export function UserBookingCard({ booking }: { booking: any }) {
               className="focus:outline-none"
             >
               <span className="absolute inset-0 z-10" aria-hidden="true" />
-              {format(start, "MMM d")} – {format(end, "MMM d, yyyy")}
+              {formatJstMonthDay(booking.startDate)} –{" "}
+              {formatJstFullDate(booking.endDate)}
             </Link>
           </h3>
           <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">

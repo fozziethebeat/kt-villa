@@ -1,12 +1,15 @@
 import Link from "next/link";
-import { differenceInCalendarDays, format } from "date-fns";
 import { Calendar, CheckCircle2, Clock, ExternalLink, Users } from "lucide-react";
+
+import {
+  formatJstFullDate,
+  formatJstMonthDay,
+  getJstNights,
+} from "@/lib/jst-date";
 
 export function MemberBookingCard({ memberBooking }: { memberBooking: any }) {
   const booking = memberBooking.booking;
-  const start = new Date(booking.startDate);
-  const end = new Date(booking.endDate);
-  const nights = Math.max(1, differenceInCalendarDays(end, start));
+  const nights = Math.max(1, getJstNights(booking.startDate, booking.endDate));
   const isApproved = memberBooking.status === "approved";
   const imageSrc = memberBooking?.item?.image || "/img/house.png";
 
@@ -50,7 +53,8 @@ export function MemberBookingCard({ memberBooking }: { memberBooking: any }) {
               className="focus:outline-none"
             >
               <span className="absolute inset-0 z-10" aria-hidden="true" />
-              {format(start, "MMM d")} – {format(end, "MMM d, yyyy")}
+              {formatJstMonthDay(booking.startDate)} –{" "}
+              {formatJstFullDate(booking.endDate)}
             </Link>
           </h3>
           <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">

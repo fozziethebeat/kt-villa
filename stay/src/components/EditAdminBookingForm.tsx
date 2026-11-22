@@ -21,6 +21,10 @@ import {
 
 import { cn } from "@/lib/utils";
 import {
+  calendarDateToJstIso,
+  jstToCalendarDate,
+} from "@/lib/jst-date";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -39,7 +43,6 @@ const UPDATE_BOOKING_MUTATION = gql`
       maxGuests
       withCat
       withDog
-      userId
     }
   }
 `;
@@ -79,10 +82,12 @@ export function EditAdminBookingForm({
 }) {
   const router = useRouter();
 
-  const [startDate, setStartDate] = useState<Date>(
-    new Date(booking.startDate)
+  const [startDate, setStartDate] = useState<Date>(() =>
+    jstToCalendarDate(booking.startDate)
   );
-  const [endDate, setEndDate] = useState<Date>(new Date(booking.endDate));
+  const [endDate, setEndDate] = useState<Date>(() =>
+    jstToCalendarDate(booking.endDate)
+  );
   const [numGuests, setNumGuests] = useState<number>(booking.numGuests ?? 2);
   const [maxGuests, setMaxGuests] = useState<number>(booking.maxGuests ?? 4);
   const [withCat, setWithCat] = useState<boolean>(Boolean(booking.withCat));
@@ -125,8 +130,8 @@ export function EditAdminBookingForm({
       variables: {
         id: booking.id,
         input: {
-          startDate,
-          endDate,
+          startDate: calendarDateToJstIso(startDate),
+          endDate: calendarDateToJstIso(endDate),
           numGuests,
           maxGuests,
           withCat,
@@ -279,11 +284,11 @@ export function EditAdminBookingForm({
               )}
             </div>
 
-            {/* Check-in & Check-out Date Pickers */}
+            {/* Check-in & Check-out Date Pickers (JST) */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Check-in Date
+                  Check-in Date (JST)
                 </label>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -309,7 +314,7 @@ export function EditAdminBookingForm({
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Check-out Date
+                  Check-out Date (JST)
                 </label>
                 <Popover>
                   <PopoverTrigger asChild>

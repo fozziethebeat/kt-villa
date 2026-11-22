@@ -6,6 +6,7 @@ import {
   BookingItemCard,
   PublicBookingCardData,
 } from "@/components/BookingItemCard";
+import { getStartOfTodayJstUtc, parseJstDateToUtc } from "@/lib/jst-date";
 
 type FilterMode = "all" | "upcoming" | "open";
 
@@ -16,27 +17,24 @@ export function BookingGalleryClient({
 }) {
   const [filter, setFilter] = useState<FilterMode>("all");
 
-  const now = useMemo(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }, []);
+  const now = useMemo(() => getStartOfTodayJstUtc(), []);
 
   const filteredBookings = useMemo(() => {
     if (filter === "upcoming") {
-      return bookings.filter((b) => new Date(b.endDate) >= now);
+      return bookings.filter((b) => parseJstDateToUtc(b.endDate) >= now);
     }
     if (filter === "open") {
       return bookings.filter(
         (b) =>
-          new Date(b.endDate) >= now && (b.maxGuests ?? 1) > (b.numGuests ?? 1)
+          parseJstDateToUtc(b.endDate) >= now &&
+          (b.maxGuests ?? 1) > (b.numGuests ?? 1)
       );
     }
     return bookings;
   }, [bookings, filter, now]);
 
   const upcomingCount = useMemo(
-    () => bookings.filter((b) => new Date(b.endDate) >= now).length,
+    () => bookings.filter((b) => parseJstDateToUtc(b.endDate) >= now).length,
     [bookings, now]
   );
 
@@ -44,7 +42,8 @@ export function BookingGalleryClient({
     () =>
       bookings.filter(
         (b) =>
-          new Date(b.endDate) >= now && (b.maxGuests ?? 1) > (b.numGuests ?? 1)
+          parseJstDateToUtc(b.endDate) >= now &&
+          (b.maxGuests ?? 1) > (b.numGuests ?? 1)
       ).length,
     [bookings, now]
   );

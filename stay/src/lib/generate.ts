@@ -8,6 +8,7 @@ import { Liquid } from "liquidjs";
 import ShortUniqueId from "short-unique-id";
 
 import { prisma } from "@/lib/prisma";
+import { getJstDateParts } from "@/lib/jst-date";
 import { imageSaver, ImageSaver } from "@/lib/storage";
 
 export interface SeasonProfile {
@@ -131,7 +132,7 @@ const HAKUBA_SEASONS: Record<SeasonProfile["id"], SeasonProfile> = {
 
 export function getHakubaSeasonProfile(dateInput?: Date | string | null): SeasonProfile {
   const d = dateInput ? new Date(dateInput) : new Date();
-  const month = d.getMonth(); // 0 = Jan, 11 = Dec
+  const month = getJstDateParts(d).month - 1; // 0 = Jan, 11 = Dec in JST
   if (month === 11 || month === 0 || month === 1) {
     return HAKUBA_SEASONS.winter;
   }
