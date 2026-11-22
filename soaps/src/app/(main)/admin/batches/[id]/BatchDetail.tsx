@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useActionState, useTransition } from 'react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Beaker, Droplets, Calendar, Hash, Sparkles, Loader2, ImageIcon, Trash2, KeyRound, Copy, Check, History } from 'lucide-react'
+import { Beaker, Droplets, Calendar, Hash, Sparkles, Loader2, ImageIcon, Trash2, KeyRound, Copy, Check, History, Pencil } from 'lucide-react'
 import { updateBatch, generateBatchImage, selectBatchImage, deleteBatch } from '@/app/actions/batch'
 import { formatDate } from '@/lib/utils'
 // @ts-ignore
@@ -225,14 +226,27 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                                 const styleTotalWeight = styleIngredients.reduce((sum, ing) => sum + (Number(ing.quantity) || 0), 0)
                                 return (
                                     <div className="p-3 rounded-md bg-brand-cream/50">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <Droplets className="h-5 w-5 text-brand-rose shrink-0" />
-                                            <div>
-                                                <p className="text-sm font-semibold text-brand-warm-brown">Style: {batch.styleRecipe.name}</p>
-                                                <p className="text-xs text-brand-stone/85">
-                                                    Total weight: {styleTotalWeight.toFixed(1)}g
-                                                </p>
+                                        <div className="flex items-center justify-between gap-3 mb-2">
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <Droplets className="h-5 w-5 text-brand-rose shrink-0" />
+                                                <div className="min-w-0">
+                                                    <p className="text-sm font-semibold text-brand-warm-brown truncate">Style: {batch.styleRecipe.name}</p>
+                                                    <p className="text-xs text-brand-stone/85">
+                                                        Total weight: {styleTotalWeight.toFixed(1)}g
+                                                    </p>
+                                                </div>
                                             </div>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                asChild
+                                                className="h-7 px-2.5 text-xs shrink-0 border-brand-terracotta/25 text-brand-terracotta hover:bg-brand-terracotta-light"
+                                            >
+                                                <Link href={`/admin/recipes/${batch.styleRecipe.id}/edit?from=/admin/batches/${batch.id}`}>
+                                                    <Pencil className="mr-1 h-3 w-3" />
+                                                    Edit Recipe
+                                                </Link>
+                                            </Button>
                                         </div>
                                         <div className="border border-border/80 rounded-md divide-y divide-border bg-white overflow-hidden mt-2">
                                             {styleIngredients.map((ing: any, idx: number) => (

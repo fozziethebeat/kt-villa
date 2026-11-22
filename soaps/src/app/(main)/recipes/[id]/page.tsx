@@ -1,9 +1,12 @@
+import Link from "next/link"
 import prisma from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { CalendarDays, Scale } from "lucide-react"
+import { CalendarDays, Scale, Pencil } from "lucide-react"
 import { formatDate } from "@/lib/utils"
+import { hasRole } from "@/lib/auth-check"
 
 interface RecipeIngredient {
     name: string;
@@ -20,9 +23,12 @@ interface PageProps {
 export default async function RecipeDetailPage({ params }: PageProps) {
     const { id } = await params
 
-    const recipe = await prisma.recipe.findUnique({
-        where: { id }
-    })
+    const [recipe, isAdmin] = await Promise.all([
+        prisma.recipe.findUnique({
+            where: { id }
+        }),
+        hasRole(['admin']),
+    ])
 
     if (!recipe) {
         notFound()
@@ -63,7 +69,14 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                 </div>
 
                 <div className="flex gap-2">
-                    {/* Add edit link if admin later */}
+                    {isAdmin && (
+                        <Button asChild variant="outline" className="border-brand-terracotta/30 text-brand-terracotta hover:bg-brand-terracotta-light">
+                            <Link href={`/admin/recipes/${recipe.id}/edit?from=/recipes/${recipe.id}`}>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Edit Recipe
+                            </Link>
+                        </Button>
+                    )}
                 </div>
             </div>
 

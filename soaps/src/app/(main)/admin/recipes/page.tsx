@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import prisma from '@/lib/prisma'
 import { Button } from '@/components/ui/button'
-import { Plus, Beaker, Leaf } from 'lucide-react'
+import { Plus, Beaker, Leaf, Pencil } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/utils'
 
@@ -28,8 +28,9 @@ export default async function RecipesPage() {
                 <div className="divide-y divide-border text-sm">
                     <div className="grid grid-cols-12 gap-4 px-6 py-2 bg-brand-cream/30 text-xs font-medium text-brand-stone uppercase tracking-wider">
                         <div className="col-span-4">Name</div>
-                        <div className="col-span-6">Ingredients</div>
+                        <div className="col-span-5">Ingredients</div>
                         <div className="col-span-2 text-right">Updated</div>
+                        <div className="col-span-1 text-right">Action</div>
                     </div>
                     {items.map((recipe) => {
                         const ingredients = Array.isArray(recipe.ingredients)
@@ -40,17 +41,30 @@ export default async function RecipesPage() {
                             ((ingredients as any[]).length > 3 ? '...' : '')
 
                         return (
-                            <Link href={`/recipes/${recipe.id}`} key={recipe.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-brand-cream/30 transition-colors block">
-                                <div className="col-span-4 font-medium truncate text-brand-warm-brown">
+                            <div key={recipe.id} className="grid grid-cols-12 gap-4 px-6 py-3 items-center hover:bg-brand-cream/30 transition-colors">
+                                <Link href={`/recipes/${recipe.id}`} className="col-span-4 font-medium truncate text-brand-warm-brown hover:text-brand-terracotta transition-colors">
                                     {recipe.name}
-                                </div>
-                                <div className="col-span-6 text-brand-stone truncate">
+                                </Link>
+                                <Link href={`/recipes/${recipe.id}`} className="col-span-5 text-brand-stone truncate">
                                     {summary || <span className="opacity-50 italic">No ingredients</span>}
-                                </div>
+                                </Link>
                                 <div className="col-span-2 text-right text-brand-stone">
                                     {formatDate(recipe.updatedAt)}
                                 </div>
-                            </Link>
+                                <div className="col-span-1 flex justify-end">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        asChild
+                                        className="h-8 px-2 text-brand-terracotta hover:text-brand-warm-brown hover:bg-brand-terracotta-light/60"
+                                    >
+                                        <Link href={`/admin/recipes/${recipe.id}/edit?from=/admin/recipes`}>
+                                            <Pencil className="h-3.5 w-3.5 mr-1" />
+                                            Edit
+                                        </Link>
+                                    </Button>
+                                </div>
+                            </div>
                         )
                     })}
                 </div>
