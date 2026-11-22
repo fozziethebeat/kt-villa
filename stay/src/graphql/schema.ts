@@ -17,6 +17,7 @@ import {
 import { CreateBookingMail } from "@/components/mail/CreateBookingMail";
 import { JoinApproved } from "@/components/mail/JoinApproved";
 import { BookingApprovedMail } from "@/components/mail/BookingApprovedMail";
+import { SameDayTurnoverMail } from "@/components/mail/SameDayTurnoverMail";
 
 export const typeDefs = gql`
   scalar DateTime
@@ -205,6 +206,142 @@ export const typeDefs = gql`
 `;
 
 const bookingCodeGenerator = new ShortUniqueId({ length: 6 });
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/**
+ * Checks for existing active bookings that share a same-day turnover (end === start
+ * or start === end in JST) with `booking` and emails the affected guests.
+ * In particular, anyone leaving on the same day a new guest arrives receives a
+ * checkout & laundry reminder.
+ */
+async function notifySameDayTurnovers(booking: {
+  id: number;
+  bookingCode: string;
+  startDate: Date;
+  endDate: Date;
+  userId: string;
+  status: string;
+}) {
+  if (booking.status !== "approved" && booking.status !== "pending") {
+    return;
+  }
+
+  const baseUrl = process.env.AUTH_URL || "https://www.kt-villa.com";
+  const newStartJst = parseJstDateToUtc(booking.startDate);
+  const newStartNextJst = new Date(newStartJst.getTime() + MS_PER_DAY);
+  const newEndJst = parseJstDateToUtc(booking.endDate);
+  const newEndNextJst = new Date(newEndJst.getTime() + MS_PER_DAY);
+
+  const [departingBeforeUs, arrivingAfterUs, bookingOwner] = await Promise.all([
+    // Case A: Existing bookings ending on our check-in day (they leave right before we arrive)
+    prisma.booking.findMany({
+      where: {
+        id: { not: booking.id },
+        status: { in: ["pending", "approved"] },
+        endDate: { gte: newStartJst, lt: newStartNextJst },
+      },
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+      },
+    }),
+    // Case B: Existing bookings starting on our check-out day (we leave right before they arrive)
+    prisma.booking.findMany({
+      where: {
+        id: { not: booking.id },
+        status: { in: ["pending", "approved"] },
+        startDate: { gte: newEndJst, lt: newEndNextJst },
+      },
+      include: {
+        user: { select: { id: true, name: true, email: true } },
+      },
+    }),
+    prisma.user.findUnique({
+      where: { id: booking.userId },
+      select: { id: true, name: true, email: true },
+    }),
+  ]);
+
+  // Case A: Email departing guest(s) with checkout & laundry reminder
+  for (const prev of departingBeforeUs) {
+    if (!prev.user?.email || prev.userId === booking.userId) continue;
+    try {
+      await mailer.sendMail({
+        from: process.env.MAILER_FROM,
+        to: prev.user.email,
+        subject: "KT Villa Same-Day Turnover Reminder (Laundry & Checkout)",
+        html: await render(
+          SameDayTurnoverMail({
+            role: "departing",
+            recipientName: prev.user.name,
+            recipientEmail: prev.user.email,
+            turnoverDate: newStartJst,
+            stayStartDate: prev.startDate,
+            stayEndDate: prev.endDate,
+            bookingLink: `${baseUrl}/booking/${prev.bookingCode}`,
+            guideLink: `${baseUrl}/guide/the-stay/departing`,
+          })
+        ),
+      });
+    } catch (mailErr) {
+      console.warn("Failed to send departing turnover email:", mailErr);
+    }
+  }
+
+  // Case B: Email arriving guest(s) about same-day turnover, AND remind the
+  // departing owner of `booking` to do laundry / checkout prep
+  const otherArriving = arrivingAfterUs.filter(
+    (next) => next.user?.email && next.userId !== booking.userId
+  );
+
+  for (const next of otherArriving) {
+    try {
+      await mailer.sendMail({
+        from: process.env.MAILER_FROM,
+        to: next.user.email,
+        subject: "KT Villa Same-Day Turnover Notice for Your Upcoming Stay",
+        html: await render(
+          SameDayTurnoverMail({
+            role: "arriving",
+            recipientName: next.user.name,
+            recipientEmail: next.user.email,
+            turnoverDate: newEndJst,
+            stayStartDate: next.startDate,
+            stayEndDate: next.endDate,
+            bookingLink: `${baseUrl}/booking/${next.bookingCode}`,
+            guideLink: `${baseUrl}/guide/the-stay/arriving`,
+          })
+        ),
+      });
+    } catch (mailErr) {
+      console.warn("Failed to send arriving turnover email:", mailErr);
+    }
+  }
+
+  if (otherArriving.length > 0 && bookingOwner?.email) {
+    try {
+      await mailer.sendMail({
+        from: process.env.MAILER_FROM,
+        to: bookingOwner.email,
+        subject: "KT Villa Same-Day Turnover Reminder (Laundry & Checkout)",
+        html: await render(
+          SameDayTurnoverMail({
+            role: "departing",
+            recipientName: bookingOwner.name,
+            recipientEmail: bookingOwner.email,
+            turnoverDate: newEndJst,
+            stayStartDate: booking.startDate,
+            stayEndDate: booking.endDate,
+            bookingLink: `${baseUrl}/booking/${booking.bookingCode}`,
+            guideLink: `${baseUrl}/guide/the-stay/departing`,
+          })
+        ),
+      });
+    } catch (mailErr) {
+      console.warn("Failed to send owner departing turnover email:", mailErr);
+    }
+  }
+}
 
 export const resolvers = {
   Query: {
@@ -560,13 +697,21 @@ export const resolvers = {
       }
       const maxGuests = Math.max(input.numGuests, Math.min(5, input.maxGuests || 4));
 
-      // Check for overlapping approved or pending bookings
-      const overlapping = await prisma.booking.findFirst({
+      // Check for overlapping approved or pending bookings by JST calendar day.
+      // Same-day turnovers (existing.endDate === startDate or existing.startDate === endDate)
+      // are explicitly allowed; only true night overlaps are rejected.
+      const candidateOverlaps = await prisma.booking.findMany({
         where: {
           status: { in: ["pending", "approved"] },
-          startDate: { lt: endDate },
-          endDate: { gt: startDate },
+          startDate: { lt: new Date(endDate.getTime() + MS_PER_DAY) },
+          endDate: { gt: new Date(startDate.getTime() - MS_PER_DAY) },
         },
+        select: { id: true, startDate: true, endDate: true },
+      });
+      const overlapping = candidateOverlaps.find((b) => {
+        const bStart = parseJstDateToUtc(b.startDate);
+        const bEnd = parseJstDateToUtc(b.endDate);
+        return bStart < endDate && bEnd > startDate;
       });
       if (overlapping) {
         throw new Error("Selected dates conflict with an existing booking");
@@ -605,6 +750,8 @@ export const resolvers = {
       } catch (mailErr) {
         console.warn("Failed to send booking creation email:", mailErr);
       }
+
+      await notifySameDayTurnovers(booking);
 
       if (status === "pending") {
         return booking;
@@ -841,10 +988,24 @@ export const resolvers = {
       if (input.startDate) updateData.startDate = parseJstDateToUtc(input.startDate);
       if (input.endDate) updateData.endDate = parseJstDateToUtc(input.endDate);
 
-      return prisma.booking.update({
+      const updatedBooking = await prisma.booking.update({
         data: updateData,
         where: { id },
       });
+
+      const datesChanged =
+        (input.startDate &&
+          parseJstDateToUtc(input.startDate).getTime() !==
+            parseJstDateToUtc(booking.startDate).getTime()) ||
+        (input.endDate &&
+          parseJstDateToUtc(input.endDate).getTime() !==
+            parseJstDateToUtc(booking.endDate).getTime());
+
+      if (datesChanged) {
+        await notifySameDayTurnovers(updatedBooking);
+      }
+
+      return updatedBooking;
     },
 
     updateImageAdapter: (a, { id, input }, { user }) => {

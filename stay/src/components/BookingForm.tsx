@@ -96,7 +96,8 @@ export function BookingForm({
     const e = startOfDay(end);
     if (isBefore(s, today)) return false;
     if (differenceInCalendarDays(e, s) < 1) return false;
-    return !excludedIntervals.some((ex) => s <= ex.end && e >= ex.start);
+    // Allow same-day turnovers (s === ex.end or e === ex.start); reject only night overlaps
+    return !excludedIntervals.some((ex) => s < ex.end && e > ex.start);
   };
 
   // Find the nearest available 3-night window so the form starts ready to book
@@ -106,7 +107,7 @@ export function BookingForm({
       const candidateEnd = addDays(candidateStart, 3);
       if (
         !excludedIntervals.some(
-          (ex) => candidateStart <= ex.end && candidateEnd >= ex.start
+          (ex) => candidateStart < ex.end && candidateEnd > ex.start
         )
       ) {
         return { from: candidateStart, to: candidateEnd };
@@ -127,6 +128,15 @@ export function BookingForm({
       ? Math.max(0, differenceInCalendarDays(date.to, date.from))
       : 0;
 
+  const hasSameDayTurnover = useMemo(() => {
+    if (!date?.from || !date?.to || !isValidDates) return false;
+    const s = startOfDay(date.from).getTime();
+    const e = startOfDay(date.to).getTime();
+    return excludedIntervals.some(
+      (ex) => ex.end.getTime() === s || ex.start.getTime() === e
+    );
+  }, [date, isValidDates, excludedIntervals]);
+
   const [createBooking, { loading, error }] = useMutation(
     CREATE_BOOKING_MUTATION,
     {
@@ -141,7 +151,20 @@ export function BookingForm({
   const isDateDisabled = (candidate: Date) => {
     const c = startOfDay(candidate);
     if (isBefore(c, today)) return true;
-    return excludedIntervals.some(({ start, end }) => c >= start && c <= end);
+    // Strictly interior days of any booking cannot be check-in or check-out
+    const isInterior = excludedIntervals.some(
+      ({ start, end }) => c > start && c < end
+    );
+    if (isInterior) return true;
+    // A day that is both an existing check-out AND an existing check-in is completely full
+    const t = c.getTime();
+    const hasEndingHere = excludedIntervals.some(
+      ({ end }) => end.getTime() === t
+    );
+    const hasStartingHere = excludedIntervals.some(
+      ({ start }) => start.getTime() === t
+    );
+    return hasEndingHere && hasStartingHere;
   };
 
   const handleSelectKnownGuests = (count: number) => {
@@ -260,8 +283,8 @@ export function BookingForm({
               /* @ts-ignore */
               excludeDisabled
               footer={
-                <div className="mt-2 flex items-center justify-between border-t border-border pt-2 text-xs text-muted-foreground">
-                  <span>Booked &amp; past dates are greyed out</span>
+                <div className="mt-2 flex items-center justify-between gap-4 border-t border-border pt-2 text-xs text-muted-foreground">
+                  <span>Same-day check-in/out turnovers are allowed</span>
                   <span
                     className={cn(
                       "rounded-full px-2.5 py-0.5 font-semibold",
@@ -277,6 +300,12 @@ export function BookingForm({
             />
           </PopoverContent>
         </Popover>
+        {hasSameDayTurnover && (
+          <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1.5 text-[11px] font-medium text-amber-900">
+            Same-day turnover selected — we&apos;ll email the adjacent guest(s)
+            with a checkout &amp; laundry heads-up.
+          </p>
+        )}
       </div>
 
       {/* Known Guests (Radio Pill Group) */}
