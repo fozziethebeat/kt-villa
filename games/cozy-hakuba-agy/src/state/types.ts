@@ -31,6 +31,37 @@ export interface VanModuleDef {
   color: string;
   purposeLabel: string;
   description: string;
+  // Explicit Service Window build mechanics
+  guestBonus: number;         // Extra guests attracted per shift
+  sweetSpotBonus: number;     // +% wider Perfect Zone in Service Window
+  speedModifier: number;      // e.g., -0.15 = 15% slower, easier gauge
+  passivePerGuest: number;    // Extra yen paid by EVERY guest served
+  effectBadges: string[];     // Crisp visual badges shown on Shelf & Van cards
+  serviceOrderName?: string;  // Order unlocked when installed
+  serviceVerb?: string;       // Hold-button verb in Service Window
+}
+
+export interface ActiveStationOrder {
+  moduleId: string;
+  itemName: string;
+  itemIcon: string;
+  actionVerb: string;
+  payout: number;
+}
+
+export interface VanBuildSummary {
+  activeStations: ActiveStationOrder[];
+  idleModuleNames: string[];
+  expectedCustomers: number;
+  sweetSpotWidth: number;       // e.g. 26 (%)
+  fillSpeedMultiplier: number;  // e.g. 0.85 (lower = easier!)
+  perfectBonusMultiplier: number; // e.g. 1.4 or 1.65 with Mochi
+  passivePerGuest: number;      // e.g. postcard upsell + combo bonus
+  mochiAutoSave: boolean;       // 1 free miss/close -> Perfect forgiveness
+  estimatedTotalYen: number;
+  regionalVitality: number;
+  activeBuffPills: string[];
+  seasonMatchWarning: string | null;
 }
 
 export interface PlacedVanModule {

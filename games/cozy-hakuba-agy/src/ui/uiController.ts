@@ -3,26 +3,18 @@ import { PERSONALITIES, REGIONS, REGION_MAP, VAN_MODULES } from '../state/conten
 import { Gender, InteractiveZone, PersonalityId, RegionId } from '../state/types';
 import { OverworldScene } from '../scenes/OverworldScene';
 import { getModuleIllustrationSvg, getProtagonistPortraitSvg, getRegionStampSubtitle } from '../art/hakubaArt';
+import {
+  mountOnsenPipePuzzle,
+  mountPopUpServiceMiniGame,
+  mountShuttleLogicPuzzle,
+  mountTakibiFirepitPuzzle,
+} from '../puzzles/miniPuzzles';
 
 export class UIController {
   private scene: OverworldScene;
   private selectedModuleToPlace: string = 'espresso_bar';
   private selectedGender: Gender = 'female';
   private selectedPersonality: PersonalityId = 'barista';
-
-  private pipeAngles: number[] = [90, 180, 90, 270];
-  private stoveStep: number = 0;
-  private routeAssignments: Record<string, string> = {
-    shuttleA: 'unassigned',
-    shuttleB: 'unassigned',
-    shuttleC: 'unassigned',
-  };
-
-  private serviceMarkerPos = 50;
-  private serviceMarkerDir = 1;
-  private serviceHits = 0;
-  private serviceAttempts = 0;
-  private serviceAnimId: number | null = null;
 
   constructor(scene: OverworldScene) {
     this.scene = scene;
@@ -60,10 +52,6 @@ export class UIController {
     document.querySelectorAll('dialog').forEach((dlg) => {
       dlg.addEventListener('close', () => {
         dlg.returnValue = '';
-        if (dlg.id === 'dialog-service-minigame' && this.serviceAnimId !== null) {
-          cancelAnimationFrame(this.serviceAnimId);
-          this.serviceAnimId = null;
-        }
       });
     });
 
@@ -305,8 +293,11 @@ export class UIController {
   public renderVanInteriorModal(): void {
     const container = document.getElementById('van-interior-body');
     if (!container) return;
+    const prevCatalogScroll = container.querySelector('.module-catalog-list')?.scrollTop ?? 0;
+    const prevDialogScroll = container.scrollTop;
     const st = store.getState();
-    const est = store.calculatePopUpShiftEstimate();
+    const build = store.computeVanBuildSummary();
+    const selectedDef = VAN_MODULES.find((m) => m.id === this.selectedModuleToPlace) || VAN_MODULES[0];
 
     const cellMap: Record<string, { placedId: string; moduleId: string; isOrigin: boolean; width: number }> = {};
     for (const placed of st.placedModules) {
@@ -330,10 +321,11 @@ export class UIController {
         if (occ) {
           if (!occ.isOrigin) continue;
           const def = VAN_MODULES.find((m) => m.id === occ.moduleId)!;
-          const seasonBadge = def.seasonTag === 'winter' ? '❄️' : def.seasonTag === 'green' ? '🌱' : '✦';
+          const isOffSeason = def.seasonTag !== 'both' && def.seasonTag !== st.season;
+          const seasonBadge = isOffSeason ? '💤' : def.seasonTag === 'winter' ? '❄️' : def.seasonTag === 'green' ? '🌱' : '✦';
           const shortTitle = def.name.split('&')[0].trim();
           gridCellsHtml += `
-            <div class="van-grid-cell occupied" style="--mod-color: ${def.color}; grid-column: span ${def.width};" data-gx="${x}" data-gy="${y}">
+            <div class="van-grid-cell occupied ${isOffSeason ? 'off-season' : ''}" style="--mod-color: ${def.color}; grid-column: span ${def.width};" data-gx="${x}" data-gy="${y}">
               <button type="button" class="cell-remove-btn" data-remove-x="${x}" data-remove-y="${y}" aria-label="Remove ${def.name}">✕</button>
               <span class="cell-badge">${seasonBadge}</span>
               <div class="cell-art">${getModuleIllustrationSvg(def.id)}</div>
@@ -351,6 +343,9 @@ export class UIController {
         }
       }
     }
+
+    const canServe = build.activeStations.length > 0;
+    const speedPct = Math.round(build.fillSpeedMultiplier * 100);
 
     container.innerHTML = `
       <div class="van-cutaway-layout">
@@ -376,21 +371,52 @@ export class UIController {
             </div>
           </div>
 
-          ${est.seasonMatchWarning ? `<div class="season-warning-banner">${est.seasonMatchWarning}</div>` : ''}
+          <div class="van-build-stats-bar" aria-label="Service Window Build Impact">
+            <div class="build-stat-box">
+              <span class="bs-label">👥 Guests</span>
+              <span class="bs-val">${build.expectedCustomers} / shift</span>
+            </div>
+            <div class="build-stat-box">
+              <span class="bs-label">🎯 Perfect Zone</span>
+              <span class="bs-val">${build.sweetSpotWidth}%</span>
+            </div>
+            <div class="build-stat-box">
+              <span class="bs-label">🐢 Pour Speed</span>
+              <span class="bs-val">${speedPct}%${speedPct < 100 ? ' (Easier!)' : ''}</span>
+            </div>
+            <div class="build-stat-box">
+              <span class="bs-label">💰 Est. Shift</span>
+              <span class="bs-val">¥${build.estimatedTotalYen}</span>
+            </div>
+          </div>
+
+          ${
+            build.activeBuffPills.length > 0
+              ? `<div class="active-buffs-strip"><span class="buffs-label">Active Perks:</span>${build.activeBuffPills
+                  .map((p) => `<span class="buff-pill">${p}</span>`)
+                  .join('')}</div>`
+              : ''
+          }
+
+          ${build.seasonMatchWarning ? `<div class="season-warning-banner">${build.seasonMatchWarning}</div>` : ''}
 
           <div class="van-service-launch-bar">
             <div>
-              <strong>~${est.expectedCustomers} visitors</strong> · Est. <strong>¥${
-      est.expectedCustomers * est.revenuePerCustomer
-    }</strong>
+              <strong>Menu:</strong> ${
+                canServe
+                  ? build.activeStations.map((s) => `${s.itemIcon} ¥${s.payout}`).join(' · ')
+                  : 'No active stations installed'
+              }
             </div>
-            <button type="button" id="btn-start-popup-shift" class="primary-cta-btn">☕ Open Service Window</button>
+            <button type="button" id="btn-start-popup-shift" class="primary-cta-btn" ${canServe ? '' : 'disabled'}>☕ Open Service Window</button>
           </div>
         </div>
 
         <div class="van-catalog-column">
           <h3>Gear &amp; Cozy Shelf</h3>
-          <p class="sub-note">Pick an item, then tap a + slot inside your van:</p>
+          <div id="selected-mod-banner" class="selected-mod-banner">
+            Selected: <strong>${selectedDef.icon} ${selectedDef.name}</strong> (${selectedDef.width}×1) — tap any <strong>+</strong> slot
+          </div>
           <div class="module-catalog-list">
             ${VAN_MODULES.map((m) => {
               const owned = st.ownedModules.includes(m.id);
@@ -405,7 +431,10 @@ export class UIController {
                       <span>${m.name}</span>
                       <span class="cat-cost ${owned ? 'owned' : ''}">${owned ? 'Owned' : `¥${cost}`}</span>
                     </div>
-                    <div class="cat-meta">${m.width}×1 · ${sIcon} · ¥${m.baseRevenue}</div>
+                    <div class="cat-meta">${m.width}×1 · ${sIcon}</div>
+                    <div class="cat-effect-badges">
+                      ${m.effectBadges.map((b) => `<span class="effect-badge">${b}</span>`).join('')}
+                    </div>
                   </div>
                 </button>
               `;
@@ -415,10 +444,24 @@ export class UIController {
       </div>
     `;
 
-    container.querySelectorAll('[data-select-mod]').forEach((btn) => {
+    // Restore scroll positions so installing/removing items never snaps the shelf back to top
+    const newCatalogList = container.querySelector('.module-catalog-list');
+    if (newCatalogList) newCatalogList.scrollTop = prevCatalogScroll;
+    container.scrollTop = prevDialogScroll;
+
+    // Update selection in-place without re-rendering DOM so scroll stays rock-steady!
+    container.querySelectorAll<HTMLButtonElement>('[data-select-mod]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        this.selectedModuleToPlace = (btn as HTMLElement).dataset.selectMod!;
-        this.renderVanInteriorModal();
+        const modId = btn.dataset.selectMod!;
+        this.selectedModuleToPlace = modId;
+        container.querySelectorAll('[data-select-mod]').forEach((el) => {
+          el.classList.toggle('selected', (el as HTMLElement).dataset.selectMod === modId);
+        });
+        const modDef = VAN_MODULES.find((m) => m.id === modId);
+        const banner = container.querySelector('#selected-mod-banner');
+        if (banner && modDef) {
+          banner.innerHTML = `Selected: <strong>${modDef.icon} ${modDef.name}</strong> (${modDef.width}×1) — tap any <strong>+</strong> slot`;
+        }
       });
     });
 
@@ -455,91 +498,20 @@ export class UIController {
   }
 
   private startTactileServiceMiniGame(): void {
-    this.serviceHits = 0;
-    this.serviceAttempts = 0;
-    this.serviceMarkerPos = 15;
-    this.serviceMarkerDir = 1;
-
     const st = store.getState();
-    const pDef = PERSONALITIES.find((p) => p.id === st.personality)!;
-    const sweetSpotStart = 38;
-    const sweetSpotWidth = st.personality === 'barista' ? 28 : 22;
-
+    const build = store.computeVanBuildSummary();
+    if (build.activeStations.length === 0) {
+      this.showToast('⚠️ Install at least 1 Cafe, Gear, or Craft station in your van first!');
+      return;
+    }
     const body = document.getElementById('service-minigame-body');
     if (!body) return;
 
-    body.innerHTML = `
-      <div class="service-counter-stage">
-        <p class="sub-note">
-          Tap <strong>Serve Order</strong> when the marker glides into the warm golden zone!
-        </p>
-        <div class="order-tickets">
-          <span class="ticket">☕ Nagano Pour-Over</span>
-          <span class="ticket">${st.season === 'winter' ? '🎿 Powder Wax' : '🚵 Trail Tune'}</span>
-          <span class="ticket">${st.season === 'winter' ? '🥟 Hot Oyaki' : '🍨 Milk Gelato'}</span>
-        </div>
-        <div class="timing-bar-track">
-          <div class="timing-sweet-spot" style="left: ${sweetSpotStart}%; width: ${sweetSpotWidth}%">
-            <span>★ SWEET SPOT ★</span>
-          </div>
-          <div id="timing-marker" class="timing-marker" style="left: 15%">▼</div>
-        </div>
-        <div id="service-score-readout" class="sub-note">
-          Served: <strong>0 / 3</strong> (${pDef.icon} ${pDef.subtitle})
-        </div>
-        <div class="modal-footer-actions">
-          <button type="button" id="btn-hit-serve" class="primary-cta-btn" autofocus>☕ Serve Order</button>
-          <button type="button" id="btn-quick-auto-serve" class="secondary-btn">⚡ Quick Serve</button>
-        </div>
-      </div>
-    `;
-
     this.openModalSafely('dialog-service-minigame');
-
-    const markerEl = document.getElementById('timing-marker');
-    const readoutEl = document.getElementById('service-score-readout');
-
-    const stepAnim = () => {
-      this.serviceMarkerPos += this.serviceMarkerDir * 1.45;
-      if (this.serviceMarkerPos >= 96) this.serviceMarkerDir = -1;
-      if (this.serviceMarkerPos <= 4) this.serviceMarkerDir = 1;
-      if (markerEl) {
-        markerEl.style.left = `${this.serviceMarkerPos}%`;
-      }
-      this.serviceAnimId = requestAnimationFrame(stepAnim);
-    };
-    this.serviceAnimId = requestAnimationFrame(stepAnim);
-
-    const finishShift = (multiplier: number) => {
-      if (this.serviceAnimId !== null) {
-        cancelAnimationFrame(this.serviceAnimId);
-        this.serviceAnimId = null;
-      }
-      const res = store.recordServiceMiniGameResult(multiplier);
+    mountPopUpServiceMiniGame(body, st.season, build, (earnedYen, servedCount) => {
+      const res = store.recordServiceMiniGameResult(earnedYen, servedCount);
       this.closeModalSafely('dialog-service-minigame');
       this.showToast(`☕ Served ${res.customersServed} visitors · +¥${res.earnedYen}!`);
-    };
-
-    document.getElementById('btn-hit-serve')?.addEventListener('click', () => {
-      this.serviceAttempts++;
-      const inSweetSpot =
-        this.serviceMarkerPos >= sweetSpotStart && this.serviceMarkerPos <= sweetSpotStart + sweetSpotWidth;
-      if (inSweetSpot) {
-        this.serviceHits++;
-      }
-      if (readoutEl) {
-        readoutEl.innerHTML = `Served: <strong>${this.serviceAttempts} / 3</strong> · ${
-          inSweetSpot ? '✨ Perfect Craft!' : '👍 Cozy Service!'
-        }`;
-      }
-      if (this.serviceAttempts >= 3) {
-        const mult = 1.0 + this.serviceHits * 0.2;
-        window.setTimeout(() => finishShift(mult), 350);
-      }
-    });
-
-    document.getElementById('btn-quick-auto-serve')?.addEventListener('click', () => {
-      finishShift(1.35);
     });
   }
 
@@ -645,132 +617,25 @@ export class UIController {
       return;
     }
 
+    const puzzleCallbacks = {
+      onToast: (msg: string) => this.showToast(msg),
+      onSolved: (bonusYen = 0) => {
+        if (bonusYen > 0) {
+          store.getState().yen += bonusYen;
+        }
+        store.completeRegionPuzzle(st.currentRegion);
+        this.closeModalSafely('dialog-puzzle');
+        this.showToast(`✨ ${regDef.puzzleTitle} restored${bonusYen > 0 ? ` (+¥${bonusYen} bonus!)` : '!'}`);
+      },
+    };
+
     if (regDef.puzzleType === 'pipes') {
-      body.innerHTML = `
-        <div class="puzzle-container">
-          <p class="sub-note">Tap each hot-spring valve until all 4 align horizontally (<code>━</code>) to warm the Hakuba Station footbath:</p>
-          <div class="pipe-grid">
-            ${this.pipeAngles
-              .map(
-                (angle, idx) => `
-              <button type="button" class="pipe-tile ${angle % 180 === 0 ? 'aligned' : ''}" data-pipe-idx="${idx}">
-                <span class="pipe-symbol" style="transform: rotate(${angle}deg)">━</span>
-                <span>Valve #${idx + 1}</span>
-              </button>
-            `
-              )
-              .join('')}
-          </div>
-          <div class="modal-footer-actions">
-            <button type="button" id="btn-instant-solve-puzzle" class="secondary-btn">✨ Quick Align</button>
-          </div>
-        </div>
-      `;
-
-      body.querySelectorAll('[data-pipe-idx]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const idx = Number((btn as HTMLElement).dataset.pipeIdx);
-          this.pipeAngles[idx] = (this.pipeAngles[idx] + 90) % 360;
-          if (this.pipeAngles.every((a) => a % 180 === 0)) {
-            store.completeRegionPuzzle(st.currentRegion);
-            this.closeModalSafely('dialog-puzzle');
-            this.showToast(`♨️ Thermal footbath is steaming!`);
-          } else {
-            this.renderPuzzleModal();
-          }
-        });
-      });
+      mountOnsenPipePuzzle(body, st.personality, puzzleCallbacks);
     } else if (regDef.puzzleType === 'stove') {
-      const steps = [
-        '1. Set Stainless Base Plate',
-        '2. Unfold Titanium Firebox',
-        '3. Stack Hakuba White Birch',
-        '4. Light the Community Takibi!',
-      ];
-      body.innerHTML = `
-        <div class="puzzle-container">
-          <p class="sub-note">Assemble Aoi's Takibi firepit (${this.stoveStep} / 4):</p>
-          <div class="stove-steps-list">
-            ${steps
-              .map(
-                (label, idx) => `
-              <button type="button" class="stove-step-btn ${idx < this.stoveStep ? 'done' : idx === this.stoveStep ? 'next' : ''}" data-stove-idx="${idx}" ${
-                  idx !== this.stoveStep ? 'disabled' : ''
-                }>
-                ${idx < this.stoveStep ? '✓' : idx === this.stoveStep ? '→' : '·'} ${label}
-              </button>
-            `
-              )
-              .join('')}
-          </div>
-          <div class="modal-footer-actions">
-            <button type="button" id="btn-instant-solve-puzzle" class="secondary-btn">✨ Quick Assemble</button>
-          </div>
-        </div>
-      `;
-
-      body.querySelectorAll('[data-stove-idx]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          this.stoveStep++;
-          if (this.stoveStep >= 4) {
-            store.completeRegionPuzzle(st.currentRegion);
-            this.closeModalSafely('dialog-puzzle');
-            this.showToast(`🔥 Takibi Hearth lit!`);
-          } else {
-            this.renderPuzzleModal();
-          }
-        });
-      });
+      mountTakibiFirepitPuzzle(body, st.personality, puzzleCallbacks);
     } else {
-      body.innerHTML = `
-        <div class="puzzle-container">
-          <p class="sub-note">Link the 3 Valley Shuttle Bays:</p>
-          <div class="route-puzzle-rows">
-            <div class="route-row">
-              <span>🚌 Bay 1 · Express</span>
-              <button type="button" class="chip-btn ${this.routeAssignments.shuttleA === 'matched' ? 'active' : ''}" data-route="shuttleA">
-                ${this.routeAssignments.shuttleA === 'matched' ? '✓ Happo Gondola' : 'Connect → Gondola'}
-              </button>
-            </div>
-            <div class="route-row">
-              <span>🚌 Bay 2 · Cafe Loop</span>
-              <button type="button" class="chip-btn ${this.routeAssignments.shuttleB === 'matched' ? 'active' : ''}" data-route="shuttleB">
-                ${this.routeAssignments.shuttleB === 'matched' ? '✓ Echoland & Iwatake' : 'Connect → Echoland'}
-              </button>
-            </div>
-            <div class="route-row">
-              <span>🚌 Bay 3 · South Lake</span>
-              <button type="button" class="chip-btn ${this.routeAssignments.shuttleC === 'matched' ? 'active' : ''}" data-route="shuttleC">
-                ${this.routeAssignments.shuttleC === 'matched' ? '✓ Goryu & Aokiko' : 'Connect → Lake Aokiko'}
-              </button>
-            </div>
-          </div>
-          <div class="modal-footer-actions">
-            <button type="button" id="btn-instant-solve-puzzle" class="secondary-btn">✨ Quick Connect</button>
-          </div>
-        </div>
-      `;
-
-      body.querySelectorAll('[data-route]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const key = (btn as HTMLElement).dataset.route!;
-          this.routeAssignments[key] = 'matched';
-          if (Object.values(this.routeAssignments).every((v) => v === 'matched')) {
-            store.completeRegionPuzzle(st.currentRegion);
-            this.closeModalSafely('dialog-puzzle');
-            this.showToast(`🚌 Valley Shuttles connected!`);
-          } else {
-            this.renderPuzzleModal();
-          }
-        });
-      });
+      mountShuttleLogicPuzzle(body, st.personality, puzzleCallbacks);
     }
-
-    document.getElementById('btn-instant-solve-puzzle')?.addEventListener('click', () => {
-      store.completeRegionPuzzle(st.currentRegion);
-      this.closeModalSafely('dialog-puzzle');
-      this.showToast(`✨ ${regDef.puzzleTitle} restored!`);
-    });
   }
 
   public renderValleyAtlasModal(): void {

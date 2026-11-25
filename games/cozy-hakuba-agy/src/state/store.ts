@@ -1,4 +1,4 @@
-import { GameState, Gender, PersonalityId, RegionId, RegionProgress, Season } from './types';
+import { ActiveStationOrder, GameState, Gender, PersonalityId, RegionId, RegionProgress, Season, VanBuildSummary } from './types';
 import { PERSONALITIES, REGIONS, REGION_MAP, VAN_MODULES } from './content';
 
 type Listener = (state: GameState) => void;
@@ -288,79 +288,154 @@ class GameStore {
     return { ok: true, message: 'Upgraded to Tier 2 Retro 4WD Overland Van!' };
   }
 
-  public calculatePopUpShiftEstimate(): {
-    expectedCustomers: number;
-    revenuePerCustomer: number;
-    seasonMatchWarning: string | null;
-    regionalVitality: number;
-  } {
+  public computeVanBuildSummary(): VanBuildSummary {
     const regDef = REGION_MAP[this.state.currentRegion];
     const regProg = this.state.regions[this.state.currentRegion];
     const vitality = this.state.season === 'winter' ? regProg.vitalityWinter : regProg.vitalityGreen;
-
-    let totalRev = 0;
-    let mismatchedCount = 0;
     const pDef = PERSONALITIES.find((p) => p.id === this.state.personality)!;
+
+    const activeStations: ActiveStationOrder[] = [];
+    const idleModuleNames: string[] = [];
+    const activeBuffPills: string[] = [];
+    const installedIds = new Set(this.state.placedModules.map((p) => p.moduleId));
+
+    let guestBonus = 0;
+    let sweetSpotWidth = 18 + (this.state.personality === 'barista' ? 8 : 0);
+    let fillSpeedMultiplier = 1.0;
+    let passivePerGuest = 0;
+    let perfectBonusMultiplier = 1.4;
+    let mochiAutoSave = false;
+
+    if (this.state.personality === 'barista') {
+      activeBuffPills.push('☕ Barista +8% Zone');
+    }
 
     for (const placed of this.state.placedModules) {
       const mDef = VAN_MODULES.find((m) => m.id === placed.moduleId);
-      if (!mDef || mDef.category === 'living') continue;
+      if (!mDef) continue;
 
-      let rev = mDef.baseRevenue;
-      if (mDef.seasonTag === 'both') {
-        rev *= 1.0;
-      } else if (mDef.seasonTag === this.state.season) {
-        rev *= 1.35; // Peak seasonal demand!
+      const isOffSeason = mDef.seasonTag !== 'both' && mDef.seasonTag !== this.state.season;
+      const isGearIdle = mDef.category === 'gear' && isOffSeason;
+
+      if (isGearIdle) {
+        idleModuleNames.push(mDef.name);
+        continue;
+      }
+
+      // Living & Craft Passive Buffs
+      if (!isOffSeason || mDef.seasonTag === 'both') {
+        guestBonus += mDef.guestBonus;
+        sweetSpotWidth += mDef.sweetSpotBonus;
+        fillSpeedMultiplier += mDef.speedModifier;
+        passivePerGuest += mDef.passivePerGuest;
       } else {
-        rev *= 0.3; // Off-season penalty (e.g., Ski Wax in July!)
-        mismatchedCount++;
+        // Off-season non-gear modules still work at half guest/passive strength
+        guestBonus += Math.floor(mDef.guestBonus / 2);
       }
 
-      if (mDef.category === pDef.bonusCategory) {
-        rev *= 1.2;
+      if (mDef.id === 'futon_bunk') {
+        activeBuffPills.push('🛏️ +8% Perfect Zone');
       }
-      totalRev += rev;
+      if (mDef.id === 'mini_wood_stove' && this.state.season === 'winter') {
+        activeBuffPills.push('🔥 +2 Guests · -15% Speed');
+      }
+      if (mDef.id === 'botanical_charm' && this.state.season === 'green') {
+        activeBuffPills.push('🌿 -20% Speed · +¥80/guest');
+      }
+      if (mDef.id === 'woodblock_postcard') {
+        activeBuffPills.push('🖼️ +¥90/guest Postcards');
+      }
+      if (mDef.id === 'shiba_pet_mat') {
+        mochiAutoSave = true;
+        perfectBonusMultiplier += 0.25;
+        activeBuffPills.push('🐕 Mochi Free Perfect + 25% Tips');
+      }
+
+      // Business Station Orders
+      if (mDef.serviceOrderName && mDef.serviceVerb) {
+        let payout = mDef.baseRevenue;
+        if (mDef.seasonTag === this.state.season) {
+          payout = Math.round(payout * 1.25);
+        } else if (isOffSeason) {
+          payout = Math.round(payout * 0.45);
+          idleModuleNames.push(`${mDef.name} (Low Demand)`);
+        }
+        if (mDef.category === pDef.bonusCategory) {
+          payout = Math.round(payout * 1.2);
+        }
+        activeStations.push({
+          moduleId: mDef.id,
+          itemName: mDef.serviceOrderName,
+          itemIcon: mDef.icon,
+          actionVerb: mDef.serviceVerb,
+          payout,
+        });
+      }
     }
 
-    const expectedCustomers = Math.max(2, Math.round((vitality / 100) * 6 + this.state.cozyRating / 25));
-    const revenuePerCustomer = Math.max(60, Math.round(totalRev / Math.max(1, expectedCustomers / 2)));
+    // Synergy Combo: Espresso + Oyaki Steamer = Morning Set!
+    if (installedIds.has('espresso_bar') && installedIds.has('oyaki_steamer')) {
+      passivePerGuest += 100;
+      activeBuffPills.push('☕+🥟 Morning Combo (+¥100/guest)');
+    }
+
+    fillSpeedMultiplier = Math.max(0.55, Number(fillSpeedMultiplier.toFixed(2)));
+    sweetSpotWidth = Math.min(48, sweetSpotWidth);
+
+    const baseGuests = Math.max(1, Math.round(vitality / 35));
+    const expectedCustomers = activeStations.length === 0 ? 0 : Math.min(6, Math.max(2, baseGuests + guestBonus));
+
+    const avgOrderPay =
+      activeStations.length > 0
+        ? Math.round(activeStations.reduce((acc, s) => acc + s.payout, 0) / activeStations.length)
+        : 0;
+    const estimatedTotalYen = expectedCustomers * (avgOrderPay + passivePerGuest);
 
     let warning: string | null = null;
-    if (this.state.season === 'green' && !regProg.greenPivotBuilt) {
-      warning = `⚠️ Green Season Slump! ${regDef.name} has no Summer Pivot built yet (Vitality ${vitality}%). Build "${regDef.greenPivotTitle}" to bring summer crowds!`;
-    } else if (mismatchedCount > 0) {
-      warning = `💡 Seasonal Tip: ${mismatchedCount} of your installed Van modules are tuned for ${
-        this.state.season === 'winter' ? 'Green Season' : 'Winter'
-      }. Swap in ${this.state.season === 'winter' ? '❄️ Winter' : '🌱 Green'} gear for +135% revenue!`;
+    if (activeStations.length === 0) {
+      warning = '⚠️ Install at least 1 Cafe, Gear, or Craft station inside your van to open the Service Window!';
+    } else if (this.state.season === 'green' && !regProg.greenPivotBuilt) {
+      warning = `⚠️ Green Season Slump in ${regDef.name} (Vitality ${vitality}%). Build "${regDef.greenPivotTitle}" for more summer guests!`;
+    } else if (idleModuleNames.length > 0) {
+      warning = `💤 Seasonal Tip: ${idleModuleNames[0]} is off-season in ${
+        this.state.season === 'winter' ? 'Winter' : 'Green Season'
+      }. Swap in ${this.state.season === 'winter' ? '❄️ Winter' : '🌱 Green'} gear!`;
     }
 
     return {
+      activeStations,
+      idleModuleNames,
       expectedCustomers,
-      revenuePerCustomer,
-      seasonMatchWarning: warning,
+      sweetSpotWidth,
+      fillSpeedMultiplier,
+      perfectBonusMultiplier,
+      passivePerGuest,
+      mochiAutoSave,
+      estimatedTotalYen,
       regionalVitality: vitality,
+      activeBuffPills,
+      seasonMatchWarning: warning,
     };
   }
 
-  public recordServiceMiniGameResult(qualityMultiplier: number): {
+  public recordServiceMiniGameResult(earnedYenOverride: number, customersServedOverride?: number): {
     earnedYen: number;
     customersServed: number;
   } {
-    const est = this.calculatePopUpShiftEstimate();
-    const earnedYen = Math.round(est.revenuePerCustomer * est.expectedCustomers * qualityMultiplier);
+    const summary = this.computeVanBuildSummary();
+    const served = customersServedOverride ?? summary.expectedCustomers;
+    const earnedYen = Math.max(0, Math.round(earnedYenOverride));
     this.state.yen += earnedYen;
-    this.state.customersServedToday += est.expectedCustomers;
-    this.state.customersServedTotal += est.expectedCustomers;
+    this.state.customersServedToday += served;
+    this.state.customersServedTotal += served;
     this.state.stamina = Math.max(0, this.state.stamina - 20);
-    this.state.reputation += Math.round(est.expectedCustomers * (this.state.personality === 'curator' ? 2 : 1));
+    this.state.reputation += Math.round(served * (this.state.personality === 'curator' ? 2 : 1));
 
     this.addLog(
-      `🚐 Served ${est.expectedCustomers} happy visitors in ${REGION_MAP[this.state.currentRegion].name} (+¥${earnedYen} | Quality ${Math.round(
-        qualityMultiplier * 100
-      )}%)!`
+      `🚐 Served ${served} happy visitors in ${REGION_MAP[this.state.currentRegion].name} (+¥${earnedYen})!`
     );
     this.emit();
-    return { earnedYen, customersServed: est.expectedCustomers };
+    return { earnedYen, customersServed: served };
   }
 
   public advanceDay(): { seasonChanged: boolean; newSeason: Season; isPrepDay: boolean } {

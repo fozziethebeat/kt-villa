@@ -503,7 +503,10 @@
       filter: brightness(1.06);
     }
     &:disabled {
-      opacity: 0.5;
+      background: var(--washi-oat);
+      border-color: var(--border-soft);
+      color: var(--ink-muted);
+      box-shadow: none;
       cursor: default;
     }
   }
@@ -553,8 +556,8 @@
   .van-cabin-shell {
     background: linear-gradient(180deg var(--in-oklab), #eaf2f6 0%, #f6efe2 38%, #e4d3b8 100%);
     border: 3px solid #59473a;
-    border-radius: 34px 44px 18px 18px;
-    padding: 0.95rem 0.95rem 0.85rem;
+    border-radius: 30px 38px 16px 16px;
+    padding: 0.65rem 0.8rem 0.7rem;
     position: relative;
     box-shadow: var(--shadow-paper);
   }
@@ -562,8 +565,8 @@
   .van-fairy-lights {
     display: flex;
     justify-content: space-around;
-    padding-block-end: 0.45rem;
-    font-size: 0.76rem;
+    padding-block-end: 0.3rem;
+    font-size: 0.72rem;
     color: var(--honey);
     letter-spacing: 0.35em;
   }
@@ -571,13 +574,13 @@
   .van-interior-grid {
     display: grid;
     grid-template-columns: repeat(var(--grid-cols, 4), 1fr);
-    gap: 0.5rem;
+    gap: 0.42rem;
   }
 
   .van-grid-cell {
-    min-height: 86px;
+    min-height: 72px;
     border-radius: 12px;
-    padding: 0.42rem 0.5rem;
+    padding: 0.34rem 0.45rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -675,6 +678,16 @@
     margin: 0 0 0.25rem;
     font-size: 0.96rem;
     font-family: 'Georgia', serif;
+  }
+
+  .selected-mod-banner {
+    background: #fdf4ea;
+    border: 1.5px solid var(--terracotta);
+    border-radius: 10px;
+    padding: 0.36rem 0.65rem;
+    font-size: 0.78rem;
+    color: var(--ink-dark);
+    margin-block-end: 0.45rem;
   }
 
   .module-catalog-list {
@@ -963,5 +976,433 @@
       font-size: 0.75rem;
       color: var(--ink-muted);
     }
+  }
+
+  /* =========================================================================
+   * UPGRADED COZY MINI-PUZZLES (Onsen Flow, Takibi Blowpipe, Shuttle Logic, Pour Counter)
+   * ========================================================================= */
+  .puzzle-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .puzzle-top-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+  }
+
+  .puzzle-status-pills {
+    display: flex;
+    gap: 0.45rem;
+  }
+
+  /* 1. 4x4 Onsen Conduit Flow Grid */
+  .onsen-pipe-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 78px);
+    gap: 0.45rem;
+    justify-content: center;
+    background: var(--washi-linen);
+    border: 2px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 0.9rem;
+  }
+
+  .onsen-tile {
+    width: 78px;
+    height: 78px;
+    background: var(--washi-cream);
+    border: 2px solid var(--border-soft);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    padding: 0;
+    transition: border-color 0.16s ease, background 0.2s ease, transform 0.14s ease;
+    &:hover:not(:disabled) {
+      border-color: var(--terracotta);
+      transform: translateY(-1px);
+    }
+    &.wet {
+      background: #e6f4f5;
+      border-color: #5eb5ba;
+      box-shadow: inset 0 0 12px rgba(94, 181, 186, 0.28);
+    }
+    &.locked {
+      cursor: default;
+      background: var(--washi-oat);
+    }
+    &.hint-glow {
+      outline: 2.5px dashed var(--honey);
+    }
+    & .tile-mini-tag {
+      position: absolute;
+      inset-block-start: 3px;
+      inset-inline-end: 5px;
+      font-size: 0.72rem;
+    }
+  }
+
+  /* 2. Takibi Firepit Stacking & Blowpipe */
+  .takibi-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .takibi-pit-visual {
+    background: var(--washi-linen);
+    border: 2px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .takibi-stage-tag {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--sage);
+    background: var(--washi-cream);
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid var(--border-soft);
+  }
+
+  .takibi-tray {
+    display: flex;
+    flex-direction: column;
+    gap: 0.48rem;
+  }
+
+  .wood-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    background: var(--washi-linen);
+    border: 1.5px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 0.58rem 0.85rem;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--ink-dark);
+    &:hover:not(:disabled) {
+      border-color: var(--terracotta);
+      background: #fdf4ea;
+    }
+    &.used {
+      background: #e3f0e5;
+      border-color: #7eb08c;
+      color: #295236;
+      cursor: default;
+    }
+    & .wood-ico {
+      font-size: 1.2rem;
+    }
+    & .wood-state {
+      font-size: 0.76rem;
+      color: var(--ink-muted);
+    }
+  }
+
+  .blowpipe-stage {
+    background: var(--washi-linen);
+    border: 2px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .flame-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    & .flame-icon {
+      font-size: 2.6rem;
+      transition: transform 0.08s linear;
+    }
+  }
+
+  .ember-meter-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .ember-bar-track {
+    position: relative;
+    height: 36px;
+    background: var(--washi-cream);
+    border: 2px solid var(--border-soft);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .ember-golden-band {
+    position: absolute;
+    inset-block: 0;
+    background: rgba(230, 162, 60, 0.34);
+    border-inline: 2px dashed var(--terracotta);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #6b3b0c;
+    z-index: 2;
+  }
+
+  .ember-heat-fill {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: linear-gradient(90deg var(--in-oklab), #f3b552, #d86442);
+    border-radius: 999px;
+    z-index: 1;
+  }
+
+  .ignite-progress-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .ignite-bar-track {
+    flex: 1;
+    height: 14px;
+    background: var(--washi-cream);
+    border: 1.5px solid var(--border-soft);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .ignite-charge-fill {
+    height: 100%;
+    background: var(--sage);
+    border-radius: 999px;
+  }
+
+  /* 3. Happo Shuttle Dispatch Logic Board */
+  .clue-notes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+  }
+
+  .clue-sticky {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    background: #fdf6dc;
+    border: 1.5px solid #e4cc88;
+    border-radius: 10px;
+    padding: 0.52rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-dark);
+    &.satisfied {
+      background: #e3f0e5;
+      border-color: #7eb08c;
+      color: #295236;
+    }
+    &.needs-fix {
+      background: #fdeae4;
+      border-color: var(--terracotta);
+    }
+  }
+
+  .dispatch-board {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    background: #524136;
+    border-radius: 14px;
+    padding: 0.85rem;
+  }
+
+  .dispatch-row {
+    display: grid;
+    grid-template-columns: 1.15fr 0.7fr 1.25fr;
+    gap: 0.55rem;
+    align-items: center;
+    background: #3d2f27;
+    border-inline-start: 5px solid var(--bus-color, #e6a23c);
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+    & .bus-label {
+      color: #faf5eb;
+      font-size: 0.85rem;
+    }
+  }
+
+  .flip-tile {
+    background: var(--washi-cream);
+    color: var(--ink-dark);
+    border: 1.5px solid #c9b9a3;
+    border-radius: 8px;
+    padding: 0.42rem 0.65rem;
+    font-size: 0.82rem;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+    &:hover {
+      border-color: var(--terracotta);
+      background: #fdf4ea;
+    }
+  }
+
+  /* 4. Upgraded Pour-Over & Service Counter */
+  .customer-window-scene {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    background: var(--washi-cream);
+    border: 1.5px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 0.75rem 1rem;
+    margin-block-end: 0.75rem;
+  }
+
+  .customer-avatar-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    & .cust-emoji {
+      font-size: 2rem;
+      background: var(--washi-linen);
+      padding: 0.3rem 0.55rem;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-soft);
+    }
+  }
+
+  .customer-speech-bubble {
+    background: #fdf4ea;
+    border: 1.5px solid var(--terracotta);
+    border-radius: 12px;
+    padding: 0.48rem 0.85rem;
+    font-size: 0.88rem;
+    color: var(--ink-dark);
+  }
+
+  .pour-fill-bar {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: linear-gradient(90deg var(--in-oklab), #d98a4e, #d86442);
+    border-radius: 999px;
+    opacity: 0.78;
+    z-index: 1;
+  }
+
+  /* Explicit Van Build Dashboard & Effect Badges */
+  .van-build-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.45rem;
+    margin-block-start: 0.65rem;
+  }
+
+  .build-stat-box {
+    background: var(--washi-linen);
+    border: 1.5px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 0.36rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    & .bs-label {
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: var(--ink-muted);
+    }
+    & .bs-val {
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: var(--ink-dark);
+    }
+  }
+
+  .active-buffs-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-block-start: 0.55rem;
+    margin-block-end: 0.55rem;
+    & .buffs-label {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--ink-muted);
+    }
+  }
+
+  .buff-pill {
+    display: inline-flex;
+    align-items: center;
+    background: #e3f0e5;
+    border: 1px solid #7eb08c;
+    color: #264d32;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    &.mochi-ready {
+      background: #fdf3dc;
+      border-color: #e4be73;
+      color: #7c4d12;
+    }
+  }
+
+  .cat-effect-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-block-start: 0.25rem;
+  }
+
+  .effect-badge {
+    background: var(--washi-cream);
+    border: 1px solid var(--border-soft);
+    color: var(--ink-dark);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.1rem 0.4rem;
+    border-radius: 6px;
+  }
+
+  .van-grid-cell.off-season {
+    opacity: 0.68;
+    border-style: dashed;
+  }
+
+  .order-pay-tag {
+    display: inline-block;
+    margin-inline-start: 0.4rem;
+    background: #fdf3dc;
+    border: 1px solid #e4be73;
+    color: #7c4d12;
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
   }
 }
