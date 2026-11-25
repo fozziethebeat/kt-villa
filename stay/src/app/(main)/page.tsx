@@ -176,13 +176,6 @@ export default async function Home() {
                           Every stay gets a custom seasonal AI artwork emblem
                         </span>
                       </li>
-                      <li className="flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                        <span>
-                          ¥5,000 / person / night contribution toward house
-                          upkeep
-                        </span>
-                      </li>
                     </ul>
 
                     <div className="space-y-2.5 pt-2">

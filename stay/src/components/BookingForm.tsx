@@ -19,7 +19,6 @@ import {
   Dog,
   Loader2,
   Sparkles,
-  Users,
   AlertCircle,
 } from "lucide-react";
 
@@ -200,19 +199,13 @@ export function BookingForm({
 
   return (
     <form onSubmit={handleSubmit} className="w-full space-y-5 text-left">
-      <div className="flex items-center justify-between border-b border-border/80 pb-3">
-        <div>
-          <h2 className="text-lg font-bold tracking-tight text-foreground">
-            Reserve Your Stay
-          </h2>
-          <p className="text-xs text-muted-foreground">
-            Pick open dates &amp; generate your custom trip emblem
-          </p>
-        </div>
-        <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-          <Sparkles className="h-3.5 w-3.5" />
-          ¥5,000 / night
-        </span>
+      <div className="border-b border-border/80 pb-3">
+        <h2 className="text-lg font-bold tracking-tight text-foreground">
+          Reserve Your Stay
+        </h2>
+        <p className="text-xs text-muted-foreground">
+          Pick open dates &amp; generate your custom trip emblem
+        </p>
       </div>
 
       {/* Date Range Picker */}
@@ -423,20 +416,8 @@ export function BookingForm({
         </label>
       </div>
 
-      {/* Cost Preview & Submit */}
+      {/* Submit */}
       <div className="space-y-3 border-t border-border/80 pt-3">
-        {isValidDates && nights > 0 && (
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Users className="h-3.5 w-3.5 text-primary" />
-              Est. house contribution ({nights}n × {numGuests}g)
-            </span>
-            <span className="font-semibold text-foreground">
-              ¥{(nights * numGuests * 5000).toLocaleString()}
-            </span>
-          </div>
-        )}
-
         {error && (
           <div className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive">
             {error.message || "Could not create booking. Please check your dates."}
