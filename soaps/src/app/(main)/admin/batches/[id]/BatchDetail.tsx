@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useActionState, useTransition } from 'react'
+import { useState, useActionState, useTransition, useRef } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Beaker, Droplets, Calendar, Hash, Sparkles, Loader2, ImageIcon, Trash2, KeyRound, Copy, Check, History, Pencil } from 'lucide-react'
-import { updateBatch, generateBatchImage, selectBatchImage, deleteBatch } from '@/app/actions/batch'
+import { Beaker, Droplets, Sparkles, Loader2, ImageIcon, Trash2, KeyRound, Copy, Check, History, Pencil, Camera, Upload, X } from 'lucide-react'
+import { updateBatch, generateBatchImage, selectBatchImage, deleteBatch, uploadBatchPhoto, removeBatchPhoto } from '@/app/actions/batch'
 import { formatDate } from '@/lib/utils'
 // @ts-ignore
 import { useFormStatus } from 'react-dom'
@@ -45,6 +45,7 @@ interface BatchData {
     readyAt: string | null
     numBars: number | null
     imageUrl: string | null
+    photoUrl: string | null
     notes: string | null
     status: string
     magicCodeId: string | null
@@ -69,7 +70,13 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
     const [numBars, setNumBars] = useState(batch.numBars?.toString() || '')
     const [status, setStatus] = useState(batch.status)
 
-    // Image generation
+    // Real soap photo upload
+    const [photoUrl, setPhotoUrl] = useState(batch.photoUrl || '')
+    const [isUploadingPhoto, startPhotoTransition] = useTransition()
+    const [photoError, setPhotoError] = useState('')
+    const photoInputRef = useRef<HTMLInputElement>(null)
+
+    // AI label image generation
     const [imagePrompt, setImagePrompt] = useState('')
     const [isGenerating, startTransition] = useTransition()
     const [imageError, setImageError] = useState('')
@@ -79,6 +86,39 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
 
     const [isDeleting, setIsDeleting] = useState(false)
     const [copied, setCopied] = useState(false)
+
+    const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (!file) return
+        setPhotoError('')
+        const formData = new FormData()
+        formData.append('photo', file)
+
+        startPhotoTransition(async () => {
+            const result = await uploadBatchPhoto(batch.id, formData)
+            if (result.success && result.photoUrl) {
+                setPhotoUrl(result.photoUrl)
+            } else {
+                setPhotoError(result.error || 'Failed to upload photo')
+            }
+            if (photoInputRef.current) {
+                photoInputRef.current.value = ''
+            }
+        })
+    }
+
+    const handleRemovePhoto = () => {
+        if (!confirm('Remove the uploaded soap photo? The landing page will fall back to the AI label image until a new photo is uploaded.')) return
+        setPhotoError('')
+        startPhotoTransition(async () => {
+            const result = await removeBatchPhoto(batch.id)
+            if (result.success) {
+                setPhotoUrl('')
+            } else {
+                setPhotoError(result.error || 'Failed to remove photo')
+            }
+        })
+    }
 
     const signupUrl = batch.magicCodeId
         ? `${typeof window !== 'undefined' ? window.location.origin : ''}/signup?magicCode=${batch.magicCodeId}`
@@ -374,15 +414,105 @@ export function BatchDetail({ batch }: { batch: BatchData }) {
                     </Card>
                 </div>
 
-                {/* Right Column — Image */}
+                {/* Right Column — Real Soap Photo & AI Label Artwork */}
                 <div className="space-y-6">
-                    {/* Current Image */}
+                    {/* Real Soap Photo (Primary Landing Page Image) */}
+                    <Card id="soap-photo" className="border-border scroll-mt-24">
+                        <CardHeader>
+                            <CardTitle className="text-base flex items-center gap-2 text-brand-warm-brown">
+                                <Camera className="h-4 w-4 text-mineral-moss" />
+                                Real Soap Photo
+                            </CardTitle>
+                            <CardDescription className="text-brand-stone">
+                                Shown as the primary photo on the landing page and collections. Your AI label artwork stays preserved below.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <input
+                                ref={photoInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handlePhotoUpload}
+                                className="hidden"
+                                disabled={isUploadingPhoto}
+                            />
+
+                            {photoUrl ? (
+                                <div className="space-y-3">
+                                    <div className="overflow-hidden border border-border bg-secondary">
+                                        <img
+                                            src={photoUrl}
+                                            alt={`${batch.name} real soap photo`}
+                                            className="w-full aspect-[4/5] object-cover"
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={() => photoInputRef.current?.click()}
+                                            disabled={isUploadingPhoto}
+                                            className="flex-1"
+                                        >
+                                            {isUploadingPhoto ? (
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            ) : (
+                                                <Upload className="mr-2 h-4 w-4" />
+                                            )}
+                                            Replace Photo
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={handleRemovePhoto}
+                                            disabled={isUploadingPhoto}
+                                            className="text-destructive hover:text-destructive"
+                                        >
+                                            <X className="mr-1 h-4 w-4" />
+                                            Remove
+                                        </Button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={() => photoInputRef.current?.click()}
+                                    disabled={isUploadingPhoto}
+                                    className="w-full aspect-[4/3] border border-dashed border-border hover:border-foreground bg-secondary/40 hover:bg-secondary/70 transition-colors duration-150 flex flex-col items-center justify-center gap-2 px-6 text-center cursor-pointer"
+                                >
+                                    {isUploadingPhoto ? (
+                                        <>
+                                            <Loader2 className="h-8 w-8 text-mineral-moss animate-spin" />
+                                            <p className="text-sm font-medium text-foreground">Uploading &amp; optimizing photo...</p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload className="h-8 w-8 text-muted-foreground" />
+                                            <p className="text-sm font-medium text-foreground">Upload a photo of this batch</p>
+                                            <p className="text-xs text-muted-foreground">JPG, PNG, or WebP · Auto-oriented for portrait display</p>
+                                        </>
+                                    )}
+                                </button>
+                            )}
+
+                            {photoError && (
+                                <p className="text-destructive text-xs">{photoError}</p>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Current AI Label Image */}
                     <Card className="border-border">
                         <CardHeader>
                             <CardTitle className="text-base flex items-center gap-2 text-brand-warm-brown">
                                 <ImageIcon className="h-4 w-4" />
-                                Batch Image
+                                AI Batch Label Artwork
                             </CardTitle>
+                            <CardDescription className="text-brand-stone">
+                                Distinct label art for this batch. Shown on the batch detail page (and as a fallback until a real photo is uploaded).
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             {generatedImageUrl ? (

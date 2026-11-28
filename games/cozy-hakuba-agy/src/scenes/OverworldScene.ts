@@ -439,6 +439,140 @@ export class OverworldScene extends Phaser.Scene {
         })
         .setOrigin(0.5);
       this.buildingContainer.add([g, sign]);
+    } else if (regionId === 'echoland') {
+      // Echoland Street: Vintage Cafe Row + Hanging Lantern String
+      g.fillStyle(0x4a3b32, 0.14);
+      g.fillEllipse(540, 232, 420, 26);
+      // Left Cafe & Right Record Chalet
+      g.fillStyle(wallCream, 1);
+      g.lineStyle(2.4, 0x4a3b32, 0.75);
+      g.fillRoundedRect(335, 134, 175, 92, 8);
+      g.strokeRoundedRect(335, 134, 175, 92, 8);
+      g.fillRoundedRect(545, 140, 185, 86, 8);
+      g.strokeRoundedRect(545, 140, 185, 86, 8);
+      // Warm awnings
+      g.fillStyle(awakened ? 0x9b4d7a : 0x7e756d, 1);
+      g.fillRoundedRect(326, 122, 193, 20, 6);
+      g.fillStyle(awakened ? 0xd86442 : 0x867e77, 1);
+      g.fillRoundedRect(536, 128, 203, 20, 6);
+      // Hanging street lanterns between shops
+      g.lineStyle(2, 0x4a3b32, 0.7);
+      g.strokeLineShape(new Phaser.Geom.Line(370, 122, 700, 128));
+      for (let lx = 410; lx <= 660; lx += 50) {
+        g.fillStyle(awakened ? 0xf6c453 : 0xcbc3b4, 1);
+        g.fillCircle(lx, 128, 7);
+      }
+      g.fillStyle(winGlow, 1);
+      for (const wx of [360, 425, 575, 650]) {
+        g.fillRoundedRect(wx, 158, 38, 34, 4);
+        g.strokeRoundedRect(wx, 158, 38, 34, 4);
+      }
+      const sign = this.add
+        .text(530, 102, 'エコーランド  ECHOLAND', {
+          fontFamily: "'Hiragino Maru Gothic ProN', 'Georgia', serif",
+          fontSize: '12px',
+          fontStyle: 'bold',
+          color: '#2e2723',
+          backgroundColor: '#faf5eb',
+          padding: { x: 10, y: 3 },
+        })
+        .setOrigin(0.5);
+      this.buildingContainer.add([g, sign]);
+    } else if (regionId === 'iwatake') {
+      // Hakuba Iwatake: Cantilevered Mountain Harbor Terrace + Gondola
+      g.fillStyle(0x4a3b32, 0.14);
+      g.fillEllipse(540, 232, 370, 26);
+      // Timber Terrace Deck
+      g.fillStyle(timber, 1);
+      g.lineStyle(2.4, 0x4a3b32, 0.75);
+      g.fillRoundedRect(350, 186, 380, 40, 6);
+      g.strokeRoundedRect(350, 186, 380, 40, 6);
+      // Panoramic Bakery Glass Pavilion
+      g.fillStyle(wallCream, 1);
+      g.fillRoundedRect(410, 118, 250, 72, 8);
+      g.strokeRoundedRect(410, 118, 250, 72, 8);
+      g.fillStyle(awakened ? 0x9ec2dd : 0xb8c0c7, 0.85);
+      g.fillRoundedRect(425, 130, 220, 46, 5);
+      g.strokeRoundedRect(425, 130, 220, 46, 5);
+      // Gondola cable + cute cabin
+      g.lineStyle(2, 0x4a3b32, 0.5);
+      g.strokeLineShape(new Phaser.Geom.Line(120, 92, 410, 128));
+      g.fillStyle(awakened ? 0x2e7d8c : 0x7e888c, 1);
+      g.fillRoundedRect(245, 108, 34, 24, 6);
+      g.strokeRoundedRect(245, 108, 34, 24, 6);
+      const sign = this.add
+        .text(535, 104, '白馬岩岳  MOUNTAIN HARBOR', {
+          fontFamily: "'Hiragino Maru Gothic ProN', 'Georgia', serif",
+          fontSize: '12px',
+          fontStyle: 'bold',
+          color: '#2e2723',
+          backgroundColor: '#faf5eb',
+          padding: { x: 10, y: 3 },
+        })
+        .setOrigin(0.5);
+      this.buildingContainer.add([g, sign]);
+    } else if (regionId === 'goryu') {
+      // Hakuba Goryu: Escal Plaza & Botanical Glass Conservatory
+      g.fillStyle(0x4a3b32, 0.14);
+      g.fillEllipse(540, 232, 370, 26);
+      g.fillStyle(wallCream, 1);
+      g.lineStyle(2.4, 0x4a3b32, 0.75);
+      g.fillRoundedRect(365, 130, 210, 96, 8);
+      g.strokeRoundedRect(365, 130, 210, 96, 8);
+      g.fillStyle(awakened ? 0x6e5aa8 : 0x7c788a, 1);
+      g.fillTriangle(350, 134, 470, 74, 590, 134);
+      g.strokeTriangle(350, 134, 470, 74, 590, 134);
+      // Botanical Glasshouse Dome
+      g.fillStyle(awakened ? 0xd8f0e4 : 0xd0d6d2, 0.9);
+      g.fillRoundedRect(585, 138, 125, 88, { tl: 48, tr: 48, bl: 4, br: 4 });
+      g.strokeRoundedRect(585, 138, 125, 88, { tl: 48, tr: 48, bl: 4, br: 4 });
+      g.fillStyle(winGlow, 1);
+      for (const wx of [392, 448, 504]) {
+        g.fillRoundedRect(wx, 152, 34, 38, 4);
+        g.strokeRoundedRect(wx, 152, 34, 38, 4);
+      }
+      const sign = this.add
+        .text(535, 108, '白馬五竜  ESCAL & BOTANICAL', {
+          fontFamily: "'Hiragino Maru Gothic ProN', 'Georgia', serif",
+          fontSize: '12px',
+          fontStyle: 'bold',
+          color: '#2e2723',
+          backgroundColor: '#faf5eb',
+          padding: { x: 10, y: 3 },
+        })
+        .setOrigin(0.5);
+      this.buildingContainer.add([g, sign]);
+    } else if (regionId === 'hakuba47') {
+      // Hakuba 47: Freestyle Base Lodge + Stone Pizza Chimney
+      g.fillStyle(0x4a3b32, 0.14);
+      g.fillEllipse(540, 232, 370, 26);
+      g.fillStyle(wallCream, 1);
+      g.lineStyle(2.4, 0x4a3b32, 0.75);
+      g.fillRoundedRect(370, 130, 320, 96, 8);
+      g.strokeRoundedRect(370, 130, 320, 96, 8);
+      // Stone chimney
+      g.fillStyle(0x8c7b6e, 1);
+      g.fillRect(620, 74, 28, 60);
+      g.strokeRect(620, 74, 28, 60);
+      g.fillStyle(awakened ? 0xd86442 : 0x867e77, 1);
+      g.fillTriangle(350, 134, 530, 72, 710, 134);
+      g.strokeTriangle(350, 134, 530, 72, 710, 134);
+      g.fillStyle(winGlow, 1);
+      for (const wx of [400, 465, 530, 595]) {
+        g.fillRoundedRect(wx, 152, 38, 38, 4);
+        g.strokeRoundedRect(wx, 152, 38, 38, 4);
+      }
+      const sign = this.add
+        .text(530, 110, '白馬47  RIVER & PARK BASE', {
+          fontFamily: "'Hiragino Maru Gothic ProN', 'Georgia', serif",
+          fontSize: '12px',
+          fontStyle: 'bold',
+          color: '#2e2723',
+          backgroundColor: '#faf5eb',
+          padding: { x: 10, y: 3 },
+        })
+        .setOrigin(0.5);
+      this.buildingContainer.add([g, sign]);
     }
 
     // Green Season Pivot Visual Illustration (Tarp tent / E-bike rack / Flower planter!)
@@ -518,7 +652,10 @@ export class OverworldScene extends Phaser.Scene {
         bubble.add([bg, bTxt]);
         container.add(bubble);
       } else if (zone.type === 'hearth') {
-        const hearthKey = st.currentRegion === 'snowpeak' ? 'prop_hearth_takibi' : 'prop_hearth';
+        const hearthKey =
+          st.currentRegion === 'snowpeak' || st.currentRegion === 'echoland' || st.currentRegion === 'hakuba47'
+            ? 'prop_hearth_takibi'
+            : 'prop_hearth';
         const hearth = this.add.image(0, 0, hearthKey);
         container.add(hearth);
       } else if (zone.type === 'forage') {
@@ -527,6 +664,14 @@ export class OverworldScene extends Phaser.Scene {
             ? 'prop_birch'
             : zone.itemReward === 'Route Plaque'
             ? 'prop_plaque'
+            : zone.itemReward === 'Lantern Bulb'
+            ? 'prop_bulb'
+            : zone.itemReward === 'Trail Marker'
+            ? 'prop_marker'
+            : zone.itemReward === 'Seed Packet'
+            ? 'prop_seed'
+            : zone.itemReward === 'River Stone'
+            ? 'prop_stone'
             : 'prop_cedar';
         const prop = this.add.image(0, 0, propKey);
         if (isCollected) {
@@ -570,7 +715,7 @@ export class OverworldScene extends Phaser.Scene {
       } else if (zone.type === 'portal') {
         const post = this.add.image(0, -10, 'prop_signpost');
         const arrow = this.add
-          .text(0, -24, zone.targetRegion === 'station' ? '←' : '→', {
+          .text(0, -24, zone.x < 500 ? '←' : '→', {
             fontSize: '15px',
             fontStyle: 'bold',
             color: '#2e2723',

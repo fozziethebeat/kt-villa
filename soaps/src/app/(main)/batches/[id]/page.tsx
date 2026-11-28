@@ -1,279 +1,230 @@
-import prisma from '@/lib/prisma'
-import { notFound } from 'next/navigation'
-import { Header } from '@/components/Header'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Beaker, Droplets, Calendar, Hash, ImageIcon, Wind, Clock } from 'lucide-react'
-import { formatDate } from '@/lib/utils'
-
-const links = [
-    { url: '/', label: 'Home' },
-]
-
-const STATUS_DISPLAY: Record<string, { label: string; color: string }> = {
-    SCHEDULING: { label: 'Scheduling', color: 'bg-brand-sage-light text-brand-sage' },
-    STARTED: { label: 'Started', color: 'bg-brand-terracotta-light text-brand-terracotta' },
-    CURING: { label: 'Curing', color: 'bg-brand-sage-light text-brand-sage' },
-    READY: { label: 'Ready', color: 'bg-brand-rose-light text-brand-rose' },
-    ARCHIVED: { label: 'Archived', color: 'bg-brand-linen text-brand-stone' },
-}
+import Link from 'next/link';
+import prisma from '@/lib/prisma';
+import { notFound } from 'next/navigation';
+import { BrandHeader } from '@/components/BrandHeader';
+import { formatDate } from '@/lib/utils';
 
 function getAgeInWeeks(date: Date) {
-    const diffTime = Math.abs(new Date().getTime() - date.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return Math.floor(diffDays / 7)
+  const diffTime = Math.abs(new Date().getTime() - date.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.max(1, Math.floor(diffDays / 7));
 }
 
-export default async function BatchViewPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params
-    const batch = await prisma.batch.findUnique({
-        where: { id },
-        include: {
-            baseRecipe: true,
-            styleRecipe: true,
-            images: {
-                orderBy: { version: 'desc' },
-            },
-        }
-    })
+export default async function BatchViewPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const batch = await prisma.batch.findUnique({
+    where: { id },
+    include: {
+      baseRecipe: true,
+      styleRecipe: true,
+      images: {
+        orderBy: { version: 'desc' },
+      },
+    },
+  });
 
-    if (!batch) {
-        notFound()
-    }
+  if (!batch || batch.status === 'SCHEDULING' || batch.status === 'ARCHIVED') {
+    notFound();
+  }
 
-    // Only show active batches to regular users (not SCHEDULING or ARCHIVED)
-    if (batch.status === 'SCHEDULING' || batch.status === 'ARCHIVED') {
-        notFound()
-    }
+  const ageWeeks = getAgeInWeeks(batch.startedAt);
+  const isCuring = batch.status === 'CURING' || batch.status === 'STARTED';
+  const statusLine =
+    batch.status === 'STARTED'
+      ? 'Freshly poured'
+      : isCuring
+        ? `Curing · Week ${Math.min(ageWeeks, 6)} of 6`
+        : 'Ready to enjoy';
 
-    const statusInfo = STATUS_DISPLAY[batch.status] || STATUS_DISPLAY.STARTED
-    const ageWeeks = getAgeInWeeks(batch.startedAt)
-    const isCuring = batch.status === 'CURING' || batch.status === 'STARTED'
+  const primaryPhoto = batch.photoUrl || batch.imageUrl || '/images/soap-placeholder.jpg';
+  const hasRealPhotoAndLabel = Boolean(batch.photoUrl && batch.imageUrl);
 
-    return (
-        <>
-            <Header links={links} target={batch.name} />
-            <div className="container mx-auto py-10 px-4 md:px-8">
-                <div className="max-w-4xl mx-auto space-y-8">
-                    {/* Header */}
-                    <div className="flex items-start justify-between gap-4">
-                        <div>
-                            <h1 className="text-3xl font-semibold tracking-tight text-brand-warm-brown">
-                                {batch.name}
-                            </h1>
-                            <div className="flex items-center gap-3 mt-2 text-sm text-brand-stone">
-                                <span className="flex items-center gap-1.5">
-                                    <Calendar className="h-4 w-4" />
-                                    Started {formatDate(batch.startedAt)}
-                                </span>
-                                {isCuring && (
-                                    <span className="flex items-center gap-1.5 text-brand-sage font-medium">
-                                        <Wind className="h-4 w-4" />
-                                        Curing for {ageWeeks} {ageWeeks === 1 ? 'week' : 'weeks'}
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-                        <Badge className={`${statusInfo.color} shrink-0 text-sm px-3 py-1`}>
-                            {statusInfo.label}
-                        </Badge>
-                    </div>
+  const baseIngredients = [
+    ...((batch.baseRecipe.ingredients as any[]) || []),
+    { name: 'Distilled water' },
+    { name: 'Sodium hydroxide (lye)' },
+  ];
+  const styleIngredients = (batch.styleRecipe?.ingredients as any[]) || [];
 
-                    <div className="grid gap-8 md:grid-cols-2">
-                        {/* Left Column — Image */}
-                        <div className="space-y-6">
-                            {/* Main Image */}
-                            <Card className="border-border overflow-hidden">
-                                {batch.imageUrl ? (
-                                    <div className="aspect-square w-full overflow-hidden bg-brand-cream">
-                                        <img
-                                            src={batch.imageUrl}
-                                            alt={batch.name}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                ) : (
-                                    <div className="aspect-square w-full flex flex-col items-center justify-center bg-gradient-to-br from-brand-terracotta-light to-brand-rose-light">
-                                        <Droplets className="h-16 w-16 text-brand-terracotta/30 mb-3" />
-                                        <p className="text-sm text-brand-stone">No image available</p>
-                                    </div>
-                                )}
-                            </Card>
+  return (
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <BrandHeader />
 
-                            {/* Image Gallery (if multiple images exist) */}
-                            {batch.images.length > 1 && (
-                                <Card className="border-border">
-                                    <CardHeader>
-                                        <CardTitle className="text-base flex items-center gap-2 text-brand-warm-brown">
-                                            <ImageIcon className="h-4 w-4 text-brand-terracotta" />
-                                            Gallery
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            {batch.images.map((image) => {
-                                                const isActive = image.imageUrl === batch.imageUrl
-                                                return (
-                                                    <div
-                                                        key={image.id}
-                                                        className={`relative rounded-md overflow-hidden border-2 aspect-square ${isActive
-                                                                ? 'border-brand-terracotta ring-2 ring-brand-terracotta/30'
-                                                                : 'border-border'
-                                                            }`}
-                                                    >
-                                                        <img
-                                                            src={image.imageUrl}
-                                                            alt={`Version ${image.version}`}
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                        {isActive && (
-                                                            <div className="absolute inset-0 flex items-end justify-center pb-1 bg-gradient-to-t from-black/50 to-transparent">
-                                                                <span className="text-white text-xs font-medium">
-                                                                    ✓ Current
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            )}
-                        </div>
+      <main className="flex-1 mx-auto w-full max-w-[1360px] px-6 md:px-12 pt-28 pb-24">
+        <div className="mb-10">
+          <Link
+            href="/#ready"
+            className="text-[0.875rem] text-muted-foreground hover:text-foreground transition-colors duration-150"
+          >
+            ← Back to rack
+          </Link>
+        </div>
 
-                        {/* Right Column — Details */}
-                        <div className="space-y-6">
-                            {/* Recipes */}
-                            <Card className="border-border">
-                                <CardHeader>
-                                    <CardTitle className="text-base text-brand-warm-brown">Recipes</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-3">
-                                    <div className="flex items-center gap-3 p-3 rounded-md bg-brand-cream/50">
-                                        <Beaker className="h-5 w-5 text-brand-terracotta shrink-0" />
-                                        <div>
-                                            <p className="text-sm font-medium text-brand-warm-brown">
-                                                Base: {batch.baseRecipe.name}
-                                            </p>
-                                            <p className="text-xs text-brand-stone">
-                                                 {(batch.baseRecipe.ingredients as any[]).map((i: any) => i.name).concat(['Water', 'Lye']).join(', ')}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    {batch.styleRecipe && (
-                                        <div className="flex items-center gap-3 p-3 rounded-md bg-brand-cream/50">
-                                            <Droplets className="h-5 w-5 text-brand-rose shrink-0" />
-                                            <div>
-                                                <p className="text-sm font-medium text-brand-warm-brown">
-                                                    Style: {batch.styleRecipe.name}
-                                                </p>
-                                                <p className="text-xs text-brand-stone">
-                                                    {(batch.styleRecipe.ingredients as any[]).map((i: any) => i.name).join(', ')}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    )}
-                                </CardContent>
-                            </Card>
-
-                            {/* Batch Info */}
-                            <Card className="border-border">
-                                <CardHeader>
-                                    <CardTitle className="text-base text-brand-warm-brown">Batch Info</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <Calendar className="h-4 w-4 text-brand-terracotta shrink-0" />
-                                            <div>
-                                                <p className="text-xs text-brand-stone">Started</p>
-                                                <p className="font-medium text-brand-warm-brown">
-                                                    {formatDate(batch.startedAt)}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        {batch.cutAt && (
-                                            <div className="flex items-center gap-2 text-sm">
-                                                <Calendar className="h-4 w-4 text-brand-sage shrink-0" />
-                                                <div>
-                                                    <p className="text-xs text-brand-stone">Cut</p>
-                                                    <p className="font-medium text-brand-warm-brown">
-                                                        {formatDate(batch.cutAt)}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        )}
-                                        {batch.readyAt && (
-                                            <div className="flex items-center gap-2 text-sm">
-                                                <Clock className="h-4 w-4 text-brand-rose shrink-0" />
-                                                <div>
-                                                    <p className="text-xs text-brand-stone">Ready</p>
-                                                    <p className="font-medium text-brand-warm-brown">
-                                                        {formatDate(batch.readyAt)}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        )}
-                                        {batch.numBars !== null && (
-                                            <div className="flex items-center gap-2 text-sm">
-                                                <Hash className="h-4 w-4 text-brand-terracotta shrink-0" />
-                                                <div>
-                                                    <p className="text-xs text-brand-stone">Bars</p>
-                                                    <p className="font-medium text-brand-warm-brown">
-                                                        {batch.numBars}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* Notes */}
-                            {batch.notes && (
-                                <Card className="border-border">
-                                    <CardHeader>
-                                        <CardTitle className="text-base text-brand-warm-brown">Notes</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <p className="text-sm text-brand-stone leading-relaxed whitespace-pre-wrap">
-                                            {batch.notes}
-                                        </p>
-                                    </CardContent>
-                                </Card>
-                            )}
-
-                            {/* Ingredients Highlight */}
-                            {batch.styleRecipe && (
-                                <Card className="border-border bg-brand-cream/30">
-                                    <CardHeader>
-                                        <CardTitle className="text-base text-brand-warm-brown">Featured Ingredients</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="flex flex-wrap gap-2">
-                                            {(batch.styleRecipe.ingredients as any[]).map((ing: any, i: number) => (
-                                                <Badge
-                                                    key={i}
-                                                    variant="outline"
-                                                    className="text-sm font-normal text-brand-stone bg-white border-brand-terracotta/15 px-3 py-1"
-                                                >
-                                                    {ing.name}
-                                                    {ing.quantity && (
-                                                        <span className="ml-1 text-brand-stone/60">
-                                                            {ing.quantity}{ing.unit}
-                                                        </span>
-                                                    )}
-                                                </Badge>
-                                            ))}
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            )}
-                        </div>
-                    </div>
-                </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          {/* Left — Primary Photograph & Optional Label Artwork */}
+          <div className="lg:col-span-6 lg:sticky lg:top-24 space-y-8">
+            <div className="aspect-[4/5] w-full overflow-hidden bg-secondary">
+              <img
+                src={primaryPhoto}
+                alt={batch.name}
+                className="h-full w-full object-cover"
+              />
             </div>
-        </>
-    )
+
+            {hasRealPhotoAndLabel && (
+              <div className="border-t border-border pt-6 grid grid-cols-12 gap-5 items-center">
+                <div className="col-span-4 aspect-square overflow-hidden bg-secondary">
+                  <img
+                    src={batch.imageUrl!}
+                    alt={`${batch.name} label artwork`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="col-span-8">
+                  <h2 className="text-[1rem] font-semibold text-foreground">
+                    Batch label artwork
+                  </h2>
+                  <p className="mt-1 text-[0.875rem] text-muted-foreground leading-relaxed">
+                    Custom studio label created for this batch&apos;s paper wrap.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {!hasRealPhotoAndLabel && batch.images.length > 1 && (
+              <div className="border-t border-border pt-6">
+                <p className="text-[0.875rem] text-muted-foreground mb-4">
+                  Label studies
+                </p>
+                <div className="grid grid-cols-4 gap-3">
+                  {batch.images.map((img) => (
+                    <div
+                      key={img.id}
+                      className="aspect-square overflow-hidden bg-secondary"
+                    >
+                      <img
+                        src={img.imageUrl}
+                        alt={`Study ${img.version}`}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right — Editorial Story & Formulation */}
+          <div className="lg:col-span-6 space-y-12">
+            <div>
+              <p className="text-[0.875rem] font-medium text-mineral-moss tabular-nums">
+                {statusLine}
+              </p>
+              <h1 className="mt-2 text-[clamp(2rem,4vw,3.25rem)] font-semibold leading-[1.06] tracking-[-0.035em] text-foreground">
+                {batch.name}
+              </h1>
+              {batch.notes && (
+                <p className="mt-6 text-[1rem] leading-relaxed text-muted-foreground max-w-[60ch] whitespace-pre-wrap">
+                  {batch.notes}
+                </p>
+              )}
+            </div>
+
+            {/* Cure Timeline */}
+            <div className="border-t border-border pt-8">
+              <h2 className="text-[1rem] font-semibold text-foreground mb-5">
+                Cure timeline
+              </h2>
+              <dl className="grid grid-cols-2 sm:grid-cols-3 gap-6 text-[0.875rem]">
+                <div>
+                  <dt className="text-muted-foreground">Poured</dt>
+                  <dd className="mt-1 font-medium text-foreground tabular-nums">
+                    {formatDate(batch.startedAt)}
+                  </dd>
+                </div>
+                {batch.cutAt && (
+                  <div>
+                    <dt className="text-muted-foreground">Cut</dt>
+                    <dd className="mt-1 font-medium text-foreground tabular-nums">
+                      {formatDate(batch.cutAt)}
+                    </dd>
+                  </div>
+                )}
+                {batch.readyAt && (
+                  <div>
+                    <dt className="text-muted-foreground">Ready</dt>
+                    <dd className="mt-1 font-medium text-foreground tabular-nums">
+                      {formatDate(batch.readyAt)}
+                    </dd>
+                  </div>
+                )}
+                {batch.numBars !== null && (
+                  <div>
+                    <dt className="text-muted-foreground">Batch yield</dt>
+                    <dd className="mt-1 font-medium text-foreground tabular-nums">
+                      {batch.numBars} bars
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+
+            {/* Scent & Additives */}
+            {batch.styleRecipe && styleIngredients.length > 0 && (
+              <div className="border-t border-border pt-8">
+                <div className="flex items-baseline justify-between gap-4 mb-5">
+                  <h2 className="text-[1rem] font-semibold text-foreground">
+                    Botanicals &amp; clays
+                  </h2>
+                  <Link
+                    href={`/recipes/${batch.styleRecipe.id}`}
+                    className="text-[0.875rem] text-muted-foreground hover:text-foreground underline underline-offset-4 decoration-border transition-colors duration-150"
+                  >
+                    {batch.styleRecipe.name}
+                  </Link>
+                </div>
+                <ul className="divide-y divide-border border-y border-border">
+                  {styleIngredients.map((ing: any, i: number) => (
+                    <li
+                      key={i}
+                      className="py-3 flex items-baseline justify-between gap-4 text-[0.875rem]"
+                    >
+                      <span className="text-foreground">{ing.name}</span>
+                      {ing.quantity && (
+                        <span className="text-muted-foreground tabular-nums">
+                          {ing.quantity} {ing.unit || 'g'}
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Base Formula */}
+            <div className="border-t border-border pt-8">
+              <div className="flex items-baseline justify-between gap-4 mb-3">
+                <h2 className="text-[1rem] font-semibold text-foreground">
+                  Base formula
+                </h2>
+                <Link
+                  href={`/recipes/${batch.baseRecipe.id}`}
+                  className="text-[0.875rem] text-muted-foreground hover:text-foreground underline underline-offset-4 decoration-border transition-colors duration-150"
+                >
+                  {batch.baseRecipe.name}
+                </Link>
+              </div>
+              <p className="text-[0.875rem] text-muted-foreground leading-relaxed max-w-[60ch]">
+                {baseIngredients.map((i: any) => i.name).join(', ')}.
+              </p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }

@@ -85,14 +85,16 @@ export async function AppSidebar({
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-brand-terracotta text-brand-cream">
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src="/favicon.png" alt="KT Soaps" />
-                    <AvatarFallback className="rounded-lg bg-brand-terracotta text-brand-cream text-xs">KT</AvatarFallback>
-                  </Avatar>
+                <div className="flex aspect-square size-8 items-center justify-center bg-foreground text-background shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" className="size-6">
+                    <path d="M16 36 A16 16 0 0 1 48 36 Z" fill="#F3F3F1"/>
+                    <rect x="10" y="39" width="44" height="3.2" fill="#F3F3F1"/>
+                    <rect x="20" y="46" width="24" height="2.8" fill="#6E8F7F"/>
+                  </svg>
                 </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold font-serif text-brand-warm-brown">KT Soaps</span>
+                <div className="flex flex-col gap-0.5 leading-none min-w-0">
+                  <span className="font-semibold tracking-[-0.03em] text-foreground truncate">Our Morning Sunset</span>
+                  <span className="text-xs text-muted-foreground">Maker Studio</span>
                 </div>
               </Link>
             </SidebarMenuButton>

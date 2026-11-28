@@ -1,31 +1,21 @@
 import type { Metadata } from 'next';
-import { DM_Sans, Cormorant_Garamond } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 
 import { ApolloWrapper } from '@/app/ApolloWrapper';
+import { Toaster } from '@/components/ui/toaster';
 import '@/app/globals.css';
 
-import { AppSidebar } from '@/components/AppSidebar';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-
-const dmSans = DM_Sans({
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-sans',
-  display: 'swap',
-});
-
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  variable: '--font-serif',
   weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: 'KT Soaps',
-  description: 'Handcrafted soaps, made with care.',
+  title: 'Our Morning Sunset',
+  description: 'Small-batch cold-process botanical soaps, cured slow.',
 };
-
-import { Toaster } from "@/components/ui/toaster"
 
 export default function RootLayout({
   children,
@@ -33,13 +23,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${cormorant.variable}`}>
-      <body className="font-sans antialiased">
+    <html lang="en" className={plusJakarta.variable}>
+      <body className="font-sans antialiased bg-background text-foreground">
         <ApolloWrapper>
-          <SidebarProvider defaultOpen={false}>
-            <AppSidebar />
-            <main className="w-full">{children}</main>
-          </SidebarProvider>
+          <div className="min-h-screen w-full">{children}</div>
         </ApolloWrapper>
         <Toaster />
       </body>

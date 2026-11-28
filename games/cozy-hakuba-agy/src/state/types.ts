@@ -94,7 +94,8 @@ export interface RegionDef {
   stewardName: string;
   stewardTitle: string;
   stewardPortraitColor: string;
-  unlockedInPhase1: boolean;
+  isPlayable: boolean;
+  requiresTier2Van?: boolean;
   defaultUnlocked: boolean;
   winterTrafficBase: number;
   greenTrafficBase: number;
@@ -103,7 +104,7 @@ export interface RegionDef {
   questDescription: string;
   fetchItemName: string;
   fetchItemRequired: number;
-  puzzleType: 'pipes' | 'stove' | 'routes';
+  puzzleType: 'pipes' | 'stove' | 'routes' | 'lanterns' | 'mtb_trail' | 'botanical' | 'pizza_oven';
   puzzleTitle: string;
   greenPivotTitle: string;
   greenPivotCost: number;

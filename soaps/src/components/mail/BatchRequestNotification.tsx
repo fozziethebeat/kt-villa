@@ -57,7 +57,7 @@ export function BatchRequestNotification({
 
                     <Hr style={styles.hr} />
                     <Text style={styles.footer}>
-                        This notification was sent from KT Soaps because a user submitted a style request.
+                        This notification was sent from Our Morning Sunset because a user submitted a style request.
                     </Text>
                     {/* Hidden timestamp to prevent Gmail threading */}
                     {timestamp && (

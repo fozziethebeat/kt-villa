@@ -1405,4 +1405,155 @@
     padding: 0.1rem 0.45rem;
     border-radius: 999px;
   }
+
+  /* Phase 2 Mini-Puzzles */
+  .lantern-avenue-wire {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.65rem;
+    background: linear-gradient(180deg var(--in-oklab), #3e3346, #574554);
+    border-radius: 16px;
+    padding: 1.1rem 0.9rem;
+    border: 2px solid #2e2723;
+  }
+
+  .lantern-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(250, 245, 235, 0.12);
+    border: 2px solid rgba(250, 245, 235, 0.25);
+    border-radius: 14px;
+    padding: 0.75rem 0.4rem;
+    color: #faf5eb;
+    cursor: pointer;
+    transition: transform 0.14s ease, background 0.2s ease, border-color 0.2s ease;
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: var(--honey);
+    }
+    &.lit {
+      background: rgba(246, 196, 83, 0.26);
+      border-color: #f6c453;
+      box-shadow: 0 0 18px rgba(246, 196, 83, 0.4);
+    }
+    & .lantern-globe {
+      font-size: 2rem;
+    }
+    & .lantern-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+  }
+
+  .trail-grade-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+  }
+
+  .trail-seg-card {
+    background: var(--washi-linen);
+    border: 2px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 0.7rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    &.ok {
+      background: #e3f0e5;
+      border-color: #7eb08c;
+    }
+    &.warn {
+      background: #fdeae4;
+      border-color: var(--terracotta);
+    }
+    & .trail-zone-title {
+      font-weight: 800;
+      font-size: 0.86rem;
+    }
+    & .trail-check {
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+  }
+
+  .botanical-match-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.55rem;
+  }
+
+  .flora-card {
+    min-height: 76px;
+    background: var(--washi-linen);
+    border: 2px solid var(--border-soft);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--ink-dark);
+    &:hover:not(:disabled) {
+      border-color: var(--terracotta);
+    }
+    &.revealed {
+      background: var(--washi-cream);
+      border-color: var(--powder-blue);
+    }
+    &.matched {
+      background: #e3f0e5;
+      border-color: #7eb08c;
+      color: #295236;
+    }
+    & .flora-ico {
+      font-size: 1.5rem;
+    }
+    & .flora-name {
+      font-size: 0.72rem;
+    }
+    & .flora-back {
+      font-size: 1.35rem;
+      opacity: 0.75;
+    }
+  }
+
+  .pizza-prep-row {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 0.9rem;
+    align-items: center;
+  }
+
+  .pizza-dough-preview {
+    background: var(--washi-linen);
+    border: 2px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pizza-circle {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    background: #f4d8a8;
+    border: 5px solid #c97b42;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    & .pizza-toppings-shown {
+      font-size: 1.1rem;
+      min-height: 1.3rem;
+    }
+  }
 }

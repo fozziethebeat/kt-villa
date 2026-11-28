@@ -26,7 +26,7 @@ export const auth = betterAuth({
           const result = await mailer.sendMail({
             from: process.env.MAILER_FROM,
             to: email,
-            subject: `Sign in to KT Soaps [${timeString}]`,
+            subject: `Sign in to Our Morning Sunset [${timeString}]`,
             html: await render(MagicLink({ url, timestamp })),
           });
           console.log(`[Auth] Magic link email sent successfully to ${email}`, result?.messageId);

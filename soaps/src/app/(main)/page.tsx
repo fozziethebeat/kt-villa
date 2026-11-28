@@ -1,320 +1,297 @@
 import Link from 'next/link';
-import { Header } from '@/components/Header';
+import { BrandHeader } from '@/components/BrandHeader';
 import prisma from '@/lib/prisma';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Droplets, Calendar, Sparkles, Wind, Users, Clock } from 'lucide-react';
-import { cn, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 import { RequestButton } from '@/components/RequestButton';
 
 function getAgeInWeeks(date: Date) {
   const diffTime = Math.abs(new Date().getTime() - date.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return Math.floor(diffDays / 7);
+  return Math.max(1, Math.floor(diffDays / 7));
+}
+
+function getBatchDisplayImage(batch: { photoUrl?: string | null; imageUrl?: string | null }) {
+  return batch.photoUrl || batch.imageUrl || '/images/soap-placeholder.jpg';
 }
 
 export default async function Home() {
-  // Fetch active batches (not archived)
-  const batches = await prisma.batch.findMany({
-    where: {
-      status: {
-        in: ['CURING', 'READY', 'STARTED']
-      }
-    },
-    orderBy: { startedAt: 'desc' },
-    include: {
-      styleRecipe: true,
-      baseRecipe: true
-    }
-  });
+  const [batches, styleRecipes, pendingRequests, schedulingBatches] = await Promise.all([
+    prisma.batch.findMany({
+      where: {
+        status: {
+          in: ['CURING', 'READY', 'STARTED'],
+        },
+      },
+      orderBy: { startedAt: 'desc' },
+      include: {
+        styleRecipe: true,
+        baseRecipe: true,
+      },
+    }),
+    prisma.recipe.findMany({
+      where: { type: 'STYLE' },
+      orderBy: { name: 'asc' },
+    }),
+    prisma.batchRequest.groupBy({
+      by: ['styleRecipeId'],
+      where: {
+        status: { in: ['PENDING', 'PLANNED'] },
+      },
+      _count: { id: true },
+    }),
+    prisma.batch.findMany({
+      where: { status: 'SCHEDULING', styleRecipeId: { not: null } },
+      select: { styleRecipeId: true },
+    }),
+  ]);
 
-  // Fetch style recipes for requests
-  const styleRecipes = await prisma.recipe.findMany({
-    where: { type: 'STYLE' },
-    orderBy: { name: 'asc' }
-  });
-
-  // Fetch pending/planned batch requests grouped by style
-  const pendingRequests = await prisma.batchRequest.groupBy({
-    by: ['styleRecipeId'],
-    where: {
-      status: { in: ['PENDING', 'PLANNED'] }
-    },
-    _count: { id: true }
-  });
-
-  // Build a map of styleRecipeId -> request count
   const requestCountMap = new Map(
-    pendingRequests.map(r => [r.styleRecipeId, r._count.id])
+    pendingRequests.map((r) => [r.styleRecipeId, r._count.id])
   );
-
-  // Fetch styles that already have a SCHEDULING batch
-  const schedulingBatches = await prisma.batch.findMany({
-    where: { status: 'SCHEDULING', styleRecipeId: { not: null } },
-    select: { styleRecipeId: true }
-  });
   const scheduledStyleIds = new Set(
-    schedulingBatches.map(b => b.styleRecipeId).filter(Boolean) as string[]
+    schedulingBatches.map((b) => b.styleRecipeId).filter(Boolean) as string[]
   );
 
-  const readyBatches = batches.filter(b => b.status === 'READY');
-  const curingBatches = batches.filter(b => b.status === 'CURING' || b.status === 'STARTED');
+  const readyBatches = batches.filter((b) => b.status === 'READY');
+  const curingBatches = batches.filter(
+    (b) => b.status === 'CURING' || b.status === 'STARTED'
+  );
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header links={[{ url: '/', label: 'Home' }]} />
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <BrandHeader transparent />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-terracotta-light via-brand-cream to-brand-rose-light opacity-60" />
-        {/* Subtle decorative circles */}
-        <div className="absolute top-10 right-10 w-64 h-64 rounded-full bg-brand-rose-light/40 blur-3xl" />
-        <div className="absolute bottom-0 left-10 w-48 h-48 rounded-full bg-brand-sage-light/50 blur-3xl" />
-        <div className="container relative mx-auto px-4 py-24 sm:py-32 flex flex-col items-center text-center">
-          <div className="inline-flex items-center rounded-full border border-brand-terracotta/20 bg-brand-cream/80 px-4 py-1.5 text-sm text-brand-terracotta mb-8 backdrop-blur-sm">
-            <Sparkles className="mr-2 h-3.5 w-3.5" />
-            <span className="font-medium tracking-wide uppercase text-xs">Handcrafted Small Batch Soaps</span>
-          </div>
-          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl text-brand-warm-brown mb-6 leading-[1.1]">
-            Pure ingredients.<br />
-            <span className="text-brand-terracotta italic">Artisan crafted.</span>
-          </h1>
-          <p className="max-w-xl text-lg text-brand-stone mb-10 leading-relaxed">
-            Discover our collection of handcrafted soaps, made with natural oils
-            and cured to perfection. See what's on the rack and what's ready for you.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="rounded-full px-8 bg-brand-warm-brown hover:bg-brand-warm-brown/90 text-brand-cream" asChild>
-              <a href="#ready">Ready Batches</a>
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 border-brand-terracotta/30 text-brand-terracotta hover:bg-brand-terracotta-light" asChild>
-              <a href="#curing">Curing Rack</a>
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 border-brand-sage/30 text-brand-sage hover:bg-brand-sage-light" asChild>
-              <a href="/collection">
-                <Droplets className="mr-2 h-4 w-4" />
-                My Collection
+      {/* Full-bleed Seongsu Mineral Hero */}
+      <section className="relative min-h-[88svh] lg:min-h-[94svh] w-full flex items-end overflow-hidden bg-secondary">
+        <img
+          src="/images/hero-mineral.jpg"
+          alt="Hand-cut charcoal and sea-clay cold-process soap bars on wet pale travertine"
+          className="absolute inset-0 h-full w-full object-cover object-[78%_28%] md:object-center"
+        />
+        {/* Subtle directional limestone wash for crisp headline contrast across mobile and desktop */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-t from-[#F3F3F1]/92 via-[#F3F3F1]/55 to-[#F3F3F1]/15 md:bg-gradient-to-r md:from-[#F3F3F1]/75 md:via-[#F3F3F1]/25 md:to-transparent"
+        />
+
+        <div className="relative z-10 mx-auto w-full max-w-[1360px] px-6 md:px-12 pb-16 pt-32 md:pb-24">
+          <div className="max-w-xl">
+            <h1 className="text-[clamp(2.75rem,6.2vw,5.25rem)] font-semibold leading-[0.98] tracking-[-0.04em] text-foreground">
+              Small-batch bars, cured slow.
+            </h1>
+            <p className="mt-6 max-w-md text-[1rem] leading-relaxed text-foreground/80">
+              Cold-process botanical soaps poured in small runs and cured for six weeks on cedar racks.
+            </p>
+            <div className="mt-9">
+              <a
+                href="#ready"
+                className="inline-flex items-center justify-center bg-foreground px-7 py-3.5 text-[0.9375rem] font-medium text-background hover:bg-mineral-moss transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              >
+                Explore the rack
               </a>
-            </Button>
+            </div>
           </div>
         </div>
       </section>
 
-      <main className="flex-1 container mx-auto px-4 py-16 space-y-24">
-
-        {/* Ready Batches */}
-        <section id="ready" className="scroll-mt-24">
-          <div className="flex items-center justify-between mb-10">
+      <main className="flex-1 mx-auto w-full max-w-[1360px] px-6 md:px-12">
+        {/* Ready Batches — Asymmetric Gallery Plates */}
+        <section id="ready" className="scroll-mt-24 py-24 md:py-32">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-14 md:mb-16">
             <div>
-              <h2 className="text-3xl font-semibold tracking-tight text-brand-warm-brown">Ready to Enjoy</h2>
-              <p className="text-brand-stone mt-2">Fully cured and ready for use.</p>
+              <h2 className="text-[1.75rem] md:text-[2rem] font-semibold tracking-[-0.03em] text-foreground">
+                Ready to enjoy
+              </h2>
+              <p className="mt-2 text-[1rem] text-muted-foreground max-w-prose">
+                Fully cured batches wrapped and ready for daily use.
+              </p>
             </div>
+            <Link
+              href="/collection"
+              className="text-[0.875rem] font-medium text-foreground underline underline-offset-4 decoration-border hover:text-mineral-moss hover:decoration-mineral-moss transition-colors duration-150"
+            >
+              Open my collection
+            </Link>
           </div>
 
           {readyBatches.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {readyBatches.map(batch => (
-                <BatchCard key={batch.id} batch={batch} />
-              ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16 lg:[&>*:nth-child(3n+2)]:mt-12">
+              {readyBatches.map((batch) => {
+                const ingredients = (batch.styleRecipe?.ingredients as any[]) || [];
+                const notesLine = ingredients
+                  .slice(0, 3)
+                  .map((i: any) => i.name.replace(/ Essential Oil$/i, ''))
+                  .join(', ');
+
+                return (
+                  <Link
+                    key={batch.id}
+                    href={`/batches/${batch.id}`}
+                    className="group block"
+                  >
+                    <div className="aspect-[4/5] w-full overflow-hidden bg-secondary">
+                      <img
+                        src={getBatchDisplayImage(batch)}
+                        alt={batch.name}
+                        className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                      />
+                    </div>
+                    <div className="mt-5 flex items-baseline justify-between gap-4">
+                      <h3 className="text-[1rem] font-semibold tracking-[-0.015em] text-foreground group-hover:text-mineral-moss transition-colors duration-150">
+                        {batch.name}
+                      </h3>
+                      <span className="text-[0.875rem] text-muted-foreground tabular-nums shrink-0">
+                        {formatDate(batch.readyAt || batch.startedAt)}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-[0.875rem] text-muted-foreground line-clamp-2">
+                      {notesLine || batch.notes || `${batch.baseRecipe.name} base`}
+                    </p>
+                  </Link>
+                );
+              })}
             </div>
           ) : (
-            <div className="rounded-2xl border-2 border-dashed border-brand-terracotta/20 p-12 text-center bg-brand-cream/50">
-              <Wind className="mx-auto h-12 w-12 text-brand-terracotta/30 mb-4" />
-              <h3 className="text-lg font-medium text-brand-warm-brown">Nothing ready just yet</h3>
-              <p className="text-brand-stone mt-1">Check back soon — good things take time.</p>
+            <div className="border-y border-border py-16">
+              <p className="text-[1rem] text-muted-foreground">
+                No batches are fully cured right now. Check the curing rack below to see what is resting.
+              </p>
             </div>
           )}
         </section>
 
-        {/* Curing Rack */}
-        <section id="curing" className="scroll-mt-24">
-          <div className="flex items-center gap-3 mb-10">
-            <div>
-              <h2 className="text-3xl font-semibold tracking-tight text-brand-warm-brown">On the Curing Rack</h2>
-              <p className="text-brand-stone mt-2">Freshly poured and curing. Good soap is worth the wait.</p>
-            </div>
-          </div>
-
-          {curingBatches.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {curingBatches.map(batch => (
-                <BatchCard key={batch.id} batch={batch} isCuring />
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-2xl border-2 border-dashed border-brand-sage/20 p-12 text-center bg-brand-sage-light/30">
-              <Droplets className="mx-auto h-12 w-12 text-brand-sage/30 mb-4" />
-              <h3 className="text-lg font-medium text-brand-warm-brown">The rack is empty</h3>
-              <p className="text-brand-stone mt-1">We'll be making more soon!</p>
-            </div>
-          )}
-        </section>
-
-        {/* Flavor Library / Requests */}
-        <section id="requests" className="scroll-mt-24">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl font-semibold tracking-tight text-brand-warm-brown">Request a Style</h2>
-            <p className="text-brand-stone mt-4 text-lg">
-              See something you love? Let us know which styles you'd like in the next batch.
+        {/* On the Curing Rack — Horizontal Editorial Plates */}
+        <section id="curing" className="scroll-mt-24 border-t border-border py-24 md:py-28">
+          <div className="mb-14">
+            <h2 className="text-[1.75rem] md:text-[2rem] font-semibold tracking-[-0.03em] text-foreground">
+              On the curing rack
+            </h2>
+            <p className="mt-2 text-[1rem] text-muted-foreground max-w-prose">
+              Freshly poured and resting for four to six weeks as water evaporates and the lather matures.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {styleRecipes.map(recipe => {
-              const requestCount = requestCountMap.get(recipe.id) || 0;
-              const isScheduled = scheduledStyleIds.has(recipe.id);
-              return (
-                <div
-                  key={recipe.id}
-                  className={cn(
-                    "group relative flex flex-col rounded-xl border p-6 hover:shadow-lg transition-all duration-300 cursor-default",
-                    isScheduled
-                      ? "border-brand-sage/40 ring-1 ring-brand-sage-light bg-brand-sage-light/30"
-                      : requestCount > 0
-                        ? "border-brand-terracotta/30 ring-1 ring-brand-terracotta-light bg-brand-terracotta-light/30"
-                        : "border-border bg-card hover:border-brand-rose/30"
-                  )}
-                >
-                  {/* Status indicator badges */}
-                  {isScheduled && (
-                    <div className="absolute -top-2.5 right-4">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-brand-sage-light border border-brand-sage/30 px-2.5 py-0.5 text-xs font-medium text-brand-sage">
-                        <Clock className="h-3 w-3" />
-                        Scheduled
-                      </span>
-                    </div>
-                  )}
-                  {!isScheduled && requestCount > 0 && (
-                    <div className="absolute -top-2.5 right-4">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-brand-terracotta-light border border-brand-terracotta/30 px-2.5 py-0.5 text-xs font-medium text-brand-terracotta">
-                        <Users className="h-3 w-3" />
-                        {requestCount} {requestCount === 1 ? 'request' : 'requests'}
-                      </span>
-                    </div>
-                  )}
+          {curingBatches.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-12">
+              {curingBatches.map((batch) => {
+                const ageWeeks = getAgeInWeeks(batch.startedAt);
+                const statusLabel =
+                  batch.status === 'STARTED'
+                    ? 'Freshly poured'
+                    : `Week ${Math.min(ageWeeks, 6)} of 6`;
 
-                  <div className="flex items-start justify-between mb-4">
-                    <div className={cn(
-                      "h-10 w-10 rounded-full flex items-center justify-center transition-colors duration-300",
-                      isScheduled
-                        ? "bg-brand-sage-light group-hover:bg-brand-sage"
-                        : "bg-brand-rose-light group-hover:bg-brand-rose"
-                    )}>
-                      <Sparkles className={cn(
-                        "h-5 w-5 group-hover:text-white transition-colors duration-300",
-                        isScheduled ? "text-brand-sage" : "text-brand-rose"
-                      )} />
+                return (
+                  <Link
+                    key={batch.id}
+                    href={`/batches/${batch.id}`}
+                    className="group grid grid-cols-1 sm:grid-cols-12 gap-6 items-start border-t border-border pt-8"
+                  >
+                    <div className="sm:col-span-5 aspect-[4/3] overflow-hidden bg-secondary">
+                      <img
+                        src={getBatchDisplayImage(batch)}
+                        alt={batch.name}
+                        className="h-full w-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                      />
                     </div>
-                  </div>
-                  <h3 className="font-semibold text-brand-warm-brown mb-2 group-hover:text-brand-terracotta transition-colors">{recipe.name}</h3>
-                  <p className="text-sm text-brand-stone line-clamp-2 mb-4 flex-1">
-                    {(recipe.ingredients as any[]).map((i: any) => i.name).join(', ')}
-                  </p>
-
-                  {/* Demand indicator bar */}
-                  {requestCount > 0 && !isScheduled && (
-                    <div className="mb-3">
-                      <div className="flex items-center justify-between text-xs text-brand-stone mb-1">
-                        <span>Demand</span>
-                        <span className="text-brand-terracotta font-medium">{requestCount} interested</span>
+                    <div className="sm:col-span-7 flex flex-col justify-between h-full">
+                      <div>
+                        <p className="text-[0.875rem] font-medium text-mineral-moss tabular-nums">
+                          {statusLabel}
+                        </p>
+                        <h3 className="mt-1.5 text-[1rem] font-semibold tracking-[-0.015em] text-foreground group-hover:text-mineral-moss transition-colors duration-150">
+                          {batch.name}
+                        </h3>
+                        <p className="mt-2 text-[0.875rem] text-muted-foreground leading-relaxed line-clamp-2">
+                          {batch.notes || `Formulated on the ${batch.baseRecipe.name} base.`}
+                        </p>
                       </div>
-                      <div className="h-1.5 rounded-full bg-brand-linen overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-brand-terracotta to-brand-rose transition-all duration-500"
-                          style={{ width: `${Math.min(requestCount * 20, 100)}%` }}
+                      <p className="mt-4 text-[0.875rem] text-muted-foreground tabular-nums">
+                        Poured {formatDate(batch.startedAt)}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="border-y border-border py-14">
+              <p className="text-[1rem] text-muted-foreground">
+                The curing rack is currently clear. Request a scent profile below for the next pour.
+              </p>
+            </div>
+          )}
+        </section>
+
+        {/* Request a Style — 1px-Ruled Editorial Scent Index */}
+        <section id="requests" className="scroll-mt-24 border-t border-border py-24 md:py-28">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12">
+            <div className="lg:col-span-4">
+              <h2 className="text-[1.75rem] md:text-[2rem] font-semibold tracking-[-0.03em] text-foreground">
+                Request a style
+              </h2>
+              <p className="mt-3 text-[1rem] text-muted-foreground leading-relaxed max-w-sm">
+                Tell the maker which essential oil and clay blend you would like poured next.
+              </p>
+            </div>
+
+            <div className="lg:col-span-8">
+              <div className="border-t border-border divide-y divide-border">
+                {styleRecipes.map((recipe) => {
+                  const requestCount = requestCountMap.get(recipe.id) || 0;
+                  const isScheduled = scheduledStyleIds.has(recipe.id);
+                  const notes = ((recipe.ingredients as any[]) || [])
+                    .map((i: any) => i.name.replace(/ Essential Oil$/i, ''))
+                    .join(', ');
+
+                  return (
+                    <div
+                      key={recipe.id}
+                      className="py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-baseline gap-3">
+                          <Link
+                            href={`/recipes/${recipe.id}`}
+                            className="text-[1rem] font-medium text-foreground hover:text-mineral-moss transition-colors duration-150"
+                          >
+                            {recipe.name}
+                          </Link>
+                          {!isScheduled && requestCount > 0 && (
+                            <span className="text-[0.875rem] text-muted-foreground tabular-nums">
+                              {requestCount} {requestCount === 1 ? 'request' : 'requests'}
+                            </span>
+                          )}
+                        </div>
+                        {notes && (
+                          <p className="mt-1 text-[0.875rem] text-muted-foreground truncate">
+                            {notes}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="shrink-0">
+                        <RequestButton
+                          recipeId={recipe.id}
+                          recipeName={recipe.name}
+                          requestCount={requestCount}
+                          isScheduled={isScheduled}
                         />
                       </div>
                     </div>
-                  )}
-
-                  <RequestButton
-                    recipeId={recipe.id}
-                    recipeName={recipe.name}
-                    requestCount={requestCount}
-                    isScheduled={isScheduled}
-                  />
-                </div>
-              );
-            })}
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </section>
-
       </main>
 
-      <footer className="py-12 border-t border-border text-center text-brand-stone text-sm bg-brand-cream/50">
-        <p className="font-serif italic text-brand-terracotta mb-1">KT Soaps</p>
-        <p>© {new Date().getFullYear()} Handcrafted with care.</p>
+      <footer className="border-t border-border bg-background">
+        <div className="mx-auto max-w-[1360px] px-6 md:px-12 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[0.875rem] text-muted-foreground">
+          <span className="font-semibold tracking-[-0.03em] text-foreground">Our Morning Sunset</span>
+          <span className="tabular-nums">Handcrafted cold-process soap · {new Date().getFullYear()}</span>
+        </div>
       </footer>
     </div>
   );
-}
-
-function BatchCard({ batch, isCuring }: { batch: any, isCuring?: boolean }) {
-  const ageWeeks = getAgeInWeeks(batch.startedAt);
-
-  return (
-    <Link href={`/batches/${batch.id}`} className="block">
-      <Card className="overflow-hidden border-0 shadow-sm hover:shadow-xl transition-all duration-300 group ring-1 ring-border cursor-pointer">
-        <div className="aspect-[4/3] relative overflow-hidden bg-brand-cream">
-          {batch.imageUrl ? (
-            <img
-              src={batch.imageUrl}
-              alt={batch.name}
-              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brand-terracotta-light to-brand-rose-light">
-              <Droplets className="h-16 w-16 text-brand-terracotta/30" />
-            </div>
-          )}
-          <div className="absolute top-4 right-4">
-            <Badge
-              className={cn(
-                "backdrop-blur-md shadow-sm border-0 text-xs font-medium",
-                isCuring
-                  ? "bg-brand-sage-light/90 text-brand-sage"
-                  : "bg-brand-cream/90 text-brand-terracotta"
-              )}
-            >
-              {isCuring ? 'Curing' : 'Ready'}
-            </Badge>
-          </div>
-        </div>
-        <CardContent className="p-6">
-          <div className="flex items-center text-xs text-brand-stone mb-3 space-x-3">
-            <span className="flex items-center">
-              <Calendar className="w-3.5 h-3.5 mr-1" />
-              {formatDate(batch.startedAt)}
-            </span>
-            {isCuring && (
-              <span className="flex items-center text-brand-sage font-medium">
-                <Wind className="w-3.5 h-3.5 mr-1" />
-                Curing for {ageWeeks} {ageWeeks === 1 ? 'week' : 'weeks'}
-              </span>
-            )}
-          </div>
-          <h3 className="font-semibold text-xl text-brand-warm-brown mb-2 group-hover:text-brand-terracotta transition-colors">
-            {batch.name}
-          </h3>
-          <p className="text-sm text-brand-stone line-clamp-2 mb-4">
-            {batch.notes || `A lovely batch made with ${batch.baseRecipe.name} base.`}
-          </p>
-
-          {batch.styleRecipe && (
-            <div className="flex flex-wrap gap-1.5">
-              {(batch.styleRecipe.ingredients as any[]).slice(0, 3).map((ing: any, i: number) => (
-                <Badge key={i} variant="outline" className="text-xs font-normal text-brand-stone bg-brand-cream border-brand-terracotta/15">
-                  {ing.name}
-                </Badge>
-              ))}
-              {(batch.styleRecipe.ingredients as any[]).length > 3 && (
-                <span className="text-xs text-brand-stone/60 pl-1">+{((batch.styleRecipe.ingredients as any[]).length - 3)} more</span>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </Link>
-  )
 }

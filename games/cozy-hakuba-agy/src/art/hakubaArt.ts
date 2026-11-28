@@ -142,6 +142,31 @@ export function getModuleIllustrationSvg(moduleId: string): string {
         <circle cx="37" cy="31" r="1.8" fill="#3B2F2B"/>
         <circle cx="32" cy="35" r="2" fill="#3B2F2B"/>
       </svg>`,
+    croissant_case: `
+      <svg viewBox="0 0 64 64" width="48" height="48" aria-hidden="true">
+        <rect x="10" y="18" width="44" height="32" rx="6" fill="#FAF5EB" stroke="#4A3B32" stroke-width="2.2"/>
+        <path d="M10 38 H54" stroke="#8C5E3C" stroke-width="2.5"/>
+        <ellipse cx="24" cy="30" rx="8" ry="5" fill="#E5A952" stroke="#4A3B32" stroke-width="1.8" transform="rotate(-12 24 30)"/>
+        <ellipse cx="40" cy="30" rx="8" ry="5" fill="#D98A3C" stroke="#4A3B32" stroke-width="1.8" transform="rotate(12 40 30)"/>
+        <rect x="14" y="42" width="36" height="5" rx="2" fill="#C97B42"/>
+      </svg>`,
+    stone_pizza_oven: `
+      <svg viewBox="0 0 80 64" width="58" height="46" aria-hidden="true">
+        <rect x="12" y="42" width="56" height="12" rx="4" fill="#8C5E3C" stroke="#4A3B32" stroke-width="2.2"/>
+        <path d="M16 42 C16 14 64 14 64 42 Z" fill="#C96F4B" stroke="#4A3B32" stroke-width="2.2"/>
+        <path d="M28 42 C28 28 52 28 52 42 Z" fill="#3B2F2B"/>
+        <ellipse cx="40" cy="40" rx="9" ry="3.5" fill="#F6C453"/>
+        <circle cx="38" cy="39" r="1.8" fill="#D86442"/>
+        <circle cx="43" cy="40" r="1.8" fill="#4D7C5B"/>
+      </svg>`,
+    vinyl_lounge: `
+      <svg viewBox="0 0 64 64" width="48" height="48" aria-hidden="true">
+        <rect x="10" y="20" width="44" height="30" rx="6" fill="#8C5E3C" stroke="#4A3B32" stroke-width="2.2"/>
+        <circle cx="28" cy="35" r="11" fill="#2E2723" stroke="#FAF5EB" stroke-width="1.4"/>
+        <circle cx="28" cy="35" r="4" fill="#E6A23C"/>
+        <line x1="46" y1="24" x2="36" y2="34" stroke="#FAF5EB" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="46" cy="24" r="2.5" fill="#FAF5EB"/>
+      </svg>`,
   };
   return icons[moduleId] || '';
 }
@@ -368,11 +393,15 @@ export function registerHakubaTextures(scene: Phaser.Scene, gender: Gender, pers
     registerCanvasTexture(scene, `van_tier_${tier}`, c);
   }
 
-  // 3. Steward NPCs (Kenji, Aoi, Hana)
+  // 3. Steward NPCs (Phase 1 & Phase 2: Kenji, Aoi, Hana, Leo, Sora, Dr. Midori, Taka)
   const stewards: { key: string; coat: string; hat: string; prop: 'cap' | 'beanie' | 'headband' }[] = [
     { key: 'steward_station', coat: '#3B5978', hat: '#25384B', prop: 'cap' },
     { key: 'steward_snowpeak', coat: '#4D7C5B', hat: '#D86442', prop: 'beanie' },
     { key: 'steward_happo', coat: '#C96D7D', hat: '#FAF5EB', prop: 'headband' },
+    { key: 'steward_echoland', coat: '#9B4D7A', hat: '#E6A23C', prop: 'beanie' },
+    { key: 'steward_iwatake', coat: '#2E7D8C', hat: '#FAF5EB', prop: 'cap' },
+    { key: 'steward_goryu', coat: '#6E5AA8', hat: '#8CC098', prop: 'headband' },
+    { key: 'steward_hakuba47', coat: '#D86442', hat: '#3B2F2B', prop: 'beanie' },
   ];
   for (const s of stewards) {
     const [c, ctx] = makeCanvas(64, 86);
@@ -484,6 +513,78 @@ export function registerHakubaTextures(scene: Phaser.Scene, gender: Gender, pers
     ctx.fillStyle = '#D86442';
     ctx.fillRect(18, 24, 18, 5);
     registerCanvasTexture(scene, 'prop_plaque', c);
+  }
+  // Phase 2 Forage Props: Lantern Bulb, Trail Marker, Seed Packet, River Stone
+  {
+    const [c, ctx] = makeCanvas(56, 52);
+    ctx.fillStyle = 'rgba(230, 162, 60, 0.25)';
+    ctx.beginPath();
+    ctx.arc(28, 26, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#F6D57A';
+    ctx.strokeStyle = '#4A3B32';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(28, 24, 11, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#8C5E3C';
+    ctx.fillRect(23, 34, 10, 7);
+    ctx.strokeRect(23, 34, 10, 7);
+    registerCanvasTexture(scene, 'prop_bulb', c);
+  }
+  {
+    const [c, ctx] = makeCanvas(56, 52);
+    ctx.fillStyle = '#8C5E3C';
+    ctx.strokeStyle = '#3B2F2B';
+    ctx.lineWidth = 2;
+    ctx.fillRect(25, 16, 6, 28);
+    ctx.strokeRect(25, 16, 6, 28);
+    ctx.fillStyle = '#D86442';
+    ctx.beginPath();
+    ctx.moveTo(31, 16);
+    ctx.lineTo(48, 22);
+    ctx.lineTo(31, 28);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    registerCanvasTexture(scene, 'prop_marker', c);
+  }
+  {
+    const [c, ctx] = makeCanvas(56, 52);
+    ctx.fillStyle = '#FAF5EB';
+    ctx.strokeStyle = '#4A3B32';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(14, 12, 28, 32, 4);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#6E5AA8';
+    ctx.beginPath();
+    ctx.arc(28, 25, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#4D7C5B';
+    ctx.fillRect(26, 32, 4, 8);
+    registerCanvasTexture(scene, 'prop_seed', c);
+  }
+  {
+    const [c, ctx] = makeCanvas(56, 52);
+    ctx.fillStyle = 'rgba(59, 47, 43, 0.2)';
+    ctx.beginPath();
+    ctx.ellipse(28, 40, 17, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#A8A29C';
+    ctx.strokeStyle = '#4A3B32';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(28, 30, 16, 11, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#CFC9C2';
+    ctx.beginPath();
+    ctx.ellipse(24, 27, 7, 4, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+    registerCanvasTexture(scene, 'prop_stone', c);
   }
 
   // 5. Steaming Ashiyu Footbath / Onsen Prop AND Takibi Campfire Hearth Prop

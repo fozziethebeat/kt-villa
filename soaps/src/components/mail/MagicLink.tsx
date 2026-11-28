@@ -17,11 +17,11 @@ export function MagicLink({ url, timestamp }: { url: string, timestamp?: string 
   return (
     <Html lang="en">
       <Head />
-      <Preview>Sign in to KT Soaps</Preview>
+      <Preview>Sign in to Our Morning Sunset</Preview>
       <Body style={styles.body}>
         <Container style={styles.container}>
           <Heading style={styles.heading}>
-            Sign in to KT Soaps
+            Sign in to Our Morning Sunset
           </Heading>
           <Text style={styles.text}>
             Click the button below to sign in to your account. This link will expire in 7 days.

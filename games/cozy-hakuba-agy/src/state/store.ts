@@ -134,11 +134,17 @@ class GameStore {
   public travelToRegion(regionId: RegionId): { ok: boolean; reason?: string } {
     const def = REGION_MAP[regionId];
     const prog = this.state.regions[regionId];
-    if (!def.unlockedInPhase1) {
-      return { ok: false, reason: `${def.name} unlocks in Phase 2/3 expansion! Wake up the first 3 hubs first.` };
+    if (!def.isPlayable) {
+      return { ok: false, reason: `${def.name} arrives in Phase 3 (High Alpine Sanctuary)!` };
     }
     if (!prog.unlocked) {
       return { ok: false, reason: `Help the Steward in the previous region to wake up the road to ${def.name}!` };
+    }
+    if (def.requiresTier2Van && this.state.vanTier < 2) {
+      return {
+        ok: false,
+        reason: `🏔️ Steep mountain road! Upgrade to the Tier 2 4WD Overland Van in Van Studio to drive up to ${def.name}.`,
+      };
     }
     this.state.currentRegion = regionId;
     this.state.vanParkedAndOpen = false;
@@ -179,7 +185,7 @@ class GameStore {
       this.state.yen += 300;
       this.addLog(`✨ ${def.name} WOKE UP IN FULL COLOR! ${def.stewardName} lit the Regional Hearth (+¥300)!`);
 
-      // Unlock next connected region
+      // Unlock next connected region(s) across Phase 1 & Phase 2
       if (regionId === 'station') {
         this.state.regions.snowpeak.unlocked = true;
         this.addLog(`🛣️ New Sub-Region Unlocked: Snow Peak Land Station!`);
@@ -188,7 +194,16 @@ class GameStore {
         this.addLog(`🛣️ New Sub-Region Unlocked: Happo-One Bus Terminal!`);
       } else if (regionId === 'happo') {
         this.state.regions.echoland.unlocked = true;
-        this.addLog(`🎉 Phase 1 Tri-Hub Restoration Complete! Echoland avenue beckons.`);
+        this.addLog(`🛣️ New Sub-Region Unlocked: Echoland Street!`);
+      } else if (regionId === 'echoland') {
+        this.state.regions.iwatake.unlocked = true;
+        this.state.regions.goryu.unlocked = true;
+        this.addLog(`⛰️ Mountain Resorts Unlocked: Hakuba Iwatake & Hakuba Goryu! (Tier 2 4WD Van required to climb!)`);
+      } else if (regionId === 'goryu') {
+        this.state.regions.hakuba47.unlocked = true;
+        this.addLog(`🏂 New Sub-Region Unlocked: Hakuba 47 River Base!`);
+      } else if (regionId === 'hakuba47') {
+        this.addLog(`🎉 Mid-Valley Restoration Complete! All 7 Phase 1–2 Hakuba regions are thriving!`);
       }
       this.emit();
       return true;
@@ -350,6 +365,9 @@ class GameStore {
         perfectBonusMultiplier += 0.25;
         activeBuffPills.push('🐕 Mochi Free Perfect + 25% Tips');
       }
+      if (mDef.id === 'vinyl_lounge') {
+        activeBuffPills.push('🎵 Vinyl Lounge (+10% Zone · -10% Speed)');
+      }
 
       // Business Station Orders
       if (mDef.serviceOrderName && mDef.serviceVerb) {
@@ -373,10 +391,14 @@ class GameStore {
       }
     }
 
-    // Synergy Combo: Espresso + Oyaki Steamer = Morning Set!
+    // Synergy Combos
     if (installedIds.has('espresso_bar') && installedIds.has('oyaki_steamer')) {
       passivePerGuest += 100;
       activeBuffPills.push('☕+🥟 Morning Combo (+¥100/guest)');
+    }
+    if (installedIds.has('espresso_bar') && installedIds.has('croissant_case')) {
+      passivePerGuest += 90;
+      activeBuffPills.push('☕+🥐 Summit Bakery Combo (+¥90/guest)');
     }
 
     fillSpeedMultiplier = Math.max(0.55, Number(fillSpeedMultiplier.toFixed(2)));

@@ -2,9 +2,11 @@
 
 import prisma from "@/lib/prisma"
 import { imageGenerator } from "@/lib/generate"
+import { imageSaver } from "@/lib/storage"
 import { generateMagicCode } from "@/lib/utils"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import sharp from "sharp"
 
 export async function createBatch(prevState: any, formData: FormData) {
     const name = formData.get("name") as string
@@ -158,6 +160,75 @@ export async function selectBatchImage(batchId: string, batchImageId: string) {
     } catch (error) {
         console.error("Failed to select batch image:", error)
         return { error: "Failed to select image. Please try again." }
+    }
+}
+
+export async function uploadBatchPhoto(batchId: string, formData: FormData) {
+    const file = formData.get("photo") as File | null
+    if (!batchId || !file || file.size === 0) {
+        return { error: "Please select a photo to upload." }
+    }
+
+    if (!file.type.startsWith("image/")) {
+        return { error: "Please upload an image file (JPG, PNG, or WebP)." }
+    }
+
+    if (file.size > 15 * 1024 * 1024) {
+        return { error: "Photo must be under 15MB." }
+    }
+
+    try {
+        const arrayBuffer = await file.arrayBuffer()
+        const rawBuffer = Buffer.from(arrayBuffer)
+
+        // Auto-orient and optimize to clean editorial JPEG using sharp
+        const optimizedBuffer = await sharp(rawBuffer)
+            .rotate()
+            .resize({ width: 1600, height: 2000, fit: "inside", withoutEnlargement: true })
+            .jpeg({ quality: 86, mozjpeg: true })
+            .toBuffer()
+
+        const timestamp = Date.now()
+        const fileName = `batch-photos/${batchId}_${timestamp}.jpg`
+        const photoUrl = await imageSaver.uploadImage(optimizedBuffer, fileName, "image/jpeg")
+
+        await prisma.batch.update({
+            where: { id: batchId },
+            data: { photoUrl },
+        })
+
+        revalidatePath("/")
+        revalidatePath("/collection")
+        revalidatePath(`/batches/${batchId}`)
+        revalidatePath(`/admin/batches/${batchId}`)
+        revalidatePath("/admin/batches")
+        return { success: true, photoUrl }
+    } catch (error) {
+        console.error("Batch photo upload failed:", error)
+        return { error: "Failed to upload photo. Please try again." }
+    }
+}
+
+export async function removeBatchPhoto(batchId: string) {
+    if (!batchId) {
+        return { error: "Batch ID is required." }
+    }
+
+    try {
+        await prisma.batch.update({
+            where: { id: batchId },
+            data: { photoUrl: null },
+        })
+
+        revalidatePath("/")
+        revalidatePath("/collection")
+        revalidatePath(`/batches/${batchId}`)
+        revalidatePath(`/admin/batches/${batchId}`)
+        revalidatePath("/admin/batches")
+        return { success: true }
+    } catch (error) {
+        console.error("Failed to remove batch photo:", error)
+        return { error: "Failed to remove photo." }
     }
 }
 

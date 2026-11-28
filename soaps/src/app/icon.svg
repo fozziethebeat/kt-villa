@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="8" fill="#141413"/>
+  <!-- Minimalist architectural sun resting on stone horizon -->
+  <path d="M16 36 A16 16 0 0 1 48 36 Z" fill="#F3F3F1"/>
+  <!-- Mineral horizon line -->
+  <rect x="10" y="39" width="44" height="3.2" fill="#F3F3F1"/>
+  <!-- Quiet reflection bar in mineral moss-celadon -->
+  <rect x="20" y="46" width="24" height="2.8" fill="#6E8F7F"/>
+</svg>

@@ -1,4 +1,4 @@
-# KT Soaps
+# Our Morning Sunset
 
 This is a premium template for building robust, user-facing applications with a modern tech stack. It features role-based authentication, a GraphQL API, AI integration, and a polished UI.
 

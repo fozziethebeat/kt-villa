@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
@@ -21,99 +22,115 @@ export function SignupForm(props: {
     const code = formData.get("magicCode") as string;
 
     try {
-      await authClient.signIn.magicLink({
-        email,
-        callbackURL: props.searchParams?.callbackUrl || "/",
-      }, {
-        headers: {
-          "x-magic-code": code
+      await authClient.signIn.magicLink(
+        {
+          email,
+          callbackURL: props.searchParams?.callbackUrl || "/",
         },
-        onRequest: () => {
-          setLoading(true);
-        },
-        onSuccess: () => {
-          setLoading(false);
-          setSuccess(true);
-        },
-        onError: (ctx) => {
-          setLoading(false);
-          setError(ctx.error.message);
+        {
+          headers: {
+            "x-magic-code": code,
+          },
+          onRequest: () => setLoading(true),
+          onSuccess: () => {
+            setLoading(false);
+            setSuccess(true);
+          },
+          onError: (ctx) => {
+            setLoading(false);
+            setError(ctx.error.message);
+          },
         }
-      });
+      );
     } catch (err: any) {
       setLoading(false);
       setError(err.message || "An error occurred");
     }
   };
 
-  if (success) {
-    return (
-      <div className="flex min-h-screen justify-center items-center bg-gradient-to-br from-brand-terracotta-light via-brand-cream to-brand-rose-light">
-        <div className="w-full max-w-sm mx-4 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-brand-terracotta/10 p-8 text-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-brand-sage-light mb-4">
-            <svg className="w-6 h-6 text-brand-sage" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <h2 className="text-xl font-semibold text-brand-warm-brown font-serif mb-2">Check your email</h2>
-          <p className="text-brand-stone text-sm">We've sent you a magic link to verify your account.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex min-h-screen justify-center items-center bg-gradient-to-br from-brand-terracotta-light via-brand-cream to-brand-rose-light">
-      <div className="w-full max-w-sm mx-4 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-brand-terracotta/10 p-8">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-semibold font-serif text-brand-warm-brown mb-1">Join KT Soaps</h1>
-          <p className="text-sm text-brand-stone">Create your account to start collecting</p>
-        </div>
-        <form onSubmit={handleSubmit}>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <label htmlFor="email" className="text-sm font-medium text-brand-warm-brown">Email</label>
-              <div className="relative">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-brand-stone/50">
-                  <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
-                  <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
-                </svg>
-                <input
-                  name="email"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-border bg-white/50 focus:bg-white focus:ring-2 focus:ring-brand-terracotta/30 focus:border-brand-terracotta/50 outline-none transition-all text-sm"
-                  id="email"
-                  type="email"
-                  required
-                  placeholder="your@email.com"
-                />
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <header className="mx-auto w-full max-w-[1360px] px-6 md:px-12 h-16 flex items-center justify-between">
+        <Link href="/" className="text-[1.0625rem] font-semibold tracking-[-0.03em] text-foreground">
+          Our Morning Sunset
+        </Link>
+        <Link href="/" className="text-[0.875rem] text-muted-foreground hover:text-foreground transition-colors duration-150">
+          Back to rack
+        </Link>
+      </header>
+
+      <div className="flex-1 flex items-center justify-center px-6 py-16">
+        <div className="w-full max-w-sm">
+          {success ? (
+            <div className="border-t border-border pt-8 space-y-3">
+              <h1 className="text-[1.75rem] font-semibold tracking-[-0.03em] text-foreground">
+                Check your email
+              </h1>
+              <p className="text-[1rem] text-muted-foreground leading-relaxed">
+                We sent a sign-in link to verify your account and unlock your collection.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="mb-8">
+                <h1 className="text-[1.75rem] font-semibold tracking-[-0.03em] text-foreground">
+                  Join Our Morning Sunset
+                </h1>
+                <p className="mt-2 text-[0.9375rem] text-muted-foreground">
+                  Enter your email and batch invitation code to start your collection.
+                </p>
               </div>
-            </div>
-            <div className="grid gap-2">
-              <label htmlFor="magicCode" className="text-sm font-medium text-brand-warm-brown">Invitation Code</label>
-              <input
-                name="magicCode"
-                id="magicCode"
-                type="text"
-                required
-                placeholder="Enter your invitation code"
-                defaultValue={props?.magicCode ?? ''}
-                className="w-full px-4 py-2.5 rounded-lg border border-border bg-white/50 focus:bg-white focus:ring-2 focus:ring-brand-terracotta/30 focus:border-brand-terracotta/50 outline-none transition-all text-sm font-mono"
-              />
-            </div>
-            {error && <p className="text-red-600 text-sm">{error}</p>}
-            <button
-              className="w-full py-2.5 rounded-lg bg-brand-warm-brown text-brand-cream font-medium text-sm hover:bg-brand-warm-brown/90 transition-colors disabled:opacity-50"
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? "Sending..." : "Create Account"}
-            </button>
-          </div>
-        </form>
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                  <label htmlFor="email" className="block text-[0.875rem] font-medium text-foreground mb-2">
+                    Email address
+                  </label>
+                  <input
+                    name="email"
+                    id="email"
+                    type="email"
+                    required
+                    placeholder="you@example.com"
+                    className="h-11 w-full border border-border bg-card px-4 text-[0.9375rem] text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors duration-150"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="magicCode" className="block text-[0.875rem] font-medium text-foreground mb-2">
+                    Invitation code
+                  </label>
+                  <input
+                    name="magicCode"
+                    id="magicCode"
+                    type="text"
+                    required
+                    placeholder="Enter your invitation code"
+                    defaultValue={props?.magicCode ?? ""}
+                    className="h-11 w-full border border-border bg-card px-4 text-[0.9375rem] text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors duration-150"
+                  />
+                </div>
+
+                {error && <p className="text-[0.875rem] text-destructive">{error}</p>}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="h-11 w-full bg-foreground text-background text-[0.9375rem] font-medium hover:bg-mineral-moss transition-colors duration-150 disabled:opacity-50 cursor-pointer"
+                >
+                  {loading ? "Sending link..." : "Create account"}
+                </button>
+              </form>
+
+              <p className="mt-8 text-[0.875rem] text-muted-foreground">
+                Already have an account?{" "}
+                <Link href="/signin" className="text-foreground underline underline-offset-4 decoration-border hover:text-mineral-moss transition-colors duration-150">
+                  Sign in
+                </Link>
+              </p>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

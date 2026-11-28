@@ -36,7 +36,7 @@ export default async function JoinCodesPage() {
                         Join Codes
                     </h1>
                     <p className="text-brand-stone mt-2">
-                        Create invitation codes for new users to join KT Soaps. Share these links on social media or directly with friends.
+                        Create invitation codes for new users to join Our Morning Sunset. Share these links on social media or directly with friends.
                     </p>
                 </div>
 

@@ -123,6 +123,7 @@ model Batch {
   readyAt   DateTime?
   numBars   Int?
   imageUrl  String?
+  photoUrl  String?
   notes     String?
   status    BatchStatus @default(STARTED)
   scale     Float       @default(1.0)

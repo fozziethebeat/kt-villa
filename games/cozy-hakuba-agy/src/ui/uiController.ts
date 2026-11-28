@@ -9,6 +9,12 @@ import {
   mountShuttleLogicPuzzle,
   mountTakibiFirepitPuzzle,
 } from '../puzzles/miniPuzzles';
+import {
+  mountEcholandLanternPuzzle,
+  mountGoryuBotanicalPuzzle,
+  mountHakuba47PizzaPuzzle,
+  mountIwatakeTrailPuzzle,
+} from '../puzzles/phase2Puzzles';
 
 export class UIController {
   private scene: OverworldScene;
@@ -633,8 +639,16 @@ export class UIController {
       mountOnsenPipePuzzle(body, st.personality, puzzleCallbacks);
     } else if (regDef.puzzleType === 'stove') {
       mountTakibiFirepitPuzzle(body, st.personality, puzzleCallbacks);
-    } else {
+    } else if (regDef.puzzleType === 'routes') {
       mountShuttleLogicPuzzle(body, st.personality, puzzleCallbacks);
+    } else if (regDef.puzzleType === 'lanterns') {
+      mountEcholandLanternPuzzle(body, st.personality, puzzleCallbacks);
+    } else if (regDef.puzzleType === 'mtb_trail') {
+      mountIwatakeTrailPuzzle(body, st.personality, puzzleCallbacks);
+    } else if (regDef.puzzleType === 'botanical') {
+      mountGoryuBotanicalPuzzle(body, st.personality, puzzleCallbacks);
+    } else {
+      mountHakuba47PizzaPuzzle(body, st.personality, puzzleCallbacks);
     }
   }
 
@@ -644,23 +658,26 @@ export class UIController {
     const st = store.getState();
 
     body.innerHTML = `
-      <p class="sub-note">Wake up each sub-region and build its Summer Pivot to bring year-round life to Hakuba.</p>
+      <p class="sub-note">Wake up each sub-region and build its Summer Pivot to bring year-round life to Hakuba. Mountain resorts (#5–#7) require the Tier 2 4WD Overland Van.</p>
       <div class="atlas-grid">
         ${REGIONS.map((r) => {
           const prog = st.regions[r.id];
           const isCurrent = st.currentRegion === r.id;
+          const needsTier2 = Boolean(r.requiresTier2Van && st.vanTier < 2);
           return `
             <div class="atlas-card ${prog.unlocked ? 'unlocked' : 'locked'} ${isCurrent ? 'current' : ''}">
               <div class="atlas-card-top">
                 <span>#${r.number} ${r.name}</span>
                 <span class="atlas-status">
                   ${
-                    !r.unlockedInPhase1
-                      ? 'Phase 2/3'
+                    !r.isPlayable
+                      ? 'Phase 3'
                       : prog.stewardHelped
                       ? '✨ Awake'
                       : prog.unlocked
-                      ? 'Open'
+                      ? needsTier2
+                        ? '⛰️ Needs 4WD'
+                        : 'Open'
                       : '🔒 Locked'
                   }
                 </span>
@@ -671,12 +688,18 @@ export class UIController {
                 <span>🌱 Green ${prog.vitalityGreen}% ${prog.greenPivotBuilt ? '✓' : ''}</span>
               </div>
               ${
-                r.unlockedInPhase1 && prog.unlocked
+                r.isPlayable && prog.unlocked
                   ? `<button type="button" class="primary-cta-btn" data-drive-to="${r.id}" ${
                       isCurrent ? 'disabled' : ''
-                    }>${isCurrent ? '🚐 Parked Here' : `🚐 Drive Here`}</button>`
+                    }>${
+                      isCurrent
+                        ? '🚐 Parked Here'
+                        : needsTier2
+                        ? '🏔️ Needs Tier 2 4WD Van'
+                        : '🚐 Drive Here'
+                    }</button>`
                   : `<div class="atlas-lock-note">${
-                      r.unlockedInPhase1 ? 'Wake previous region to unlock' : `Summer Pivot: ${r.greenPivotTitle}`
+                      r.isPlayable ? 'Wake previous region to unlock' : `Phase 3 Pivot: ${r.greenPivotTitle}`
                     }</div>`
               }
             </div>
@@ -692,6 +715,8 @@ export class UIController {
         if (res.ok) {
           this.closeModalSafely('dialog-valley-atlas');
           this.showToast(`🚐 Drove to ${REGION_MAP[target].name}`);
+        } else if (res.reason) {
+          this.showToast(res.reason);
         }
       });
     });

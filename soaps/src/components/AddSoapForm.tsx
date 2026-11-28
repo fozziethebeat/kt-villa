@@ -1,10 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { addToCollection } from '@/app/actions/collection'
-import { Loader2, Plus, Check, KeyRound } from 'lucide-react'
+import { Loader2, Check } from 'lucide-react'
 import { toast } from '@/components/ui/use-toast'
 
 export function AddSoapForm() {
@@ -26,13 +24,13 @@ export function AddSoapForm() {
                 setSuccess(true)
                 setCode('')
                 toast({
-                    title: "Soap Added! 🧼",
+                    title: "Added to collection",
                     description: result.message,
                 })
                 setTimeout(() => setSuccess(false), 3000)
             } else {
                 toast({
-                    title: "Couldn't add soap",
+                    title: "Could not add soap",
                     description: result.message,
                     variant: "destructive"
                 })
@@ -49,27 +47,27 @@ export function AddSoapForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex items-center gap-3">
-            <div className="relative flex-1 max-w-xs">
-                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <Input
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    placeholder="Enter soap code..."
-                    className="pl-9 font-mono"
-                    disabled={loading}
-                />
-            </div>
-            <Button type="submit" disabled={loading || !code.trim()} size="sm">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+            <input
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="Enter soap code"
+                aria-label="Soap code"
+                className="h-11 w-full sm:w-64 border border-border bg-card px-4 text-[0.9375rem] text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors duration-150"
+                disabled={loading}
+            />
+            <button
+                type="submit"
+                disabled={loading || !code.trim()}
+                className="h-11 px-6 bg-foreground text-background text-[0.9375rem] font-medium hover:bg-mineral-moss transition-colors duration-150 disabled:opacity-40 inline-flex items-center justify-center gap-2 cursor-pointer shrink-0"
+            >
                 {loading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                 ) : success ? (
-                    <Check className="mr-2 h-4 w-4" />
-                ) : (
-                    <Plus className="mr-2 h-4 w-4" />
-                )}
-                {success ? 'Added!' : 'Add to Collection'}
-            </Button>
+                    <Check className="h-4 w-4" />
+                ) : null}
+                {success ? 'Added' : 'Add bar'}
+            </button>
         </form>
     )
 }

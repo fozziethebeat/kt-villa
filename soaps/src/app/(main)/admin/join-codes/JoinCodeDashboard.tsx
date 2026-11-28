@@ -80,7 +80,7 @@ export function JoinCodeDashboard({
                         Create New Join Code
                     </CardTitle>
                     <CardDescription className="text-brand-stone">
-                        Generate a shareable link anyone can use to sign up for KT Soaps — no batch required.
+                        Generate a shareable link anyone can use to sign up for Our Morning Sunset — no batch required.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
